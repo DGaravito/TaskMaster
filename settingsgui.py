@@ -6,8 +6,7 @@ from PyQt6.QtCore import Qt
 from adopy.tasks.dd import TaskDD
 from adopy.tasks.cra import TaskCRA
 import participant
-import discountinggui
-import memorygui
+import gui
 
 
 class Settings(QWidget):
@@ -135,7 +134,7 @@ class DdSettings(Settings):
                                            self.ssrewin.text(),
                                            self.llrewin.text())
 
-        self.exp = discountinggui.DiscountExp(person)
+        self.exp = gui.DiscountExp(person)
         self.exp.show()
         self.hide()
 
@@ -239,7 +238,7 @@ class PdSettings(Settings): # TODO Change to probability discounting things
                                            self.ssrewin.text(),
                                            self.llrewin.text())
 
-        self.exp = discountinggui.DiscountExp(person)
+        self.exp = gui.DiscountExp(person)
         self.exp.show()
         self.hide()
 
@@ -343,7 +342,7 @@ class CEDTSettings(Settings): # TODO Review CEDT for proper variables
                                            self.ssrewin.text(),
                                            self.llrewin.text())
 
-        self.exp = discountinggui.DiscountExp(person)
+        self.exp = gui.DiscountExp(person)
         self.exp.show()
         self.hide()
 
@@ -450,7 +449,7 @@ class ARTTSettings(Settings):  # TODO Review ADOPy for required stuff - progress
                                              self.srewin.text(),
                                              self.lrewin.text())
 
-        self.exp = discountinggui.ARTTExp(person)
+        self.exp = gui.ARTTExp(person)
         self.exp.show()
         self.hide()
 
@@ -546,6 +545,6 @@ class PrSettings(Settings):
                                            self.trialsin.text(),
                                            self.stt)
 
-        self.exp = memorygui.MemoryExp(person)
+        self.exp = gui.MemoryExp(person)
         self.exp.show()
         self.hide()
