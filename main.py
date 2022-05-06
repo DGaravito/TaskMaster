@@ -56,15 +56,15 @@ class SelectWindow(QWidget):
         self.ddbutton.clicked.connect(self.ddexp)
 
         # PD button
-        self.pdbutton = QPushButton('PD')
+        self.pdbutton = QPushButton('PD (WIP)')
         self.pdbutton.clicked.connect(self.pdexp)
 
         # CEDT button
-        self.cedtbutton = QPushButton('CEDT')
+        self.cedtbutton = QPushButton('CEDT (WIP)')
         self.cedtbutton.clicked.connect(self.cedtexp)
 
         # ARTT button
-        self.arttbutton = QPushButton('ARTT')
+        self.arttbutton = QPushButton('ARTT (WIP)')
         self.arttbutton.clicked.connect(self.arttexp)
 
         # Paired Recall button

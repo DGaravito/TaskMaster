@@ -158,61 +158,26 @@ class DdParticipant(Participant):
 
 class PdParticipant(Participant):
 
-    def __init__(self, expid, trials, outdir, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew):
+    def __init__(self, expid, trials, outdir, task, design, min, max):
         super().__init__(expid, trials, outdir, task)
 
-        self.engine = self.create_dd_engine(self.task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew)
-
-        # Compute an optimal design for the first trial
-        self.design = self.engine.get_design('optimal')
+        self.create_stim(self.task, min, max, design)
 
         # Experiment settings output dataframe
-        dict_simulsettings = {'Immediate Option Delay': [ss_del],
-                              'Shortest Delay': [ll_shortdel],
-                              'Longest Delay': [ll_longdel],
-                              'Smallest Smaller Sooner Reward': [ss_smallrew],
-                              'Largest Smaller Sooner Reward': [(float(ll_rew) - float(ss_smallrew))],
-                              'Larger Later Reward': [ll_rew]
+        dict_simulsettings = {'Design': [design],
+                              'Minimum Reward': [min],
+                              'Maximum Reward': [max]
                               }
 
         df_simulsettings = pd.DataFrame(dict_simulsettings)
 
         self.set_settings(df_simulsettings)
 
-    def create_dd_engine(self, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew):
+    def create_stim(self, task, min, max, design):
 
-        model = ModelHyp()
-
-        grid_design = {
-            # [Now]
-            't_ss': [float(ss_del)],
-
-            # [1 week, 2 weeks, ..., longdelay] in weeks
-            't_ll': np.arange(float(ll_shortdel), float(ll_longdel), .5),
-
-            # [smallreward, smallreward + $1, ..., bigreward]
-            'r_ss': np.arange(float(ss_smallrew), float(ll_rew), .5),
-
-            # [bigreward]
-            'r_ll': [float(ll_rew)]
-        }
-
-        grid_param = {
-            # 50 points on [10^-5, ..., 1] in a log scale
-            'k': np.logspace(-5, 0, 50, base=10),
-
-            # 10 points on (0, 5] in a linear scale
-            'tau': np.linspace(0, 5, 11)[1:]
-        }
-
-        grid_response = {
-            'choice': [0, 1]
-        }
-
-        # Set up engine
-        engine = Engine(task, model, grid_design, grid_param, grid_response)
-
-        return engine
+        self.gains = np.arange(int(min), int(max)-1, 1)
+        self.losses = np.arange(int(min), int(max)-1, 1)
+        probabilities = np.arange(1, 100, 1)
 
     def get_design_text(self):
 
@@ -228,25 +193,14 @@ class PdParticipant(Participant):
 
         return [leftstring, rightstring]
 
-    def engineupdate(self, response):
-        # Update engine with the response and current design
-        self.engine.update(self.design, response)
-
-        # Generate new optimal design based on previous design and response
-        self.design = self.engine.get_design('optimal')
-
     def updateoutput(self, response, trial):
 
         df_simultrial = {
             'trial': [trial],
-            'SSAmount': [float(self.design['r_ss'])],
-            'LLAmount': [float(self.design['r_ll'])],
-            'LLDelay': [float(self.design['t_ll'])],
-            'response': [response],
-            'mean_k': [self.engine.post_mean[0]],
-            'mean_tau': [self.engine.post_mean[1]],
-            'sd_k': [self.engine.post_sd[0]],
-            'sd_tau': [self.engine.post_sd[1]]
+            'SureAmount': [float(self.design['r_ss'])],
+            'RiskyAmount': [float(self.design['r_ll'])],
+            'RiskyProbability': [float(self.design['t_ll'])],
+            'response': [response]
         }
 
         df_simultrial = pd.DataFrame(data=df_simultrial)
@@ -378,8 +332,8 @@ class ARTTParticipant(Participant):
 
         model = ModelLinear()
 
-        r_var = np.arange(int(rewmin), int(rewmax), 2.5)
-        r_fix = np.arange(int(rewmin), (int(rewmax)/2), 2.5)
+        r_var = np.arange(int(rewmin), int(rewmax), .5)
+        r_fix = np.arange(int(rewmin), (int(rewmax)/2), .5)
 
         rewards = np.array([
             [rv, rf] for rv in r_var for rf in r_fix if rv > rf
@@ -429,16 +383,22 @@ class ARTTParticipant(Participant):
     def engineupdate(self, response):
 
         start = time.time()
-        print("updateengine")
+        print("update engine")
 
         # Update engine with the response and current design
         self.engine.update(self.design, response)
 
+        end = time.time()
+        print(end - start)
+
+        start2 = time.time()
+        print("get design")
+
         # Generate new optimal design based on previous design and response
         self.design = self.engine.get_design('optimal')
 
-        end = time.time()
-        print(end - start)
+        end2 = time.time()
+        print(end2 - start2)
 
     def updateoutput(self, response, trial):
 

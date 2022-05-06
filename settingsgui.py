@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QSpinBox, QLineEdit,\
-    QFormLayout, QVBoxLayout, QCheckBox
+    QFormLayout, QVBoxLayout, QCheckBox, QComboBox
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
 
@@ -134,7 +134,7 @@ class DdSettings(Settings):
                                            self.ssrewin.text(),
                                            self.llrewin.text())
 
-        self.exp = gui.DiscountExp(person)
+        self.exp = gui.DDiscountExp(person)
         self.exp.show()
         self.hide()
 
@@ -181,25 +181,17 @@ class PdSettings(Settings): # TODO Change to probability discounting things
         self.trialsin = QSpinBox()
         self.trialsin.setSpecialValueText('10')
 
-        # Immediate Delay input
-        self.imdin = QSpinBox()
-        self.imdin.setSpecialValueText('0')
+        # Minimum input
+        self.rewmin = QSpinBox()
+        self.rewmin.setSpecialValueText('1')
 
-        # Short Delay input
-        self.sdin = QSpinBox()
-        self.sdin.setSpecialValueText('1')
+        # Maximum input
+        self.rewmax = QSpinBox()
+        self.rewmax.setSpecialValueText('250')
 
-        # Long Delay input
-        self.ldin = QSpinBox()
-        self.ldin.setSpecialValueText('52')
-
-        # SS reward input
-        self.ssrewin = QSpinBox()
-        self.ssrewin.setSpecialValueText('1')
-
-        # LL reward input
-        self.llrewin = QSpinBox()
-        self.llrewin.setSpecialValueText('250')
+        # Dropdown box for gains, losses, or both
+        self.design = QComboBox()
+        self.design.addItems(['Gains only', 'Losses only', 'Gains and losses'])
 
         # WD input
         self.wdset = QLineEdit()
@@ -214,11 +206,8 @@ class PdSettings(Settings): # TODO Change to probability discounting things
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
         layout.addRow(QLabel('Number of trials:'), self.trialsin)
-        layout.addRow(QLabel('Shortest delay in immediate option (weeks):'), self.imdin)
-        layout.addRow(QLabel('Shortest delay in delayed option (weeks):'), self.sdin)
-        layout.addRow(QLabel('Longest delay in delayed option (weeks):'), self.ldin)
-        layout.addRow(QLabel('Smallest reward in immediate option:'), self.ssrewin)
-        layout.addRow(QLabel('Biggest reward in delayed option:'), self.llrewin)
+        layout.addRow(QLabel('Smallest amount of money:'), self.rewmin)
+        layout.addRow(QLabel('Biggest amount of money:'), self.rewmax)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
@@ -228,17 +217,15 @@ class PdSettings(Settings): # TODO Change to probability discounting things
         self.setLayout(over_layout)
 
     def submitsettings(self):
-        person = participant.DdParticipant(self.idform.text(),
+        person = participant.PdParticipant(self.idform.text(),
                                            self.trialsin.text(),
                                            self.wdset.text(),
-                                           TaskDD(),
-                                           self.imdin.text(),
-                                           self.sdin.text(),
-                                           self.ldin.text(),
-                                           self.ssrewin.text(),
-                                           self.llrewin.text())
+                                           'Probability Discounting',
+                                           self.design.currentText(),
+                                           self.rewmin.text(),
+                                           self.rewmax.text())
 
-        self.exp = gui.DiscountExp(person)
+        self.exp = gui.PDiscountExp(person)
         self.exp.show()
         self.hide()
 
@@ -322,7 +309,6 @@ class CEDTSettings(Settings): # TODO Review CEDT for proper variables
         layout.addRow(QLabel('Shortest delay in delayed option (weeks):'), self.sdin)
         layout.addRow(QLabel('Longest delay in delayed option (weeks):'), self.ldin)
         layout.addRow(QLabel('Smallest reward in immediate option:'), self.ssrewin)
-        layout.addRow(QLabel('Biggest reward in delayed option:'), self.llrewin)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
@@ -347,7 +333,7 @@ class CEDTSettings(Settings): # TODO Review CEDT for proper variables
         self.hide()
 
 
-class ARTTSettings(Settings):  # TODO Review ADOPy for required stuff - progress bar
+class ARTTSettings(Settings):  # TODO Review ADOPy for required stuff - progress bar?
 
     def __init__(self):
         super().__init__()
@@ -403,7 +389,7 @@ class ARTTSettings(Settings):  # TODO Review ADOPy for required stuff - progress
 
         # Largest reward input
         self.lrewin = QSpinBox()
-        self.lrewin.setSpecialValueText('500')
+        self.lrewin.setSpecialValueText('50')
 
         # WD input
         self.wdset = QLineEdit()
