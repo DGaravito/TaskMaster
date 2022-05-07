@@ -118,9 +118,13 @@ class SelectWindow(QWidget):
         self.hide()
 
 
-if __name__ == '__main__':
-
+def main():
     APP = QApplication([])
     APP.setStyle('Fusion')
     w = SelectWindow()
     APP.exec()
+
+
+if __name__ == '__main__':
+
+    main()
