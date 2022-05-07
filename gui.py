@@ -114,7 +114,7 @@ class DDiscountExp(QWidget):
 
         self.person.updateoutput(self.response, self.trialsdone)
 
-        self.timerjitter.start(2000)
+        self.timerjitter.start(1000)
 
     def generatenext(self):
 

@@ -1,7 +1,9 @@
 from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QSpinBox, QLineEdit,\
-    QFormLayout, QVBoxLayout, QCheckBox, QComboBox
+    QFormLayout, QVBoxLayout, QCheckBox, QComboBox, QDialog
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
+
+from os import path
 
 from adopy.tasks.dd import TaskDD
 from adopy.tasks.cra import TaskCRA
@@ -9,13 +11,35 @@ import participant
 import gui
 
 
-class Settings(QWidget):
-    def centerscreen(self):
-        qr = self.frameGeometry()
-        cp = self.screen().availableGeometry().center()
+class errorbox(QDialog):
 
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle('Error')
+
+        # Make  layout
+        dialayout = QVBoxLayout()
+
+        # Make labels for text
+        self.mainerror = QLabel('It looks like you entered an invalid directory!')
+        self.mainerror.setStyleSheet('padding :5px')
+
+        self.windowsex = QLabel('Windows example: \'C:\\Users\\dgara\\desktop\'')
+        self.windowsex.setStyleSheet('padding :5px')
+
+        self.macex = QLabel('Mac example: \'Users\\DGaravito\\desktop\'')
+        self.macex.setStyleSheet('padding :5px')
+
+        # Add stuff to overarching layout
+        dialayout.addWidget(self.mainerror),
+        dialayout.addWidget(self.windowsex),
+        dialayout.addWidget(self.macex)
+
+        self.setLayout(dialayout)
+
+
+class Settings(QWidget):
 
     def __init__(self):
         super().__init__()
@@ -33,6 +57,42 @@ class Settings(QWidget):
         self.quitbutton = QPushButton('Quit')
         self.quitbutton.clicked.connect(QApplication.instance().quit)
         self.quitbutton.resize(self.quitbutton.sizeHint())
+
+        # ID form
+        self.idform = QLineEdit()
+        self.idform.setText('9999')
+
+        # WD input
+        self.wdset = QLineEdit()
+        self.wdset.setText('C:/Users/dgaravito/Desktop')
+
+        # Submit button
+        self.submit = QPushButton('Submit')
+        self.submit.clicked.connect(self.checksettings)
+
+    def centerscreen(self):
+        qr = self.frameGeometry()
+        cp = self.screen().availableGeometry().center()
+
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
+    def checksettings(self):
+
+        if path.isdir(self.wdset.text()):
+            self.submitsettings()
+
+        else:
+            self.errordialog()
+
+    def errordialog(self):
+
+        error = errorbox()
+
+        error.exec()
+
+    def submitsettings(self):
+        print('If you see this, panic')
 
 
 class DdSettings(Settings):
@@ -69,10 +129,6 @@ class DdSettings(Settings):
 
         over_layout.addWidget(self.header)
 
-        # ID form
-        self.idform = QLineEdit()
-        self.idform.setText('9999')
-
         # Trials input
         self.trialsin = QSpinBox()
         self.trialsin.setSpecialValueText('10')
@@ -96,14 +152,6 @@ class DdSettings(Settings):
         # LL reward input
         self.llrewin = QSpinBox()
         self.llrewin.setSpecialValueText('250')
-
-        # WD input
-        self.wdset = QLineEdit()
-        self.wdset.setText('/Users/DGaravito/Desktop')
-
-        # Submit button
-        self.submit = QPushButton('Submit')
-        self.submit.clicked.connect(self.submitsettings)
 
         # Make form layout for all the settings
         layout = QFormLayout()
@@ -173,10 +221,6 @@ class PdSettings(Settings): # TODO Change to probability discounting things
 
         over_layout.addWidget(self.header)
 
-        # ID form
-        self.idform = QLineEdit()
-        self.idform.setText('9999')
-
         # Trials input
         self.trialsin = QSpinBox()
         self.trialsin.setSpecialValueText('10')
@@ -192,14 +236,6 @@ class PdSettings(Settings): # TODO Change to probability discounting things
         # Dropdown box for gains, losses, or both
         self.design = QComboBox()
         self.design.addItems(['Gains only', 'Losses only', 'Gains and losses'])
-
-        # WD input
-        self.wdset = QLineEdit()
-        self.wdset.setText('/Users/DGaravito/Desktop')
-
-        # Submit button
-        self.submit = QPushButton('Submit')
-        self.submit.clicked.connect(self.submitsettings)
 
         # Make form layout for all the settings
         layout = QFormLayout()
@@ -264,10 +300,6 @@ class CEDTSettings(Settings): # TODO Review CEDT for proper variables
 
         over_layout.addWidget(self.header)
 
-        # ID form
-        self.idform = QLineEdit()
-        self.idform.setText('9999')
-
         # Trials input
         self.trialsin = QSpinBox()
         self.trialsin.setSpecialValueText('10')
@@ -291,14 +323,6 @@ class CEDTSettings(Settings): # TODO Review CEDT for proper variables
         # LL reward input
         self.llrewin = QSpinBox()
         self.llrewin.setSpecialValueText('250')
-
-        # WD input
-        self.wdset = QLineEdit()
-        self.wdset.setText('/Users/DGaravito/Desktop')
-
-        # Submit button
-        self.submit = QPushButton('Submit')
-        self.submit.clicked.connect(self.submitsettings)
 
         # Make form layout for all the settings
         layout = QFormLayout()
@@ -367,10 +391,6 @@ class ARTTSettings(Settings):  # TODO Review ADOPy for required stuff - progress
 
         over_layout.addWidget(self.header)
 
-        # ID form
-        self.idform = QLineEdit()
-        self.idform.setText('9999')
-
         # Trials input
         self.trialsin = QSpinBox()
         self.trialsin.setSpecialValueText('10')
@@ -390,14 +410,6 @@ class ARTTSettings(Settings):  # TODO Review ADOPy for required stuff - progress
         # Largest reward input
         self.lrewin = QSpinBox()
         self.lrewin.setSpecialValueText('50')
-
-        # WD input
-        self.wdset = QLineEdit()
-        self.wdset.setText('/Users/DGaravito/Desktop')
-
-        # Submit button
-        self.submit = QPushButton('Submit')
-        self.submit.clicked.connect(self.submitsettings)
 
         # Make form layout for all the settings
         layout = QFormLayout()
@@ -477,10 +489,6 @@ class PrSettings(Settings):
 
         over_layout.addWidget(self.header)
 
-        # ID form
-        self.idform = QLineEdit()
-        self.idform.setText('9999')
-
         # Pairs input
         self.pairsin = QSpinBox()
         self.pairsin.setSpecialValueText('30')
@@ -492,14 +500,6 @@ class PrSettings(Settings):
         # ST Trials input
         self.stttoggle = QCheckBox('STT?', self)
         self.stttoggle.stateChanged.connect(self.clickBox)
-
-        # WD input
-        self.wdset = QLineEdit()
-        self.wdset.setText('/Users/DGaravito/Desktop')
-
-        # Submit button
-        self.submit = QPushButton('Submit')
-        self.submit.clicked.connect(self.submitsettings)
 
         # Make form layout for all the settings
         layout = QFormLayout()

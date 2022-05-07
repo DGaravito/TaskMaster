@@ -8,7 +8,6 @@ import random
 
 import xlsxwriter
 import os
-import time
 
 
 class Participant(object):
@@ -46,6 +45,8 @@ class Participant(object):
     def output(self):
         if self.task == TaskDD():
             taskstr = 'DD_'
+        elif self.task == 'Pair Recall Memory':
+            taskstr = 'PR_'
         else:
             taskstr = ''
 
@@ -327,9 +328,6 @@ class ARTTParticipant(Participant):
 
     def create_artt_engine(self, task, risklist, amblist, rewmin, rewmax):
 
-        start = time.time()
-        print("create")
-
         model = ModelLinear()
 
         r_var = np.arange(int(rewmin), int(rewmax), .5)
@@ -361,49 +359,25 @@ class ARTTParticipant(Participant):
         # Set up engine
         engine = Engine(task, model, grid_design, grid_param, grid_response)
 
-        end = time.time()
-        print(end - start)
-
         return engine
 
     def get_design_text(self):
-
-        start = time.time()
-        print("get text")
 
         fixedstring = str('{:.2f}'.format(self.design['r_fix']))
 
         otherstring = str('{:.2f}'.format(self.design['r_var']))
 
-        end = time.time()
-        print(end - start)
-
         return [fixedstring, otherstring, int(self.design['a_var']*100), int(self.design['p_var']*100)]
 
     def engineupdate(self, response):
 
-        start = time.time()
-        print("update engine")
-
         # Update engine with the response and current design
         self.engine.update(self.design, response)
-
-        end = time.time()
-        print(end - start)
-
-        start2 = time.time()
-        print("get design")
 
         # Generate new optimal design based on previous design and response
         self.design = self.engine.get_design('optimal')
 
-        end2 = time.time()
-        print(end2 - start2)
-
     def updateoutput(self, response, trial):
-
-        start = time.time()
-        print("update output")
 
         df_simultrial = {
             'trial': [trial],
@@ -422,9 +396,6 @@ class ARTTParticipant(Participant):
 
         df_simultrial = pd.DataFrame(data=df_simultrial)
         self.set_performance(df_simultrial)
-
-        end = time.time()
-        print(end - start)
 
 
 class PrParticipant(Participant):

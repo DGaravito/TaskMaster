@@ -41,10 +41,10 @@ class SelectWindow(QWidget):
         self.header = QLabel('Please select the appropriate design:', self)
 
         # setting font style and size
-        self.header.setFont(QFont('Helvetica', 20))
+        self.header.setFont(QFont('Helvetica', 15))
 
         # resizing and moving
-        self.header.resize(400, 20)
+        self.header.resize(400, 25)
         self.header.move(0, 30)
 
         # center header
@@ -83,8 +83,11 @@ class SelectWindow(QWidget):
         layout.addWidget(self.pdbutton, 0, 1)
         layout.addWidget(self.cedtbutton, 0, 2)
         layout.addWidget(self.arttbutton, 1, 0)
-        layout.addWidget(self.prbutton, 1, 1)
-        layout.addWidget(QPushButton('TBA'), 1, 2)
+        layout.addWidget(QPushButton('Risk Aversion'), 1, 1)
+        layout.addWidget(QPushButton('Framing'), 1, 2)
+        layout.addWidget(self.prbutton, 2, 0)
+        layout.addWidget(QPushButton('n-Back'), 2, 1)
+        layout.addWidget(QPushButton('TBA'), 2, 2)
         layout.addWidget(self.quitbutton, 3, 0, 1, 3)
 
         self.setLayout(layout)
