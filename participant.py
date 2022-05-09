@@ -37,10 +37,16 @@ class Participant(object):
         return int(self.trials)
 
     def set_settings(self, append):
-        self.df_settings = pd.concat([self.df_settings, append])
+        self.df_settings = pd.join(pd.DataFrame(
+            append, index=self.df_settings.index
+        ))
 
     def set_performance(self, append):
-        self.df_performance = pd.concat([self.df_performance, append])
+        self.df_performance = pd.concat(
+            [
+                self.df_performance, append
+            ]
+        )
 
     def output(self):
         if self.task == TaskDD():
@@ -79,9 +85,7 @@ class DdParticipant(Participant):
                               'Larger Later Reward': [ll_rew]
                               }
 
-        df_simulsettings = pd.DataFrame(dict_simulsettings)
-
-        self.set_settings(df_simulsettings)
+        self.set_settings(dict_simulsettings)
 
     def create_dd_engine(self, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew):
 
@@ -162,7 +166,11 @@ class PdParticipant(Participant):
     def __init__(self, expid, trials, outdir, task, design, min, max):
         super().__init__(expid, trials, outdir, task)
 
-        self.create_stim(self.task, min, max, design)
+        self.design = design
+        self.max = max
+        self.trialdesign = []
+
+        self.create_stim(min, max)
 
         # Experiment settings output dataframe
         dict_simulsettings = {'Design': [design],
@@ -174,33 +182,272 @@ class PdParticipant(Participant):
 
         self.set_settings(df_simulsettings)
 
-    def create_stim(self, task, min, max, design):
+    def create_stim(self, min, max):
 
-        self.gains = np.arange(int(min), int(max)-1, 1)
-        self.losses = np.arange(int(min), int(max)-1, 1)
-        probabilities = np.arange(1, 100, 1)
+        if self.design == 'Gains only':
+
+            sureamounts = np.arange(int(min), int(max) - .5, .5)
+            self.suredict = dict(zip(sureamounts, sureamounts))
+
+            riskyprobabilities = np.arange(.01, 1, .01)
+            riskkeys = riskyprobabilities * max
+
+            self.riskdict = dict(zip(riskkeys, riskyprobabilities))
+
+        elif self.design == 'Losses only':
+
+            sureamounts = np.arange(int(min), int(max)-.5, .5)
+            surekeys = sureamounts * -1
+
+            self.suredict = dict(zip(surekeys, sureamounts))
+
+            riskyprobabilities = np.arange(.01, 1, .01)
+            riskkeys = riskyprobabilities * max * -1
+
+            self.riskdict = dict(zip(riskkeys, riskyprobabilities))
+
+        else:
+
+            # Gains
+            suregainamounts = np.arange(int(min), int(max) - .5, .5)
+            self.suregaindict = dict(zip(suregainamounts, suregainamounts))
+
+            riskygainprobabilities = np.arange(.01, 1, .01)
+            riskgainkeys = riskygainprobabilities * max
+
+            self.riskgaindict = dict(zip(riskgainkeys, riskygainprobabilities))
+
+            # Losses
+            surelossamounts = np.arange(int(min), int(max) - .5, .5)
+            surelosskeys = surelossamounts * -1
+
+            self.surelossdict = dict(zip(surelosskeys, surelossamounts))
+
+            riskylossprobabilities = np.arange(.01, 1, .01)
+            risklosskeys = riskylossprobabilities * max * -1
+
+            self.risklossdict = dict(zip(risklosskeys, riskylossprobabilities))
+
+        self.set_design_text()
+
+    def set_design_text(self, trial=0):
+
+        if self.design == 'Gains and losses':
+
+            if ((trial + 1) % 2) != 0:
+                self.currentsuregainkey = random.choice(self.suregaindict)
+                self.currentriskgainkey = random.choice(self.riskgaindict)
+
+                trialdesign = [
+                    self.suregaindict.pop(self.currentsuregainkey),
+                    self.riskgaindict.pop(self.currentriskgainkey)
+                ]
+
+            else:
+                self.currentsurelosskey = random.choice(self.surelossdict)
+                self.currentrisklosskey = random.choice(self.risklossdict)
+
+                trialdesign = [
+                    self.surelossdict.pop(self.currentsurelosskey),
+                    self.risklossdict.pop(self.currentrisklosskey)
+                ]
+
+        else:
+
+            self.currentsurekey = random.choice(self.suredict)
+            self.currentriskkey = random.choice(self.riskdict)
+
+            trialdesign = [
+                self.suredict.pop(self.currentsurekey),
+                self.riskdict.pop(self.currentriskkey)
+            ]
+
+        self.trialdesign = trialdesign
 
     def get_design_text(self):
 
-        if int(self.design['t_ss']) == 0:
-            leftstring = 'Getting $' + str('{:.2f}'.format(self.design['r_ss'])) + '\nnow'
+        leftstring = '$' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+        rightstring = 'A ' + str(self.trialdesign[1]) + '% chance for ' +\
+                      str('{:.2f}'.format(self.max))
+        barvalue = self.trialdesign[1] * 100
+
+        return [leftstring, rightstring, barvalue]
+
+    def update(self, response, trial):
+
+        """
+        Updates the dictionaries for experimental parameters based on the participant's response (and the type of trial
+        if you are using gains and losses)
+        :param response: A binary 0 or 1 depending on if the participant chose the sure option (0) or gamble (1)
+        :param trial: The trial (in an integer format) that the participant just completed
+        :return: N/A
+        """
+
+        # Flip a coin for later - 1 or 2
+        coinflip = random.randint(1, 2)
+
+        # If you are using gains and losses, use the top; otherwise, use the else
+        if self.design == 'Gains and losses':
+
+            # If the trial is an even number, it was a gains trial and use the top; otherwise, it was loss and use else
+            if ((trial + 1) % 2) != 0:
+
+                # If the participant chose the sure thing, use the top; otherwise, use else
+                if response == 0:
+
+                    # If the coin flip resulted in a 1, use the top; otherwise, use else
+                    if coinflip == 1:
+
+                        # Loop for every key (i.e., EV of the possible reward value in the sure option) in the sure gain
+                        # dictionary
+                        for key in self.suregaindict:
+
+                            # If the EV for that key is greater in value compared to EV of the option that
+                            # was just used...
+                            if int(key) > self.currentsuregainkey:
+
+                                # ...Delete that option
+                                del self.suregaindict[key]
+
+                    else:
+
+                        # Loop for every key (i.e., EV of the possible reward value in the risk option) in the risky
+                        # gain dictionary
+                        for key in self.riskgaindict:
+
+                            # If the EV for that key is lesser in value compared to EV of the option that
+                            # was just used...
+                            if int(key) < self.currentriskgainkey:
+
+                                # ...Delete that option
+                                del self.riskgaindict[key]
+
+                else:
+
+                    # This does the same thing as the above but is responding to the participant choosing the risky
+                    # option
+                    if coinflip == 1:
+
+                        for key in self.suregaindict:
+
+                            # Remove all values for the sure option that would have a lesser EV than what the
+                            # participant just rejected
+                            if int(key) < self.currentsuregainkey:
+
+                                del self.suregaindict[key]
+
+                    else:
+
+                        for key in self.riskgaindict:
+
+                            # Remove all values for the risky option that would have a greater EV than what the
+                            # participant just accepted
+                            if int(key) > self.currentriskgainkey:
+
+                                del self.riskgaindict[key]
+
+            else:
+
+                # This section is the same as all that was above but if the trial just conducted was a loss trial.
+                if response == 0:
+
+                    # If the participant chose the sure loss...
+                    if coinflip == 1:
+
+                        # And the coin flipped 1...
+                        for key in self.surelossdict:
+
+                            # Then look at the EVs for all the possible sure loss options...
+                            if int(key) > self.currentsurelosskey:
+
+                                # And delete those where the EV for the sure option is greater.
+                                del self.surelossdict[key]
+
+                    else:
+
+                        # If the coin flipped 2...
+                        for key in self.risklossdict:
+
+                            # Then look at the EVs for all the possible risky loss options...
+                            if int(key) < self.currentrisklosskey:
+
+                                # And delete those where the EV for the sure option is less.
+                                del self.risklossdict[key]
+
+                else:
+
+                    # If the participant chose the risky option...
+                    if coinflip == 1:
+
+                        # And the coin flipped 1...
+                        for key in self.surelossdict:
+
+                            # Then look at the EVs for all the possible sure loss options...
+                            if int(key) < self.currentsurelosskey:
+
+                                # And delete those where the EV for the sure option is less.
+                                del self.surelossdict[key]
+
+                    else:
+
+                        # If the coin flipped 2...
+                        for key in self.risklossdict:
+
+                            # Then look at the EVs for all the possible risky loss options...
+                            if int(key) > self.currentrisklosskey:
+
+                                # And delete those where the EV for the risky option is more.
+                                del self.risklossdict[key]
 
         else:
-            leftstring = 'Getting $' + str('{:.2f}'.format(self.design['r_ll'])) + '\nafter '\
-                         + str(int(self.design['t_ss'])) + ' weeks'
 
-        rightstring = 'Getting $' + str('{:.2f}'.format(self.design['r_ll'])) + '\nafter '\
-                      + str(int(self.design['t_ll'])) + ' weeks'
+            # If you don't have both gains and losses and instead have gains or losses, then the above is condensed
+            if response == 0:
 
-        return [leftstring, rightstring]
+                if coinflip == 1:
+
+                    for key in self.suredict:
+
+                        if int(key) > self.currentsurekey:
+
+                            del self.suredict[key]
+
+                else:
+
+                    for key in self.riskdict:
+
+                        if int(key) < self.currentriskkey:
+
+                            del self.riskdict[key]
+
+            else:
+
+                if coinflip == 1:
+
+                    for key in self.suredict:
+
+                        if int(key) < self.currentsurekey:
+
+                            del self.suredict[key]
+
+                else:
+
+                    for key in self.riskdict:
+
+                        if int(key) > self.currentriskkey:
+
+                            del self.riskdict[key]
+
+        # Now, given the dictionaries are adjusted, generate a new random set of parameters
+        self.set_design_text(trial)
 
     def updateoutput(self, response, trial):
 
         df_simultrial = {
             'trial': [trial],
-            'SureAmount': [float(self.design['r_ss'])],
-            'RiskyAmount': [float(self.design['r_ll'])],
-            'RiskyProbability': [float(self.design['t_ll'])],
+            'SureAmount': [str('{:.2f}'.format(self.trialdesign[0]))],
+            'RiskyAmount': [self.max],
+            'RiskyProbability': [str(self.trialdesign[1])],
             'response': [response]
         }
 

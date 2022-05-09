@@ -267,7 +267,7 @@ class PDiscountExp(QWidget):
         expverblayout.addWidget(self.right)
         expverblayout.addStretch(1)
 
-        # creating vertical progress bars to represent options
+        # creating vertical progress bar to represent options
         self.left = QLabel('')
         self.leftblank.setFont(QFont('Helvetica', 40))
 
@@ -318,7 +318,7 @@ class PDiscountExp(QWidget):
         self.rightbar.setValue(0)
         self.middle.setText('+')
 
-        self.person.engineupdate(self.response)
+        self.person.update(self.response, self.trialsdone)
 
         self.person.updateoutput(self.response, self.trialsdone)
 
@@ -383,7 +383,7 @@ class PDiscountExp(QWidget):
         self.left.setText(info[0])
 
         self.right.setText(info[1])
-        self.rightbar.setValue(info[3])
+        self.rightbar.setValue(info[2])
 
         self.middle.setText('OR')
 
