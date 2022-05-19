@@ -5,6 +5,7 @@ from adopy import Engine
 import numpy as np
 import pandas as pd
 import random
+import string
 
 import xlsxwriter
 import os
@@ -183,6 +184,14 @@ class PdParticipant(Participant):
         self.set_settings(df_simulsettings)
 
     def create_stim(self, min, max):
+        """
+        Uses the parameters from the settings input and makes a set of dictionaries for gamble probabilities and sure
+        values
+        :param min: the minimum reward value possible, as an integer, given by participants
+        :param max: the maximum reward value possible, as an integer, given by participants
+        :return: Does not return a value, instead creates the class dictionaries and then calls set design text to make
+        the first trial
+        """
 
         if self.design == 'Gains only':
 
@@ -232,49 +241,151 @@ class PdParticipant(Participant):
 
     def set_design_text(self, trial=0):
 
+        """
+        Gets the actual text used in the design
+        :param trial: This is the trial number, as an integer, that the experiment is on
+        :return: Creates self.trialdesign
+        """
+
+        # If you're using gains and losses
         if self.design == 'Gains and losses':
 
+            # If the trial was even, work with gains, otherwise, use the else statement for losses
             if ((trial + 1) % 2) != 0:
+
+                # Pick a random reward for the sure option and probability for the gamble option
                 self.currentsuregainkey = random.choice(self.suregaindict)
                 self.currentriskgainkey = random.choice(self.riskgaindict)
 
-                trialdesign = [
-                    self.suregaindict.pop(self.currentsuregainkey),
-                    self.riskgaindict.pop(self.currentriskgainkey)
-                ]
+                # The following if-else statement looks at if there is just one value left in a dictionary. If so,
+                # then you don't want to pop, as that would leave an empty dictionary, resulting in errors next time
+                # you tried to get the trial info. We use get() instead so that the key:value pair remains in the
+                # dictionary, which continues to have a length of 1
+                if len(self.suregaindict) >= 1 & len(self.riskgaindict) >= 1:
+
+                    # actually grap the values for the trial design, which is a list of integers
+                    trialdesign = [
+                        self.suregaindict.pop(self.currentsuregainkey),
+                        self.riskgaindict.pop(self.currentriskgainkey)
+                    ]
+
+                elif len(self.suregaindict) >= 1 & len(self.riskgaindict) == 1:
+
+                    trialdesign = [
+                        self.suregaindict.pop(self.currentsuregainkey),
+                        self.riskgaindict.get(self.currentriskgainkey)
+                    ]
+
+                elif len(self.suregaindict) == 1 & len(self.riskgaindict) >= 1:
+
+                    trialdesign = [
+                        self.suregaindict.get(self.currentsuregainkey),
+                        self.riskgaindict.pop(self.currentriskgainkey)
+                    ]
+
+                else:
+
+                    trialdesign = [
+                        self.suregaindict.get(self.currentsuregainkey),
+                        self.riskgaindict.get(self.currentriskgainkey)
+                    ]
 
             else:
+
+                # Same as above: do the random selection and then go through the big if-else statement
                 self.currentsurelosskey = random.choice(self.surelossdict)
                 self.currentrisklosskey = random.choice(self.risklossdict)
 
-                trialdesign = [
-                    self.surelossdict.pop(self.currentsurelosskey),
-                    self.risklossdict.pop(self.currentrisklosskey)
-                ]
+                if len(self.surelossdict) >= 1 & len(self.risklossdict) >= 1:
+
+                    # actually grap the values for the trial design, which is a list of integers
+                    trialdesign = [
+                        self.surelossdict.pop(self.currentsurelosskey),
+                        self.risklossdict.pop(self.currentrisklosskey)
+                    ]
+
+                elif len(self.surelossdict) >= 1 & len(self.risklossdict) == 1:
+
+                    trialdesign = [
+                        self.surelossdict.pop(self.currentsurelosskey),
+                        self.risklossdict.get(self.currentrisklosskey)
+                    ]
+
+                elif len(self.surelossdict) == 1 & len(self.risklossdict) >= 1:
+
+                    trialdesign = [
+                        self.surelossdict.get(self.currentsurelosskey),
+                        self.risklossdict.pop(self.currentrisklosskey)
+                    ]
+
+                else:
+
+                    trialdesign = [
+                        self.surelossdict.get(self.currentsurelosskey),
+                        self.risklossdict.get(self.currentrisklosskey)
+                    ]
 
         else:
 
+            # This whole section is if you just have gains or just have losses. Same concept though: we select a random
+            # value for the sure option and probability for the gamble
             self.currentsurekey = random.choice(self.suredict)
             self.currentriskkey = random.choice(self.riskdict)
 
-            trialdesign = [
-                self.suredict.pop(self.currentsurekey),
-                self.riskdict.pop(self.currentriskkey)
-            ]
+            # Then we have to see if the dictionaries have more than one key:value pair left. If so, we can pop and
+            # not have to worry about errors. If not, then we use get and keep the length at 1
+            if len(self.suredict) >= 1 & len(self.riskdict) >= 1:
+
+                # actually grap the values for the trial design, which is a list of integers
+                trialdesign = [
+                    self.suredict.pop(self.currentsurekey),
+                    self.riskdict.pop(self.currentriskkey)
+                ]
+
+            elif len(self.suredict) >= 1 & len(self.riskdict) == 1:
+
+                trialdesign = [
+                    self.suredict.pop(self.currentsurekey),
+                    self.riskdict.get(self.currentriskkey)
+                ]
+
+            elif len(self.suredict) == 1 & len(self.riskdict) >= 1:
+
+                trialdesign = [
+                    self.suredict.get(self.currentsurekey),
+                    self.riskdict.pop(self.currentriskkey)
+                ]
+
+            else:
+
+                trialdesign = [
+                    self.suredict.get(self.currentsurekey),
+                    self.riskdict.get(self.currentriskkey)
+                ]
 
         self.trialdesign = trialdesign
 
     def get_design_text(self):
 
+        """
+        Looks at self.trialdesign and returns strings for the GUI
+        :return: left text (sure), right text (gamble), and gamble probability
+        """
+
+        # Set up the left string for sure value
         leftstring = '$' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+        # Set up the right string for risky gamble
         rightstring = 'A ' + str(self.trialdesign[1]) + '% chance for ' +\
                       str('{:.2f}'.format(self.max))
+
+        # Set the probability bar for the risky gamble
         barvalue = self.trialdesign[1] * 100
 
+        # Return the values to the gui
         return [leftstring, rightstring, barvalue]
 
     def update(self, response, trial):
-
         """
         Updates the dictionaries for experimental parameters based on the participant's response (and the type of trial
         if you are using gains and losses)
@@ -303,8 +414,8 @@ class PdParticipant(Participant):
                         for key in self.suregaindict:
 
                             # If the EV for that key is greater in value compared to EV of the option that
-                            # was just used...
-                            if int(key) > self.currentsuregainkey:
+                            # was just used AND the dictionary is more than 1 in length (to avoid an empty dict)...
+                            if int(key) > self.currentsuregainkey & len(self.suregaindict) > 1:
 
                                 # ...Delete that option
                                 del self.suregaindict[key]
@@ -317,7 +428,7 @@ class PdParticipant(Participant):
 
                             # If the EV for that key is lesser in value compared to EV of the option that
                             # was just used...
-                            if int(key) < self.currentriskgainkey:
+                            if int(key) < self.currentriskgainkey & len(self.riskgaindict) > 1:
 
                                 # ...Delete that option
                                 del self.riskgaindict[key]
@@ -332,7 +443,7 @@ class PdParticipant(Participant):
 
                             # Remove all values for the sure option that would have a lesser EV than what the
                             # participant just rejected
-                            if int(key) < self.currentsuregainkey:
+                            if int(key) < self.currentsuregainkey & len(self.suregaindict) > 1:
 
                                 del self.suregaindict[key]
 
@@ -342,7 +453,7 @@ class PdParticipant(Participant):
 
                             # Remove all values for the risky option that would have a greater EV than what the
                             # participant just accepted
-                            if int(key) > self.currentriskgainkey:
+                            if int(key) > self.currentriskgainkey & len(self.riskgaindict) > 1:
 
                                 del self.riskgaindict[key]
 
@@ -358,7 +469,7 @@ class PdParticipant(Participant):
                         for key in self.surelossdict:
 
                             # Then look at the EVs for all the possible sure loss options...
-                            if int(key) > self.currentsurelosskey:
+                            if int(key) > self.currentsurelosskey & len(self.surelossdict) > 1:
 
                                 # And delete those where the EV for the sure option is greater.
                                 del self.surelossdict[key]
@@ -369,7 +480,7 @@ class PdParticipant(Participant):
                         for key in self.risklossdict:
 
                             # Then look at the EVs for all the possible risky loss options...
-                            if int(key) < self.currentrisklosskey:
+                            if int(key) < self.currentrisklosskey & len(self.risklossdict) > 1:
 
                                 # And delete those where the EV for the sure option is less.
                                 del self.risklossdict[key]
@@ -383,7 +494,7 @@ class PdParticipant(Participant):
                         for key in self.surelossdict:
 
                             # Then look at the EVs for all the possible sure loss options...
-                            if int(key) < self.currentsurelosskey:
+                            if int(key) < self.currentsurelosskey & len(self.surelossdict) > 1:
 
                                 # And delete those where the EV for the sure option is less.
                                 del self.surelossdict[key]
@@ -394,7 +505,7 @@ class PdParticipant(Participant):
                         for key in self.risklossdict:
 
                             # Then look at the EVs for all the possible risky loss options...
-                            if int(key) > self.currentrisklosskey:
+                            if int(key) > self.currentrisklosskey & len(self.risklossdict) > 1:
 
                                 # And delete those where the EV for the risky option is more.
                                 del self.risklossdict[key]
@@ -408,7 +519,7 @@ class PdParticipant(Participant):
 
                     for key in self.suredict:
 
-                        if int(key) > self.currentsurekey:
+                        if int(key) > self.currentsurekey & len(self.suredict) > 1:
 
                             del self.suredict[key]
 
@@ -416,7 +527,7 @@ class PdParticipant(Participant):
 
                     for key in self.riskdict:
 
-                        if int(key) < self.currentriskkey:
+                        if int(key) < self.currentriskkey & len(self.riskdict) > 1:
 
                             del self.riskdict[key]
 
@@ -426,7 +537,7 @@ class PdParticipant(Participant):
 
                     for key in self.suredict:
 
-                        if int(key) < self.currentsurekey:
+                        if int(key) < self.currentsurekey & len(self.suredict) > 1:
 
                             del self.suredict[key]
 
@@ -434,7 +545,7 @@ class PdParticipant(Participant):
 
                     for key in self.riskdict:
 
-                        if int(key) > self.currentriskkey:
+                        if int(key) > self.currentriskkey & len(self.riskdict) > 1:
 
                             del self.riskdict[key]
 
@@ -749,5 +860,111 @@ class PrParticipant(Participant):
     def updateoutput(self):
 
         df_simultrial = pd.DataFrame(data=self.expwordpairs)
+
+        self.set_performance(df_simultrial)
+
+
+class NbParticipant(Participant):
+
+    def __init__(self, expid, trials, outdir, task, rounds):
+        super().__init__(expid, trials, outdir, task)
+
+        self.task = task
+        self.rounds = rounds
+        self.backlist = ['1', '1', '1', '1']
+
+        # Experiment settings output dataframe
+        dict_simulsettings = {
+            'Task': [task],
+            'Rounds': [rounds]
+        }
+
+        df_simulsettings = pd.DataFrame(dict_simulsettings)
+
+        self.set_settings(df_simulsettings)
+
+    def nextround(self, round):
+
+        if round == self.rounds:
+
+            prompt = 'Thank you! This task is complete.'
+
+        else:
+
+            self.backlist = ['1', '1', '1', '1']
+
+            prompt = 'Please let the researcher know you are ready'
+
+        return prompt
+
+    def get_trial_text(self):
+
+        newletter = random.choice(string.ascii_uppercase)
+
+        self.backlist.append(newletter)
+
+        return [newletter]
+
+    def updateoutput(self, trial, response=3):
+        """
+        evaluates whether the person got the n-back correct based on their response
+        :param trial: the trial that was just completed
+        :param response: integer with either 0 or 1 depending on if the person thought the letter was a false-alarm
+        or a target. Default is 3 in case the participant doesn't answer in time.
+        :return: updates the performance dataframe in the superclass
+        """
+
+        if self.task == '1-back':
+
+            if response == 1 & (self.backlist[-1] == self.backlist[-2]):
+                correct = 1
+
+            elif response == 0 & (self.backlist[-1] != self.backlist[-2]):
+                correct = 1
+
+            else:
+                correct = 0
+
+        elif self.task == '2-back':
+
+            if response == 1 & (self.backlist[-1] == self.backlist[-3]):
+                correct = 1
+
+            elif response == 0 & (self.backlist[-1] != self.backlist[-3]):
+                correct = 1
+
+            else:
+                correct = 0
+
+        elif self.task == '3-back':
+
+            if response == 1 & (self.backlist[-1] == self.backlist[-4]):
+                correct = 1
+
+            elif response == 0 & (self.backlist[-1] != self.backlist[-4]):
+                correct = 1
+
+            else:
+                correct = 0
+
+        else:
+
+            if response == 1 & (self.backlist[-1] == self.backlist[-5]):
+                correct = 1
+
+            elif response == 0 & (self.backlist[-1] != self.backlist[-5]):
+                correct = 1
+
+            else:
+                correct = 0
+
+        df_simultrial = {
+            'trial': [trial],
+            'letter': [self.backlist[-1]],
+            'response': [response],
+            'correct': [correct]
+        }
+
+        df_simultrial = pd.DataFrame(data=df_simultrial)
 
         self.set_performance(df_simultrial)

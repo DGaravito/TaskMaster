@@ -804,3 +804,127 @@ class MemoryExp(QWidget):
 
         if key in ['g', 'G']:
             self.generatenext()
+
+
+class NbExp(QWidget):
+    keyPressed = pyqtSignal(str)
+
+    def __init__(self, person):
+        super().__init__()
+
+        self.person = person
+        self.trialsdone = 0
+        self.roundsdone = 0
+
+        # Window title
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+
+        # center window
+        self.centerscreen()
+
+        # Add in elements
+        self.elements()
+
+        # Show all elements
+        self.showMaximized()
+
+        # Attach keyboard keys to functions
+        self.keyPressed.connect(self.keyaction)
+
+        # Make timer to transition word pairs
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.timeout)
+
+    def elements(self):
+
+        # Make overarching layout
+        mainlayout = QVBoxLayout()
+
+        # Quit button
+        self.quitbutton = QPushButton('Quit')
+        self.quitbutton.clicked.connect(QApplication.instance().quit)
+        self.quitbutton.setFixedWidth(40)
+        self.quitbutton.setFixedHeight(20)
+
+        # Instructions
+        self.instructions = QLabel('Press C if the letter is a false-alarm. Press M if the letter is a target')
+
+        # setting font style and size
+        self.instructions.setFont(QFont('Helvetica', 25))
+
+        # center Instructions
+        self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.middle = QLabel('Please let the researcher know you are ready')
+        self.middle.setFont(QFont('Helvetica', 40))
+
+        # Put everything in vertical layout
+
+        mainlayout.addWidget(self.instructions)
+        mainlayout.addStretch(1)
+        mainlayout.addLayout(self.middle)
+        mainlayout.addStretch(1)
+        mainlayout.addWidget(self.quitbutton)
+
+        # Set up layout
+
+        self.setLayout(mainlayout)
+
+    def centerscreen(self):
+
+        qr = self.frameGeometry()
+        cp = self.screen().availableGeometry().center()
+
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
+    def keyPressEvent(self, keyevent):
+        self.keyPressed.emit(keyevent.text())
+
+    def generatenext(self):
+
+        if self.trialsdone < self.person.trials:
+
+            self.middle.setText(self.person.get_trial_text())
+
+            self.timer.start(3000)
+
+        else:
+
+            self.roundsdone += 1
+
+            self.middle.setText(self.person.nextround(self.roundsdone))
+
+            if self.person.rounds == self.roundsdone:
+
+                self.person.output()
+                self.instructions.setText('Thank you!')
+
+    def timeout(self):
+
+        self.timer.stop()
+
+        self.person.updateoutput()
+        self.generatenext()
+
+        self.timer.start(3000)
+
+    def keyaction(self, key):
+
+        if key in ['g', 'G']:
+
+            self.generatenext()
+
+        if key in ['m', 'M']:
+
+            self.timer.stop()
+            self.trialsdone += 1
+            self.person.updateoutput(1)
+            self.generatenext()
+
+        if key in ['c', 'C']:
+
+            self.timer.stop()
+            self.trialsdone += 1
+            self.person.updateoutput(0)
+            self.generatenext()

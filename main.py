@@ -71,6 +71,10 @@ class SelectWindow(QWidget):
         self.prbutton = QPushButton('Paired Recall')
         self.prbutton.clicked.connect(self.prexp)
 
+        # n Back button
+        self.nbackbutton = QPushButton('n-Back')
+        self.nbackbutton.clicked.connect(self.nback)
+
         # Quit button
         self.quitbutton = QPushButton('Quit')
         self.quitbutton.clicked.connect(QApplication.instance().quit)
@@ -86,7 +90,7 @@ class SelectWindow(QWidget):
         layout.addWidget(QPushButton('Risk Aversion'), 1, 1)
         layout.addWidget(QPushButton('Framing'), 1, 2)
         layout.addWidget(self.prbutton, 2, 0)
-        layout.addWidget(QPushButton('n-Back'), 2, 1)
+        layout.addWidget(self.nbackbutton, 2, 1)
         layout.addWidget(QPushButton('TBA'), 2, 2)
         layout.addWidget(self.quitbutton, 3, 0, 1, 3)
 
@@ -114,6 +118,11 @@ class SelectWindow(QWidget):
 
     def prexp(self):
         self.w = settingsgui.PrSettings()
+        self.w.show()
+        self.hide()
+
+    def nback(self):
+        self.w = settingsgui.NBackSettings()
         self.w.show()
         self.hide()
 
