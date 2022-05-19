@@ -11,7 +11,7 @@ import participant
 import gui
 
 
-class errorbox(QDialog):
+class ErrorBox(QDialog):
 
     def __init__(self):
         super().__init__()
@@ -87,7 +87,7 @@ class Settings(QWidget):
 
     def errordialog(self):
 
-        error = errorbox()
+        error = ErrorBox()
 
         error.exec()
 

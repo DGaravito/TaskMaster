@@ -45,7 +45,7 @@ class SelectWindow(QWidget):
 
         # resizing and moving
         self.header.resize(400, 25)
-        self.header.move(0, 30)
+        self.header.move(0, 20)
 
         # center header
 
@@ -56,7 +56,7 @@ class SelectWindow(QWidget):
         self.ddbutton.clicked.connect(self.ddexp)
 
         # PD button
-        self.pdbutton = QPushButton('PD (WIP)')
+        self.pdbutton = QPushButton('PD')
         self.pdbutton.clicked.connect(self.pdexp)
 
         # CEDT button
@@ -66,6 +66,30 @@ class SelectWindow(QWidget):
         # ARTT button
         self.arttbutton = QPushButton('ARTT (WIP)')
         self.arttbutton.clicked.connect(self.arttexp)
+
+        # Risk Aversion button
+        self.rabutton = QPushButton('RA (WIP)')
+        self.rabutton.clicked.connect(self.raexp)
+
+        # Framing button
+        self.framebutton = QPushButton('Framing (WIP)')
+        self.framebutton.clicked.connect(self.frameexp)
+
+        # Beads Task button
+        self.beadsbutton = QPushButton('Beads (WIP)')
+        self.beadsbutton.clicked.connect(self.beadsexp)
+
+        # PBT button
+        self.pbtbutton = QPushButton('PBT (WIP)')
+        self.pbtbutton.clicked.connect(self.pbtexp)
+
+        # Negative Attentional Capture button
+        self.nactbutton = QPushButton('NACT (WIP)')
+        self.nactbutton.clicked.connect(self.nactexp)
+
+        # Stop Signal button
+        self.ssbutton = QPushButton('Stop Signal (WIP)')
+        self.ssbutton.clicked.connect(self.ssexp)
 
         # Paired Recall button
         self.prbutton = QPushButton('Paired Recall')
@@ -87,12 +111,15 @@ class SelectWindow(QWidget):
         layout.addWidget(self.pdbutton, 0, 1)
         layout.addWidget(self.cedtbutton, 0, 2)
         layout.addWidget(self.arttbutton, 1, 0)
-        layout.addWidget(QPushButton('Risk Aversion'), 1, 1)
-        layout.addWidget(QPushButton('Framing'), 1, 2)
-        layout.addWidget(self.prbutton, 2, 0)
-        layout.addWidget(self.nbackbutton, 2, 1)
-        layout.addWidget(QPushButton('TBA'), 2, 2)
-        layout.addWidget(self.quitbutton, 3, 0, 1, 3)
+        layout.addWidget(self.rabutton, 1, 1)
+        layout.addWidget(self.framebutton, 1, 2)
+        layout.addWidget(self.beadsbutton, 2, 0)
+        layout.addWidget(self.pbtbutton, 2, 1)
+        layout.addWidget(self.nactbutton, 2, 2)
+        layout.addWidget(self.ssbutton, 3, 0)
+        layout.addWidget(self.prbutton, 3, 1)
+        layout.addWidget(self.nbackbutton, 3, 2)
+        layout.addWidget(self.quitbutton, 4, 0, 1, 3)
 
         self.setLayout(layout)
 
@@ -116,6 +143,36 @@ class SelectWindow(QWidget):
         self.w.show()
         self.hide()
 
+    def raexp(self):
+        self.w = settingsgui.RASettings()
+        self.w.show()
+        self.hide()
+
+    def frameexp(self):
+        self.w = settingsgui.FrameSettings()
+        self.w.show()
+        self.hide()
+
+    def beadsexp(self):
+        self.w = settingsgui.BeadsSettings()
+        self.w.show()
+        self.hide()
+
+    def pbtexp(self):
+        self.w = settingsgui.PBTSettings()
+        self.w.show()
+        self.hide()
+
+    def nactexp(self):
+        self.w = settingsgui.NACTSettings()
+        self.w.show()
+        self.hide()
+
+    def ssexp(self):
+        self.w = settingsgui.SSSettings()
+        self.w.show()
+        self.hide()
+
     def prexp(self):
         self.w = settingsgui.PrSettings()
         self.w.show()
@@ -127,6 +184,7 @@ class SelectWindow(QWidget):
         self.hide()
 
 
+# Main function, which starts the application when called
 def main():
     APP = QApplication([])
     APP.setStyle('Fusion')
@@ -134,6 +192,7 @@ def main():
     APP.exec()
 
 
+# Main loop
 if __name__ == '__main__':
 
     main()
