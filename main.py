@@ -6,6 +6,9 @@ import settingsgui
 
 
 class SelectWindow(QWidget):
+    """
+    This class is a window that has buttons for every task I have incorporated (or plan to incorporate) at the moment
+    """
 
     def centerscreen(self):
         qr = self.frameGeometry()
@@ -53,51 +56,51 @@ class SelectWindow(QWidget):
 
         # DD button
         self.ddbutton = QPushButton('DD')
-        self.ddbutton.clicked.connect(self.ddexp)
+        self.ddbutton.clicked.connect(lambda: self.selection(1))
 
         # PD button
         self.pdbutton = QPushButton('PD')
-        self.pdbutton.clicked.connect(self.pdexp)
+        self.pdbutton.clicked.connect(lambda: self.selection(2))
 
         # CEDT button
         self.cedtbutton = QPushButton('CEDT (WIP)')
-        self.cedtbutton.clicked.connect(self.cedtexp)
+        self.cedtbutton.clicked.connect(lambda: self.selection(3))
 
         # ARTT button
         self.arttbutton = QPushButton('ARTT (WIP)')
-        self.arttbutton.clicked.connect(self.arttexp)
+        self.arttbutton.clicked.connect(lambda: self.selection(4))
 
         # Risk Aversion button
         self.rabutton = QPushButton('RA (WIP)')
-        self.rabutton.clicked.connect(self.raexp)
+        self.rabutton.clicked.connect(lambda: self.selection(5))
 
         # Framing button
         self.framebutton = QPushButton('Framing (WIP)')
-        self.framebutton.clicked.connect(self.frameexp)
+        self.framebutton.clicked.connect(lambda: self.selection(6))
 
         # Beads Task button
         self.beadsbutton = QPushButton('Beads (WIP)')
-        self.beadsbutton.clicked.connect(self.beadsexp)
+        self.beadsbutton.clicked.connect(lambda: self.selection(7))
 
         # PBT button
         self.pbtbutton = QPushButton('PBT (WIP)')
-        self.pbtbutton.clicked.connect(self.pbtexp)
+        self.pbtbutton.clicked.connect(lambda: self.selection(8))
 
         # Negative Attentional Capture button
         self.nactbutton = QPushButton('NACT (WIP)')
-        self.nactbutton.clicked.connect(self.nactexp)
+        self.nactbutton.clicked.connect(lambda: self.selection(9))
 
         # Stop Signal button
         self.ssbutton = QPushButton('Stop Signal (WIP)')
-        self.ssbutton.clicked.connect(self.ssexp)
+        self.ssbutton.clicked.connect(lambda: self.selection(10))
 
         # Paired Recall button
         self.prbutton = QPushButton('Paired Recall')
-        self.prbutton.clicked.connect(self.prexp)
+        self.prbutton.clicked.connect(lambda: self.selection(11))
 
         # n Back button
         self.nbackbutton = QPushButton('n-Back')
-        self.nbackbutton.clicked.connect(self.nback)
+        self.nbackbutton.clicked.connect(lambda: self.selection(12))
 
         # Quit button
         self.quitbutton = QPushButton('Quit')
@@ -123,63 +126,49 @@ class SelectWindow(QWidget):
 
         self.setLayout(layout)
 
-    def ddexp(self):
-        self.w = settingsgui.DdSettings()
-        self.w.show()
-        self.hide()
+    def selection(self, choice):
+        """
+        Takes the choice value (determined by what button the user picked) and loads up the appropriate settings window
+        :param choice: an integer corresponding to the button that the user clicked
+        :return: Hides the selection window and opens up the corresponding settings window
+        """
 
-    def pdexp(self):
-        self.w = settingsgui.PdSettings()
-        self.w.show()
-        self.hide()
+        if choice == 1:
+            self.w = settingsgui.DdSettings()
 
-    def cedtexp(self):
-        self.w = settingsgui.CEDTSettings()
-        self.w.show()
-        self.hide()
+        elif choice == 2:
+            self.w = settingsgui.PdSettings()
 
-    def arttexp(self):
-        self.w = settingsgui.ARTTSettings()
-        self.w.show()
-        self.hide()
+        elif choice == 3:
+            self.w = settingsgui.CEDTSettings()
 
-    def raexp(self):
-        self.w = settingsgui.RASettings()
-        self.w.show()
-        self.hide()
+        elif choice == 4:
+            self.w = settingsgui.ARTTSettings()
 
-    def frameexp(self):
-        self.w = settingsgui.FrameSettings()
-        self.w.show()
-        self.hide()
+        elif choice == 5:
+            self.w = settingsgui.RASettings()
 
-    def beadsexp(self):
-        self.w = settingsgui.BeadsSettings()
-        self.w.show()
-        self.hide()
+        elif choice == 6:
+            self.w = settingsgui.FrameSettings()
 
-    def pbtexp(self):
-        self.w = settingsgui.PBTSettings()
-        self.w.show()
-        self.hide()
+        elif choice == 7:
+            self.w = settingsgui.BeadsSettings()
 
-    def nactexp(self):
-        self.w = settingsgui.NACTSettings()
-        self.w.show()
-        self.hide()
+        elif choice == 8:
+            self.w = settingsgui.PBTSettings()
 
-    def ssexp(self):
-        self.w = settingsgui.SSSettings()
-        self.w.show()
-        self.hide()
+        elif choice == 9:
+            self.w = settingsgui.NACTSettings()
 
-    def prexp(self):
-        self.w = settingsgui.PrSettings()
-        self.w.show()
-        self.hide()
+        elif choice == 10:
+            self.w = settingsgui.SSSettings()
 
-    def nback(self):
-        self.w = settingsgui.NBackSettings()
+        elif choice == 11:
+            self.w = settingsgui.PrSettings()
+
+        elif choice == 12:
+            self.w = settingsgui.NBackSettings()
+
         self.w.show()
         self.hide()
 

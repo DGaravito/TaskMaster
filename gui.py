@@ -1,5 +1,8 @@
+from pathlib import Path
+import time
+
 from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QProgressBar
-from PyQt6.QtGui import QFont
+from PyQt6.QtGui import QFont, QPixmap
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 
 
@@ -855,14 +858,153 @@ class NbExp(QWidget):
         # center Instructions
         self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.middle = QLabel('Please let the researcher know you are ready')
+        # Make the middle for the actualy n-back task
+
+        self.middle = QLabel(self.person.nextround(0))
         self.middle.setFont(QFont('Helvetica', 40))
+
+        # center middle
+        self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Put everything in vertical layout
 
         mainlayout.addWidget(self.instructions)
         mainlayout.addStretch(1)
-        mainlayout.addLayout(self.middle)
+        mainlayout.addWidget(self.middle)
+        mainlayout.addStretch(1)
+        mainlayout.addWidget(self.quitbutton)
+
+        # Set up layout
+
+        self.setLayout(mainlayout)
+
+    def centerscreen(self):
+
+        qr = self.frameGeometry()
+        cp = self.screen().availableGeometry().center()
+
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
+    def keyPressEvent(self, keyevent):
+        self.keyPressed.emit(keyevent.text())
+
+    def generatenext(self):
+
+        if self.trialsdone < int(self.person.trials):
+
+            self.middle.setText(self.person.get_trial_text())
+
+            self.timer.start(3000)
+
+        else:
+
+            self.roundsdone += 1
+
+            self.middle.setText(self.person.nextround(self.roundsdone))
+
+            if self.person.rounds == self.roundsdone:
+
+                self.person.output()
+                self.instructions.setText('Thank you!')
+
+    def timeout(self):
+
+        self.timer.stop()
+
+        self.trialsdone += 1
+
+        self.person.updateoutput(self.trialsdone)
+        self.generatenext()
+
+        self.timer.start(3000)
+
+    def keyaction(self, key):
+
+        if key in ['g', 'G']:
+
+            self.generatenext()
+
+        if key in ['m', 'M']:
+
+            self.timer.stop()
+            self.trialsdone += 1
+            self.person.updateoutput(self.trialsdone, 1)
+            self.generatenext()
+
+        if key in ['c', 'C']:
+
+            self.timer.stop()
+            self.trialsdone += 1
+            self.person.updateoutput(self.trialsdone, 0)
+            self.generatenext()
+
+
+class PBTExp(QWidget):
+    keyPressed = pyqtSignal(str)
+
+    def __init__(self, person):
+        super().__init__()
+
+        self.person = person
+        self.trialsdone = 0
+        self.roundsdone = 0
+
+        # Window title
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+
+        # center window
+        self.centerscreen()
+
+        # Add in elements
+        self.elements()
+
+        # Show all elements
+        self.showMaximized()
+
+        # Attach keyboard keys to functions
+        self.keyPressed.connect(self.keyaction)
+
+        # Make timer to transition word pairs
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.timeout)
+
+        self.ititimer = QTimer()
+        self.ititimer.timeout.connect(self.generatenext)
+
+    def elements(self):
+
+        # Make overarching layout
+        mainlayout = QVBoxLayout()
+
+        # Quit button
+        self.quitbutton = QPushButton('Quit')
+        self.quitbutton.clicked.connect(QApplication.instance().quit)
+        self.quitbutton.setFixedWidth(40)
+        self.quitbutton.setFixedHeight(20)
+
+        # Instructions
+        self.instructions = QLabel('Press C for crosses. Press M for squares.')
+
+        # setting font style and size
+        self.instructions.setFont(QFont('Helvetica', 25))
+
+        # center Instructions
+        self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # Make middle for pictures
+
+        self.middle = QLabel('Please let the researcher know you are ready')
+        self.middle.setFont(QFont('Helvetica', 40))
+
+        # center middle
+        self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # Put everything in vertical layout
+
+        mainlayout.addWidget(self.instructions)
+        mainlayout.addStretch(1)
+        mainlayout.addWidget(self.middle)
         mainlayout.addStretch(1)
         mainlayout.addWidget(self.quitbutton)
 
@@ -885,13 +1027,23 @@ class NbExp(QWidget):
 
         if self.trialsdone < self.person.trials:
 
-            self.middle.setText(self.person.get_trial_text())
+            self.ititimer.stop()
 
-            self.timer.start(3000)
+            self.pixmap = QPixmap(Path('./assets', self.person.get_trial_pic()))
+
+            self.middle.setPixmap(self.pixmap)
+
+            self.starttime = time.time()
+
+            self.timer.start(5000)
 
         else:
 
+            self.ititimer.stop()
+
             self.roundsdone += 1
+
+            self.middle.setPixmap(QPixmap())
 
             self.middle.setText(self.person.nextround(self.roundsdone))
 
@@ -900,31 +1052,52 @@ class NbExp(QWidget):
                 self.person.output()
                 self.instructions.setText('Thank you!')
 
+    def iti(self):
+
+        self.middle.setPixmap(QPixmap())
+
+        self.ititimer.start(500)
+
     def timeout(self):
 
         self.timer.stop()
 
-        self.person.updateoutput()
-        self.generatenext()
+        endtime = time.time()
+        rt = endtime - self.starttime
 
-        self.timer.start(3000)
+        self.person.updateoutput(self.trialsdone, self.pixmap, rt, 'None')
+        self.iti()
 
     def keyaction(self, key):
 
         if key in ['g', 'G']:
 
-            self.generatenext()
+            self.middle.setText('')
+
+            self.iti()
 
         if key in ['m', 'M']:
 
             self.timer.stop()
             self.trialsdone += 1
-            self.person.updateoutput(1)
-            self.generatenext()
+
+            endtime = time.time()
+            rt = endtime - self.starttime
+
+            self.person.updateoutput(self.trialsdone, self.pixmap, rt, 'Square')
+            self.iti()
 
         if key in ['c', 'C']:
 
             self.timer.stop()
             self.trialsdone += 1
-            self.person.updateoutput(0)
-            self.generatenext()
+
+            endtime = time.time()
+            rt = endtime - self.starttime
+
+            self.person.updateoutput(self.trialsdone, self.pixmap, rt, 'Cross')
+            self.iti()
+
+        if key in ['i', 'I']:
+
+            self.middle.setText(self.person.get_instructions(self.person.globallocal, self.person.instructions))

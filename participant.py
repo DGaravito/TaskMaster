@@ -26,6 +26,7 @@ class Participant(object):
         # Experiment settings output dataframe
         self.dict_settings = {
             'Participant ID': [self.expid],
+            'Task': [self.task],
             'Number of trials': [self.trials]
         }
 
@@ -38,7 +39,8 @@ class Participant(object):
         return int(self.trials)
 
     def set_settings(self, append):
-        self.df_settings = pd.join(pd.DataFrame(
+
+        self.df_settings.join(pd.DataFrame(
             append, index=self.df_settings.index
         ))
 
@@ -50,14 +52,23 @@ class Participant(object):
         )
 
     def output(self):
-        if self.task == TaskDD():
-            taskstr = 'DD_'
-        elif self.task == 'Pair Recall Memory':
-            taskstr = 'PR_'
-        else:
-            taskstr = ''
 
-        writer = pd.ExcelWriter(taskstr + self.expid + '.xlsx', engine='xlsxwriter')
+        if self.task == TaskDD():
+            taskstr = '_DD'
+
+        elif self.task == 'Pair Recall Memory':
+            taskstr = '_PR'
+
+        elif self.task == 'Perceptual Bias Task':
+            taskstr = '_PBT'
+
+        elif self.task in ['1-back', '2-back', '3-back', '4-back']:
+            taskstr = '_' + self.task
+
+        else:
+            taskstr = '_'
+
+        writer = pd.ExcelWriter(self.expid + taskstr + '.xlsx', engine='xlsxwriter')
 
         # Write each dataframe to a different worksheet.
         self.df_settings.to_excel(writer, sheet_name='Sheet1')
@@ -179,9 +190,7 @@ class PdParticipant(Participant):
                               'Maximum Reward': [max]
                               }
 
-        df_simulsettings = pd.DataFrame(dict_simulsettings)
-
-        self.set_settings(df_simulsettings)
+        self.set_settings(dict_simulsettings)
 
     def create_stim(self, min, max):
         """
@@ -263,7 +272,7 @@ class PdParticipant(Participant):
                 # dictionary, which continues to have a length of 1
                 if len(self.suregaindict) >= 1 & len(self.riskgaindict) >= 1:
 
-                    # actually grap the values for the trial design, which is a list of integers
+                    # actually grab the values for the trial design, which is a list of integers
                     trialdesign = [
                         self.suregaindict.pop(self.currentsuregainkey),
                         self.riskgaindict.pop(self.currentriskgainkey)
@@ -585,9 +594,7 @@ class CEDTParticipant(Participant):
                               'Larger Later Reward': [ll_rew]
                               }
 
-        df_simulsettings = pd.DataFrame(dict_simulsettings)
-
-        self.set_settings(df_simulsettings)
+        self.set_settings(dict_simulsettings)
 
     def create_dd_engine(self, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew):
 
@@ -680,9 +687,7 @@ class ARTTParticipant(Participant):
                               'Largest Reward': [rewmax]
                               }
 
-        df_simulsettings = pd.DataFrame(dict_simulsettings)
-
-        self.set_settings(df_simulsettings)
+        self.set_settings(dict_simulsettings)
 
     def create_artt_engine(self, task, risklist, amblist, rewmin, rewmax):
 
@@ -765,21 +770,19 @@ class PrParticipant(Participant):
         stt = stt
 
         if stt == 1:
-            self.structstr = 'STT' + ('ST' * (int(design) - 1))
-            self.structure = list(self.structstr)
+            structstr = 'STT' + ('ST' * (int(design) - 1))
+            self.structure = list(structstr)
 
         else:
-            self.structstr = 'ST' * int(design)
-            self.structure = list(self.structstr)
+            structstr = 'ST' * int(design)
+            self.structure = list(structstr)
 
         # Experiment settings output dataframe
         dict_simulsettings = {
-                              'Design': [self.structstr]
-                              }
+            'Design': [structstr]
+        }
 
-        df_simulsettings = pd.DataFrame(dict_simulsettings)
-
-        self.set_settings(df_simulsettings)
+        self.set_settings(dict_simulsettings)
 
         self.set_pairs(int(trials))
 
@@ -867,21 +870,18 @@ class PrParticipant(Participant):
 class NbParticipant(Participant):
 
     def __init__(self, expid, trials, outdir, task, rounds):
+
         super().__init__(expid, trials, outdir, task)
 
-        self.task = task
         self.rounds = rounds
         self.backlist = ['1', '1', '1', '1']
 
         # Experiment settings output dataframe
         dict_simulsettings = {
-            'Task': [task],
             'Rounds': [rounds]
         }
 
-        df_simulsettings = pd.DataFrame(dict_simulsettings)
-
-        self.set_settings(df_simulsettings)
+        self.set_settings(dict_simulsettings)
 
     def nextround(self, round):
 
@@ -903,7 +903,7 @@ class NbParticipant(Participant):
 
         self.backlist.append(newletter)
 
-        return [newletter]
+        return newletter
 
     def updateoutput(self, trial, response=3):
         """
@@ -968,3 +968,141 @@ class NbParticipant(Participant):
         df_simultrial = pd.DataFrame(data=df_simultrial)
 
         self.set_performance(df_simultrial)
+
+
+class PBTParticipant(Participant):
+
+    def __init__(self, expid, trials, outdir, task, rounds):
+        super().__init__(expid, trials, outdir, task)
+
+        self.rounds = rounds
+        self.globallocal = random.choice(['Global', 'Local'])
+        self.instructions = 0
+
+        multnum = int(int(trials)/4)
+        picturenames = ['PBT_DCC.BMP', 'PBT_DCS.BMP', 'PBT_DSC.BMP', 'PBT_DSS.BMP']
+        multiplier = [multnum, multnum, multnum, multnum]
+        self.piclist = sum([[s] * n for s, n in zip(picturenames, multiplier)], [])
+
+        # Experiment settings output dataframe
+        dict_simulsettings = {
+            'Rounds': [rounds],
+            'Starting Block': [self.globallocal]
+        }
+
+        self.set_settings(dict_simulsettings)
+
+    def nextround(self, blocks):
+
+        if blocks == self.rounds:
+
+            prompt = 'Thank you! This task is complete.'
+
+        else:
+
+            self.picorder = list(self.piclist)
+            random.shuffle(self.picorder)
+
+            if blocks > 0:
+
+                if self.globallocal == 'Global':
+
+                    self.globallocal = 'Local'
+
+                else:
+
+                    self.globallocal = 'Global'
+
+            prompt = 'Please let the researcher know you are ready'
+
+        return prompt
+
+    def get_trial_pic(self):
+
+        pic = self.picorder.pop()
+
+        return [pic]
+
+    def updateoutput(self, trial, pic, time, response=3):
+        """
+        evaluates whether the person got the n-back correct based on their response
+        :param trial: the number of the trial that was just completed
+        :param pic: string with the picture name in it, so we can see if the participant gave the correct answer
+        :param time: participant's reaction time
+        :param response: integer with either 0 or 1 depending on if the person chose x or square. Default is 3 in case
+        the participant doesn't answer in time.
+        :return: updates the performance dataframe in the superclass
+        """
+
+        if self.globallocal == 'Local':
+
+            if pic in ['PBT_DCS.BMP', 'PBT_DSS.BMP']:
+
+                if response == 'Square':
+                    correct = 1
+
+                else:
+                    correct = 0
+
+            else:
+
+                if response == 'Cross':
+                    correct = 1
+
+                else:
+                    correct = 0
+
+        else:
+
+            if pic in ['PBT_DSS.BMP', 'PBT_DSC.BMP']:
+
+                if response == 'Square':
+                    correct = 1
+
+                else:
+                    correct = 0
+
+            else:
+
+                if response == 'Cross':
+                    correct = 1
+
+                else:
+                    correct = 0
+
+        df_simultrial = {
+            'trial': [trial],
+            'block': [self.globallocal],
+            'picture': [pic],
+            'response': [response],
+            'reaction time': [time],
+            'correct': [correct]
+        }
+
+        df_simultrial = pd.DataFrame(data=df_simultrial)
+
+        self.set_performance(df_simultrial)
+
+    def get_instructions(self, block_type, instruction):
+
+        if block_type == 'Global':
+
+            if instruction == 1:
+
+                inst = 'pretend something is here about global stuff'
+
+            else:
+
+                inst = 'pretend something else is here about global stuff'
+
+        else:
+
+            if instruction == 1:
+
+                inst = 'pretend something is here about local stuff'
+
+            else:
+
+                inst = 'pretend something else is here about local stuff'
+
+        return inst
