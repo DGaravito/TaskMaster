@@ -19,7 +19,6 @@ class Participant(object):
         self.trials = trials
 
         self.outdir = outdir
-        os.chdir(self.outdir)
 
         self.task = task
 
@@ -70,6 +69,8 @@ class Participant(object):
 
         else:
             taskstr = '_'
+
+        os.chdir(self.outdir)
 
         writer = pd.ExcelWriter(self.expid + taskstr + '.xlsx', engine='xlsxwriter')
 
@@ -764,351 +765,75 @@ class ARTTParticipant(Participant):
         self.set_performance(df_simultrial)
 
 
-class PrParticipant(Participant):
+class RAParticipant(Participant):
 
-    def __init__(self, expid, trials, outdir, task, design, stt):
+    def __init__(self, expid, trials, outdir, task, minimum, maximum):
         super().__init__(expid, trials, outdir, task)
 
-        design = design
-        stt = stt
+        self.trialtext = []
 
-        if stt == 1:
-            structstr = 'STT' + ('ST' * (int(design) - 1))
-            self.structure = list(structstr)
-
-        else:
-            structstr = 'ST' * int(design)
-            self.structure = list(structstr)
+        self.create_stim(minimum, maximum)
 
         # Experiment settings output dataframe
-        dict_simulsettings = {
-            'Design': [structstr]
-        }
+        dict_simulsettings = {'Minimum Reward': [minimum],
+                              'Maximum Reward': [maximum]
+                              }
 
         self.set_settings(dict_simulsettings)
 
-        self.set_pairs(int(trials))
-
-    def set_pairs(self, trials):
-
-        originalpairs = {
-            'Pony': ['Cranberry'],
-            'Minister': ['Liquor'],
-            'Cloud': ['Café'],
-            'Screwdriver': ['Leg'],
-            'Vodka': ['Gym'],
-            'Ant': ['Beer'],
-            'Refridgerator': ['Lion'],
-            'Tangerine': ['Steam'],
-            'Cradle': ['Smoke'],
-            'Nurse': ['Violin'],
-            'Chocolate': ['Square'],
-            'Crabs': ['Box'],
-            'Toe': ['Crocodile'],
-            'Coin': ['Duck'],
-            'Microscope': ['Dentist'],
-            'Jail': ['Telescope'],
-            'Fence': ['Sail'],
-            'Dark': ['Rowboat'],
-            'Jockey': ['Bubble'],
-            'Spinach': ['Mansion'],
-            'Fish': ['President'],
-            'University': ['Sun'],
-            'Bra': ['Can-Opener'],
-            'Bracelet': ['Needle'],
-            'Beach': ['Penny'],
-            'Flashbulbs': ['Bomb'],
-            'Cake': ['Professor'],
-            'Doctor': ['Mosquito'],
-            'Rain': ['Gorilla']
-        }
-
-        if len(originalpairs) - trials != 0:
-
-            for n in range(len(originalpairs) - trials):
-
-                del originalpairs[next(iter(originalpairs))]
-
-        self.expwordpairs = dict(originalpairs)
-
-        self.trialwordpairs = dict(self.expwordpairs)
-
-        self.updateoutput()
-
-    def starttrial(self):
-
-        self.trialwordpairs = dict(self.expwordpairs)
-
-        prompt = 'Please let the researcher know you are ready'
-
-        return prompt
-
-    def get_design_text(self, test=0):
-
-        if test == 0:
-
-            leftstring, rightstring = random.choice(list(self.trialwordpairs.items()))
-
-            rightstring = rightstring[0]
-
-        else:
-
-            leftstring = random.choice(list(self.trialwordpairs))
-
-            rightstring = ''
-
-        del self.trialwordpairs[leftstring]
-
-        middlestring = ''
-
-        return [leftstring, rightstring, middlestring]
-
-    def updateoutput(self):
-
-        df_simultrial = pd.DataFrame(data=self.expwordpairs)
-
-        self.set_performance(df_simultrial)
-
-
-class NbParticipant(Participant):
-
-    def __init__(self, expid, trials, outdir, task, rounds):
-
-        super().__init__(expid, trials, outdir, task)
-
-        self.rounds = int(rounds)
-        self.backlist = ['1', '1', '1', '1']
-
-        # Experiment settings output dataframe
-        dict_simulsettings = {
-            'Rounds': [rounds]
-        }
-
-        self.set_settings(dict_simulsettings)
-
-    def nextround(self, roundsdone):
-
-        if roundsdone == self.rounds:
-
-            prompt = 'Thank you! This task is complete.'
-
-        else:
-
-            self.backlist = ['1', '1', '1', '1']
-
-            prompt = 'Please let the researcher know you are ready'
-
-        return prompt
-
-    def get_trial_text(self):
-
-        newletter = random.choice(string.ascii_uppercase)
-
-        self.backlist.append(newletter)
-
-        return newletter
-
-    def updateoutput(self, trial, response=3):
+    def create_stim(self, min, max):
         """
-        evaluates whether the person got the n-back correct based on their response
-        :param trial: the trial that was just completed
-        :param response: integer with either 0 or 1 depending on if the person thought the letter was a false-alarm
-        or a target. Default is 3 in case the participant doesn't answer in time.
-        :return: updates the performance dataframe in the superclass
+        Uses the parameters from the settings input and makes a set of dictionaries for gamble probabilities and sure
+        values
+        :param min: the minimum reward value possible, as an integer, given by participants
+        :param max: the maximum reward value possible, as an integer, given by participants
+        :return: Does not return a value, instead creates array of possible gains
         """
 
-        if self.task == '1-back':
+        self.gainamounts = np.arange(int(min), int(max), 1)
+        self.multiplieramounts = np.arange(.25, 2, .125)
 
-            if response == 1 & (self.backlist[-1] == self.backlist[-2]):
-                correct = 1
+        self.set_design_text()
 
-            elif response == 0 & (self.backlist[-1] != self.backlist[-2]):
-                correct = 1
+    def set_design_text(self):
+        """
+        Gets the actual text used in the design. The sure thing is always zero; the gamble has a possible gain equal to
+        a random gain amount and a possible loss that is equal to the random gain amount multiplied by the negative
+        multiplier
+        :return: Creates self.trialdesign
+        """
 
-            else:
-                correct = 0
+        self.gainint = random.choice(self.gainamounts)
+        self.lossfloat = self.gainint * random.choice(self.multiplieramounts)
 
-        elif self.task == '2-back':
+    def get_design_text(self):
 
-            if response == 1 & (self.backlist[-1] == self.backlist[-3]):
-                correct = 1
+        """
+        Looks at self.trialdesign and returns strings for the GUI
+        :return: gain text, loss text for the gamble, as a list
+        """
 
-            elif response == 0 & (self.backlist[-1] != self.backlist[-3]):
-                correct = 1
+        # Set up the left string for sure value
+        gainstring = '50% chance to win $' + str('{:.2f}'.format(self.gainint))
 
-            else:
-                correct = 0
+        # Set up the right string for risky gamble
+        lossstring = '50% chance to lose $' + str('{:.2f}'.format(self.lossfloat))
 
-        elif self.task == '3-back':
+        # Return the values to the gui
+        return [gainstring, lossstring]
 
-            if response == 1 & (self.backlist[-1] == self.backlist[-4]):
-                correct = 1
-
-            elif response == 0 & (self.backlist[-1] != self.backlist[-4]):
-                correct = 1
-
-            else:
-                correct = 0
-
-        else:
-
-            if response == 1 & (self.backlist[-1] == self.backlist[-5]):
-                correct = 1
-
-            elif response == 0 & (self.backlist[-1] != self.backlist[-5]):
-                correct = 1
-
-            else:
-                correct = 0
+    def updateoutput(self, response, trial):
 
         df_simultrial = {
             'trial': [trial],
-            'letter': [self.backlist[-1]],
-            'response': [response],
-            'correct': [correct]
+            'gain': [str('{:.2f}'.format(self.gainint))],
+            'loss': [str('{:.2f}'.format(self.lossfloat))],
+            'certain': [0],
+            'response': [response]
         }
 
         df_simultrial = pd.DataFrame(data=df_simultrial)
-
         self.set_performance(df_simultrial)
-
-
-class PBTParticipant(Participant):
-
-    def __init__(self, expid, trials, outdir, task, rounds):
-        super().__init__(expid, trials, outdir, task)
-
-        self.rounds = rounds
-        self.globallocal = random.choice(['Global', 'Local'])
-        self.instructions = 0
-
-        multnum = int(int(trials)/4)
-        picturenames = ['PBT_DCC.BMP', 'PBT_DCS.BMP', 'PBT_DSC.BMP', 'PBT_DSS.BMP']
-        multiplier = [multnum, multnum, multnum, multnum]
-        self.piclist = sum([[s] * n for s, n in zip(picturenames, multiplier)], [])
-
-        # Experiment settings output dataframe
-        dict_simulsettings = {
-            'Rounds': [rounds],
-            'Starting Block': [self.globallocal]
-        }
-
-        self.set_settings(dict_simulsettings)
-
-    def nextround(self, blocks):
-
-        if blocks == self.rounds:
-
-            prompt = 'Thank you! This task is complete.'
-
-        else:
-
-            self.picorder = list(self.piclist)
-            random.shuffle(self.picorder)
-
-            if blocks > 0:
-
-                if self.globallocal == 'Global':
-
-                    self.globallocal = 'Local'
-
-                else:
-
-                    self.globallocal = 'Global'
-
-            prompt = 'Please let the researcher know you are ready'
-
-        return prompt
-
-    def get_trial_pic(self):
-
-        pic = self.picorder.pop()
-
-        return [pic]
-
-    def updateoutput(self, trial, pic, time, response=3):
-        """
-        evaluates whether the person got the n-back correct based on their response
-        :param trial: the number of the trial that was just completed
-        :param pic: string with the picture name in it, so we can see if the participant gave the correct answer
-        :param time: participant's reaction time
-        :param response: integer with either 0 or 1 depending on if the person chose x or square. Default is 3 in case
-        the participant doesn't answer in time.
-        :return: updates the performance dataframe in the superclass
-        """
-
-        if self.globallocal == 'Local':
-
-            if pic in ['PBT_DCS.BMP', 'PBT_DSS.BMP']:
-
-                if response == 'Square':
-                    correct = 1
-
-                else:
-                    correct = 0
-
-            else:
-
-                if response == 'Cross':
-                    correct = 1
-
-                else:
-                    correct = 0
-
-        else:
-
-            if pic in ['PBT_DSS.BMP', 'PBT_DSC.BMP']:
-
-                if response == 'Square':
-                    correct = 1
-
-                else:
-                    correct = 0
-
-            else:
-
-                if response == 'Cross':
-                    correct = 1
-
-                else:
-                    correct = 0
-
-        df_simultrial = {
-            'trial': [trial],
-            'block': [self.globallocal],
-            'picture': [pic],
-            'response': [response],
-            'reaction time': [time],
-            'correct': [correct]
-        }
-
-        df_simultrial = pd.DataFrame(data=df_simultrial)
-
-        self.set_performance(df_simultrial)
-
-    def get_instructions(self, block_type, instruction):
-
-        if block_type == 'Global':
-
-            if instruction == 1:
-
-                inst = 'pretend something is here about global stuff'
-
-            else:
-
-                inst = 'pretend something else is here about global stuff'
-
-        else:
-
-            if instruction == 1:
-
-                inst = 'pretend something is here about local stuff'
-
-            else:
-
-                inst = 'pretend something else is here about local stuff'
-
-        return inst
 
 
 class FrameParticipant(Participant):
@@ -1513,77 +1238,6 @@ class FrameParticipant(Participant):
         self.set_performance(df_simultrial)
 
 
-class RAParticipant(Participant):
-
-    def __init__(self, expid, trials, outdir, task, minimum, maximum):
-        super().__init__(expid, trials, outdir, task)
-
-        self.trialtext = []
-
-        self.create_stim(minimum, maximum)
-
-        # Experiment settings output dataframe
-        dict_simulsettings = {'Minimum Reward': [minimum],
-                              'Maximum Reward': [maximum]
-                              }
-
-        self.set_settings(dict_simulsettings)
-
-    def create_stim(self, min, max):
-        """
-        Uses the parameters from the settings input and makes a set of dictionaries for gamble probabilities and sure
-        values
-        :param min: the minimum reward value possible, as an integer, given by participants
-        :param max: the maximum reward value possible, as an integer, given by participants
-        :return: Does not return a value, instead creates array of possible gains
-        """
-
-        self.gainamounts = np.arange(int(min), int(max), 1)
-        self.multiplieramounts = np.arange(.25, 2, .125)
-
-        self.set_design_text()
-
-    def set_design_text(self):
-        """
-        Gets the actual text used in the design. The sure thing is always zero; the gamble has a possible gain equal to
-        a random gain amount and a possible loss that is equal to the random gain amount multiplied by the negative
-        multiplier
-        :return: Creates self.trialdesign
-        """
-
-        self.gainint = random.choice(self.gainamounts)
-        self.lossfloat = self.gainint * random.choice(self.multiplieramounts)
-
-    def get_design_text(self):
-
-        """
-        Looks at self.trialdesign and returns strings for the GUI
-        :return: gain text, loss text for the gamble, as a list
-        """
-
-        # Set up the left string for sure value
-        gainstring = '50% chance to win $' + str('{:.2f}'.format(self.gainint))
-
-        # Set up the right string for risky gamble
-        lossstring = '50% chance to lose $' + str('{:.2f}'.format(self.lossfloat))
-
-        # Return the values to the gui
-        return [gainstring, lossstring]
-
-    def updateoutput(self, response, trial):
-
-        df_simultrial = {
-            'trial': [trial],
-            'gain': [str('{:.2f}'.format(self.gainint))],
-            'loss': [str('{:.2f}'.format(self.lossfloat))],
-            'certain': [0],
-            'response': [response]
-        }
-
-        df_simultrial = pd.DataFrame(data=df_simultrial)
-        self.set_performance(df_simultrial)
-
-
 class BeadsParticipant(Participant):
 
     def __init__(self, expid, trials, outdir, task, rounds):
@@ -1772,3 +1426,353 @@ class BeadsParticipant(Participant):
                 inst = 'Let the experimenter know you are ready.'
 
         return inst
+
+
+class PBTParticipant(Participant):
+
+    def __init__(self, expid, trials, outdir, task, rounds):
+        super().__init__(expid, trials, outdir, task)
+
+        self.rounds = rounds
+        self.globallocal = random.choice(['Global', 'Local'])
+        self.instructions = 0
+
+        multnum = int(int(trials)/4)
+        picturenames = ['PBT_DCC.BMP', 'PBT_DCS.BMP', 'PBT_DSC.BMP', 'PBT_DSS.BMP']
+        multiplier = [multnum, multnum, multnum, multnum]
+        self.piclist = sum([[s] * n for s, n in zip(picturenames, multiplier)], [])
+
+        self.picorder = list(self.piclist)
+        random.shuffle(self.picorder)
+
+        # Experiment settings output dataframe
+        dict_simulsettings = {
+            'Rounds': [rounds],
+            'Starting Block': [self.globallocal]
+        }
+
+        self.set_settings(dict_simulsettings)
+
+    def nextround(self, blocks):
+
+        if blocks == self.rounds:
+
+            prompt = 'Thank you! This task is complete.'
+
+        else:
+
+            self.picorder = list(self.piclist)
+            random.shuffle(self.picorder)
+
+            if blocks > 0:
+
+                if self.globallocal == 'Global':
+
+                    self.globallocal = 'Local'
+
+                else:
+
+                    self.globallocal = 'Global'
+
+            prompt = 'Please let the researcher know you are ready'
+
+        return prompt
+
+    def get_trial_pic(self):
+
+        pic = self.picorder.pop()
+
+        return pic
+
+    def updateoutput(self, trial, pic, time, response=3):
+        """
+        evaluates whether the person got the n-back correct based on their response
+        :param trial: the number of the trial that was just completed
+        :param pic: string with the picture name in it, so we can see if the participant gave the correct answer
+        :param time: participant's reaction time
+        :param response: integer with either 0 or 1 depending on if the person chose x or square. Default is 3 in case
+        the participant doesn't answer in time.
+        :return: updates the performance dataframe in the superclass
+        """
+
+        if self.globallocal == 'Local':
+
+            if pic in ['PBT_DCS.BMP', 'PBT_DSS.BMP']:
+
+                if response == 'Square':
+                    correct = 1
+
+                else:
+                    correct = 0
+
+            else:
+
+                if response == 'Cross':
+                    correct = 1
+
+                else:
+                    correct = 0
+
+        else:
+
+            if pic in ['PBT_DSS.BMP', 'PBT_DSC.BMP']:
+
+                if response == 'Square':
+                    correct = 1
+
+                else:
+                    correct = 0
+
+            else:
+
+                if response == 'Cross':
+                    correct = 1
+
+                else:
+                    correct = 0
+
+        df_simultrial = {
+            'trial': [trial],
+            'block': [self.globallocal],
+            'picture': [pic],
+            'response': [response],
+            'reaction time': [time],
+            'correct': [correct]
+        }
+
+        df_simultrial = pd.DataFrame(data=df_simultrial)
+
+        self.set_performance(df_simultrial)
+
+    def get_instructions(self, block_type, instruction):
+
+        if block_type == 'Global':
+
+            if instruction == 1:
+
+                inst = 'pretend something is here about global stuff'
+
+            else:
+
+                inst = 'pretend something else is here about global stuff'
+
+        else:
+
+            if instruction == 1:
+
+                inst = 'pretend something is here about local stuff'
+
+            else:
+
+                inst = 'pretend something else is here about local stuff'
+
+        return inst
+
+
+class PrParticipant(Participant):
+
+    def __init__(self, expid, trials, outdir, task, design, stt):
+        super().__init__(expid, trials, outdir, task)
+
+        design = design
+        stt = stt
+
+        if stt == 1:
+            structstr = 'STT' + ('ST' * (int(design) - 1))
+            self.structure = list(structstr)
+
+        else:
+            structstr = 'ST' * int(design)
+            self.structure = list(structstr)
+
+        # Experiment settings output dataframe
+        dict_simulsettings = {
+            'Design': [structstr]
+        }
+
+        self.set_settings(dict_simulsettings)
+
+        self.set_pairs(int(trials))
+
+    def set_pairs(self, trials):
+
+        originalpairs = {
+            'Pony': ['Cranberry'],
+            'Minister': ['Liquor'],
+            'Cloud': ['Café'],
+            'Screwdriver': ['Leg'],
+            'Vodka': ['Gym'],
+            'Ant': ['Beer'],
+            'Refridgerator': ['Lion'],
+            'Tangerine': ['Steam'],
+            'Cradle': ['Smoke'],
+            'Nurse': ['Violin'],
+            'Chocolate': ['Square'],
+            'Crabs': ['Box'],
+            'Toe': ['Crocodile'],
+            'Coin': ['Duck'],
+            'Microscope': ['Dentist'],
+            'Jail': ['Telescope'],
+            'Fence': ['Sail'],
+            'Dark': ['Rowboat'],
+            'Jockey': ['Bubble'],
+            'Spinach': ['Mansion'],
+            'Fish': ['President'],
+            'University': ['Sun'],
+            'Bra': ['Can-Opener'],
+            'Bracelet': ['Needle'],
+            'Beach': ['Penny'],
+            'Flashbulbs': ['Bomb'],
+            'Cake': ['Professor'],
+            'Doctor': ['Mosquito'],
+            'Rain': ['Gorilla']
+        }
+
+        if len(originalpairs) - trials != 0:
+
+            for n in range(len(originalpairs) - trials):
+
+                del originalpairs[next(iter(originalpairs))]
+
+        self.expwordpairs = dict(originalpairs)
+
+        self.trialwordpairs = dict(self.expwordpairs)
+
+        self.updateoutput()
+
+    def starttrial(self):
+
+        self.trialwordpairs = dict(self.expwordpairs)
+
+        prompt = 'Please let the researcher know you are ready'
+
+        return prompt
+
+    def get_design_text(self, test=0):
+
+        if test == 0:
+
+            leftstring, rightstring = random.choice(list(self.trialwordpairs.items()))
+
+            rightstring = rightstring[0]
+
+        else:
+
+            leftstring = random.choice(list(self.trialwordpairs))
+
+            rightstring = ''
+
+        del self.trialwordpairs[leftstring]
+
+        middlestring = ''
+
+        return [leftstring, rightstring, middlestring]
+
+    def updateoutput(self):
+
+        df_simultrial = pd.DataFrame(data=self.expwordpairs)
+
+        self.set_performance(df_simultrial)
+
+
+class NbParticipant(Participant):
+
+    def __init__(self, expid, trials, outdir, task, rounds):
+
+        super().__init__(expid, trials, outdir, task)
+
+        self.rounds = int(rounds)
+        self.backlist = ['1', '1', '1', '1']
+
+        # Experiment settings output dataframe
+        dict_simulsettings = {
+            'Rounds': [rounds]
+        }
+
+        self.set_settings(dict_simulsettings)
+
+    def nextround(self, roundsdone):
+
+        if roundsdone == self.rounds:
+
+            prompt = 'Thank you! This task is complete.'
+
+        else:
+
+            self.backlist = ['1', '1', '1', '1']
+
+            prompt = 'Please let the researcher know you are ready'
+
+        return prompt
+
+    def get_trial_text(self):
+
+        newletter = random.choice(string.ascii_uppercase)
+
+        self.backlist.append(newletter)
+
+        return newletter
+
+    def updateoutput(self, trial, response=3):
+        """
+        evaluates whether the person got the n-back correct based on their response
+        :param trial: the trial that was just completed
+        :param response: integer with either 0 or 1 depending on if the person thought the letter was a false-alarm
+        or a target. Default is 3 in case the participant doesn't answer in time.
+        :return: updates the performance dataframe in the superclass
+        """
+
+        if self.task == '1-back':
+
+            if response == 1 & (self.backlist[-1] == self.backlist[-2]):
+                correct = 1
+
+            elif response == 0 & (self.backlist[-1] != self.backlist[-2]):
+                correct = 1
+
+            else:
+                correct = 0
+
+        elif self.task == '2-back':
+
+            if response == 1 & (self.backlist[-1] == self.backlist[-3]):
+                correct = 1
+
+            elif response == 0 & (self.backlist[-1] != self.backlist[-3]):
+                correct = 1
+
+            else:
+                correct = 0
+
+        elif self.task == '3-back':
+
+            if response == 1 & (self.backlist[-1] == self.backlist[-4]):
+                correct = 1
+
+            elif response == 0 & (self.backlist[-1] != self.backlist[-4]):
+                correct = 1
+
+            else:
+                correct = 0
+
+        else:
+
+            if response == 1 & (self.backlist[-1] == self.backlist[-5]):
+                correct = 1
+
+            elif response == 0 & (self.backlist[-1] != self.backlist[-5]):
+                correct = 1
+
+            else:
+                correct = 0
+
+        df_simultrial = {
+            'trial': [trial],
+            'letter': [self.backlist[-1]],
+            'response': [response],
+            'correct': [correct]
+        }
+
+        df_simultrial = pd.DataFrame(data=df_simultrial)
+
+        self.set_performance(df_simultrial)

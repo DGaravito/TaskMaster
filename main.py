@@ -41,14 +41,14 @@ class SelectWindow(QWidget):
     def elements(self):
 
         # Make a label with instructions
-        self.header = QLabel('Please select the appropriate design:', self)
+        self.header = QLabel('Please select the appropriate task:', self)
 
         # setting font style and size
         self.header.setFont(QFont('Helvetica', 15))
 
         # resizing and moving
         self.header.resize(400, 25)
-        self.header.move(0, 20)
+        self.header.move(0, 10)
 
         # center header
 
@@ -71,7 +71,7 @@ class SelectWindow(QWidget):
         self.arttbutton.clicked.connect(lambda: self.selection(4))
 
         # Risk Aversion button
-        self.rabutton = QPushButton('RA (WIP)')
+        self.rabutton = QPushButton('RA')
         self.rabutton.clicked.connect(lambda: self.selection(5))
 
         # Framing button
@@ -93,6 +93,10 @@ class SelectWindow(QWidget):
         # Stop Signal button
         self.ssbutton = QPushButton('Stop Signal (WIP)')
         self.ssbutton.clicked.connect(lambda: self.selection(10))
+
+        # Emo Go-NoGo button
+        self.egngbutton = QPushButton('Emo Go/No-Go (WIP)')
+        self.egngbutton.clicked.connect(lambda: self.selection(13))
 
         # Paired Recall button
         self.prbutton = QPushButton('Paired Recall')
@@ -120,9 +124,10 @@ class SelectWindow(QWidget):
         layout.addWidget(self.pbtbutton, 2, 1)
         layout.addWidget(self.nactbutton, 2, 2)
         layout.addWidget(self.ssbutton, 3, 0)
-        layout.addWidget(self.prbutton, 3, 1)
-        layout.addWidget(self.nbackbutton, 3, 2)
-        layout.addWidget(self.quitbutton, 4, 0, 1, 3)
+        layout.addWidget(self.egngbutton, 3, 1)
+        layout.addWidget(self.prbutton, 3, 2)
+        layout.addWidget(self.nbackbutton, 4, 0)
+        layout.addWidget(self.quitbutton, 5, 0, 1, 3)
 
         self.setLayout(layout)
 
@@ -133,41 +138,49 @@ class SelectWindow(QWidget):
         :return: Hides the selection window and opens up the corresponding settings window
         """
 
-        if choice == 1:
-            self.w = settingsgui.DdSettings()
+        match choice:
 
-        elif choice == 2:
-            self.w = settingsgui.PdSettings()
+            case 1:
+                self.w = settingsgui.DdSettings()
 
-        elif choice == 3:
-            self.w = settingsgui.CEDTSettings()
+            case 2:
+                self.w = settingsgui.PdSettings()
 
-        elif choice == 4:
-            self.w = settingsgui.ARTTSettings()
+            case 3:
+                self.w = settingsgui.CEDTSettings()
 
-        elif choice == 5:
-            self.w = settingsgui.RASettings()
+            case 4:
+                self.w = settingsgui.ARTTSettings()
 
-        elif choice == 6:
-            self.w = settingsgui.FrameSettings()
+            case 5:
+                self.w = settingsgui.RASettings()
 
-        elif choice == 7:
-            self.w = settingsgui.BeadsSettings()
+            case 6:
+                self.w = settingsgui.FrameSettings()
 
-        elif choice == 8:
-            self.w = settingsgui.PBTSettings()
+            case 7:
+                self.w = settingsgui.BeadsSettings()
 
-        elif choice == 9:
-            self.w = settingsgui.NACTSettings()
+            case 8:
+                self.w = settingsgui.PBTSettings()
 
-        elif choice == 10:
-            self.w = settingsgui.SSSettings()
+            case 9:
+                self.w = settingsgui.NACTSettings()
 
-        elif choice == 11:
-            self.w = settingsgui.PrSettings()
+            case 10:
+                self.w = settingsgui.SSSettings()
 
-        elif choice == 12:
-            self.w = settingsgui.NBackSettings()
+            case 11:
+                self.w = settingsgui.PrSettings()
+
+            case 12:
+                self.w = settingsgui.NBackSettings()
+
+            case 13:
+                self.w = settingsgui.EGNGSettings()
+
+            case _:
+                print("not sure how you got this...")
 
         self.w.show()
         self.hide()

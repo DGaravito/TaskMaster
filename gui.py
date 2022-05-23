@@ -1,9 +1,9 @@
-from pathlib import Path
 import time
+from pathlib import Path
 
 from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QProgressBar
 from PyQt6.QtGui import QFont, QPixmap
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal
+from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QDir
 
 
 class DDiscountExp(QWidget):
@@ -408,197 +408,6 @@ class PDiscountExp(QWidget):
             self.generatenext()
 
 
-class RAExp(QWidget):
-    keyPressed = pyqtSignal(str)
-
-    def __init__(self, person):
-        super().__init__()
-
-        self.response = 0
-        self.person = person
-        self.trialsdone = 0
-
-        # Window title
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-
-        # center window
-        self.centerscreen()
-
-        # Add in elements
-        self.elements()
-
-        # Show all elements
-        self.showMaximized()
-
-        # Attach keyboard keys to functions
-        self.keyPressed.connect(self.keyaction)
-
-        # Make timer for jitter screen
-        self.timerjitter = QTimer()
-        self.timerjitter.timeout.connect(self.generatenext)
-
-        # Make timer for participant taking too long
-        self.timerresponse = QTimer()
-        self.timerresponse.timeout.connect(self.timerwarning)
-
-        # Make timer for resetting after the above time warning
-        self.timerreset = QTimer()
-        self.timerreset.timeout.connect(self.responsereset)
-
-    def elements(self):
-
-        # Make overarching layout
-        instquitlayout = QVBoxLayout()
-
-        # Quit button
-        self.quitbutton = QPushButton('Quit')
-        self.quitbutton.clicked.connect(QApplication.instance().quit)
-        self.quitbutton.setFixedWidth(40)
-        self.quitbutton.setFixedHeight(20)
-
-        # Instructions
-        self.instructions = QLabel('Press C for the left option and M for the right option')
-
-        # setting font style and size
-        self.instructions.setFont(QFont('Helvetica', 25))
-
-        # center Instructions
-        self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # Left and right options (and middle stuff) with font settings
-        self.left = QLabel('')
-        self.left.setFont(QFont('Helvetica', 40))
-
-        self.rightgain = QLabel('')
-        self.rightgain.setFont(QFont('Helvetica', 40))
-
-        self.rightloss = QLabel('')
-        self.rightloss.setFont(QFont('Helvetica', 40))
-
-        self.middle = QLabel('Press G to Start')
-        self.middle.setFont(QFont('Helvetica', 30))
-
-        # Put Left and Right visual options in horizontal layout
-        gamblelayout = QVBoxLayout()
-
-        gamblelayout.addWidget(self.rightgain)
-        gamblelayout.addWidget(self.rightloss)
-
-        # Put Left and Right words for options in horizontal layout
-        mainhlayout = QHBoxLayout()
-
-        mainhlayout.addStretch(1)
-        mainhlayout.addWidget(self.left)
-        mainhlayout.addStretch(1)
-        mainhlayout.addWidget(self.middle)
-        mainhlayout.addStretch(1)
-        mainhlayout.addLayout(gamblelayout)
-        mainhlayout.addStretch(1)
-
-        # Put everything in vertical layout
-
-        instquitlayout.addWidget(self.instructions)
-        instquitlayout.addStretch(1)
-        instquitlayout.addLayout(mainhlayout)
-        instquitlayout.addStretch(1)
-        instquitlayout.addWidget(self.quitbutton)
-
-        # Set up layout
-
-        self.setLayout(instquitlayout)
-
-    def centerscreen(self):
-
-        qr = self.frameGeometry()
-        cp = self.screen().availableGeometry().center()
-
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
-
-    def keyPressEvent(self, keyevent):
-        self.keyPressed.emit(keyevent.text())
-
-    def jitter(self):
-
-        self.left.setText('')
-        self.rightgain.setText('')
-        self.rightloss.setText('')
-        self.middle.setText('+')
-
-        self.person.updateoutput(self.response, self.trialsdone)
-
-        self.person.set_design_text()
-
-        self.timerjitter.start(1000)
-
-    def generatenext(self):
-
-        self.timerjitter.stop()
-        if self.trialsdone < self.person.get_trials():
-
-            info = self.person.get_design_text()
-            self.left.setText('0')
-
-            self.rightgain.setText(info[0])
-            self.rightloss.setText(info[1])
-
-            self.middle.setText('OR')
-
-            self.trialsdone += 1
-
-            self.timerresponse.start(5000)
-
-        else:
-            self.person.output()
-
-            self.left.setText('')
-            self.rightgain.setText('')
-            self.rightloss.setText('')
-            self.instructions.setText('Thank you!')
-            self.middle.setText('You may now quit the application.')
-
-    def timerwarning(self):
-
-        self.timerresponse.stop()
-
-        self.left.setText('')
-
-        self.rightgain.setText('')
-        self.rightloss.setText('')
-        self.middle.setText('Please try to be quicker')
-
-        self.timerreset.start(1000)
-
-    def responsereset(self):
-
-        self.timerreset.stop()
-
-        info = self.person.get_design_text()
-        self.left.setText('0')
-
-        self.rightgain.setText(info[0])
-        self.rightloss.setText(info[1])
-
-        self.middle.setText('OR')
-
-        self.timerresponse.start(5000)
-
-    def keyaction(self, key):
-
-        self.timerresponse.stop()
-
-        if key in ['c', 'C']:
-            self.response = 0
-            self.jitter()
-
-        elif key in ['m', 'M']:
-            self.response = 1
-            self.jitter()
-
-        elif key in ['g', 'G']:
-            self.generatenext()
-
-
 class ARTTExp(QWidget):
     keyPressed = pyqtSignal(str)
 
@@ -823,7 +632,386 @@ class ARTTExp(QWidget):
             self.generatenext()
 
 
-class MemoryExp(QWidget):
+class RAExp(QWidget):
+    keyPressed = pyqtSignal(str)
+
+    def __init__(self, person):
+        super().__init__()
+
+        self.response = 0
+        self.person = person
+        self.trialsdone = 0
+
+        # Window title
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+
+        # center window
+        self.centerscreen()
+
+        # Add in elements
+        self.elements()
+
+        # Show all elements
+        self.showMaximized()
+
+        # Attach keyboard keys to functions
+        self.keyPressed.connect(self.keyaction)
+
+        # Make timer for jitter screen
+        self.timerjitter = QTimer()
+        self.timerjitter.timeout.connect(self.generatenext)
+
+        # Make timer for participant taking too long
+        self.timerresponse = QTimer()
+        self.timerresponse.timeout.connect(self.timerwarning)
+
+        # Make timer for resetting after the above time warning
+        self.timerreset = QTimer()
+        self.timerreset.timeout.connect(self.responsereset)
+
+    def elements(self):
+
+        # Make overarching layout
+        instquitlayout = QVBoxLayout()
+
+        # Quit button
+        self.quitbutton = QPushButton('Quit')
+        self.quitbutton.clicked.connect(QApplication.instance().quit)
+        self.quitbutton.setFixedWidth(40)
+        self.quitbutton.setFixedHeight(20)
+
+        # Instructions
+        self.instructions = QLabel('Press C for the left option and M for the right option')
+
+        # setting font style and size
+        self.instructions.setFont(QFont('Helvetica', 25))
+
+        # center Instructions
+        self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # Left and right options (and middle stuff) with font settings
+        self.left = QLabel('')
+        self.left.setFont(QFont('Helvetica', 40))
+
+        self.rightgain = QLabel('')
+        self.rightgain.setFont(QFont('Helvetica', 40))
+
+        self.rightloss = QLabel('')
+        self.rightloss.setFont(QFont('Helvetica', 40))
+
+        self.middle = QLabel('Press G to Start')
+        self.middle.setFont(QFont('Helvetica', 30))
+
+        # Put Left and Right visual options in horizontal layout
+        gamblelayout = QVBoxLayout()
+
+        gamblelayout.addWidget(self.rightgain)
+        gamblelayout.addWidget(self.rightloss)
+
+        # Put Left and Right words for options in horizontal layout
+        mainhlayout = QHBoxLayout()
+
+        mainhlayout.addStretch(1)
+        mainhlayout.addWidget(self.left)
+        mainhlayout.addStretch(1)
+        mainhlayout.addWidget(self.middle)
+        mainhlayout.addStretch(1)
+        mainhlayout.addLayout(gamblelayout)
+        mainhlayout.addStretch(1)
+
+        # Put everything in vertical layout
+
+        instquitlayout.addWidget(self.instructions)
+        instquitlayout.addStretch(1)
+        instquitlayout.addLayout(mainhlayout)
+        instquitlayout.addStretch(1)
+        instquitlayout.addWidget(self.quitbutton)
+
+        # Set up layout
+
+        self.setLayout(instquitlayout)
+
+    def centerscreen(self):
+
+        qr = self.frameGeometry()
+        cp = self.screen().availableGeometry().center()
+
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
+    def keyPressEvent(self, keyevent):
+        self.keyPressed.emit(keyevent.text())
+
+    def jitter(self):
+
+        self.left.setText('')
+        self.rightgain.setText('')
+        self.rightloss.setText('')
+        self.middle.setText('+')
+
+        self.person.updateoutput(self.response, self.trialsdone)
+
+        self.person.set_design_text()
+
+        self.timerjitter.start(1000)
+
+    def generatenext(self):
+
+        self.timerjitter.stop()
+        if self.trialsdone < self.person.get_trials():
+
+            info = self.person.get_design_text()
+            self.left.setText('0')
+
+            self.rightgain.setText(info[0])
+            self.rightloss.setText(info[1])
+
+            self.middle.setText('OR')
+
+            self.trialsdone += 1
+
+            self.timerresponse.start(5000)
+
+        else:
+            self.person.output()
+
+            self.left.setText('')
+            self.rightgain.setText('')
+            self.rightloss.setText('')
+            self.instructions.setText('Thank you!')
+            self.middle.setText('You may now quit the application.')
+
+    def timerwarning(self):
+
+        self.timerresponse.stop()
+
+        self.left.setText('')
+
+        self.rightgain.setText('')
+        self.rightloss.setText('')
+        self.middle.setText('Please try to be quicker')
+
+        self.timerreset.start(1000)
+
+    def responsereset(self):
+
+        self.timerreset.stop()
+
+        info = self.person.get_design_text()
+        self.left.setText('0')
+
+        self.rightgain.setText(info[0])
+        self.rightloss.setText(info[1])
+
+        self.middle.setText('OR')
+
+        self.timerresponse.start(5000)
+
+    def keyaction(self, key):
+
+        self.timerresponse.stop()
+
+        if key in ['c', 'C']:
+            self.response = 0
+            self.jitter()
+
+        elif key in ['m', 'M']:
+            self.response = 1
+            self.jitter()
+
+        elif key in ['g', 'G']:
+            self.generatenext()
+
+
+class PBTExp(QWidget):
+    keyPressed = pyqtSignal(str)
+
+    def __init__(self, person):
+        super().__init__()
+
+        self.person = person
+        self.trialsdone = 0
+        self.roundsdone = 0
+
+        # Window title
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+
+        # center window
+        self.centerscreen()
+
+        # Add in elements
+        self.elements()
+
+        # Show all elements
+        self.showMaximized()
+
+        # Attach keyboard keys to functions
+        self.keyPressed.connect(self.keyaction)
+
+        # Make timer to transition word pairs
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.timeout)
+
+        self.ititimer = QTimer()
+        self.ititimer.timeout.connect(self.generatenext)
+
+    def elements(self):
+
+        # Make overarching layout
+        mainlayout = QVBoxLayout()
+
+        # Quit button
+        self.quitbutton = QPushButton('Quit')
+        self.quitbutton.clicked.connect(QApplication.instance().quit)
+        self.quitbutton.setFixedWidth(40)
+        self.quitbutton.setFixedHeight(20)
+
+        # Instructions
+        self.instructions = QLabel('Press C for crosses. Press M for squares.')
+
+        # setting font style and size
+        self.instructions.setFont(QFont('Helvetica', 25))
+        self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # add the assets folder
+
+        toassets = str(Path('.').resolve())
+        QDir.addSearchPath('assets', toassets)
+
+        # Make middle for pictures and text
+
+        middlelayout = QHBoxLayout()
+
+        self.middle = QLabel('Please let the researcher know you are ready')
+        self.middle.setFont(QFont('Helvetica', 40))
+
+        # center middle
+        self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.middle.setScaledContents(True)
+
+        middlelayout.addStretch(1)
+        middlelayout.addWidget(self.middle)
+        middlelayout.addStretch(1)
+
+        # Put everything in vertical layout
+
+        mainlayout.addWidget(self.instructions)
+        mainlayout.addStretch(1)
+        mainlayout.addLayout(middlelayout)
+        mainlayout.addStretch(1)
+        mainlayout.addWidget(self.quitbutton)
+
+        # Set up layout
+
+        self.setLayout(mainlayout)
+
+    def centerscreen(self):
+
+        qr = self.frameGeometry()
+        cp = self.screen().availableGeometry().center()
+
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
+    def keyPressEvent(self, keyevent):
+        self.keyPressed.emit(keyevent.text())
+
+    def generatenext(self):
+
+        if self.trialsdone < self.person.get_trials():
+
+            self.ititimer.stop()
+
+            self.picstring = self.person.get_trial_pic()
+
+            pathstring = 'assets/' + self.picstring
+
+            pixmap = QPixmap(pathstring)
+
+            self.middle.setPixmap(pixmap)
+
+            print('loaded')
+
+            self.starttime = time.time()
+
+            self.timer.start(5000)
+
+            print('timer started')
+
+        else:
+
+            self.ititimer.stop()
+
+            self.roundsdone += 1
+
+            self.middle.setPixmap(QPixmap())
+
+            self.middle.setText(self.person.nextround(self.roundsdone))
+
+            if self.person.rounds == self.roundsdone:
+
+                self.person.output()
+                self.instructions.setText('Thank you!')
+
+    def iti(self):
+
+        self.middle.setPixmap(QPixmap())
+
+        self.ititimer.start(500)
+
+    def timeout(self):
+
+        self.timer.stop()
+
+        print('timeout')
+
+        endtime = time.time()
+        rt = endtime - self.starttime
+
+        print('update')
+
+        self.person.updateoutput(self.trialsdone, self.picstring, rt, 'None')
+
+        print('before iti')
+
+        self.iti()
+
+    def keyaction(self, key):
+
+        if key in ['g', 'G']:
+
+            self.middle.setText('')
+
+            self.iti()
+
+        if key in ['m', 'M']:
+
+            self.timer.stop()
+            self.trialsdone += 1
+
+            endtime = time.time()
+            rt = endtime - self.starttime
+
+            self.person.updateoutput(self.trialsdone, self.picstring, rt, 'Square')
+            self.iti()
+
+        if key in ['c', 'C']:
+
+            self.timer.stop()
+            self.trialsdone += 1
+
+            endtime = time.time()
+            rt = endtime - self.starttime
+
+            self.person.updateoutput(self.trialsdone, self.picstring, rt, 'Cross')
+            self.iti()
+
+        if key in ['i', 'I']:
+
+            self.middle.setText(self.person.get_instructions(self.person.globallocal, self.person.instructions))
+
+
+class PrExp(QWidget):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):
@@ -1082,7 +1270,7 @@ class NbExp(QWidget):
 
     def generatenext(self):
 
-        if self.trialsdone < int(self.person.trials):
+        if self.trialsdone < self.person.get_trials():
 
             self.middle.setText(self.person.get_trial_text())
 
@@ -1129,166 +1317,3 @@ class NbExp(QWidget):
             self.trialsdone += 1
             self.person.updateoutput(self.trialsdone, 0)
             self.generatenext()
-
-
-class PBTExp(QWidget):
-    keyPressed = pyqtSignal(str)
-
-    def __init__(self, person):
-        super().__init__()
-
-        self.person = person
-        self.trialsdone = 0
-        self.roundsdone = 0
-
-        # Window title
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-
-        # center window
-        self.centerscreen()
-
-        # Add in elements
-        self.elements()
-
-        # Show all elements
-        self.showMaximized()
-
-        # Attach keyboard keys to functions
-        self.keyPressed.connect(self.keyaction)
-
-        # Make timer to transition word pairs
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.timeout)
-
-        self.ititimer = QTimer()
-        self.ititimer.timeout.connect(self.generatenext)
-
-    def elements(self):
-
-        # Make overarching layout
-        mainlayout = QVBoxLayout()
-
-        # Quit button
-        self.quitbutton = QPushButton('Quit')
-        self.quitbutton.clicked.connect(QApplication.instance().quit)
-        self.quitbutton.setFixedWidth(40)
-        self.quitbutton.setFixedHeight(20)
-
-        # Instructions
-        self.instructions = QLabel('Press C for crosses. Press M for squares.')
-
-        # setting font style and size
-        self.instructions.setFont(QFont('Helvetica', 25))
-
-        # center Instructions
-        self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # Make middle for pictures
-
-        self.middle = QLabel('Please let the researcher know you are ready')
-        self.middle.setFont(QFont('Helvetica', 40))
-
-        # center middle
-        self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # Put everything in vertical layout
-
-        mainlayout.addWidget(self.instructions)
-        mainlayout.addStretch(1)
-        mainlayout.addWidget(self.middle)
-        mainlayout.addStretch(1)
-        mainlayout.addWidget(self.quitbutton)
-
-        # Set up layout
-
-        self.setLayout(mainlayout)
-
-    def centerscreen(self):
-
-        qr = self.frameGeometry()
-        cp = self.screen().availableGeometry().center()
-
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
-
-    def keyPressEvent(self, keyevent):
-        self.keyPressed.emit(keyevent.text())
-
-    def generatenext(self):
-
-        if self.trialsdone < self.person.trials:
-
-            self.ititimer.stop()
-
-            self.pixmap = QPixmap(Path('./assets', self.person.get_trial_pic()))
-
-            self.middle.setPixmap(self.pixmap)
-
-            self.starttime = time.time()
-
-            self.timer.start(5000)
-
-        else:
-
-            self.ititimer.stop()
-
-            self.roundsdone += 1
-
-            self.middle.setPixmap(QPixmap())
-
-            self.middle.setText(self.person.nextround(self.roundsdone))
-
-            if self.person.rounds == self.roundsdone:
-
-                self.person.output()
-                self.instructions.setText('Thank you!')
-
-    def iti(self):
-
-        self.middle.setPixmap(QPixmap())
-
-        self.ititimer.start(500)
-
-    def timeout(self):
-
-        self.timer.stop()
-
-        endtime = time.time()
-        rt = endtime - self.starttime
-
-        self.person.updateoutput(self.trialsdone, self.pixmap, rt, 'None')
-        self.iti()
-
-    def keyaction(self, key):
-
-        if key in ['g', 'G']:
-
-            self.middle.setText('')
-
-            self.iti()
-
-        if key in ['m', 'M']:
-
-            self.timer.stop()
-            self.trialsdone += 1
-
-            endtime = time.time()
-            rt = endtime - self.starttime
-
-            self.person.updateoutput(self.trialsdone, self.pixmap, rt, 'Square')
-            self.iti()
-
-        if key in ['c', 'C']:
-
-            self.timer.stop()
-            self.trialsdone += 1
-
-            endtime = time.time()
-            rt = endtime - self.starttime
-
-            self.person.updateoutput(self.trialsdone, self.pixmap, rt, 'Cross')
-            self.iti()
-
-        if key in ['i', 'I']:
-
-            self.middle.setText(self.person.get_instructions(self.person.globallocal, self.person.instructions))
