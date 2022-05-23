@@ -65,6 +65,9 @@ class Participant(object):
         elif self.task in ['1-back', '2-back', '3-back', '4-back']:
             taskstr = '_' + self.task
 
+        elif self.task == 'Risk Aversion':
+            taskstr = '_RA'
+
         else:
             taskstr = '_'
 
@@ -873,7 +876,7 @@ class NbParticipant(Participant):
 
         super().__init__(expid, trials, outdir, task)
 
-        self.rounds = rounds
+        self.rounds = int(rounds)
         self.backlist = ['1', '1', '1', '1']
 
         # Experiment settings output dataframe
@@ -883,9 +886,9 @@ class NbParticipant(Participant):
 
         self.set_settings(dict_simulsettings)
 
-    def nextround(self, round):
+    def nextround(self, roundsdone):
 
-        if round == self.rounds:
+        if roundsdone == self.rounds:
 
             prompt = 'Thank you! This task is complete.'
 
@@ -1104,5 +1107,668 @@ class PBTParticipant(Participant):
             else:
 
                 inst = 'pretend something else is here about local stuff'
+
+        return inst
+
+
+class FrameParticipant(Participant):
+
+    def __init__(self, expid, trials, outdir, task, design, min, max):
+        super().__init__(expid, trials, outdir, task)
+
+        self.design = design
+        self.max = max
+        self.trialdesign = []
+
+        self.create_stim(min, max)
+
+        # Experiment settings output dataframe
+        dict_simulsettings = {'Design': [design],
+                              'Minimum Reward': [min],
+                              'Maximum Reward': [max]
+                              }
+
+        self.set_settings(dict_simulsettings)
+
+    def create_stim(self, min, max):
+        """
+        Uses the parameters from the settings input and makes a set of dictionaries for gamble probabilities and sure
+        values
+        :param min: the minimum reward value possible, as an integer, given by participants
+        :param max: the maximum reward value possible, as an integer, given by participants
+        :return: Does not return a value, instead creates the class dictionaries and then calls set design text to make
+        the first trial
+        """
+
+        if self.design == 'Gains only':
+
+            sureamounts = np.arange(int(min), int(max) - .5, .5)
+            self.suredict = dict(zip(sureamounts, sureamounts))
+
+            riskyprobabilities = np.arange(.01, 1, .01)
+            riskkeys = riskyprobabilities * max
+
+            self.riskdict = dict(zip(riskkeys, riskyprobabilities))
+
+        elif self.design == 'Losses only':
+
+            sureamounts = np.arange(int(min), int(max)-.5, .5)
+            surekeys = sureamounts * -1
+
+            self.suredict = dict(zip(surekeys, sureamounts))
+
+            riskyprobabilities = np.arange(.01, 1, .01)
+            riskkeys = riskyprobabilities * max * -1
+
+            self.riskdict = dict(zip(riskkeys, riskyprobabilities))
+
+        else:
+
+            # Gains
+            suregainamounts = np.arange(int(min), int(max) - .5, .5)
+            self.suregaindict = dict(zip(suregainamounts, suregainamounts))
+
+            riskygainprobabilities = np.arange(.01, 1, .01)
+            riskgainkeys = riskygainprobabilities * max
+
+            self.riskgaindict = dict(zip(riskgainkeys, riskygainprobabilities))
+
+            # Losses
+            surelossamounts = np.arange(int(min), int(max) - .5, .5)
+            surelosskeys = surelossamounts * -1
+
+            self.surelossdict = dict(zip(surelosskeys, surelossamounts))
+
+            riskylossprobabilities = np.arange(.01, 1, .01)
+            risklosskeys = riskylossprobabilities * max * -1
+
+            self.risklossdict = dict(zip(risklosskeys, riskylossprobabilities))
+
+        self.set_design_text()
+
+    def set_design_text(self, trial=0):
+
+        """
+        Gets the actual text used in the design
+        :param trial: This is the trial number, as an integer, that the experiment is on
+        :return: Creates self.trialdesign
+        """
+
+        # If you're using gains and losses
+        if self.design == 'Gains and losses':
+
+            # If the trial was even, work with gains, otherwise, use the else statement for losses
+            if ((trial + 1) % 2) != 0:
+
+                # Pick a random reward for the sure option and probability for the gamble option
+                self.currentsuregainkey = random.choice(self.suregaindict)
+                self.currentriskgainkey = random.choice(self.riskgaindict)
+
+                # The following if-else statement looks at if there is just one value left in a dictionary. If so,
+                # then you don't want to pop, as that would leave an empty dictionary, resulting in errors next time
+                # you tried to get the trial info. We use get() instead so that the key:value pair remains in the
+                # dictionary, which continues to have a length of 1
+                if len(self.suregaindict) >= 1 & len(self.riskgaindict) >= 1:
+
+                    # actually grab the values for the trial design, which is a list of integers
+                    trialdesign = [
+                        self.suregaindict.pop(self.currentsuregainkey),
+                        self.riskgaindict.pop(self.currentriskgainkey)
+                    ]
+
+                elif len(self.suregaindict) >= 1 & len(self.riskgaindict) == 1:
+
+                    trialdesign = [
+                        self.suregaindict.pop(self.currentsuregainkey),
+                        self.riskgaindict.get(self.currentriskgainkey)
+                    ]
+
+                elif len(self.suregaindict) == 1 & len(self.riskgaindict) >= 1:
+
+                    trialdesign = [
+                        self.suregaindict.get(self.currentsuregainkey),
+                        self.riskgaindict.pop(self.currentriskgainkey)
+                    ]
+
+                else:
+
+                    trialdesign = [
+                        self.suregaindict.get(self.currentsuregainkey),
+                        self.riskgaindict.get(self.currentriskgainkey)
+                    ]
+
+            else:
+
+                # Same as above: do the random selection and then go through the big if-else statement
+                self.currentsurelosskey = random.choice(self.surelossdict)
+                self.currentrisklosskey = random.choice(self.risklossdict)
+
+                if len(self.surelossdict) >= 1 & len(self.risklossdict) >= 1:
+
+                    # actually grap the values for the trial design, which is a list of integers
+                    trialdesign = [
+                        self.surelossdict.pop(self.currentsurelosskey),
+                        self.risklossdict.pop(self.currentrisklosskey)
+                    ]
+
+                elif len(self.surelossdict) >= 1 & len(self.risklossdict) == 1:
+
+                    trialdesign = [
+                        self.surelossdict.pop(self.currentsurelosskey),
+                        self.risklossdict.get(self.currentrisklosskey)
+                    ]
+
+                elif len(self.surelossdict) == 1 & len(self.risklossdict) >= 1:
+
+                    trialdesign = [
+                        self.surelossdict.get(self.currentsurelosskey),
+                        self.risklossdict.pop(self.currentrisklosskey)
+                    ]
+
+                else:
+
+                    trialdesign = [
+                        self.surelossdict.get(self.currentsurelosskey),
+                        self.risklossdict.get(self.currentrisklosskey)
+                    ]
+
+        else:
+
+            # This whole section is if you just have gains or just have losses. Same concept though: we select a random
+            # value for the sure option and probability for the gamble
+            self.currentsurekey = random.choice(self.suredict)
+            self.currentriskkey = random.choice(self.riskdict)
+
+            # Then we have to see if the dictionaries have more than one key:value pair left. If so, we can pop and
+            # not have to worry about errors. If not, then we use get and keep the length at 1
+            if len(self.suredict) >= 1 & len(self.riskdict) >= 1:
+
+                # actually grap the values for the trial design, which is a list of integers
+                trialdesign = [
+                    self.suredict.pop(self.currentsurekey),
+                    self.riskdict.pop(self.currentriskkey)
+                ]
+
+            elif len(self.suredict) >= 1 & len(self.riskdict) == 1:
+
+                trialdesign = [
+                    self.suredict.pop(self.currentsurekey),
+                    self.riskdict.get(self.currentriskkey)
+                ]
+
+            elif len(self.suredict) == 1 & len(self.riskdict) >= 1:
+
+                trialdesign = [
+                    self.suredict.get(self.currentsurekey),
+                    self.riskdict.pop(self.currentriskkey)
+                ]
+
+            else:
+
+                trialdesign = [
+                    self.suredict.get(self.currentsurekey),
+                    self.riskdict.get(self.currentriskkey)
+                ]
+
+        self.trialdesign = trialdesign
+
+    def get_design_text(self):
+
+        """
+        Looks at self.trialdesign and returns strings for the GUI
+        :return: left text (sure), right text (gamble), and gamble probability
+        """
+
+        # Set up the left string for sure value
+        leftstring = '$' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+        # Set up the right string for risky gamble
+        rightstring = 'A ' + str(self.trialdesign[1]) + '% chance for ' +\
+                      str('{:.2f}'.format(self.max))
+
+        # Set the probability bar for the risky gamble
+        barvalue = self.trialdesign[1] * 100
+
+        # Return the values to the gui
+        return [leftstring, rightstring, barvalue]
+
+    def update(self, response, trial):
+        """
+        Updates the dictionaries for experimental parameters based on the participant's response (and the type of trial
+        if you are using gains and losses)
+        :param response: A binary 0 or 1 depending on if the participant chose the sure option (0) or gamble (1)
+        :param trial: The trial (in an integer format) that the participant just completed
+        :return: N/A
+        """
+
+        # Flip a coin for later - 1 or 2
+        coinflip = random.randint(1, 2)
+
+        # If you are using gains and losses, use the top; otherwise, use the else
+        if self.design == 'Gains and losses':
+
+            # If the trial is an even number, it was a gains trial and use the top; otherwise, it was loss and use else
+            if ((trial + 1) % 2) != 0:
+
+                # If the participant chose the sure thing, use the top; otherwise, use else
+                if response == 0:
+
+                    # If the coin flip resulted in a 1, use the top; otherwise, use else
+                    if coinflip == 1:
+
+                        # Loop for every key (i.e., EV of the possible reward value in the sure option) in the sure gain
+                        # dictionary
+                        for key in self.suregaindict:
+
+                            # If the EV for that key is greater in value compared to EV of the option that
+                            # was just used AND the dictionary is more than 1 in length (to avoid an empty dict)...
+                            if int(key) > self.currentsuregainkey & len(self.suregaindict) > 1:
+
+                                # ...Delete that option
+                                del self.suregaindict[key]
+
+                    else:
+
+                        # Loop for every key (i.e., EV of the possible reward value in the risk option) in the risky
+                        # gain dictionary
+                        for key in self.riskgaindict:
+
+                            # If the EV for that key is lesser in value compared to EV of the option that
+                            # was just used...
+                            if int(key) < self.currentriskgainkey & len(self.riskgaindict) > 1:
+
+                                # ...Delete that option
+                                del self.riskgaindict[key]
+
+                else:
+
+                    # This does the same thing as the above but is responding to the participant choosing the risky
+                    # option
+                    if coinflip == 1:
+
+                        for key in self.suregaindict:
+
+                            # Remove all values for the sure option that would have a lesser EV than what the
+                            # participant just rejected
+                            if int(key) < self.currentsuregainkey & len(self.suregaindict) > 1:
+
+                                del self.suregaindict[key]
+
+                    else:
+
+                        for key in self.riskgaindict:
+
+                            # Remove all values for the risky option that would have a greater EV than what the
+                            # participant just accepted
+                            if int(key) > self.currentriskgainkey & len(self.riskgaindict) > 1:
+
+                                del self.riskgaindict[key]
+
+            else:
+
+                # This section is the same as all that was above but if the trial just conducted was a loss trial.
+                if response == 0:
+
+                    # If the participant chose the sure loss...
+                    if coinflip == 1:
+
+                        # And the coin flipped 1...
+                        for key in self.surelossdict:
+
+                            # Then look at the EVs for all the possible sure loss options...
+                            if int(key) > self.currentsurelosskey & len(self.surelossdict) > 1:
+
+                                # And delete those where the EV for the sure option is greater.
+                                del self.surelossdict[key]
+
+                    else:
+
+                        # If the coin flipped 2...
+                        for key in self.risklossdict:
+
+                            # Then look at the EVs for all the possible risky loss options...
+                            if int(key) < self.currentrisklosskey & len(self.risklossdict) > 1:
+
+                                # And delete those where the EV for the sure option is less.
+                                del self.risklossdict[key]
+
+                else:
+
+                    # If the participant chose the risky option...
+                    if coinflip == 1:
+
+                        # And the coin flipped 1...
+                        for key in self.surelossdict:
+
+                            # Then look at the EVs for all the possible sure loss options...
+                            if int(key) < self.currentsurelosskey & len(self.surelossdict) > 1:
+
+                                # And delete those where the EV for the sure option is less.
+                                del self.surelossdict[key]
+
+                    else:
+
+                        # If the coin flipped 2...
+                        for key in self.risklossdict:
+
+                            # Then look at the EVs for all the possible risky loss options...
+                            if int(key) > self.currentrisklosskey & len(self.risklossdict) > 1:
+
+                                # And delete those where the EV for the risky option is more.
+                                del self.risklossdict[key]
+
+        else:
+
+            # If you don't have both gains and losses and instead have gains or losses, then the above is condensed
+            if response == 0:
+
+                if coinflip == 1:
+
+                    for key in self.suredict:
+
+                        if int(key) > self.currentsurekey & len(self.suredict) > 1:
+
+                            del self.suredict[key]
+
+                else:
+
+                    for key in self.riskdict:
+
+                        if int(key) < self.currentriskkey & len(self.riskdict) > 1:
+
+                            del self.riskdict[key]
+
+            else:
+
+                if coinflip == 1:
+
+                    for key in self.suredict:
+
+                        if int(key) < self.currentsurekey & len(self.suredict) > 1:
+
+                            del self.suredict[key]
+
+                else:
+
+                    for key in self.riskdict:
+
+                        if int(key) > self.currentriskkey & len(self.riskdict) > 1:
+
+                            del self.riskdict[key]
+
+        # Now, given the dictionaries are adjusted, generate a new random set of parameters
+        self.set_design_text(trial)
+
+    def updateoutput(self, response, trial):
+
+        df_simultrial = {
+            'trial': [trial],
+            'SureAmount': [str('{:.2f}'.format(self.trialdesign[0]))],
+            'RiskyAmount': [self.max],
+            'RiskyProbability': [str(self.trialdesign[1])],
+            'response': [response]
+        }
+
+        df_simultrial = pd.DataFrame(data=df_simultrial)
+        self.set_performance(df_simultrial)
+
+
+class RAParticipant(Participant):
+
+    def __init__(self, expid, trials, outdir, task, minimum, maximum):
+        super().__init__(expid, trials, outdir, task)
+
+        self.trialtext = []
+
+        self.create_stim(minimum, maximum)
+
+        # Experiment settings output dataframe
+        dict_simulsettings = {'Minimum Reward': [minimum],
+                              'Maximum Reward': [maximum]
+                              }
+
+        self.set_settings(dict_simulsettings)
+
+    def create_stim(self, min, max):
+        """
+        Uses the parameters from the settings input and makes a set of dictionaries for gamble probabilities and sure
+        values
+        :param min: the minimum reward value possible, as an integer, given by participants
+        :param max: the maximum reward value possible, as an integer, given by participants
+        :return: Does not return a value, instead creates array of possible gains
+        """
+
+        self.gainamounts = np.arange(int(min), int(max), 1)
+        self.multiplieramounts = np.arange(.25, 2, .125)
+
+        self.set_design_text()
+
+    def set_design_text(self):
+        """
+        Gets the actual text used in the design. The sure thing is always zero; the gamble has a possible gain equal to
+        a random gain amount and a possible loss that is equal to the random gain amount multiplied by the negative
+        multiplier
+        :return: Creates self.trialdesign
+        """
+
+        self.gainint = random.choice(self.gainamounts)
+        self.lossfloat = self.gainint * random.choice(self.multiplieramounts)
+
+    def get_design_text(self):
+
+        """
+        Looks at self.trialdesign and returns strings for the GUI
+        :return: gain text, loss text for the gamble, as a list
+        """
+
+        # Set up the left string for sure value
+        gainstring = '50% chance to win $' + str('{:.2f}'.format(self.gainint))
+
+        # Set up the right string for risky gamble
+        lossstring = '50% chance to lose $' + str('{:.2f}'.format(self.lossfloat))
+
+        # Return the values to the gui
+        return [gainstring, lossstring]
+
+    def updateoutput(self, response, trial):
+
+        df_simultrial = {
+            'trial': [trial],
+            'gain': [str('{:.2f}'.format(self.gainint))],
+            'loss': [str('{:.2f}'.format(self.lossfloat))],
+            'certain': [0],
+            'response': [response]
+        }
+
+        df_simultrial = pd.DataFrame(data=df_simultrial)
+        self.set_performance(df_simultrial)
+
+
+class BeadsParticipant(Participant):
+
+    def __init__(self, expid, trials, outdir, task, rounds):
+        super().__init__(expid, trials, outdir, task)
+
+        self.rounds = rounds
+        self.globallocal = random.choice(['Global', 'Local'])
+        self.instructions = 0
+
+        multnum = int(int(trials)/4)
+        picturenames = ['PBT_DCC.BMP', 'PBT_DCS.BMP', 'PBT_DSC.BMP', 'PBT_DSS.BMP']
+        multiplier = [multnum, multnum, multnum, multnum]
+        self.piclist = sum([[s] * n for s, n in zip(picturenames, multiplier)], [])
+
+        # Experiment settings output dataframe
+        dict_simulsettings = {
+            'Rounds': [rounds],
+            'Starting Block': [self.globallocal]
+        }
+
+        self.set_settings(dict_simulsettings)
+
+    def nextround(self, blocks):
+
+        if blocks == self.rounds:
+
+            prompt = 'Thank you! This task is complete.'
+
+        else:
+
+            self.picorder = list(self.piclist)
+            random.shuffle(self.picorder)
+
+            if blocks > 0:
+
+                if self.globallocal == 'Global':
+
+                    self.globallocal = 'Local'
+
+                else:
+
+                    self.globallocal = 'Global'
+
+            prompt = 'Please let the researcher know you are ready'
+
+        return prompt
+
+    def get_trial_pic(self):
+
+        pic = self.picorder.pop()
+
+        return [pic]
+
+    def updateoutput(self, trial, pic, time, response=3):
+        """
+        evaluates whether the person got the n-back correct based on their response
+        :param trial: the number of the trial that was just completed
+        :param pic: string with the picture name in it, so we can see if the participant gave the correct answer
+        :param time: participant's reaction time
+        :param response: integer with either 0 or 1 depending on if the person chose x or square. Default is 3 in case
+        the participant doesn't answer in time.
+        :return: updates the performance dataframe in the superclass
+        """
+
+        if self.globallocal == 'Local':
+
+            if pic in ['PBT_DCS.BMP', 'PBT_DSS.BMP']:
+
+                if response == 'Square':
+                    correct = 1
+
+                else:
+                    correct = 0
+
+            else:
+
+                if response == 'Cross':
+                    correct = 1
+
+                else:
+                    correct = 0
+
+        else:
+
+            if pic in ['PBT_DSS.BMP', 'PBT_DSC.BMP']:
+
+                if response == 'Square':
+                    correct = 1
+
+                else:
+                    correct = 0
+
+            else:
+
+                if response == 'Cross':
+                    correct = 1
+
+                else:
+                    correct = 0
+
+        df_simultrial = {
+            'trial': [trial],
+            'block': [self.globallocal],
+            'picture': [pic],
+            'response': [response],
+            'reaction time': [time],
+            'correct': [correct]
+        }
+
+        df_simultrial = pd.DataFrame(data=df_simultrial)
+
+        self.set_performance(df_simultrial)
+
+    def get_instructions(self, instruction):
+
+        match instruction:
+
+            case 1:
+
+                inst = 'In this game, the computer is going to take beds out of one of two jars on the screen.'
+
+            case 2:
+
+                inst = 'Your goal is to figure out from which jar (left or right) the computer took out the beads.'
+
+            case 3:
+
+                inst = 'You are going to see two clear jars with 100 beads in each jar'
+
+            case 4:
+
+                inst = 'One jar has 80% blue beads and 20% red beads. The other jar has the opposite, with 80% read' \
+                       ' beads and 20% blue beads.'
+
+            case 5:
+
+                inst = 'The computer will take beads from ONE jar and will show you the color of the bead it took out' \
+                       ' from that jar.'
+
+            case 6:
+
+                inst = 'The computer will select form the SAME jar until you make a choice (of left or right jar).'
+
+            case 7:
+
+                inst = 'The beads the computer takes out will be shown to you one at a time at the top of the screen.'
+
+            case 8:
+
+                inst = 'If you want to see the computer pick another beads, press the \"B\" key.'
+
+            case 9:
+
+                inst = 'When you are ready to decide which jar the computer is selecting the beads from, click on the' \
+                       ' button below either jar to choose that jar'
+
+            case 10:
+
+                inst = 'The computer will continue to select from the SAME jar until you\'ve made a decision about' \
+                       ' which jar the computer was picking from.'
+
+            case 11:
+
+                inst = 'You can make a decision any time after seeing the first bead.'
+
+            case 12:
+
+                inst = 'You can see up to 20 beads. After the bead is shown to you, it will be put back into the same' \
+                       ' jar before selecting the next bead.'
+
+            case 13:
+
+                inst = 'You will be reminded of the last bead that has been drawn at the top of the screen.'
+
+            case 14:
+
+                inst = 'You will be able to see all of the beads that have been drawn by clicking on the \"Bead' \
+                       'History\" button in the center of the screen.'
+
+            case 15:
+
+                inst = 'Remember, you can make a decision anytime after seeing the first bead.'
+
+            case _:
+
+                inst = 'Let the experimenter know you are ready.'
 
         return inst

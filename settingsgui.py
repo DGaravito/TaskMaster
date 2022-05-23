@@ -405,11 +405,11 @@ class ARTTSettings(Settings):  # TODO Review ADOPy for required stuff - rework w
         self.trialsin = QSpinBox()
         self.trialsin.setSpecialValueText('10')
 
-        # Short Delay input
+        # probability input
         self.probriskin = QLineEdit()
         self.probriskin.setText('.13, .25, .38')
 
-        # Long Delay input
+        # proportion input
         self.probambin = QLineEdit()
         self.probambin.setText('.25, .5, .75')
 
@@ -427,7 +427,7 @@ class ARTTSettings(Settings):  # TODO Review ADOPy for required stuff - rework w
         layout.addRow(QLabel('Subject ID:'), self.idform)
         layout.addRow(QLabel('Number of trials:'), self.trialsin)
         layout.addRow(QLabel('Enter the probablities for risky trials:'), self.probriskin)
-        layout.addRow(QLabel('Enter the probablities for ambiguous trials:'), self.probambin)
+        layout.addRow(QLabel('Enter the proportions covered for ambiguous trials:'), self.probambin)
         layout.addRow(QLabel('Smallest reward possible:'), self.srewin)
         layout.addRow(QLabel('Biggest reward possible:'), self.lrewin)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
@@ -462,7 +462,7 @@ class ARTTSettings(Settings):  # TODO Review ADOPy for required stuff - rework w
         self.hide()
 
 
-class RASettings(Settings): # TODO Make this risk aversion specific
+class RASettings(Settings):
 
     def __init__(self):
         super().__init__()
@@ -499,25 +499,25 @@ class RASettings(Settings): # TODO Make this risk aversion specific
 
         over_layout.addWidget(self.header)
 
-        # Pairs input
-        self.pairsin = QSpinBox()
-        self.pairsin.setSpecialValueText('30')
-
-        # ST Trials input
+        # Trials input
         self.trialsin = QSpinBox()
-        self.trialsin.setSpecialValueText('3')
+        self.trialsin.setSpecialValueText('30')
 
-        # ST Trials input
-        self.stttoggle = QCheckBox('STT?', self)
-        self.stttoggle.stateChanged.connect(self.clickBox)
+        # Minimum input
+        self.minin = QSpinBox()
+        self.minin.setSpecialValueText('1')
+
+        # Maximum input
+        self.maxin = QSpinBox()
+        self.maxin.setSpecialValueText('30')
 
         # Make form layout for all the settings
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
-        layout.addRow(QLabel('Number of word pairs (Max: 30):'), self.pairsin)
-        layout.addRow(QLabel('Number of study-test trials:'), self.trialsin)
-        layout.addRow(QLabel('Do you want an STT trial?:'), self.stttoggle)
+        layout.addRow(QLabel('Number of trials:'), self.trialsin)
+        layout.addRow(QLabel('Smallest possible gain:'), self.minin)
+        layout.addRow(QLabel('Largest possible gain:'), self.maxin)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
@@ -526,22 +526,15 @@ class RASettings(Settings): # TODO Make this risk aversion specific
 
         self.setLayout(over_layout)
 
-    def clickBox(self):
-
-        if self.stttoggle.isChecked():
-            self.stt = 1
-        else:
-            self.stt = 0
-
     def submitsettings(self):
-        person = participant.PrParticipant(self.idform.text(),
-                                           self.pairsin.text(),
-                                           self.wdset.text(),
-                                           'Pair Recall Memory',
+        person = participant.RAParticipant(self.idform.text(),
                                            self.trialsin.text(),
-                                           self.stt)
+                                           self.wdset.text(),
+                                           'Risk Aversion',
+                                           self.minin.text(),
+                                           self.maxin.text())
 
-        self.exp = gui.MemoryExp(person)
+        self.exp = gui.RAExp(person)
         self.exp.show()
         self.hide()
 
