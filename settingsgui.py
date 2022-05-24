@@ -11,7 +11,7 @@ import participant
 import gui
 
 
-class ErrorBox(QDialog):
+class WDErrorBox(QDialog):
     """
     This is a popup window that may come up after the settings window checks to see if the directory that the user put
     in is actually a directory. If not, this popup lets the user know that they goofed and gives them examples to
@@ -40,6 +40,55 @@ class ErrorBox(QDialog):
         dialayout.addWidget(self.mainerror),
         dialayout.addWidget(self.windowsex),
         dialayout.addWidget(self.macex)
+
+        self.setLayout(dialayout)
+
+
+class MathErrorBox(QDialog):
+    """
+    This is a popup window that may come up after the settings window checks to see if the math works out. Condition is
+    determined by the settings GUI that has the error and the settings within that. For example, PBT needs to be
+    divisible by 4 because there are four pictures. Framing needs to be divisible by 2 if gains and losses are enabled,
+    divisible by 3 if FTT is enabled, and divisible by 6 if both are enabled.
+    """
+
+    def __init__(self, state):
+        super().__init__()
+
+        self.setWindowTitle('Input Error')
+
+        # Make  layout
+        dialayout = QVBoxLayout()
+
+        # Make labels for text
+
+        self.mainerror = QLabel('Your number of trials isn\'t compatible with the settings and/or task you chose!')
+        self.mainerror.setStyleSheet('padding :5px')
+
+        if state == 1:
+
+            self.followup = QLabel('There are 4 pictures for stimuli, so the total number of trials must be ' +
+                                   'divisible by 4.')
+
+        elif state == 2:
+
+            self.followup = QLabel('You enabled gains and losses, so your number of trials should be divisible by 2.')
+
+        elif state == 3:
+
+            self.followup = QLabel('You enabled FTT, so your number of trials should be divisible by 3.')
+
+        elif state == 4:
+
+            self.followup = QLabel('You enabled FTT and need gains and losses, so your number of trials should be ' +
+                                   ' divisible by 6 (minimum Gist, Mixed, and Verbatim version of 1 gain and 1 loss ' +
+                                   ' question.')
+
+        self.followup.setStyleSheet('padding :5px')
+
+        # Add stuff to overarching layout
+        dialayout.addWidget(self.mainerror),
+        dialayout.addWidget(self.followup)
 
         self.setLayout(dialayout)
 
@@ -93,11 +142,11 @@ class Settings(QWidget):
             self.submitsettings()
 
         else:
-            self.errordialog()
+            self.wderrordialog()
 
-    def errordialog(self):
+    def wderrordialog(self):
 
-        error = ErrorBox()
+        error = WDErrorBox()
 
         error.exec()
 
@@ -245,7 +294,7 @@ class PdSettings(Settings):
 
         # Dropdown box for gains, losses, or both
         self.design = QComboBox()
-        self.design.addItems(['Gains only', 'Losses only', 'Gains and losses'])
+        self.design.addItems(['Gains only', 'Losses only', 'Gains and Losses'])
 
         # Make form layout for all the settings
         layout = QFormLayout()
@@ -254,6 +303,7 @@ class PdSettings(Settings):
         layout.addRow(QLabel('Number of trials:'), self.trialsin)
         layout.addRow(QLabel('Smallest amount of money:'), self.rewmin)
         layout.addRow(QLabel('Biggest amount of money:'), self.rewmax)
+        layout.addRow(QLabel('What type of questions do you want?:'), self.design)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
@@ -355,7 +405,7 @@ class CEDTSettings(Settings): # TODO Review CEDT for proper variables
         person = participant.DdParticipant(self.idform.text(),
                                            self.trialsin.text(),
                                            self.wdset.text(),
-                                           TaskDD(),
+                                           'CogED Task',
                                            self.imdin.text(),
                                            self.sdin.text(),
                                            self.ldin.text(),
@@ -551,7 +601,7 @@ class FrameSettings(Settings):
         self.centerscreen()
 
         # STT default
-        self.stt = 0
+        self.ftt = 0
 
         # Add in elements
         self.elements()
@@ -590,7 +640,7 @@ class FrameSettings(Settings):
 
         # Dropdown box for gains, losses, or both
         self.design = QComboBox()
-        self.design.addItems(['Gains only', 'Losses only', 'Gains and losses'])
+        self.design.addItems(['Gains only', 'Losses only', 'Gains and Losses'])
 
         # FTT  input
         self.ftttoggle = QCheckBox('', self)
@@ -616,23 +666,48 @@ class FrameSettings(Settings):
     def clickBox(self):
 
         if self.ftttoggle.isChecked():
-            self.ftt = 1
+            self.ftt = 'Yes'
         else:
-            self.ftt = 0
+            self.ftt = 'No'
 
     def submitsettings(self):
-        person = participant.FrameParticipant(self.idform.text(),
-                                           self.trialsin.text(),
-                                           self.wdset.text(),
-                                           'Framing',
-                                           self.minin.text(),
-                                           self.maxin.text(),
-                                           self.design.currentText(),
-                                           self.ftt)
 
-        self.exp = gui.FrameExp(person)
-        self.exp.show()
-        self.hide()
+        if (
+                (self.design.currentText() == 'Gains and Losses') &
+                (self.ftt == 'Yes') &
+                int(self.trialsin.text()) % 6 != 0
+        ):
+
+            self.matherrordialog(4)
+
+        elif (self.ftt == 'Yes') & (int(self.trialsin.text()) % 3 != 0):
+
+            self.matherrordialog(3)
+
+        elif (self.design.currentText() == 'Gains and Losses') & (int(self.trialsin.text()) % 2 != 0):
+
+            self.matherrordialog(2)
+
+        else:
+
+            person = participant.FrameParticipant(self.idform.text(),
+                                                  self.trialsin.text(),
+                                                  self.wdset.text(),
+                                                  'Framing',
+                                                  self.minin.text(),
+                                                  self.maxin.text(),
+                                                  self.design.currentText(),
+                                                  self.ftt)
+
+            self.exp = gui.FrameExp(person)
+            self.exp.show()
+            self.hide()
+
+    def matherrordialog(self, state):
+
+        error = MathErrorBox(state)
+
+        error.exec()
 
 
 class BeadsSettings(Settings):
@@ -760,15 +835,26 @@ class PBTSettings(Settings):
         self.setLayout(over_layout)
 
     def submitsettings(self):
-        person = participant.PBTParticipant(self.idform.text(),
-                                            self.trialsin.text(),
-                                            self.wdset.text(),
-                                            'Perceptual Bias Task',
-                                            self.blocksin.text())
 
-        self.exp = gui.PBTExp(person)
-        self.exp.show()
-        self.hide()
+        if (int(self.trialsin.text()) % 4) == 0:
+            person = participant.PBTParticipant(self.idform.text(),
+                                                self.trialsin.text(),
+                                                self.wdset.text(),
+                                                'Perceptual Bias Task',
+                                                self.blocksin.text())
+
+            self.exp = gui.PBTExp(person)
+            self.exp.show()
+            self.hide()
+
+        else:
+            self.matherrordialog()
+
+    def matherrordialog(self):
+
+        error = MathErrorBox(1)
+
+        error.exec()
 
 
 class NACTSettings(Settings): # TODO Make this negative attention specific
@@ -846,7 +932,7 @@ class NACTSettings(Settings): # TODO Make this negative attention specific
         person = participant.PrParticipant(self.idform.text(),
                                            self.pairsin.text(),
                                            self.wdset.text(),
-                                           'Pair Recall Memory',
+                                           'Negative Attention Capture',
                                            self.trialsin.text(),
                                            self.stt)
 

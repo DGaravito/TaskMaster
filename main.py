@@ -55,7 +55,7 @@ class SelectWindow(QWidget):
         self.header.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # DD button
-        self.ddbutton = QPushButton('DD')
+        self.ddbutton = QPushButton('DD (feat. ADOPy)')
         self.ddbutton.clicked.connect(lambda: self.selection(1))
 
         # PD button
@@ -67,7 +67,7 @@ class SelectWindow(QWidget):
         self.cedtbutton.clicked.connect(lambda: self.selection(3))
 
         # ARTT button
-        self.arttbutton = QPushButton('ARTT (WIP)')
+        self.arttbutton = QPushButton('ARTT (feat. ADOPy) (WIP)')
         self.arttbutton.clicked.connect(lambda: self.selection(4))
 
         # Risk Aversion button
@@ -75,7 +75,7 @@ class SelectWindow(QWidget):
         self.rabutton.clicked.connect(lambda: self.selection(5))
 
         # Framing button
-        self.framebutton = QPushButton('Framing (WIP)')
+        self.framebutton = QPushButton('Framing')
         self.framebutton.clicked.connect(lambda: self.selection(6))
 
         # Beads Task button
@@ -83,7 +83,7 @@ class SelectWindow(QWidget):
         self.beadsbutton.clicked.connect(lambda: self.selection(7))
 
         # PBT button
-        self.pbtbutton = QPushButton('PBT (WIP)')
+        self.pbtbutton = QPushButton('PBT')
         self.pbtbutton.clicked.connect(lambda: self.selection(8))
 
         # Negative Attentional Capture button
