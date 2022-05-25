@@ -67,7 +67,7 @@ class SelectWindow(QWidget):
         self.cedtbutton.clicked.connect(lambda: self.selection(3))
 
         # ARTT button
-        self.arttbutton = QPushButton('ARTT (feat. ADOPy) (WIP)')
+        self.arttbutton = QPushButton('ARTT (feat. ADOPy)')
         self.arttbutton.clicked.connect(lambda: self.selection(4))
 
         # Risk Aversion button

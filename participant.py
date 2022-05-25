@@ -523,7 +523,7 @@ class ARTTParticipant(Participant):
                 fixedstring = 'Lose $' + str('{:.2f}'.format(self.design['r_fix'])) + 'for sure'
                 otherstring = 'Lose $' + str('{:.2f}'.format(self.design['r_var']))
 
-        if self.design == 'Gains only':
+        elif self.design == 'Gains only':
 
             self.state = 'Gain'
 
@@ -539,11 +539,11 @@ class ARTTParticipant(Participant):
 
         if self.design['a_var'] != 0:
 
-            picstring = 'risk_' + str(int(self.design['p_var'] * 100))
+            picstring = 'ARTT_risk_' + str(int(self.design['p_var'] * 100))
 
         else:
 
-            picstring = 'ambig_' + str(int(self.design['a_var'] * 100))
+            picstring = 'ARTT_ambig_' + str(int(self.design['a_var'] * 100))
 
         return [fixedstring, otherstring, picstring]
 
