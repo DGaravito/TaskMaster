@@ -435,8 +435,12 @@ class CEDTParticipant(Participant):
 
 class ARTTParticipant(Participant):
 
-    def __init__(self, expid, trials, outdir, task, risklist, amblist, rewmin, rewmax):
+    def __init__(self, expid, trials, outdir, task, risklist, amblist, rewmin, rewmax, design):
         super().__init__(expid, trials, outdir, task)
+
+        self.design = design
+
+        self.create_design()
 
         self.engine = self.create_artt_engine(self.task, risklist, amblist, rewmin, rewmax)
 
@@ -446,21 +450,37 @@ class ARTTParticipant(Participant):
         # Experiment settings output dataframe
         dict_simulsettings = {'Risky Probabilities': [risklist],
                               'Ambiguous Probabilities': [amblist],
-                              'Smallest Reward': [rewmin],
-                              'Largest Reward': [rewmax]
+                              'Fixed Reward': [rewmin],
+                              'Largest Reward': [rewmax],
+                              'Design': [design]
                               }
 
         self.set_settings(dict_simulsettings)
+
+    def create_design(self):
+        """
+        If you want both gains and losses, then it creates a random order for gain and loss questions
+        :return: Does not return a value, instead creates the class dictionaries and then calls set design text to make
+        the first trial
+        """
+
+        if self.design == 'Gains and Losses':
+
+            multnum = int(self.get_trials() / 2)
+            gainlosscond = ['Gain', 'Loss']
+            multiplier = [multnum, multnum]
+            self.order = sum([[s] * n for s, n in zip(gainlosscond, multiplier)], [])
+            random.shuffle(self.order)
 
     def create_artt_engine(self, task, risklist, amblist, rewmin, rewmax):
 
         model = ModelLinear()
 
-        r_var = np.arange(int(rewmin), int(rewmax), .5)
-        r_fix = np.arange(int(rewmin), (int(rewmax)/2), .5)
+        r_var = np.arange(float(rewmin) + .5, int(rewmax), .5)
+        r_fix = rewmin
 
         rewards = np.array([
-            [rv, rf] for rv in r_var for rf in r_fix if rv > rf
+            [rv, rf] for rv in r_var for rf in r_fix
         ])
 
         pa_risky = np.array([[pr, 0] for pr in risklist])
@@ -489,11 +509,43 @@ class ARTTParticipant(Participant):
 
     def get_design_text(self):
 
-        fixedstring = str('{:.2f}'.format(self.design['r_fix']))
+        if self.design == 'Gains and Losses':
 
-        otherstring = str('{:.2f}'.format(self.design['r_var']))
+            self.state = self.order.pop()
 
-        return [fixedstring, otherstring, int(self.design['a_var']*100), int(self.design['p_var']*100)]
+            if self.state == 'Gain':
+
+                fixedstring = 'Win $' + str('{:.2f}'.format(self.design['r_fix'])) + 'for sure'
+                otherstring = 'Win $' + str('{:.2f}'.format(self.design['r_var']))
+
+            else:
+
+                fixedstring = 'Lose $' + str('{:.2f}'.format(self.design['r_fix'])) + 'for sure'
+                otherstring = 'Lose $' + str('{:.2f}'.format(self.design['r_var']))
+
+        if self.design == 'Gains only':
+
+            self.state = 'Gain'
+
+            fixedstring = 'Win $' + str('{:.2f}'.format(self.design['r_fix'])) + 'for sure'
+            otherstring = 'Win $' + str('{:.2f}'.format(self.design['r_var']))
+
+        else:
+
+            self.state = 'Loss'
+
+            fixedstring = 'Lose $' + str('{:.2f}'.format(self.design['r_fix'])) + ' for sure'
+            otherstring = 'Lose $' + str('{:.2f}'.format(self.design['r_var']))
+
+        if self.design['a_var'] != 0:
+
+            picstring = 'risk_' + str(int(self.design['p_var'] * 100))
+
+        else:
+
+            picstring = 'ambig_' + str(int(self.design['a_var'] * 100))
+
+        return [fixedstring, otherstring, picstring]
 
     def engineupdate(self, response):
 
@@ -854,106 +906,82 @@ class BeadsParticipant(Participant):
         super().__init__(expid, trials, outdir, task)
 
         self.rounds = rounds
-        self.globallocal = random.choice(['Global', 'Local'])
         self.instructions = 0
 
-        multnum = int(int(trials)/4)
-        picturenames = ['PBT_DCC.BMP', 'PBT_DCS.BMP', 'PBT_DSC.BMP', 'PBT_DSS.BMP']
-        multiplier = [multnum, multnum, multnum, multnum]
-        self.piclist = sum([[s] * n for s, n in zip(picturenames, multiplier)], [])
+        self.blue_jar = ['BeadsTask_BlueBead',
+                         'BeadsTask_BlueBead',
+                         'BeadsTask_BlueBead',
+                         'BeadsTask_BlueBead',
+                         'BeadsTask_RedBead']
+
+        self.red_jar = ['BeadsTask_BlueBead',
+                        'BeadsTask_RedBead',
+                        'BeadsTask_RedBead',
+                        'BeadsTask_RedBead',
+                        'BeadsTask_RedBead']
 
         # Experiment settings output dataframe
         dict_simulsettings = {
-            'Rounds': [rounds],
-            'Starting Block': [self.globallocal]
+            'Rounds': [rounds]
         }
 
         self.set_settings(dict_simulsettings)
 
-    def nextround(self, blocks):
+    def nextround(self, completedround):
 
-        if blocks == self.rounds:
+        if completedround == self.rounds:
 
             prompt = 'Thank you! This task is complete.'
 
         else:
 
-            self.picorder = list(self.piclist)
-            random.shuffle(self.picorder)
+            jarint = random.randint(1, 2)
 
-            if blocks > 0:
+            if jarint == 1:
 
-                if self.globallocal == 'Global':
+                self.jarname = 'Blue'
+                self.jar = self.blue_jar
 
-                    self.globallocal = 'Local'
 
-                else:
+            else:
 
-                    self.globallocal = 'Global'
+                self.jarname = 'Red'
+                self.jar = self.red_jar
 
             prompt = 'Please let the researcher know you are ready'
 
         return prompt
 
-    def get_trial_pic(self):
+    def get_bead(self):
 
-        pic = self.picorder.pop()
+        self.pic = random.choice(self.jar)
 
-        return [pic]
+        return [self.pic]
 
-    def updateoutput(self, trial, pic, time, response=3):
+    def updateoutput(self, currentround, beadspicked, response=0, pick='None'):
         """
-        evaluates whether the person got the n-back correct based on their response
-        :param trial: the number of the trial that was just completed
-        :param pic: string with the picture name in it, so we can see if the participant gave the correct answer
-        :param time: participant's reaction time
-        :param response: integer with either 0 or 1 depending on if the person chose x or square. Default is 3 in case
-        the participant doesn't answer in time.
+        updates the performance dataframe for each trial, and if they chose to pick a jar, were they correct
+        :param currentround: the number of the current round
+        :param beadspicked: the number of the trial that was just completed
+        :param response: integer with either 0 or 1 depending on if the person chose to draw a bead or pick a jar
+        :param pick: if they picked a jar, what jar did they pick
         :return: updates the performance dataframe in the superclass
         """
 
-        if self.globallocal == 'Local':
+        correct = 0
 
-            if pic in ['PBT_DCS.BMP', 'PBT_DSS.BMP']:
+        if response == 1:
 
-                if response == 'Square':
-                    correct = 1
+            if pick == self.jarname:
 
-                else:
-                    correct = 0
-
-            else:
-
-                if response == 'Cross':
-                    correct = 1
-
-                else:
-                    correct = 0
-
-        else:
-
-            if pic in ['PBT_DSS.BMP', 'PBT_DSC.BMP']:
-
-                if response == 'Square':
-                    correct = 1
-
-                else:
-                    correct = 0
-
-            else:
-
-                if response == 'Cross':
-                    correct = 1
-
-                else:
-                    correct = 0
+                correct = 1
 
         df_simultrial = {
-            'trial': [trial],
-            'block': [self.globallocal],
-            'picture': [pic],
+            'round': [currentround],
+            'beads': [beadspicked],
+            'last bead': [self.pic],
             'response': [response],
-            'reaction time': [time],
+            'jar picked': [pick],
             'correct': [correct]
         }
 

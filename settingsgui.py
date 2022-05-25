@@ -456,12 +456,14 @@ class ARTTSettings(Settings):  # TODO Review ADOPy for required stuff - rework w
         self.trialsin.setSpecialValueText('10')
 
         # probability input
-        self.probriskin = QLineEdit()
-        self.probriskin.setText('.13, .25, .38')
+        # self.probriskin = QLineEdit()
+        # self.probriskin.setText('.13, .25, .38, .5, .75')
+        self.probabilities = [.13, .25, .38, .5, .62, .75, .87]
 
         # proportion input
-        self.probambin = QLineEdit()
-        self.probambin.setText('.25, .5, .75')
+        # self.probambin = QLineEdit()
+        # self.probambin.setText('.25, .5, .75')
+        self.proportions = [.25, .5, .75]
 
         # Smallest reward input
         self.srewin = QSpinBox()
@@ -471,15 +473,20 @@ class ARTTSettings(Settings):  # TODO Review ADOPy for required stuff - rework w
         self.lrewin = QSpinBox()
         self.lrewin.setSpecialValueText('50')
 
+        # Dropdown box for gains, losses, or both
+        self.design = QComboBox()
+        self.design.addItems(['Gains only', 'Losses only', 'Gains and Losses'])
+
         # Make form layout for all the settings
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
         layout.addRow(QLabel('Number of trials:'), self.trialsin)
-        layout.addRow(QLabel('Enter the probablities for risky trials:'), self.probriskin)
-        layout.addRow(QLabel('Enter the proportions covered for ambiguous trials:'), self.probambin)
-        layout.addRow(QLabel('Smallest reward possible:'), self.srewin)
-        layout.addRow(QLabel('Biggest reward possible:'), self.lrewin)
+        # layout.addRow(QLabel('Enter the probablities for risky trials:'), self.probriskin)
+        # layout.addRow(QLabel('Enter the proportions covered for ambiguous trials:'), self.probambin)
+        layout.addRow(QLabel('Fixed reward/loss magnitude:'), self.srewin)
+        layout.addRow(QLabel('Largest reward/loss possible:'), self.lrewin)
+        layout.addRow(QLabel('What type of questions do you want?:'), self.design)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
@@ -490,22 +497,21 @@ class ARTTSettings(Settings):  # TODO Review ADOPy for required stuff - rework w
 
     def submitsettings(self):
 
-        riskstring = self.probriskin.text()
+        # riskstring = self.probriskin.text()
+        # risklist = list(riskstring.split(", "))
 
-        risklist = list(riskstring.split(", "))
-
-        ambstring = self.probambin.text()
-
-        amblist = list(ambstring.split(", "))
+        # ambstring = self.probambin.text()
+        # amblist = list(ambstring.split(", "))
 
         person = participant.ARTTParticipant(self.idform.text(),
                                              self.trialsin.text(),
                                              self.wdset.text(),
                                              TaskCRA(),
-                                             risklist,
-                                             amblist,
+                                             self.probabilities,
+                                             self.proportions,
                                              self.srewin.text(),
-                                             self.lrewin.text())
+                                             self.lrewin.text(),
+                                             self.design.currentText())
 
         self.exp = gui.ARTTExp(person)
         self.exp.show()

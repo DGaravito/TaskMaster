@@ -1,7 +1,8 @@
 import time
 from pathlib import Path
 
-from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QProgressBar
+from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QProgressBar,\
+    QDialog, QGridLayout
 from PyQt6.QtGui import QFont, QPixmap
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QDir
 
@@ -415,6 +416,11 @@ class ARTTExp(QWidget):
         # center window
         self.centerscreen()
 
+        # add the assets folder
+
+        toassets = str(Path('.').resolve())
+        QDir.addSearchPath('assets', toassets)
+
         # Add in elements
         self.elements()
 
@@ -456,54 +462,48 @@ class ARTTExp(QWidget):
         # center Instructions
         self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        # Left and right options (and middle stuff) with font settings
+        # Left option (and middle stuff) with font settings
         self.left = QLabel('')
         self.left.setFont(QFont('Helvetica', 40))
-
-        self.right = QLabel('')
-        self.right.setFont(QFont('Helvetica', 40))
 
         self.middle = QLabel('Press G to Start')
         self.middle.setFont(QFont('Helvetica', 30))
 
-        # Put Left and Right words for options in horizontal layout
-        expverblayout = QHBoxLayout()
+        # Set up right option stuff
 
-        expverblayout.addStretch(1)
-        expverblayout.addWidget(self.left)
-        expverblayout.addStretch(1)
-        expverblayout.addWidget(self.middle)
-        expverblayout.addStretch(1)
-        expverblayout.addWidget(self.right)
-        expverblayout.addStretch(1)
+        self.righttoptext = QLabel('')
+        self.righttoptext.setFont(QFont('Helvetica', 40))
 
-        # creating vertical progress bars to represent options
-        self.leftbar = QProgressBar(self)
-        self.leftbar.setOrientation(Qt.Orientation.Vertical)
-        self.leftbar.setGeometry(200, 150, 40, 200)
+        self.rightpic = QLabel()
+        self.rightpic.setPixmap(QPixmap())
 
-        self.rightbar = QProgressBar(self)
-        self.rightbar.setOrientation(Qt.Orientation.Vertical)
-        self.rightbar.setGeometry(200, 150, 40, 200)
+        self.rightbottomtext = QLabel('')
+        self.rightbottomtext.setFont(QFont('Helvetica', 40))
 
-        # Put Left and Right visual options in horizontal layout
-        expvislayout = QHBoxLayout()
+        # Put right option stuff in a vertical layout
 
-        expvislayout.addStretch(1)
-        expvislayout.addWidget(self.leftbar)
-        expvislayout.addStretch(1)
-        expvislayout.addWidget(QLabel(''))
-        expvislayout.addStretch(1)
-        expvislayout.addWidget(self.rightbar)
-        expvislayout.addStretch(1)
+        rightlayout = QVBoxLayout()
+
+        rightlayout.addWidget(self.righttoptext)
+        rightlayout.addWidget(self.rightpic)
+        rightlayout.addWidget(self.rightbottomtext)
+
+        # Put Left and Right options in horizontal layout
+        explayout = QHBoxLayout()
+
+        explayout.addStretch(1)
+        explayout.addWidget(self.left)
+        explayout.addStretch(1)
+        explayout.addWidget(self.middle)
+        explayout.addStretch(1)
+        explayout.addLayout(rightlayout)
+        explayout.addStretch(1)
 
         # Put everything in vertical layout
 
         instquitlayout.addWidget(self.instructions)
         instquitlayout.addStretch(1)
-        instquitlayout.addLayout(expverblayout)
-        instquitlayout.addStretch(1)
-        instquitlayout.addLayout(expvislayout)
+        instquitlayout.addLayout(explayout)
         instquitlayout.addStretch(1)
         instquitlayout.addWidget(self.quitbutton)
 
@@ -525,45 +525,33 @@ class ARTTExp(QWidget):
     def jitter(self):
 
         self.left.setText('')
-        self.leftbar.setValue(0)
-        self.right.setText('')
-        self.rightbar.setValue(0)
+
+        self.rightpic.setPixmap(QPixmap())
+        self.righttoptext.setText('')
+        self.rightbottomtext.setText('')
+
         self.middle.setText('+')
 
-        self.person.engineupdate(self.response)
+        if self.trialsdone > 0:
 
-        self.person.updateoutput(self.response, self.trialsdone)
+            self.person.engineupdate(self.response)
+
+            self.person.updateoutput(self.response, self.trialsdone)
 
         self.timerjitter.start(1000)
 
     def generatenext(self):
 
         self.timerjitter.stop()
-        if self.trialsdone == 0:
+        if self.trialsdone < self.person.get_trials():
 
             info = self.person.get_design_text()
             self.left.setText(info[0])
-            self.leftbar.setValue(50)
 
-            self.right.setText(info[1])
-            self.rightbar.setValue(info[3])
-
-            self.middle.setText('OR')
-
-            self.trialsdone += 1
-
-            self.timerresponse.start(5000)
-
-        elif self.person.get_trials() > self.trialsdone:
-
-            self.person.engineupdate(self.response)
-
-            info = self.person.get_design_text()
-            self.left.setText(info[0])
-            self.leftbar.setValue(50)
-
-            self.right.setText(info[1])
-            self.rightbar.setValue(info[3])
+            pixmap = 'assets/' + info[2]
+            self.rightpic.setPixmap(QPixmap(pixmap))
+            self.righttoptext.setText(info[1])
+            self.rightbottomtext.setText('0')
 
             self.middle.setText('OR')
 
@@ -575,7 +563,10 @@ class ARTTExp(QWidget):
             self.person.output()
 
             self.left.setText('')
-            self.right.setText('')
+
+            self.righttoptext.setText('')
+            self.righttoptext.setText('')
+
             self.instructions.setText('Thank you!')
             self.middle.setText('You may now quit the application.')
 
@@ -584,10 +575,11 @@ class ARTTExp(QWidget):
         self.timerresponse.stop()
 
         self.left.setText('')
-        self.leftbar.setValue(0)
 
-        self.right.setText('')
-        self.rightbar.setValue(0)
+        self.rightpic.setPixmap(QPixmap())
+        self.righttoptext.setText('')
+        self.rightbottomtext.setText('')
+
         self.middle.setText('Please try to be quicker')
 
         self.timerreset.start(1000)
@@ -598,10 +590,11 @@ class ARTTExp(QWidget):
 
         info = self.person.get_design_text()
         self.left.setText(info[0])
-        self.leftbar.setValue(50)
 
-        self.right.setText(info[1])
-        self.rightbar.setValue(info[3])
+        pixmap = 'assets/' + info[2]
+        self.rightpic.setPixmap(QPixmap(pixmap))
+        self.righttoptext.setText(info[1])
+        self.rightbottomtext.setText('0')
 
         self.middle.setText('OR')
 
@@ -884,7 +877,7 @@ class FrameExp(QWidget):
         self.middle = QLabel('Press G to Start')
         self.middle.setFont(QFont('Helvetica', 30))
 
-        # Put Left and Right visual options in horizontal layout
+        # Put gamble parts in vertical layout
         gamblelayout = QVBoxLayout()
 
         gamblelayout.addWidget(self.rightgain)
@@ -1007,6 +1000,292 @@ class FrameExp(QWidget):
             self.jitter()
 
 
+class BeadsInventory(QDialog):
+    """
+        This is a popup window that contains the participant's 'inventory' in the beads task. It has a grid layout of
+        all of the beads they have draw in that round.
+        """
+
+    def __init__(self, list):
+        super().__init__()
+
+        self.setWindowTitle('Beads you have drawn')
+
+        # Make  layout
+        layout = QGridLayout()
+
+        one = QLabel().setPixmap(list[0])
+        two = QLabel().setPixmap(list[1])
+        three = QLabel().setPixmap(list[2])
+        four = QLabel().setPixmap(list[3])
+        five = QLabel().setPixmap(list[4])
+        six = QLabel().setPixmap(list[5])
+        seven = QLabel().setPixmap(list[6])
+        eight = QLabel().setPixmap(list[7])
+        nine = QLabel().setPixmap(list[8])
+        ten = QLabel().setPixmap(list[9])
+        eleven = QLabel().setPixmap(list[10])
+        twelve = QLabel().setPixmap(list[11])
+        thirteen = QLabel().setPixmap(list[12])
+        fourteen = QLabel().setPixmap(list[13])
+        fifteen = QLabel().setPixmap(list[14])
+        sixteen = QLabel().setPixmap(list[15])
+        seventeen = QLabel().setPixmap(list[16])
+        eighteen = QLabel().setPixmap(list[17])
+        nineteen = QLabel().setPixmap(list[18])
+        twenty = QLabel().setPixmap(list[19])
+
+        layout.addWidget(one, 0, 0)
+        layout.addWidget(two, 0, 1)
+        layout.addWidget(three, 0, 2)
+        layout.addWidget(four, 0, 3)
+        layout.addWidget(five, 0, 4)
+        layout.addWidget(six, 1, 0)
+        layout.addWidget(seven, 1, 1)
+        layout.addWidget(eight, 1, 2)
+        layout.addWidget(nine, 1, 3)
+        layout.addWidget(ten, 1, 4)
+        layout.addWidget(eleven, 2, 0)
+        layout.addWidget(twelve, 2, 1)
+        layout.addWidget(thirteen, 2, 2)
+        layout.addWidget(fourteen, 2, 3)
+        layout.addWidget(fifteen, 2, 4)
+        layout.addWidget(sixteen, 3, 0)
+        layout.addWidget(seventeen, 3, 1)
+        layout.addWidget(eighteen, 3, 2)
+        layout.addWidget(nineteen, 3, 3)
+        layout.addWidget(twenty, 3, 4)
+
+        self.setLayout(layout)
+
+
+class BeadsExp(QWidget):
+    keyPressed = pyqtSignal(str)
+
+    def __init__(self, person):
+        super().__init__()
+
+        self.inst = 0
+        self.response = 0
+        self.person = person
+        self.roundsdone = 0
+        self.beadsdrawn = 0
+        self.beadlist = ['',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '']
+
+        # Window title
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+
+        # center window
+        self.centerscreen()
+
+        # Add in elements
+        self.elements()
+
+        # Show all elements
+        self.showMaximized()
+
+        # Make timer for jitter screen
+        self.jittertimer = QTimer()
+        self.jittertimer.timeout.connect(self.newround)
+
+        # Make timer for jitter screen
+        self.starttimer = QTimer()
+        self.starttimer.timeout.connect(self.startround)
+
+        # Attach keyboard keys to functions
+        self.keyPressed.connect(self.keyaction)
+
+    def elements(self):
+
+        # Make overarching layout
+        totallayout = QVBoxLayout()
+
+        # Quit button
+        self.quitbutton = QPushButton('Quit')
+        self.quitbutton.clicked.connect(QApplication.instance().quit)
+        self.quitbutton.setFixedWidth(40)
+        self.quitbutton.setFixedHeight(20)
+
+        # Inventory button
+        self.invbutton = QPushButton('Beads you\'ve drawn')
+        self.invbutton.clicked.connect(BeadsInventory.exec())
+
+        # Instructions
+        self.instructions = QLabel('Press \"M\" to draw a bead and \"C\" to choose a jar')
+
+        # setting font style and size
+        self.instructions.setFont(QFont('Helvetica', 25))
+
+        # center Instructions
+        self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # add the assets folder
+
+        toassets = str(Path('.').resolve())
+        QDir.addSearchPath('assets', toassets)
+
+        # Left and right options (and middle stuff) with font settings
+        self.left = QLabel('')
+        self.left.setFont(QFont('Helvetica', 40))
+        self.left.mousePressEvent(self.chosejar('Red'))
+
+        self.right = QLabel('')
+        self.right.setFont(QFont('Helvetica', 40))
+        self.right.mousePressEvent(self.chosejar('Blue'))
+
+        self.middle = QLabel('Press G to Start and I for Instructions')
+        self.middle.setFont(QFont('Helvetica', 30))
+
+        # Put Left and Right jars, plus middle for instructions, in horizontal layout
+        mainhlayout = QHBoxLayout()
+
+        mainhlayout.addStretch(1)
+        mainhlayout.addWidget(self.left)
+        mainhlayout.addStretch(1)
+        mainhlayout.addWidget(self.middle)
+        mainhlayout.addStretch(1)
+        mainhlayout.addLayout(self.right)
+        mainhlayout.addStretch(1)
+
+        # Put inventory and quit button in horizontal layout
+        quitinvlayout = QHBoxLayout()
+
+        quitinvlayout.addWidget(self.quitbutton)
+        quitinvlayout.addStretch(1)
+        quitinvlayout.addWidget(self.invbutton)
+
+        # Put everything in vertical layout
+
+        totallayout.addWidget(self.instructions)
+        totallayout.addStretch(1)
+        totallayout.addLayout(mainhlayout)
+        totallayout.addStretch(1)
+        totallayout.addWidget(self.quitbutton)
+
+        # Set up layout
+
+        self.setLayout(totallayout)
+
+    def centerscreen(self):
+
+        qr = self.frameGeometry()
+        cp = self.screen().availableGeometry().center()
+
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
+    def keyPressEvent(self, keyevent):
+        self.keyPressed.emit(keyevent.text())
+
+    def jitter(self):
+
+        self.left.setPixmap(QPixmap())
+        self.right.setPixmap(QPixmap())
+        self.middle.setText('+')
+
+        self.jittertimer.start(1000)
+
+    def newround(self):
+
+        self.jittertimer.stop()
+        self.middle.setText(self.person.nextround(self.roundsdone))
+        self.roundsdone += 1
+        self.starttimer.start(500)
+
+    def startround(self):
+
+        self.starttimer.stop()
+        self.middle.setText('')
+
+        leftpixmap = QPixmap('assets/BeadsTask_RedJar.png')
+        rightpixmap = QPixmap('assets/BeadsTask_BlueJar.png')
+
+        self.left.setPixmap(leftpixmap)
+        self.right.setPixmap(rightpixmap)
+
+        self.beadsdrawn = 0
+
+        self.beadlist = ['',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '',
+                         '']
+
+    def drawbead(self):
+
+        newbead = 'assets/' + self.person.get_bead()
+
+        self.beadlist[self.beadsdrawn] = newbead
+
+        self.beadsdrawn += 1
+
+        self.person.updateoutput(self.roundsdone, self.beadsdrawn)
+
+    def chosejar(self, choice):
+
+        self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, choice)
+
+    def keyaction(self, key):
+
+        if key in ['c', 'C']:
+            self.middle.setText('Click on the jar you want to choose or press \"M\" to go back')
+
+        elif key in ['m', 'M']:
+
+            self.middle.setText('')
+
+            if self.beadsdrawn < 20:
+                self.drawbead()
+
+            else:
+                self.middle.setText('Max number of beads drawn')
+
+        elif key in ['g', 'G']:
+            self.jitter()
+
+        elif key in ['i', 'I']:
+            self.inst += 1
+            self.middle.setText(self.person.get_instructions(self.instructions))
+
+            if self.inst == 20:
+
+                self.inst = 0
+
+
 class PBTExp(QWidget):
     keyPressed = pyqtSignal(str)
 
@@ -1114,13 +1393,9 @@ class PBTExp(QWidget):
 
             self.middle.setPixmap(pixmap)
 
-            print('loaded')
-
             self.starttime = time.time()
 
             self.timer.start(5000)
-
-            print('timer started')
 
         else:
 
@@ -1147,16 +1422,10 @@ class PBTExp(QWidget):
 
         self.timer.stop()
 
-        print('timeout')
-
         endtime = time.time()
         rt = endtime - self.starttime
 
-        print('update')
-
         self.person.updateoutput(self.trialsdone, self.picstring, rt, 'None')
-
-        print('before iti')
 
         self.iti()
 

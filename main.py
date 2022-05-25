@@ -79,7 +79,7 @@ class SelectWindow(QWidget):
         self.framebutton.clicked.connect(lambda: self.selection(6))
 
         # Beads Task button
-        self.beadsbutton = QPushButton('Beads (WIP)')
+        self.beadsbutton = QPushButton('Beads')
         self.beadsbutton.clicked.connect(lambda: self.selection(7))
 
         # PBT button
