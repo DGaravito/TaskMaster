@@ -902,8 +902,8 @@ class FrameParticipant(Participant):
 
 class BeadsParticipant(Participant):
 
-    def __init__(self, expid, trials, outdir, task, rounds):
-        super().__init__(expid, trials, outdir, task)
+    def __init__(self, expid, rounds, outdir, task):
+        super().__init__(expid, rounds, outdir, task)
 
         self.rounds = rounds
         self.instructions = 0
@@ -920,13 +920,6 @@ class BeadsParticipant(Participant):
                         'BeadsTask_RedBead',
                         'BeadsTask_RedBead']
 
-        # Experiment settings output dataframe
-        dict_simulsettings = {
-            'Rounds': [rounds]
-        }
-
-        self.set_settings(dict_simulsettings)
-
     def nextround(self, completedround):
 
         if completedround == self.rounds:
@@ -942,13 +935,18 @@ class BeadsParticipant(Participant):
                 self.jarname = 'Blue'
                 self.jar = self.blue_jar
 
-
             else:
 
                 self.jarname = 'Red'
                 self.jar = self.red_jar
 
-            prompt = 'Please let the researcher know you are ready'
+            if completedround == 0:
+
+                prompt = ''
+
+            else:
+
+                prompt = 'Please let the researcher know you are ready'
 
         return prompt
 
@@ -995,47 +993,47 @@ class BeadsParticipant(Participant):
 
             case 1:
 
-                inst = 'In this game, the computer is going to take beds out of one of two jars on the screen.'
+                inst = 'In this game, the computer is going to take beds out\nof one of two jars on the screen.'
 
             case 2:
 
-                inst = 'Your goal is to figure out from which jar (left or right) the computer took out the beads.'
+                inst = 'Your goal is to figure out from which jar (left\nor right) the computer took out the beads.'
 
             case 3:
 
-                inst = 'You are going to see two clear jars with 100 beads in each jar'
+                inst = 'You are going to see two clear jars with 100 beads\nin each jar'
 
             case 4:
 
-                inst = 'One jar has 80% blue beads and 20% red beads. The other jar has the opposite, with 80% read' \
+                inst = 'One jar has 80% blue beads and 20% red beads.\nThe other jar has the opposite, with 80% read' \
                        ' beads and 20% blue beads.'
 
             case 5:
 
-                inst = 'The computer will take beads from ONE jar and will show you the color of the bead it took out' \
+                inst = 'The computer will take beads from ONE jar and\nwill show you the color of the bead it took out' \
                        ' from that jar.'
 
             case 6:
 
-                inst = 'The computer will select form the SAME jar until you make a choice (of left or right jar).'
+                inst = 'The computer will select form the SAME jar until\nyou make a choice (of left or right jar).'
 
             case 7:
 
-                inst = 'The beads the computer takes out will be shown to you one at a time at the top of the screen.'
+                inst = 'The beads the computer takes out will be shown\nto you one at a time at the top of the screen.'
 
             case 8:
 
-                inst = 'If you want to see the computer pick another beads, press the \"B\" key.'
+                inst = 'If you want to see the computer pick another\nbeads, press the \"M\" key.'
 
             case 9:
 
-                inst = 'When you are ready to decide which jar the computer is selecting the beads from, click on the' \
-                       ' button below either jar to choose that jar'
+                inst = 'When you are ready to decide which jar the computer\nis selecting the beads from, press the' \
+                       ' \"C\" key'
 
             case 10:
 
-                inst = 'The computer will continue to select from the SAME jar until you\'ve made a decision about' \
-                       ' which jar the computer was picking from.'
+                inst = 'The computer will continue to select from the SAME\njar until you\'ve made a decision about' \
+                       ' which jar the computer\nwas picking from.'
 
             case 11:
 
@@ -1043,21 +1041,17 @@ class BeadsParticipant(Participant):
 
             case 12:
 
-                inst = 'You can see up to 20 beads. After the bead is shown to you, it will be put back into the same' \
-                       ' jar before selecting the next bead.'
+                inst = 'You can see up to 20 beads. After the bead is shown\nto you, it will be put back into the' \
+                       'same jar before selecting\nthe next bead.'
 
             case 13:
 
-                inst = 'You will be reminded of the last bead that has been drawn at the top of the screen.'
+                inst = 'You will be able to see all of the beads that have\nbeen drawn by clicking on the button in' \
+                       'the bottom right of the screen.'
 
             case 14:
 
-                inst = 'You will be able to see all of the beads that have been drawn by clicking on the \"Bead' \
-                       'History\" button in the center of the screen.'
-
-            case 15:
-
-                inst = 'Remember, you can make a decision anytime after seeing the first bead.'
+                inst = 'Remember, you can make a decision anytime after\nseeing the first bead.'
 
             case _:
 

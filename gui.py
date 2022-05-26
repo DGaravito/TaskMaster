@@ -1114,6 +1114,10 @@ class BeadsExp(QWidget):
         # Attach keyboard keys to functions
         self.keyPressed.connect(self.keyaction)
 
+        # Attach left and right to functions
+        self.left.mouseReleaseEvent = lambda: self.chosejar('Red')
+        self.right.mouseReleaseEvent = lambda: self.chosejar('Blue')
+
     def elements(self):
 
         # Make overarching layout
@@ -1127,7 +1131,7 @@ class BeadsExp(QWidget):
 
         # Inventory button
         self.invbutton = QPushButton('Beads you\'ve drawn')
-        self.invbutton.clicked.connect(BeadsInventory.exec())
+        self.invbutton.clicked.connect(BeadsInventory.exec)
 
         # Instructions
         self.instructions = QLabel('Press \"M\" to draw a bead and \"C\" to choose a jar')
@@ -1146,11 +1150,9 @@ class BeadsExp(QWidget):
         # Left and right options (and middle stuff) with font settings
         self.left = QLabel('')
         self.left.setFont(QFont('Helvetica', 40))
-        self.left.mousePressEvent(self.chosejar('Red'))
 
         self.right = QLabel('')
         self.right.setFont(QFont('Helvetica', 40))
-        self.right.mousePressEvent(self.chosejar('Blue'))
 
         self.middle = QLabel('Press G to Start and I for Instructions')
         self.middle.setFont(QFont('Helvetica', 30))
@@ -1163,7 +1165,7 @@ class BeadsExp(QWidget):
         mainhlayout.addStretch(1)
         mainhlayout.addWidget(self.middle)
         mainhlayout.addStretch(1)
-        mainhlayout.addLayout(self.right)
+        mainhlayout.addWidget(self.right)
         mainhlayout.addStretch(1)
 
         # Put inventory and quit button in horizontal layout
@@ -1179,7 +1181,7 @@ class BeadsExp(QWidget):
         totallayout.addStretch(1)
         totallayout.addLayout(mainhlayout)
         totallayout.addStretch(1)
-        totallayout.addWidget(self.quitbutton)
+        totallayout.addLayout(quitinvlayout)
 
         # Set up layout
 
@@ -1250,6 +1252,7 @@ class BeadsExp(QWidget):
         newbead = 'assets/' + self.person.get_bead()
 
         self.beadlist[self.beadsdrawn] = newbead
+        print('added')
 
         self.beadsdrawn += 1
 
@@ -1262,7 +1265,7 @@ class BeadsExp(QWidget):
     def keyaction(self, key):
 
         if key in ['c', 'C']:
-            self.middle.setText('Click on the jar you want to choose or press \"M\" to go back')
+            self.middle.setText('Click on the jar you want to choose\nPress \"M\" to go back')
 
         elif key in ['m', 'M']:
 
@@ -1279,7 +1282,7 @@ class BeadsExp(QWidget):
 
         elif key in ['i', 'I']:
             self.inst += 1
-            self.middle.setText(self.person.get_instructions(self.instructions))
+            self.middle.setText(self.person.get_instructions(self.inst))
 
             if self.inst == 20:
 
