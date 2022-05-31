@@ -549,6 +549,7 @@ class ARTTExp(QWidget):
             self.left.setText(info[0])
 
             pixmap = 'assets/' + info[2]
+            print(pixmap)
             self.rightpic.setPixmap(QPixmap(pixmap))
             self.righttoptext.setText(info[1])
             self.rightbottomtext.setText('0')
@@ -1404,6 +1405,8 @@ class PBTExp(QWidget):
             self.middle.setPixmap(QPixmap())
 
             self.middle.setText(self.person.nextround(self.roundsdone))
+
+            self.trialsdone = 0
 
             if self.person.rounds == self.roundsdone:
 

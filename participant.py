@@ -39,9 +39,12 @@ class Participant(object):
 
     def set_settings(self, append):
 
-        self.df_settings.join(pd.DataFrame(
-            append, index=self.df_settings.index
-        ))
+        self.df_settings = self.df_settings.join(
+            pd.DataFrame(
+                append,
+                index=self.df_settings.index
+            )
+        )
 
     def set_performance(self, append):
         self.df_performance = pd.concat(
@@ -435,12 +438,12 @@ class CEDTParticipant(Participant):
 
 class ARTTParticipant(Participant):
 
-    def __init__(self, expid, trials, outdir, task, risklist, amblist, rewmin, rewmax, design):
+    def __init__(self, expid, trials, outdir, task, risklist, amblist, rewmin, rewmax, structure):
         super().__init__(expid, trials, outdir, task)
 
-        self.design = design
+        self.structure = structure
 
-        self.create_design()
+        self.create_structure()
 
         self.engine = self.create_artt_engine(self.task, risklist, amblist, rewmin, rewmax)
 
@@ -452,19 +455,23 @@ class ARTTParticipant(Participant):
                               'Ambiguous Probabilities': [amblist],
                               'Fixed Reward': [rewmin],
                               'Largest Reward': [rewmax],
-                              'Design': [design]
+                              'Design': [structure]
                               }
+
+        print(dict_simulsettings)
 
         self.set_settings(dict_simulsettings)
 
-    def create_design(self):
+        print(self.df_settings)
+
+    def create_structure(self):
         """
         If you want both gains and losses, then it creates a random order for gain and loss questions
         :return: Does not return a value, instead creates the class dictionaries and then calls set design text to make
         the first trial
         """
 
-        if self.design == 'Gains and Losses':
+        if self.structure == 'Gains and Losses':
 
             multnum = int(self.get_trials() / 2)
             gainlosscond = ['Gain', 'Loss']
@@ -509,25 +516,25 @@ class ARTTParticipant(Participant):
 
     def get_design_text(self):
 
-        if self.design == 'Gains and Losses':
+        if self.structure == 'Gains and Losses':
 
             self.state = self.order.pop()
 
             if self.state == 'Gain':
 
-                fixedstring = 'Win $' + str('{:.2f}'.format(self.design['r_fix'])) + 'for sure'
+                fixedstring = 'Win $' + str('{:.2f}'.format(self.design['r_fix'])) + ' for sure'
                 otherstring = 'Win $' + str('{:.2f}'.format(self.design['r_var']))
 
             else:
 
-                fixedstring = 'Lose $' + str('{:.2f}'.format(self.design['r_fix'])) + 'for sure'
+                fixedstring = 'Lose $' + str('{:.2f}'.format(self.design['r_fix'])) + ' for sure'
                 otherstring = 'Lose $' + str('{:.2f}'.format(self.design['r_var']))
 
-        elif self.design == 'Gains only':
+        elif self.structure == 'Gains only':
 
             self.state = 'Gain'
 
-            fixedstring = 'Win $' + str('{:.2f}'.format(self.design['r_fix'])) + 'for sure'
+            fixedstring = 'Win $' + str('{:.2f}'.format(self.design['r_fix'])) + ' for sure'
             otherstring = 'Win $' + str('{:.2f}'.format(self.design['r_var']))
 
         else:
@@ -537,13 +544,13 @@ class ARTTParticipant(Participant):
             fixedstring = 'Lose $' + str('{:.2f}'.format(self.design['r_fix'])) + ' for sure'
             otherstring = 'Lose $' + str('{:.2f}'.format(self.design['r_var']))
 
-        if self.design['a_var'] != 0:
+        if self.design['a_var'] == 0:
 
-            picstring = 'ARTT_risk_' + str(int(self.design['p_var'] * 100))
+            picstring = 'ARTT_risk_' + str(round(self.design['p_var'] * 100)) + '.bmp'
 
         else:
 
-            picstring = 'ARTT_ambig_' + str(int(self.design['a_var'] * 100))
+            picstring = 'ARTT_ambig_' + str(round(self.design['a_var'] * 100)) + '.bmp'
 
         return [fixedstring, otherstring, picstring]
 
@@ -559,6 +566,7 @@ class ARTTParticipant(Participant):
 
         df_simultrial = {
             'trial': [trial],
+            'cond': [self.state],
             'Proportion Ambiguous': float(self.design['a_var']),
             'Proportion Risky': [float(self.design['p_var'])],
             'Fixed Reward': [self.design['r_fix']],
@@ -1059,7 +1067,7 @@ class PBTParticipant(Participant):
     def __init__(self, expid, trials, outdir, task, rounds):
         super().__init__(expid, trials, outdir, task)
 
-        self.rounds = rounds
+        self.rounds = int(rounds)
         self.globallocal = random.choice(['Global', 'Local'])
         self.instructions = 0
 

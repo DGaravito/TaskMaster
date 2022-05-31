@@ -417,7 +417,7 @@ class CEDTSettings(Settings): # TODO Review CEDT for proper variables
         self.hide()
 
 
-class ARTTSettings(Settings):  # TODO Review ADOPy for required stuff - rework with pictures?
+class ARTTSettings(Settings):
 
     def __init__(self):
         super().__init__()
