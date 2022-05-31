@@ -905,7 +905,6 @@ class BeadsParticipant(Participant):
     def __init__(self, expid, rounds, outdir, task):
         super().__init__(expid, rounds, outdir, task)
 
-        self.rounds = rounds
         self.instructions = 0
 
         self.blue_jar = ['BeadsTask_BlueBead',
@@ -922,7 +921,7 @@ class BeadsParticipant(Participant):
 
     def nextround(self, completedround):
 
-        if completedround == self.rounds:
+        if completedround == self.get_trials():
 
             prompt = 'Thank you! This task is complete.'
 
@@ -940,13 +939,7 @@ class BeadsParticipant(Participant):
                 self.jarname = 'Red'
                 self.jar = self.red_jar
 
-            if completedround == 0:
-
-                prompt = ''
-
-            else:
-
-                prompt = 'Please let the researcher know you are ready'
+            prompt = ''
 
         return prompt
 
@@ -954,7 +947,7 @@ class BeadsParticipant(Participant):
 
         self.pic = random.choice(self.jar)
 
-        return [self.pic]
+        return self.pic
 
     def updateoutput(self, currentround, beadspicked, response=0, pick='None'):
         """
@@ -1019,11 +1012,12 @@ class BeadsParticipant(Participant):
 
             case 7:
 
-                inst = 'The beads the computer takes out will be shown\nto you one at a time at the top of the screen.'
+                inst = 'The bead the computer takes out will be shown\nto you one at a time in the middle of the' \
+                       ' screen.'
 
             case 8:
 
-                inst = 'If you want to see the computer pick another\nbeads, press the \"M\" key.'
+                inst = 'If you want to see the computer pick a bead,\npress the \"M\" key.'
 
             case 9:
 

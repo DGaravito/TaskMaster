@@ -1006,7 +1006,7 @@ class BeadsInventory(QDialog):
         all of the beads they have draw in that round.
         """
 
-    def __init__(self, list):
+    def __init__(self, beadlist):
         super().__init__()
 
         self.setWindowTitle('Beads you have drawn')
@@ -1014,47 +1014,24 @@ class BeadsInventory(QDialog):
         # Make  layout
         layout = QGridLayout()
 
-        one = QLabel().setPixmap(list[0])
-        two = QLabel().setPixmap(list[1])
-        three = QLabel().setPixmap(list[2])
-        four = QLabel().setPixmap(list[3])
-        five = QLabel().setPixmap(list[4])
-        six = QLabel().setPixmap(list[5])
-        seven = QLabel().setPixmap(list[6])
-        eight = QLabel().setPixmap(list[7])
-        nine = QLabel().setPixmap(list[8])
-        ten = QLabel().setPixmap(list[9])
-        eleven = QLabel().setPixmap(list[10])
-        twelve = QLabel().setPixmap(list[11])
-        thirteen = QLabel().setPixmap(list[12])
-        fourteen = QLabel().setPixmap(list[13])
-        fifteen = QLabel().setPixmap(list[14])
-        sixteen = QLabel().setPixmap(list[15])
-        seventeen = QLabel().setPixmap(list[16])
-        eighteen = QLabel().setPixmap(list[17])
-        nineteen = QLabel().setPixmap(list[18])
-        twenty = QLabel().setPixmap(list[19])
+        pixmaplist = []
 
-        layout.addWidget(one, 0, 0)
-        layout.addWidget(two, 0, 1)
-        layout.addWidget(three, 0, 2)
-        layout.addWidget(four, 0, 3)
-        layout.addWidget(five, 0, 4)
-        layout.addWidget(six, 1, 0)
-        layout.addWidget(seven, 1, 1)
-        layout.addWidget(eight, 1, 2)
-        layout.addWidget(nine, 1, 3)
-        layout.addWidget(ten, 1, 4)
-        layout.addWidget(eleven, 2, 0)
-        layout.addWidget(twelve, 2, 1)
-        layout.addWidget(thirteen, 2, 2)
-        layout.addWidget(fourteen, 2, 3)
-        layout.addWidget(fifteen, 2, 4)
-        layout.addWidget(sixteen, 3, 0)
-        layout.addWidget(seventeen, 3, 1)
-        layout.addWidget(eighteen, 3, 2)
-        layout.addWidget(nineteen, 3, 3)
-        layout.addWidget(twenty, 3, 4)
+        # add the assets folder
+
+        toassets = str(Path('.').resolve())
+        QDir.addSearchPath('assets', toassets)
+
+        for index, bead in enumerate(beadlist):
+            pixmaplist.append(QLabel(''))
+            pixmap = QPixmap(bead)
+            pixmaplist[index].setPixmap(pixmap.scaled(100, 100, Qt.AspectRatioMode.KeepAspectRatio))
+
+        # Make the grid for the inventory
+
+        for row in range(0, 4):
+
+            for column in range(0, 5):
+                layout.addWidget(pixmaplist[(column + (row * 5))], (0 + row), column)
 
         self.setLayout(layout)
 
@@ -1115,8 +1092,8 @@ class BeadsExp(QWidget):
         self.keyPressed.connect(self.keyaction)
 
         # Attach left and right to functions
-        self.left.mouseReleaseEvent = lambda: self.chosejar('Red')
-        self.right.mouseReleaseEvent = lambda: self.chosejar('Blue')
+        self.left.mousePressEvent = self.choseleftjar
+        self.right.mousePressEvent = self.choserightjar
 
     def elements(self):
 
@@ -1131,7 +1108,7 @@ class BeadsExp(QWidget):
 
         # Inventory button
         self.invbutton = QPushButton('Beads you\'ve drawn')
-        self.invbutton.clicked.connect(BeadsInventory.exec)
+        self.invbutton.clicked.connect(self.openinventory)
 
         # Instructions
         self.instructions = QLabel('Press \"M\" to draw a bead and \"C\" to choose a jar')
@@ -1187,6 +1164,9 @@ class BeadsExp(QWidget):
 
         self.setLayout(totallayout)
 
+    def keyPressEvent(self, keyevent):
+        self.keyPressed.emit(keyevent.text())
+
     def centerscreen(self):
 
         qr = self.frameGeometry()
@@ -1195,8 +1175,21 @@ class BeadsExp(QWidget):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-    def keyPressEvent(self, keyevent):
-        self.keyPressed.emit(keyevent.text())
+    def choseleftjar(self, event):
+
+        self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Red')
+        self.jitter()
+
+    def choserightjar(self, event):
+
+        self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Blue')
+        self.jitter()
+
+    def openinventory(self):
+
+        window = BeadsInventory(self.beadlist)
+
+        window.exec()
 
     def jitter(self):
 
@@ -1210,8 +1203,13 @@ class BeadsExp(QWidget):
 
         self.jittertimer.stop()
         self.middle.setText(self.person.nextround(self.roundsdone))
-        self.roundsdone += 1
-        self.starttimer.start(500)
+
+        if self.roundsdone < self.person.get_trials():
+            self.roundsdone += 1
+            self.starttimer.start(500)
+
+        else:
+            self.person.output()
 
     def startround(self):
 
@@ -1249,18 +1247,15 @@ class BeadsExp(QWidget):
 
     def drawbead(self):
 
-        newbead = 'assets/' + self.person.get_bead()
+        newbead = 'assets/' + self.person.get_bead() + '.png'
 
         self.beadlist[self.beadsdrawn] = newbead
-        print('added')
+
+        self.middle.setPixmap(QPixmap(newbead))
 
         self.beadsdrawn += 1
 
         self.person.updateoutput(self.roundsdone, self.beadsdrawn)
-
-    def chosejar(self, choice):
-
-        self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, choice)
 
     def keyaction(self, key):
 
