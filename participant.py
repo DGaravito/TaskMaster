@@ -458,11 +458,7 @@ class ARTTParticipant(Participant):
                               'Design': [structure]
                               }
 
-        print(dict_simulsettings)
-
         self.set_settings(dict_simulsettings)
-
-        print(self.df_settings)
 
     def create_structure(self):
         """
