@@ -579,6 +579,90 @@ class ARTTParticipant(Participant):
         df_simultrial = pd.DataFrame(data=df_simultrial)
         self.set_performance(df_simultrial)
 
+    def get_instructions(self, instint):
+        """
+        Takes in an int and returns the appropriate instructions string
+        :param instint: an int that is supplied and incremented by the gui
+        :return: a string containing the appropriate instructions that the gui puts up
+        """
+
+        match instint:
+
+            case 1:
+
+                inst = 'You are participating in a study about decision making\nand will be asked to make a number' \
+                       ' of choices.'
+
+            case 2:
+
+                inst = 'You have $25 in starting money. Your final payment\nwill depend on the choices you make ' \
+                       'in this task.'
+
+            case 3:
+
+                inst = 'In this task, you will see images that show gambles.'
+
+            case 4:
+
+                inst = 'Each gamble represents a bag of red and blue poker\nchips. Continue to see an example.'
+
+            case 6:
+
+                inst = 'The size of the colored areas represent the number\nof chips of each color in the bag. In ' \
+                       'the example, 25 chips\nare blue and 75 chips are red.'
+
+            case 7:
+
+                inst = 'Next to each color is a dollar amount. This amount\nrepresents how much you will win or' \
+                       ' lose if that color\nof chip is drawn.'
+
+            case 7:
+
+                inst = 'On that test, I will show you the first word\nof each pair, and you will try to recall the' \
+                       ' second word that\ngoes with it.'
+
+            case 8:
+
+                inst = 'For example, if one of the word pairs was\nSANDWICH-SHOES, I would show you the word' \
+                       ' SANDWICH, and\nyou would try to recall SHOES.'
+
+            case 9:
+
+                inst = 'If you can’t recall a word after 5 seconds,\nwe will move on to the next pair. All pairs will' \
+                       ' be tested in a\nrandom order.'
+
+            case 10:
+
+                inst = 'We will continue like this until your memory\nfor all word pairs has been tested.'
+
+            case 11:
+
+                inst = 'After the first test, we will do a second test\nthat is just like the first.'
+
+            case 12:
+
+                inst = 'That is, I will show you the first word of each\npair again, and you will try to recall' \
+                       ' the second word that\ngoes with it.'
+
+            case 13:
+
+                inst = 'After this second memory test, we will study\nthe 30 word pairs again.'
+
+            case 14:
+
+                inst = 'After I have shown you all 30 word pairs, we will do\nanother memory test that is just like' \
+                       ' the first 2 tests.'
+
+            case 15:
+
+                inst = 'After that memory test, we will study the 30 word\npairs one more time before having a'
+
+            case _:
+
+                inst = 'Let the experimenter know you are ready.'
+
+        return inst
+
 
 class RAParticipant(Participant):
 
@@ -986,6 +1070,12 @@ class BeadsParticipant(Participant):
 
     def get_instructions(self, instint):
 
+        """
+        Takes in an int and returns the appropriate instructions string
+        :param instint: an int that is supplied and incremented by the gui
+        :return: a string containing the appropriate instructions that the gui puts up
+        """
+
         match instint:
 
             case 1:
@@ -1174,6 +1264,13 @@ class PBTParticipant(Participant):
         self.set_performance(df_simultrial)
 
     def get_instructions(self, block_type, instint):
+        """
+        Takes in an int and returns the appropriate instructions string
+        :param block_type: a string that indicates whether the upcoming block is a global or local one so that the
+        instructions match
+        :param instint: an int that is supplied and incremented by the gui
+        :return: a string containing the appropriate instructions that the gui puts up
+        """
 
         if instint <= 2:
 
@@ -1362,6 +1459,90 @@ class PrParticipant(Participant):
         df_simultrial = pd.DataFrame(data=self.expwordpairs)
 
         self.set_performance(df_simultrial)
+
+    def get_instructions(self, instint):
+        """
+        Takes in an int and returns the appropriate instructions string
+        :param instint: an int that is supplied and incremented by the gui
+        :return: a string containing the appropriate instructions that the gui puts up
+        """
+
+        match instint:
+
+            case 1:
+
+                inst = 'We are going to do memory tasks that involve\nremembering pairs of familiar words.'
+
+            case 2:
+
+                inst = 'I will show you a list of word pairs, and you will\nattempt to recall one of the words in' \
+                       ' each pair.'
+
+            case 3:
+
+                inst = 'On the screen, I will show you pairs of words.'
+
+            case 4:
+
+                inst = 'I will show you the pairs of words one at a time,\nat rate of 4 seconds per pair, and I will' \
+                       ' read the words aloud\nas they appear on the screen.'
+
+            case 5:
+
+                inst = 'Your task is to try to remember as many of the\nword pairs as you can, for a later memory' \
+                       ' test.'
+
+            case 6:
+
+                inst = 'After I have shown you all word pairs, we will\ndo the first memory test.'
+
+            case 7:
+
+                inst = 'On that test, I will show you the first word\nof each pair, and you will try to recall the' \
+                       ' second word that\ngoes with it.'
+
+            case 8:
+
+                inst = 'For example, if one of the word pairs was\nSANDWICH-SHOES, I would show you the word' \
+                       ' SANDWICH, and\nyou would try to recall SHOES.'
+
+            case 9:
+
+                inst = 'If you can’t recall a word after 5 seconds,\nwe will move on to the next pair. All pairs will' \
+                       ' be tested in a\nrandom order.'
+
+            case 10:
+
+                inst = 'We will continue like this until your memory\nfor all word pairs has been tested.'
+
+            case 11:
+
+                inst = 'After the first test, we will do a second test\nthat is just like the first.'
+
+            case 12:
+
+                inst = 'That is, I will show you the first word of each\npair again, and you will try to recall' \
+                       ' the second word that\ngoes with it.'
+
+            case 13:
+
+                inst = 'After this second memory test, we will study\nthe 30 word pairs again.'
+
+            case 14:
+
+                inst = 'After I have shown you all 30 word pairs, we will do\nanother memory test that is just like' \
+                       ' the first 2 tests.'
+
+            case 15:
+
+                inst = 'After that memory test, we will study the 30 word\npairs one more time before having a' \
+                       'final memory test.'
+
+            case _:
+
+                inst = 'Let the experimenter know you are ready.'
+
+        return inst
 
 
 class NbParticipant(Participant):

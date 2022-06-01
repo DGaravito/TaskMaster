@@ -409,6 +409,7 @@ class ARTTExp(QWidget):
         self.response = 0
         self.person = person
         self.trialsdone = 0
+        self.inst = 0
 
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
@@ -614,6 +615,13 @@ class ARTTExp(QWidget):
 
         elif key in ['g', 'G']:
             self.generatenext()
+
+        elif key in ['i', 'I']:
+            self.inst += 1
+            self.middle.setText(self.person.get_instructions(self.inst))
+
+            if self.inst == 20:
+                self.inst = 0
 
 
 class RAExp(QWidget):
@@ -1027,7 +1035,7 @@ class BeadsConfidence(QDialog):
 
         slider = QSlider()
         slider.setMinimum(1)
-        slider.setMaximum(5)
+        slider.setMaximum(10)
         slider.setTickInterval(1)
         slider.setSingleStep(1)
         slider.setTickPosition(QSlider.TickPosition.TicksBothSides)
@@ -1046,9 +1054,9 @@ class BeadsConfidence(QDialog):
 
         # Arrange slider and labels
 
-        sliderlayout.addWidget(slider, 0, 0, 1, 5)
+        sliderlayout.addWidget(slider, 0, 0, 1, 10)
         sliderlayout.addWidget(lowlabel, 1, 0, 1, 1)
-        sliderlayout.addWidget(highlabel, 1, 4, 1, 1)
+        sliderlayout.addWidget(highlabel, 1, 9, 1, 1)
 
         layout.addLayout(sliderlayout)
 
@@ -1359,7 +1367,6 @@ class BeadsExp(QWidget):
             self.middle.setText(self.person.get_instructions(self.inst))
 
             if self.inst == 20:
-
                 self.inst = 0
 
 
@@ -1565,6 +1572,9 @@ class PBTExp(QWidget):
             else:
                 self.middle.setText(self.person.get_instructions(self.person.globallocal, self.inst))
 
+            if self.inst == 11:
+                self.inst = 0
+
 
 class PrExp(QWidget):
     keyPressed = pyqtSignal(str)
@@ -1574,6 +1584,7 @@ class PrExp(QWidget):
 
         self.person = person
         self.trialsdone = 0
+        self.inst = 0
 
         self.structure = self.person.structure
 
@@ -1627,7 +1638,7 @@ class PrExp(QWidget):
         self.right = QLabel('')
         self.right.setFont(QFont('Helvetica', 40))
 
-        self.middle = QLabel('Please let the researcher know you are ready')
+        self.middle = QLabel('Press \"I\"')
         self.middle.setFont(QFont('Helvetica', 30))
 
         # Put Left and Right options in horizontal layout
@@ -1741,6 +1752,15 @@ class PrExp(QWidget):
 
         if key in ['g', 'G']:
             self.generatenext()
+
+        if key in ['i', 'I']:
+
+            self.inst += 1
+            self.middle.setText(self.person.get_instructions(self.inst))
+
+            if self.inst == 16:
+
+                self.inst = 0
 
 
 class NbExp(QWidget):
