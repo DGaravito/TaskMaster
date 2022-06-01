@@ -951,13 +951,14 @@ class BeadsParticipant(Participant):
 
         return self.pic
 
-    def updateoutput(self, currentround, beadspicked, response=0, pick='None'):
+    def updateoutput(self, currentround, beadspicked, response=0, pick='None', conf=0):
         """
         updates the performance dataframe for each trial, and if they chose to pick a jar, were they correct
         :param currentround: the number of the current round
         :param beadspicked: the number of the trial that was just completed
         :param response: integer with either 0 or 1 depending on if the person chose to draw a bead or pick a jar
         :param pick: if they picked a jar, what jar did they pick
+        :param conf: if they picked a jar, how confident were they
         :return: updates the performance dataframe in the superclass
         """
 
@@ -975,6 +976,7 @@ class BeadsParticipant(Participant):
             'last bead': [self.pic],
             'response': [response],
             'jar picked': [pick],
+            'confidence': [conf],
             'correct': [correct]
         }
 
@@ -982,9 +984,9 @@ class BeadsParticipant(Participant):
 
         self.set_performance(df_simultrial)
 
-    def get_instructions(self, instruction):
+    def get_instructions(self, instint):
 
-        match instruction:
+        match instint:
 
             case 1:
 

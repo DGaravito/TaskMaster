@@ -2,7 +2,7 @@ import time
 from pathlib import Path
 
 from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QProgressBar,\
-    QDialog, QGridLayout
+    QDialog, QGridLayout, QSlider
 from PyQt6.QtGui import QFont, QPixmap
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QDir
 
@@ -1000,6 +1000,74 @@ class FrameExp(QWidget):
             self.jitter()
 
 
+class BeadsConfidence(QDialog):
+    """
+        This is a popup window that allows for user input to indicate confidence in their jar choice for the bead task.
+    """
+
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle('Confidence Rating')
+
+        # Make  layout
+        layout = QVBoxLayout()
+
+        # add instructions
+
+        instructions = QLabel('How confident were you in your choice?')
+        instructions.setFont(QFont('Helvetica', 25))
+        layout.addWidget(instructions)
+
+        # add slider
+
+        self.output = 0
+
+        sliderlayout = QGridLayout()
+
+        slider = QSlider()
+        slider.setMinimum(1)
+        slider.setMaximum(5)
+        slider.setTickInterval(1)
+        slider.setSingleStep(1)
+        slider.setTickPosition(QSlider.TickPosition.TicksBothSides)
+        slider.setValue(1)
+        slider.setOrientation(Qt.Orientation.Horizontal)
+        slider.setContentsMargins(10, 10, 10, 10)
+
+        # Add slider labels
+
+        lowlabel = QLabel('Not Confident')
+        lowlabel.setFont(QFont('Helvetica', 15))
+        lowlabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        highlabel = QLabel('Very Confident')
+        highlabel.setFont(QFont('Helvetica', 15))
+        highlabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # Arrange slider and labels
+
+        sliderlayout.addWidget(slider, 0, 0, 1, 5)
+        sliderlayout.addWidget(lowlabel, 1, 0, 1, 1)
+        sliderlayout.addWidget(highlabel, 1, 4, 1, 1)
+
+        layout.addLayout(sliderlayout)
+
+        slider.valueChanged.connect(lambda: self.changeoutput(slider.value()))
+
+        # Add button
+
+        button = QPushButton('OK')
+        layout.addWidget(button)
+
+        # Add signals
+        button.clicked.connect(self.accept)
+
+        self.setLayout(layout)
+
+    def changeoutput(self, number):
+        self.output = number
+
+
 class BeadsInventory(QDialog):
     """
         This is a popup window that contains the participant's 'inventory' in the beads task. It has a grid layout of
@@ -1177,18 +1245,27 @@ class BeadsExp(QWidget):
 
     def choseleftjar(self, event):
 
-        self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Red')
+        window = BeadsConfidence()
+        window.exec()
+
+        conf = window.output
+
+        self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Red', conf)
         self.jitter()
 
     def choserightjar(self, event):
 
-        self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Blue')
+        window = BeadsConfidence()
+        window.exec()
+
+        conf = window.output
+
+        self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Blue', conf)
         self.jitter()
 
     def openinventory(self):
 
         window = BeadsInventory(self.beadlist)
-
         window.exec()
 
     def jitter(self):
@@ -1219,8 +1296,8 @@ class BeadsExp(QWidget):
         leftpixmap = QPixmap('assets/BeadsTask_RedJar.png')
         rightpixmap = QPixmap('assets/BeadsTask_BlueJar.png')
 
-        self.left.setPixmap(leftpixmap)
-        self.right.setPixmap(rightpixmap)
+        self.left.setPixmap(leftpixmap.scaledToWidth(300, Qt.TransformationMode.SmoothTransformation))
+        self.right.setPixmap(rightpixmap.scaledToWidth(300, Qt.TransformationMode.SmoothTransformation))
 
         self.beadsdrawn = 0
 
@@ -1251,7 +1328,9 @@ class BeadsExp(QWidget):
 
         self.beadlist[self.beadsdrawn] = newbead
 
-        self.middle.setPixmap(QPixmap(newbead))
+        pixmap = QPixmap(newbead)
+
+        self.middle.setPixmap(pixmap.scaled(100, 100, Qt.AspectRatioMode.KeepAspectRatio))
 
         self.beadsdrawn += 1
 
@@ -1485,7 +1564,6 @@ class PBTExp(QWidget):
 
             else:
                 self.middle.setText(self.person.get_instructions(self.person.globallocal, self.inst))
-
 
 
 class PrExp(QWidget):
