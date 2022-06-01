@@ -909,8 +909,6 @@ class BeadsParticipant(Participant):
     def __init__(self, expid, rounds, outdir, task):
         super().__init__(expid, rounds, outdir, task)
 
-        self.instructions = 0
-
         self.blue_jar = ['BeadsTask_BlueBead',
                          'BeadsTask_BlueBead',
                          'BeadsTask_BlueBead',
@@ -1065,7 +1063,6 @@ class PBTParticipant(Participant):
 
         self.rounds = int(rounds)
         self.globallocal = random.choice(['Global', 'Local'])
-        self.instructions = 0
 
         multnum = int(int(trials)/4)
         picturenames = ['PBT_DCC.BMP', 'PBT_DCS.BMP', 'PBT_DSC.BMP', 'PBT_DSS.BMP']
@@ -1104,7 +1101,7 @@ class PBTParticipant(Participant):
 
                     self.globallocal = 'Global'
 
-            prompt = 'Please let the researcher know you are ready'
+            prompt = 'Please wait for the researcher to read you the instructions'
 
         return prompt
 
@@ -1174,27 +1171,87 @@ class PBTParticipant(Participant):
 
         self.set_performance(df_simultrial)
 
-    def get_instructions(self, block_type, instruction):
+    def get_instructions(self, block_type, instint):
 
-        if block_type == 'Global':
+        if instint <= 2:
 
-            if instruction == 1:
+            match instint:
 
-                inst = 'pretend something is here about global stuff'
+                case 1:
 
-            else:
+                    inst = 'A large figure made of small pieces will be shown on\nevery trial.'
 
-                inst = 'pretend something else is here about global stuff'
+                case _:
+
+                    inst = 'For example, a large square made of small crosses.'
 
         else:
 
-            if instruction == 1:
+            if block_type == 'Global':
 
-                inst = 'pretend something is here about local stuff'
+                match instint:
+
+                    case 3:
+
+                        inst = 'Your task is to decide whether the LARGE figure\nis a square or cross.'
+
+                    case 4:
+
+                        inst = 'Ignore the small elements. Press \"M\" if the\nlarge figure is a SQUARE and \"C\" if' \
+                               ' the large figure\nis a CROSS.'
+
+                    case 5:
+
+                        inst = 'Continue for an example picture.'
+
+                    case 7:
+
+                        inst = 'There, the large figure was a SQUARE,\nso you would press \"M\".'
+
+                    case 8:
+
+                        inst = 'Continue for another example.'
+
+                    case 10:
+
+                        inst = 'There, the large figure was a CROSS,\nso you would press \"C\".'
+
+                    case _:
+
+                        inst = 'Please let the experimenter know\nwhen you are ready.'
 
             else:
 
-                inst = 'pretend something else is here about local stuff'
+                match instint:
+
+                    case 3:
+
+                        inst = 'Your task is to decide whether the SMALL figure\nis a square or cross.'
+
+                    case 4:
+
+                        inst = 'Ignore the small elements. Press \"M\" if the\nsmall figure is a SQUARE and \"C\" if' \
+                               ' the small figure\nis a CROSS.'
+
+                    case 5:
+
+                        inst = 'Continue for an example picture.'
+
+                    case 7:
+
+                        inst = 'There, the small figure was a CROSS,\nso you would press \"C\".'
+
+                    case 8:
+
+                        inst = 'Continue for another example.'
+
+                    case 10:
+
+                        inst = 'There, the small figure was a SQUARE,\nso you would press \"M\".'
+
+                    case _:
+
+                        inst = 'Please let the experimenter know\nwhen you are ready.'
 
         return inst
 

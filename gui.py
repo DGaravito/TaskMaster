@@ -549,7 +549,6 @@ class ARTTExp(QWidget):
             self.left.setText(info[0])
 
             pixmap = 'assets/' + info[2]
-            print(pixmap)
             self.rightpic.setPixmap(QPixmap(pixmap))
             self.righttoptext.setText(info[1])
             self.rightbottomtext.setText('0')
@@ -1294,6 +1293,7 @@ class PBTExp(QWidget):
         self.person = person
         self.trialsdone = 0
         self.roundsdone = 0
+        self.inst = 0
 
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
@@ -1316,6 +1316,9 @@ class PBTExp(QWidget):
 
         self.ititimer = QTimer()
         self.ititimer.timeout.connect(self.generatenext)
+
+        self.blankouttimer = QTimer()
+        self.blankouttimer.timeout.connect(self.blankout)
 
     def elements(self):
 
@@ -1390,11 +1393,13 @@ class PBTExp(QWidget):
 
             pixmap = QPixmap(pathstring)
 
-            self.middle.setPixmap(pixmap)
+            self.middle.setPixmap(pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
 
             self.starttime = time.time()
 
             self.timer.start(5000)
+
+            self.blankouttimer.start(250)
 
         else:
 
@@ -1419,6 +1424,12 @@ class PBTExp(QWidget):
 
         self.ititimer.start(500)
 
+    def blankout(self):
+
+        self.blankouttimer.stop()
+
+        self.middle.setPixmap(QPixmap())
+
     def timeout(self):
 
         self.timer.stop()
@@ -1435,7 +1446,7 @@ class PBTExp(QWidget):
         if key in ['g', 'G']:
 
             self.middle.setText('')
-
+            self.inst = 1
             self.iti()
 
         if key in ['m', 'M']:
@@ -1462,7 +1473,19 @@ class PBTExp(QWidget):
 
         if key in ['i', 'I']:
 
-            self.middle.setText(self.person.get_instructions(self.person.globallocal, self.person.instructions))
+            self.inst += 1
+
+            if self.inst == 6:
+                pixmap = QPixmap('assets/PBT_DSC.BMP')
+                self.middle.setPixmap(pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
+
+            elif self.inst == 9:
+                pixmap = QPixmap('assets/PBT_DCS.BMP')
+                self.middle.setPixmap(pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
+
+            else:
+                self.middle.setText(self.person.get_instructions(self.person.globallocal, self.inst))
+
 
 
 class PrExp(QWidget):
