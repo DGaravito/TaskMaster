@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QGridLay
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
 
-import settingsgui
+import settingsguis
 
 
 class SelectWindow(QWidget):
@@ -56,55 +56,59 @@ class SelectWindow(QWidget):
 
         # DD button
         self.ddbutton = QPushButton('DD (feat. ADOPy)')
-        self.ddbutton.clicked.connect(lambda: self.selection(1))
+        self.ddbutton.clicked.connect(lambda: self.selection('DD'))
 
         # PD button
         self.pdbutton = QPushButton('PD')
-        self.pdbutton.clicked.connect(lambda: self.selection(2))
+        self.pdbutton.clicked.connect(lambda: self.selection('PD'))
 
         # CEDT button
         self.cedtbutton = QPushButton('CEDT (WIP)')
-        self.cedtbutton.clicked.connect(lambda: self.selection(3))
+        self.cedtbutton.clicked.connect(lambda: self.selection('CEDT'))
 
         # ARTT button
         self.arttbutton = QPushButton('ARTT (feat. ADOPy)')
-        self.arttbutton.clicked.connect(lambda: self.selection(4))
+        self.arttbutton.clicked.connect(lambda: self.selection('ARTT'))
 
         # Risk Aversion button
         self.rabutton = QPushButton('RA')
-        self.rabutton.clicked.connect(lambda: self.selection(5))
+        self.rabutton.clicked.connect(lambda: self.selection('RA'))
 
         # Framing button
         self.framebutton = QPushButton('Framing')
-        self.framebutton.clicked.connect(lambda: self.selection(6))
+        self.framebutton.clicked.connect(lambda: self.selection('Framing'))
 
         # Beads Task button
         self.beadsbutton = QPushButton('Beads')
-        self.beadsbutton.clicked.connect(lambda: self.selection(7))
+        self.beadsbutton.clicked.connect(lambda: self.selection('Beads'))
 
         # PBT button
         self.pbtbutton = QPushButton('PBT')
-        self.pbtbutton.clicked.connect(lambda: self.selection(8))
+        self.pbtbutton.clicked.connect(lambda: self.selection('PBT'))
 
         # Negative Attentional Capture button
         self.nactbutton = QPushButton('NACT (WIP)')
-        self.nactbutton.clicked.connect(lambda: self.selection(9))
+        self.nactbutton.clicked.connect(lambda: self.selection('NACT'))
 
         # Stop Signal button
         self.ssbutton = QPushButton('Stop Signal (WIP)')
-        self.ssbutton.clicked.connect(lambda: self.selection(10))
+        self.ssbutton.clicked.connect(lambda: self.selection('SS'))
 
         # Emo Go-NoGo button
         self.egngbutton = QPushButton('Emo Go/No-Go (WIP)')
-        self.egngbutton.clicked.connect(lambda: self.selection(13))
+        self.egngbutton.clicked.connect(lambda: self.selection('EGNG'))
+
+        # Go-NoGo button
+        self.gngbutton = QPushButton('Go/No-Go (WIP)')
+        self.gngbutton.clicked.connect(lambda: self.selection('GNG'))
 
         # Paired Recall button
         self.prbutton = QPushButton('Paired Recall')
-        self.prbutton.clicked.connect(lambda: self.selection(11))
+        self.prbutton.clicked.connect(lambda: self.selection('PR'))
 
         # n Back button
         self.nbackbutton = QPushButton('n-Back')
-        self.nbackbutton.clicked.connect(lambda: self.selection(12))
+        self.nbackbutton.clicked.connect(lambda: self.selection('NB'))
 
         # Quit button
         self.quitbutton = QPushButton('Quit')
@@ -125,62 +129,64 @@ class SelectWindow(QWidget):
         layout.addWidget(self.nactbutton, 2, 2)
         layout.addWidget(self.ssbutton, 3, 0)
         layout.addWidget(self.egngbutton, 3, 1)
-        layout.addWidget(self.prbutton, 3, 2)
-        layout.addWidget(self.nbackbutton, 4, 0)
+        layout.addWidget(self.gngbutton, 3, 2)
+        layout.addWidget(self.prbutton, 4, 0)
+        layout.addWidget(self.nbackbutton, 4, 1)
         layout.addWidget(self.quitbutton, 5, 0, 1, 3)
 
         self.setLayout(layout)
 
-    def selection(self, choice):
+    def selection(self, choice=''):
         """
-        Takes the choice value (determined by what button the user picked) and loads up the appropriate settings window
-        :param choice: an integer corresponding to the button that the user clicked
-        :return: Hides the selection window and opens up the corresponding settings window
+        Takes the choice value (determined by what button the user picked) and loads up the appropriate settingsguis
+        window
+        :param choice: a string corresponding to the button that the user clicked
+        :return: Hides the selection window and opens up the corresponding settingsguis window
         """
 
         match choice:
 
-            case 1:
-                self.w = settingsgui.DdSettings()
+            case str('DD'):
+                self.w = settingsguis.discount.DdSettings()
 
-            case 2:
-                self.w = settingsgui.PdSettings()
+            case str('PD'):
+                self.w = settingsguis.discount.PdSettings()
 
-            case 3:
-                self.w = settingsgui.CEDTSettings()
+            case str('CEDT'):
+                self.w = settingsguis.discount.CEDTSettings()
 
-            case 4:
-                self.w = settingsgui.ARTTSettings()
+            case str('ARTT'):
+                self.w = settingsguis.gamble.ARTTSettings()
 
-            case 5:
-                self.w = settingsgui.RASettings()
+            case str('RA'):
+                self.w = settingsguis.gamble.RASettings()
 
-            case 6:
-                self.w = settingsgui.FrameSettings()
+            case str('Framing'):
+                self.w = settingsguis.gamble.FrameSettings()
 
-            case 7:
-                self.w = settingsgui.BeadsSettings()
+            case str('Beads'):
+                self.w = settingsguis.beads.BeadsSettings()
 
-            case 8:
-                self.w = settingsgui.PBTSettings()
+            case str('PBT'):
+                self.w = settingsguis.pbt.PBTSettings()
 
-            case 9:
-                self.w = settingsgui.NACTSettings()
+            case str('NACT'):
+                self.w = settingsguis.nact.NACTSettings()
 
-            case 10:
-                self.w = settingsgui.SSSettings()
+            case str('SS'):
+                self.w = settingsguis.reaction.SSSettings()
 
-            case 11:
-                self.w = settingsgui.PrSettings()
+            case str('PR'):
+                self.w = settingsguis.memory.PrSettings()
 
-            case 12:
-                self.w = settingsgui.NBackSettings()
+            case str('NB'):
+                self.w = settingsguis.memory.NBackSettings()
 
-            case 13:
-                self.w = settingsgui.EGNGSettings()
+            case str('EGNG'):
+                self.w = settingsguis.reaction.EGNGSettings()
 
             case _:
-                print("not sure how you got this...")
+                self.w = QLabel('Panic')
 
         self.w.show()
         self.hide()
@@ -188,10 +194,10 @@ class SelectWindow(QWidget):
 
 # Main function, which starts the application when called
 def main():
-    APP = QApplication([])
-    APP.setStyle('Fusion')
-    w = SelectWindow()
-    APP.exec()
+    app = QApplication([])
+    app.setStyle('Fusion')
+    SelectWindow()
+    app.exec()
 
 
 # Main loop
