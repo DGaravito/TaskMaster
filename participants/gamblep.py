@@ -120,7 +120,7 @@ class ARTTParticipant(participant.Participant):
 
             if bluered == 1:
 
-                picstring = 'ARTT_risk_' + str(1-round(self.design['p_var'] * 100)) + '.bmp'
+                picstring = 'ARTT_risk_' + str(100-round(self.design['p_var'] * 100)) + '.bmp'
 
             else:
 
@@ -200,8 +200,8 @@ class ARTTParticipant(participant.Participant):
 
             case 8:
 
-                inst = 'In half of the trials, the red color will be associated\nwith zero; in the other half, the' \
-                       ' blue color will be.'
+                inst = 'In around half of the trials, the red color will be associated\nwith zero; in the other half,' \
+                       ' the blue color will\nbe.'
 
             case 9:
 

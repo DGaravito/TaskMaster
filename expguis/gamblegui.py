@@ -79,12 +79,15 @@ class ARTTExp(QWidget):
 
         self.righttoptext = QLabel('')
         self.righttoptext.setFont(QFont('Helvetica', 40))
+        self.righttoptext.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.rightpic = QLabel()
         self.rightpic.setPixmap(QPixmap())
+        self.rightpic.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.rightbottomtext = QLabel('')
         self.rightbottomtext.setFont(QFont('Helvetica', 40))
+        self.rightbottomtext.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Put right option stuff in a vertical layout
 
@@ -238,11 +241,11 @@ class ARTTExp(QWidget):
 
             if self.inst == 5:
                 pixmap = QPixmap('assets/ARTT_risk_25.bmp')
-                self.middle.setPixmap(pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
+                self.middle.setPixmap(pixmap.scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
 
             elif self.inst == 11:
                 pixmap = QPixmap('assets/ARTT_ambig_50.bmp')
-                self.middle.setPixmap(pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
+                self.middle.setPixmap(pixmap.scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
 
             else:
                 self.middle.setText(self.person.get_instructions(self.inst))
