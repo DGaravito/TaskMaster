@@ -9,6 +9,7 @@ class DDiscountExp(QWidget):
     def __init__(self, person):
         super().__init__()
 
+        self.inst = 0
         self.response = 0
         self.person = person
         self.trialsdone = 0
@@ -187,6 +188,14 @@ class DDiscountExp(QWidget):
 
         elif key in ['g', 'G']:
             self.generatenext()
+
+        elif key in ['i', 'I']:
+            self.inst += 1
+
+            self.middle.setText(self.person.get_instructions(self.inst))
+
+            if self.inst == 5:
+                self.inst = 0
 
 
 class PDiscountExp(QWidget):

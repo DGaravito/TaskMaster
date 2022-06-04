@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QLabel, QSpinBox, QFormLayout, QVBoxLayout
+from PyQt6.QtWidgets import QLabel, QSpinBox, QFormLayout, QVBoxLayout, QComboBox
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
 
@@ -45,9 +45,17 @@ class SSSettings(settings.Settings):
 
         over_layout.addWidget(self.header)
 
-        # ST Trials input
+        # Trials input
         self.trialsin = QSpinBox()
-        self.trialsin.setSpecialValueText('3')
+        self.trialsin.setSpecialValueText('30')
+
+        # Reaction time input
+        self.maxrtin = QSpinBox()
+        self.maxrtin.setSpecialValueText('1500')
+
+        # Blocks input
+        self.blocksin = QSpinBox()
+        self.blocksin.setSpecialValueText('3')
 
         # Make form layout for all the settingsguis
         layout = QFormLayout()
@@ -55,6 +63,8 @@ class SSSettings(settings.Settings):
         layout.addRow(QLabel('Subject ID:'), self.idform)
         layout.addRow(QLabel('Number of trials:'), self.trialsin)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
+        layout.addRow(QLabel('Maximal reaction time (in milliseconds)?'), self.maxrtin)
+        layout.addRow(QLabel('Number of blocks?'), self.blocksin)
         layout.addRow(self.submit, self.quitbutton)
 
         # Add form layout to overarching layout
@@ -67,7 +77,9 @@ class SSSettings(settings.Settings):
         person = reactionp.SSParticipant(self.idform.text(),
                                          self.trialsin.text(),
                                          self.wdset.text(),
-                                         'Stop-Signal Task')
+                                         'Stop-Signal Task',
+                                         self.maxrtin.text(),
+                                         self.blocksin.text())
 
         self.exp = reactiongui.SSExp(person)
         self.exp.show()
@@ -111,9 +123,17 @@ class EGNGSettings(settings.Settings):
 
         over_layout.addWidget(self.header)
 
-        # ST Trials input
+        # Trials input
         self.trialsin = QSpinBox()
-        self.trialsin.setSpecialValueText('3')
+        self.trialsin.setSpecialValueText('30')
+
+        # Reaction time input
+        self.maxrtin = QSpinBox()
+        self.maxrtin.setSpecialValueText('1500')
+
+        # Blocks input
+        self.blocksin = QSpinBox()
+        self.blocksin.setSpecialValueText('3')
 
         # Make form layout for all the settingsguis
         layout = QFormLayout()
@@ -121,6 +141,8 @@ class EGNGSettings(settings.Settings):
         layout.addRow(QLabel('Subject ID:'), self.idform)
         layout.addRow(QLabel('Number of trials:'), self.trialsin)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
+        layout.addRow(QLabel('Maximal reaction time (in milliseconds)?'), self.maxrtin)
+        layout.addRow(QLabel('Number of blocks?'), self.blocksin)
         layout.addRow(self.submit, self.quitbutton)
 
         # Add form layout to overarching layout
@@ -133,7 +155,9 @@ class EGNGSettings(settings.Settings):
         person = reactionp.EGNGParticipant(self.idform.text(),
                                            self.trialsin.text(),
                                            self.wdset.text(),
-                                           'Emo Go/No-Go')
+                                           'Emo Go/No-Go',
+                                           self.maxrtin.text(),
+                                           self.blocksin.text())
 
         self.exp = reactiongui.EGNGExp(person)
         self.exp.show()

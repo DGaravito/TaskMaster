@@ -102,6 +102,37 @@ class DdParticipant(participant.Participant):
         df_simultrial = pd.DataFrame(data=df_simultrial)
         self.set_performance(df_simultrial)
 
+    def get_instructions(self, instint):
+        """
+        Takes in an int and returns the appropriate instructions string
+        :param instint: an int that is supplied and incremented by the expguis
+        :return: a string containing the appropriate instructions that the expguis puts up
+        """
+
+        match instint:
+
+            case 1:
+
+                inst = 'In this task, you will be making choices between\nreceiving pretend amounts of money either' \
+                       ' right now or\nsome time in the future.'
+
+            case 2:
+
+                inst = 'You will use the keyboard to make your choice\nbetween the pretend rewards shown on the ' \
+                       'left and\nright side of the screen.'
+
+            case 3:
+
+                inst = 'Even though these money rewards are pretend,\ntry to choose as if you were being offered ' \
+                       'these rewards\nfor real.'
+
+            case _:
+
+                inst = 'Let the experimenter know you are ready.'
+
+        return inst
+
+
 
 class PdParticipant(participant.Participant):
 

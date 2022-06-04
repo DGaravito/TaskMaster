@@ -85,7 +85,6 @@ class BeadsParticipant(participant.Participant):
         self.set_performance(df_simultrial)
 
     def get_instructions(self, instint):
-
         """
         Takes in an int and returns the appropriate instructions string
         :param instint: an int that is supplied and incremented by the expguis
