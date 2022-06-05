@@ -14,6 +14,14 @@ class DDiscountExp(QWidget):
         self.person = person
         self.trialsdone = 0
 
+        if self.person.buttonbox == 'Yes':
+            self.leftkey = ['1']
+            self.rightkey = ['2']
+
+        else:
+            self.leftkey = ['C', 'c']
+            self.rightkey = ['M', 'm']
+
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
@@ -53,7 +61,8 @@ class DDiscountExp(QWidget):
         self.quitbutton.setFixedHeight(20)
 
         # Instructions
-        self.instructions = QLabel('Press C for the left option and M for the right option')
+        self.instructions = QLabel('Press ' + self.leftkey[0] + ' for the left option and ' + self.rightkey[0]
+                                   + ' for the right option')
 
         # setting font style and size
         self.instructions.setFont(QFont('Helvetica', 25))
@@ -178,11 +187,11 @@ class DDiscountExp(QWidget):
 
         self.timerresponse.stop()
 
-        if key == 'c':
+        if key in self.leftkey:
             self.response = 0
             self.jitter()
 
-        elif key == 'm':
+        elif key in self.rightkey:
             self.response = 1
             self.jitter()
 
@@ -208,6 +217,14 @@ class PDiscountExp(QWidget):
         self.person = person
         self.trialsdone = 0
         self.inst = 0
+
+        if self.person.buttonbox == 'Yes':
+            self.leftkey = ['1']
+            self.rightkey = ['2']
+
+        else:
+            self.leftkey = ['C', 'c']
+            self.rightkey = ['M', 'm']
 
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
@@ -248,7 +265,8 @@ class PDiscountExp(QWidget):
         self.quitbutton.setFixedHeight(20)
 
         # Instructions
-        self.instructions = QLabel('Press C for the left option and M for the right option')
+        self.instructions = QLabel('Press ' + self.leftkey[0] + ' for the left option and ' + self.rightkey[0]
+                                   + ' for the right option')
 
         # setting font style and size
         self.instructions.setFont(QFont('Helvetica', 25))
@@ -394,11 +412,11 @@ class PDiscountExp(QWidget):
 
         self.timerresponse.stop()
 
-        if key == 'c':
+        if key in self.leftkey:
             self.response = 0
             self.jitter()
 
-        elif key == 'm':
+        elif key in self.rightkey:
             self.response = 1
             self.jitter()
 
@@ -424,6 +442,14 @@ class CEDiscountExp(QWidget):
         self.response = 0
         self.person = person
         self.trialsdone = 0
+
+        if self.person.buttonbox == 'Yes':
+            self.leftkey = ['1']
+            self.rightkey = ['2']
+
+        else:
+            self.leftkey = ['C', 'c']
+            self.rightkey = ['M', 'm']
 
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
@@ -464,7 +490,8 @@ class CEDiscountExp(QWidget):
         self.quitbutton.setFixedHeight(20)
 
         # Instructions
-        self.instructions = QLabel('Press C for the left option and M for the right option')
+        self.instructions = QLabel('Press ' + self.leftkey[0] + ' for the left option and ' + self.rightkey[0]
+                                   + ' for the right option')
 
         # setting font style and size
         self.instructions.setFont(QFont('Helvetica', 25))
@@ -589,11 +616,11 @@ class CEDiscountExp(QWidget):
 
         self.timerresponse.stop()
 
-        if key == 'c':
+        if key in self.leftkey:
             self.response = 0
             self.jitter()
 
-        elif key == 'm':
+        elif key in self.rightkey:
             self.response = 1
             self.jitter()
 

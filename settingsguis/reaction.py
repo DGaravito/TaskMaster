@@ -19,9 +19,6 @@ class SSSettings(settings.Settings):
         # center window
         self.centerscreen()
 
-        # STT default
-        self.stt = 0
-
         # Add in elements
         self.elements()
 
@@ -64,6 +61,7 @@ class SSSettings(settings.Settings):
         layout.addRow(QLabel('Number of trials:'), self.trialsin)
         layout.addRow(QLabel('Maximal reaction time (in milliseconds)?'), self.maxrtin)
         layout.addRow(QLabel('Number of blocks?'), self.blocksin)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?:'), self.buttonbox)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
@@ -72,6 +70,13 @@ class SSSettings(settings.Settings):
 
         self.setLayout(over_layout)
 
+    def clickbox(self):
+
+        if self.buttonbox.isChecked():
+            self.buttonboxstate = 'Yes'
+        else:
+            self.buttonboxstate = 'No'
+
     def submitsettings(self):
 
         person = reactionp.SSParticipant(self.idform.text(),
@@ -79,7 +84,8 @@ class SSSettings(settings.Settings):
                                          self.wdset.text(),
                                          'Stop-Signal Task',
                                          self.maxrtin.text(),
-                                         self.blocksin.text())
+                                         self.blocksin.text(),
+                                         self.buttonboxstate)
 
         self.exp = reactiongui.SSExp(person)
         self.exp.show()
@@ -96,9 +102,6 @@ class EGNGSettings(settings.Settings):
 
         # center window
         self.centerscreen()
-
-        # STT default
-        self.stt = 0
 
         # Add in elements
         self.elements()
@@ -157,7 +160,8 @@ class EGNGSettings(settings.Settings):
                                            self.wdset.text(),
                                            'Emo Go/No-Go',
                                            self.maxrtin.text(),
-                                           self.blocksin.text())
+                                           self.blocksin.text(),
+                                           self.buttonboxstate)
 
         self.exp = reactiongui.EGNGExp(person)
         self.exp.show()

@@ -201,6 +201,14 @@ class NbExp(QWidget):
         self.roundsdone = 0
         self.inst = 0
 
+        if self.person.buttonbox == 'Yes':
+            self.leftkey = ['1']
+            self.rightkey = ['2']
+
+        else:
+            self.leftkey = ['C', 'c']
+            self.rightkey = ['M', 'm']
+
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
@@ -232,7 +240,8 @@ class NbExp(QWidget):
         self.quitbutton.setFixedHeight(20)
 
         # Instructions
-        self.instructions = QLabel('Press C if the letter is a false alarm. Press M if the letter is a target')
+        self.instructions = QLabel('Press ' + self.leftkey[0] + ' if the letter is a false alarm. Press ' +
+                                   self.rightkey[0] + ' if the letter is a target')
 
         # setting font style and size
         self.instructions.setFont(QFont('Helvetica', 25))
@@ -314,16 +323,17 @@ class NbExp(QWidget):
 
             self.generatenext()
 
-            self.instructions.setText('Press C if the letter is a false alarm. Press M if the letter is a target')
+            self.instructions.setText('Press ' + self.leftkey[0] + ' if the letter is a false alarm. Press ' +
+                                      self.rightkey[0] + ' if the letter is a target')
 
-        if key in ['m', 'M']:
+        if key in self.rightkey:
 
             self.timer.stop()
             self.trialsdone += 1
             self.person.updateoutput(self.trialsdone, 1)
             self.generatenext()
 
-        if key in ['c', 'C']:
+        if key in self.leftkey:
 
             self.timer.stop()
             self.trialsdone += 1

@@ -19,9 +19,6 @@ class PBTSettings(settings.Settings):
         # center window
         self.centerscreen()
 
-        # STT default
-        self.stt = 0
-
         # Add in elements
         self.elements()
 
@@ -59,6 +56,7 @@ class PBTSettings(settings.Settings):
         layout.addRow(QLabel('Subject ID:'), self.idform)
         layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         layout.addRow(QLabel('Number of trials per block (make sure it\'s divisible by 4):'), self.trialsin)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?:'), self.buttonbox)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
@@ -66,6 +64,13 @@ class PBTSettings(settings.Settings):
         over_layout.addLayout(layout)
 
         self.setLayout(over_layout)
+
+    def clickbox(self):
+
+        if self.buttonbox.isChecked():
+            self.buttonboxstate = 'Yes'
+        else:
+            self.buttonboxstate = 'No'
 
     def submitsettings(self):
 
@@ -75,7 +80,8 @@ class PBTSettings(settings.Settings):
                                          self.trialsin.text(),
                                          self.wdset.text(),
                                          'Perceptual Bias Task',
-                                         self.blocksin.text())
+                                         self.blocksin.text(),
+                                         self.buttonboxstate)
 
             self.exp = pbtgui.PBTExp(person)
             self.exp.show()

@@ -17,6 +17,14 @@ class PBTExp(QWidget):
         self.roundsdone = 0
         self.inst = 0
 
+        if self.person.buttonbox == 'Yes':
+            self.leftkey = ['1']
+            self.rightkey = ['2']
+
+        else:
+            self.leftkey = ['C', 'c']
+            self.rightkey = ['M', 'm']
+
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
@@ -54,7 +62,8 @@ class PBTExp(QWidget):
         self.quitbutton.setFixedHeight(20)
 
         # Instructions
-        self.instructions = QLabel('Press C for crosses. Press M for squares.')
+        self.instructions = QLabel('Press ' + self.leftkey[0] + ' for crosses. Press ' + self.rightkey[0] +
+                                   ' for squares.')
 
         # setting font style and size
         self.instructions.setFont(QFont('Helvetica', 25))
@@ -171,7 +180,7 @@ class PBTExp(QWidget):
             self.inst = 1
             self.iti()
 
-        if key in ['m', 'M']:
+        if key in self.rightkey:
 
             self.timer.stop()
             self.trialsdone += 1
@@ -182,7 +191,7 @@ class PBTExp(QWidget):
             self.person.updateoutput(self.trialsdone, self.picstring, rt, 'Square')
             self.iti()
 
-        if key in ['c', 'C']:
+        if key in self.leftkey:
 
             self.timer.stop()
             self.trialsdone += 1

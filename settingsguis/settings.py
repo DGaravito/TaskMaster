@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton,  QLineEdit, QVBoxLayout, QDialog
+from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton,  QLineEdit, QVBoxLayout, QDialog, QCheckBox
 from PyQt6.QtCore import Qt
 
 from os import path
@@ -23,10 +23,10 @@ class WDErrorBox(QDialog):
         self.mainerror = QLabel('It looks like you entered an invalid directory!')
         self.mainerror.setStyleSheet('padding :5px')
 
-        self.windowsex = QLabel('Windows example: \'C:\\Users\\dgara\\desktop\'')
+        self.windowsex = QLabel('Windows example: \'C:/Users/dgara/desktop\'')
         self.windowsex.setStyleSheet('padding :5px')
 
-        self.macex = QLabel('Mac example: \'Users\\DGaravito\\desktop\'')
+        self.macex = QLabel('Mac example: \'Users/DGara/desktop\'')
         self.macex.setStyleSheet('padding :5px')
 
         # Add stuff to overarching layout
@@ -102,6 +102,12 @@ class Settings(QWidget):
         # setting the minimum window size
         self.setMinimumSize(500, 350)
 
+        # Defaults for various tasks
+        self.buttonboxstate = 'No'
+        self.outcome = 'No'
+        self.ftt = 'No'
+        self.stt = 0
+
         # center window
         self.centerscreen()
 
@@ -113,6 +119,10 @@ class Settings(QWidget):
         # ID form
         self.idform = QLineEdit()
         self.idform.setText('9999')
+
+        # Button check
+        self.buttonbox = QCheckBox()
+        self.buttonbox.stateChanged.connect(self.clickbox)
 
         # WD input
         self.wdset = QLineEdit()
@@ -128,6 +138,10 @@ class Settings(QWidget):
 
         qr.moveCenter(cp)
         self.move(qr.topLeft())
+
+    def clickbox(self):
+
+        print('if you see this, panic')
 
     def checksettings(self):
 

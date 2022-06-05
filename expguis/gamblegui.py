@@ -1,3 +1,4 @@
+import random
 from pathlib import Path
 
 from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QProgressBar
@@ -15,6 +16,14 @@ class ARTTExp(QWidget):
         self.person = person
         self.trialsdone = 0
         self.inst = 0
+
+        if self.person.buttonbox == 'Yes':
+            self.leftkey = ['1']
+            self.rightkey = ['2']
+
+        else:
+            self.leftkey = ['C', 'c']
+            self.rightkey = ['M', 'm']
 
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
@@ -60,7 +69,8 @@ class ARTTExp(QWidget):
         self.quitbutton.setFixedHeight(20)
 
         # Instructions
-        self.instructions = QLabel('Press C for the left option and M for the right option')
+        self.instructions = QLabel('Press ' + self.leftkey[0] + ' for the left option and ' + self.rightkey[0]
+                                   + ' for the right option')
 
         # setting font style and size
         self.instructions.setFont(QFont('Helvetica', 25))
@@ -183,7 +193,14 @@ class ARTTExp(QWidget):
             self.righttoptext.setText('')
 
             self.instructions.setText('Thank you!')
-            self.middle.setText('You may now quit the application.')
+
+            if self.person.outcomeopt == 'Yes':
+
+                outcome = random.choice(self.person.outcomelist)
+                self.middle.setText('Your outcome: ' + outcome)
+
+            else:
+                self.middle.setText('You may now quit the application.')
 
     def timerwarning(self):
 
@@ -225,11 +242,11 @@ class ARTTExp(QWidget):
 
         self.timerresponse.stop()
 
-        if key == 'c':
+        if key in self.leftkey:
             self.response = 0
             self.jitter()
 
-        elif key == 'm':
+        elif key in self.rightkey:
             self.response = 1
             self.jitter()
 
@@ -264,6 +281,14 @@ class RAExp(QWidget):
         self.person = person
         self.trialsdone = 0
         self.inst = 0
+
+        if self.person.buttonbox == 'Yes':
+            self.leftkey = ['1']
+            self.rightkey = ['2']
+
+        else:
+            self.leftkey = ['C', 'c']
+            self.rightkey = ['M', 'm']
 
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
@@ -304,7 +329,8 @@ class RAExp(QWidget):
         self.quitbutton.setFixedHeight(20)
 
         # Instructions
-        self.instructions = QLabel('Press C for the left option and M for the right option')
+        self.instructions = QLabel('Press ' + self.leftkey[0] + ' for the left option and ' + self.rightkey[0]
+                                   + ' for the right option')
 
         # setting font style and size
         self.instructions.setFont(QFont('Helvetica', 25))
@@ -402,7 +428,14 @@ class RAExp(QWidget):
             self.rightgain.setText('')
             self.rightloss.setText('')
             self.instructions.setText('Thank you!')
-            self.middle.setText('You may now quit the application.')
+
+            if self.person.outcomeopt == 'Yes':
+
+                outcome = random.choice(self.person.outcomelist)
+                self.middle.setText('Your outcome: ' + outcome)
+
+            else:
+                self.middle.setText('You may now quit the application.')
 
     def timerwarning(self):
 
@@ -434,11 +467,11 @@ class RAExp(QWidget):
 
         self.timerresponse.stop()
 
-        if key in ['c', 'C']:
+        if key in self.leftkey:
             self.response = 0
             self.jitter()
 
-        elif key in ['m', 'M']:
+        elif key in self.rightkey:
             self.response = 1
             self.jitter()
 
@@ -464,6 +497,14 @@ class FrameExp(QWidget):
         self.person = person
         self.trialsdone = 0
         self.inst = 0
+
+        if self.person.buttonbox == 'Yes':
+            self.leftkey = ['1']
+            self.rightkey = ['2']
+
+        else:
+            self.leftkey = ['C', 'c']
+            self.rightkey = ['M', 'm']
 
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
@@ -504,7 +545,8 @@ class FrameExp(QWidget):
         self.quitbutton.setFixedHeight(20)
 
         # Instructions
-        self.instructions = QLabel('Press C for the left option and M for the right option')
+        self.instructions = QLabel('Press ' + self.leftkey[0] + ' for the left option and ' + self.rightkey[0]
+                                   + ' for the right option')
 
         # setting font style and size
         self.instructions.setFont(QFont('Helvetica', 25))
@@ -604,9 +646,16 @@ class FrameExp(QWidget):
             self.rightgain.setText('')
             self.rightloss.setText('')
 
+            if self.person.outcomeopt == 'Yes':
+
+                outcome = random.choice(self.person.outcomelist)
+                self.middle.setText('Your outcome: ' + outcome)
+
+            else:
+                self.middle.setText('You may now quit the application.')
 
             self.instructions.setText('Thank you!')
-            self.middle.setText('You may now quit the application.')
+
 
     def timerwarning(self):
 
@@ -638,11 +687,11 @@ class FrameExp(QWidget):
 
         self.timerresponse.stop()
 
-        if key in ['c', 'C']:
+        if key in self.leftkey:
             self.response = 0
             self.jitter()
 
-        elif key in ['m', 'M']:
+        elif key in self.rightkey:
             self.response = 1
             self.jitter()
 

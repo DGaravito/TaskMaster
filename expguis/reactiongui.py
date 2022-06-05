@@ -19,6 +19,14 @@ class SSExp(QWidget):
         self.inst = 0
         self.signal = False
 
+        if self.person.buttonbox == 'Yes':
+            self.leftkey = ['1']
+            self.rightkey = ['2']
+
+        else:
+            self.leftkey = ['C', 'c']
+            self.rightkey = ['M', 'm']
+
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
@@ -56,7 +64,8 @@ class SSExp(QWidget):
         self.quitbutton.setFixedHeight(20)
 
         # Instructions
-        self.instructions = QLabel('Press C for crosses. Press M for squares.')
+        self.instructions = QLabel('Press ' + self.leftkey[0] + ' for crosses. Press ' + self.rightkey[0] +
+                                   ' for squares.')
 
         # setting font style and size
         self.instructions.setFont(QFont('Helvetica', 25))
@@ -183,7 +192,6 @@ class SSExp(QWidget):
 
         self.middle.setPixmap(pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
 
-
     def keyaction(self, key):
 
         if key in ['g', 'G']:
@@ -192,7 +200,7 @@ class SSExp(QWidget):
             self.inst = 1
             self.iti()
 
-        if key in ['m', 'M']:
+        if key in self.rightkey:
 
             self.timer.stop()
             self.signaltimer.stop()
@@ -204,7 +212,7 @@ class SSExp(QWidget):
             self.person.updateoutput(self.trialsdone, self.picstring, rt, 2)
             self.iti()
 
-        if key in ['c', 'C']:
+        if key in self.leftkey:
 
             self.timer.stop()
             self.signaltimer.stop()

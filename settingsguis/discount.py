@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QLabel, QSpinBox, QFormLayout, QVBoxLayout, QComboBox
+from PyQt6.QtWidgets import QLabel, QSpinBox, QFormLayout, QVBoxLayout, QComboBox, QCheckBox
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
 
@@ -77,6 +77,7 @@ class DdSettings(settings.Settings):
         layout.addRow(QLabel('Longest delay in delayed option (weeks):'), self.ldin)
         layout.addRow(QLabel('Smallest reward in immediate option:'), self.ssrewin)
         layout.addRow(QLabel('Biggest reward in delayed option:'), self.llrewin)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?:'), self.buttonbox)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
@@ -84,6 +85,13 @@ class DdSettings(settings.Settings):
         over_layout.addLayout(layout)
 
         self.setLayout(over_layout)
+
+    def clickbox(self):
+
+        if self.buttonbox.isChecked():
+            self.buttonboxstate = 'Yes'
+        else:
+            self.buttonboxstate = 'No'
 
     def submitsettings(self):
         person = discountp.DdParticipant(self.idform.text(),
@@ -94,7 +102,8 @@ class DdSettings(settings.Settings):
                                          self.sdin.text(),
                                          self.ldin.text(),
                                          self.ssrewin.text(),
-                                         self.llrewin.text())
+                                         self.llrewin.text(),
+                                         self.buttonboxstate)
 
         self.exp = discountgui.DDiscountExp(person)
         self.exp.show()
@@ -151,6 +160,14 @@ class PdSettings(settings.Settings):
         self.design = QComboBox()
         self.design.addItems(['Gains only', 'Losses only', 'Gains and Losses'])
 
+        # checkbox for getting a random reward/loss
+        self.outcometoggle = QCheckBox('', self)
+        self.outcometoggle.stateChanged.connect(self.clickbox)
+
+        # Starting money input
+        self.smoneyin = QSpinBox()
+        self.smoneyin.setSpecialValueText('25')
+
         # Make form layout for all the settingsguis
         layout = QFormLayout()
 
@@ -159,6 +176,9 @@ class PdSettings(settings.Settings):
         layout.addRow(QLabel('Smallest amount of money:'), self.rewmin)
         layout.addRow(QLabel('Biggest amount of money:'), self.rewmax)
         layout.addRow(QLabel('What type of questions do you want?:'), self.design)
+        layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
+        layout.addRow(QLabel('How much participant starting money (only used if above is checked):'), self.smoneyin)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?:'), self.buttonbox)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
@@ -167,6 +187,18 @@ class PdSettings(settings.Settings):
 
         self.setLayout(over_layout)
 
+    def clickbox(self):
+
+        if self.buttonbox.isChecked():
+            self.buttonboxstate = 'Yes'
+        else:
+            self.buttonboxstate = 'No'
+
+        if self.outcometoggle.isChecked():
+            self.outcome = 'Yes'
+        else:
+            self.outcome = 'No'
+
     def submitsettings(self):
         person = discountp.PdParticipant(self.idform.text(),
                                          self.trialsin.text(),
@@ -174,7 +206,10 @@ class PdSettings(settings.Settings):
                                          'Probability Discounting',
                                          self.design.currentText(),
                                          self.rewmin.text(),
-                                         self.rewmax.text())
+                                         self.rewmax.text(),
+                                         self.outcome,
+                                         self.smoneyin.text(),
+                                         self.buttonboxstate)
 
         self.exp = discountgui.PDiscountExp(person)
         self.exp.show()
@@ -234,6 +269,8 @@ class CEDTSettings(settings.Settings):
         layout.addRow(QLabel('Number of trials:'), self.trialsin)
         layout.addRow(QLabel('Smallest reward amount:'), self.minrewin)
         layout.addRow(QLabel('Largest reward amount:'), self.maxrewin)
+        layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?:'), self.buttonbox)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
@@ -242,13 +279,27 @@ class CEDTSettings(settings.Settings):
 
         self.setLayout(over_layout)
 
+    def clickbox(self):
+
+        if self.buttonbox.isChecked():
+            self.buttonboxstate = 'Yes'
+        else:
+            self.buttonboxstate = 'No'
+
+        if self.outcometoggle.isChecked():
+            self.outcome = 'Yes'
+        else:
+            self.outcome = 'No'
+
     def submitsettings(self):
         person = discountp.CEDParticipant(self.idform.text(),
                                           self.trialsin.text(),
                                           self.wdset.text(),
                                           'CogED Task',
                                           self.minrewin.text(),
-                                          self.maxrewin.text())
+                                          self.maxrewin.text(),
+                                          self.outcome,
+                                          self.buttonboxstate)
 
         self.exp = discountgui.CEDiscountExp(person)
         self.exp.show()

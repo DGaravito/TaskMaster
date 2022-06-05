@@ -6,9 +6,10 @@ import random
 
 class SSParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, maxrt, blocks):
+    def __init__(self, expid, trials, outdir, task, maxrt, blocks, buttonbox):
         super().__init__(expid, trials, outdir, task)
 
+        self.buttonbox = buttonbox
         self.blocks = int(blocks)
         self.timer = 250
         self.globallocal = random.choice(['Global', 'Local'])

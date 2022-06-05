@@ -20,6 +20,9 @@ class ARTTSettings(settings.Settings):
         # center window
         self.centerscreen()
 
+        # Outcome default
+        self.outcome = 'No'
+
         # Add in elements
         self.elements()
 
@@ -69,6 +72,14 @@ class ARTTSettings(settings.Settings):
         self.design = QComboBox()
         self.design.addItems(['Gains only', 'Losses only', 'Gains and Losses'])
 
+        # checkbox for getting a random reward/loss
+        self.outcometoggle = QCheckBox('', self)
+        self.outcometoggle.stateChanged.connect(self.clickbox)
+
+        # Starting money input
+        self.smoneyin = QSpinBox()
+        self.smoneyin.setSpecialValueText('25')
+
         # Make form layout for all the settingsguis
         layout = QFormLayout()
 
@@ -79,6 +90,9 @@ class ARTTSettings(settings.Settings):
         layout.addRow(QLabel('Fixed reward/loss magnitude:'), self.srewin)
         layout.addRow(QLabel('Largest reward/loss possible:'), self.lrewin)
         layout.addRow(QLabel('What type of questions do you want?:'), self.design)
+        layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
+        layout.addRow(QLabel('How much participant starting money (only used if above is checked)?:'), self.smoneyin)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?:'), self.buttonbox)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
@@ -86,6 +100,18 @@ class ARTTSettings(settings.Settings):
         over_layout.addLayout(layout)
 
         self.setLayout(over_layout)
+
+    def clickbox(self):
+
+        if self.buttonbox.isChecked():
+            self.buttonboxstate = 'Yes'
+        else:
+            self.buttonboxstate = 'No'
+
+        if self.outcometoggle.isChecked():
+            self.outcome = 'Yes'
+        else:
+            self.outcome = 'No'
 
     def submitsettings(self):
 
@@ -95,7 +121,6 @@ class ARTTSettings(settings.Settings):
         # ambstring = self.probambin.text()
         # amblist = list(ambstring.split(", "))
 
-
         person = gamblep.ARTTParticipant(self.idform.text(),
                                          self.trialsin.text(),
                                          self.wdset.text(),
@@ -104,7 +129,10 @@ class ARTTSettings(settings.Settings):
                                          self.proportions,
                                          self.srewin.text(),
                                          self.lrewin.text(),
-                                         self.design.currentText())
+                                         self.design.currentText(),
+                                         self.outcome,
+                                         self.smoneyin.text(),
+                                         self.buttonboxstate)
 
         self.exp = gamblegui.ARTTExp(person)
         self.exp.show()
@@ -122,8 +150,8 @@ class RASettings(settings.Settings):
         # center window
         self.centerscreen()
 
-        # STT default
-        self.stt = 0
+        # Outcome default
+        self.outcome = 'No'
 
         # Add in elements
         self.elements()
@@ -160,6 +188,14 @@ class RASettings(settings.Settings):
         self.maxin = QSpinBox()
         self.maxin.setSpecialValueText('30')
 
+        # checkbox for getting a random reward/loss
+        self.outcometoggle = QCheckBox('', self)
+        self.outcometoggle.stateChanged.connect(self.clickbox)
+
+        # Starting money input
+        self.smoneyin = QSpinBox()
+        self.smoneyin.setSpecialValueText('25')
+
         # Make form layout for all the settingsguis
         layout = QFormLayout()
 
@@ -167,6 +203,9 @@ class RASettings(settings.Settings):
         layout.addRow(QLabel('Number of trials:'), self.trialsin)
         layout.addRow(QLabel('Smallest possible gain:'), self.minin)
         layout.addRow(QLabel('Largest possible gain:'), self.maxin)
+        layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
+        layout.addRow(QLabel('How much participant starting money (only used if above is checked)?:'), self.smoneyin)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?:'), self.buttonbox)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
@@ -175,6 +214,18 @@ class RASettings(settings.Settings):
 
         self.setLayout(over_layout)
 
+    def clickbox(self):
+
+        if self.buttonbox.isChecked():
+            self.buttonboxstate = 'Yes'
+        else:
+            self.buttonboxstate = 'No'
+
+        if self.outcometoggle.isChecked():
+            self.outcome = 'Yes'
+        else:
+            self.outcome = 'No'
+
     def submitsettings(self):
 
         person = gamblep.RAParticipant(self.idform.text(),
@@ -182,7 +233,10 @@ class RASettings(settings.Settings):
                                        self.wdset.text(),
                                        'Risk Aversion',
                                        self.minin.text(),
-                                       self.maxin.text())
+                                       self.maxin.text(),
+                                       self.outcome,
+                                       self.smoneyin.text(),
+                                       self.buttonboxstate)
 
         self.exp = gamblegui.RAExp(person)
         self.exp.show()
@@ -200,8 +254,9 @@ class FrameSettings(settings.Settings):
         # center window
         self.centerscreen()
 
-        # STT default
-        self.ftt = 0
+        # FTT and outcome defaults
+        self.ftt = 'No'
+        self.outcome = 'No'
 
         # Add in elements
         self.elements()
@@ -244,7 +299,15 @@ class FrameSettings(settings.Settings):
 
         # FTT  input
         self.ftttoggle = QCheckBox('', self)
-        self.ftttoggle.stateChanged.connect(self.clickBox)
+        self.ftttoggle.stateChanged.connect(self.clickbox)
+
+        # checkbox for getting a random reward/loss
+        self.outcometoggle = QCheckBox('', self)
+        self.outcometoggle.stateChanged.connect(self.clickbox)
+
+        # Starting money input
+        self.smoneyin = QSpinBox()
+        self.smoneyin.setSpecialValueText('25')
 
         # Make form layout for all the settingsguis
         layout = QFormLayout()
@@ -255,6 +318,9 @@ class FrameSettings(settings.Settings):
         layout.addRow(QLabel('Maximum expected value:'), self.maxin)
         layout.addRow(QLabel('What type of questions do you want?:'), self.design)
         layout.addRow(QLabel('Do you want FTT truncations (i.e., Gist, Mixed, Verbatim)?:'), self.ftttoggle)
+        layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
+        layout.addRow(QLabel('How much participant starting money (only used if above is checked):'), self.smoneyin)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?:'), self.buttonbox)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
@@ -263,12 +329,22 @@ class FrameSettings(settings.Settings):
 
         self.setLayout(over_layout)
 
-    def clickBox(self):
+    def clickbox(self):
+
+        if self.buttonbox.isChecked():
+            self.buttonboxstate = 'Yes'
+        else:
+            self.buttonboxstate = 'No'
 
         if self.ftttoggle.isChecked():
             self.ftt = 'Yes'
         else:
             self.ftt = 'No'
+
+        if self.outcometoggle.isChecked():
+            self.outcome = 'Yes'
+        else:
+            self.outcome = 'No'
 
     def submitsettings(self):
 
@@ -297,7 +373,10 @@ class FrameSettings(settings.Settings):
                                               self.minin.text(),
                                               self.maxin.text(),
                                               self.design.currentText(),
-                                              self.ftt)
+                                              self.ftt,
+                                              self.outcome,
+                                              self.smoneyin.text(),
+                                              self.buttonboxstate)
 
             self.exp = gamblegui.FrameExp(person)
             self.exp.show()

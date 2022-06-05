@@ -91,7 +91,7 @@ class SelectWindow(QWidget):
         self.nactbutton.clicked.connect(lambda: self.selection('NACT'))
 
         # Stop Signal button
-        self.ssbutton = QPushButton('Stop Signal (WIP)')
+        self.ssbutton = QPushButton('Stop Signal')
         self.ssbutton.clicked.connect(lambda: self.selection('SS'))
 
         # Emo Go-NoGo button

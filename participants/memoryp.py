@@ -197,10 +197,11 @@ class PrParticipant(participant.Participant):
 
 class NbParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, rounds):
+    def __init__(self, expid, trials, outdir, task, rounds, buttonbox):
 
         super().__init__(expid, trials, outdir, task)
 
+        self.buttonbox = buttonbox
         self.roundperformance = 0.0
         self.roundsum = 0
         self.rounds = int(rounds)

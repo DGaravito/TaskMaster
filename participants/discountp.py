@@ -10,8 +10,10 @@ import random
 
 class DdParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew):
+    def __init__(self, expid, trials, outdir, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew, buttonbox):
         super().__init__(expid, trials, outdir, task)
+
+        self.buttonbox = buttonbox
 
         self.engine = self.create_dd_engine(self.task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew)
 
@@ -135,13 +137,16 @@ class DdParticipant(participant.Participant):
 
 class PdParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, design, minimum, maximum):
+    def __init__(self, expid, trials, outdir, task, design, minimum, maximum, outcome, money, buttonbox):
         super().__init__(expid, trials, outdir, task)
 
+        self.buttonbox = buttonbox
         self.design = design
         self.maximum = float(maximum)
         self.minimum = float(minimum)
         self.trialdesign = []
+        self.startmoney = money
+        self.outcomeopt = outcome
 
         self.create_design()
 
@@ -274,13 +279,16 @@ class PdParticipant(participant.Participant):
 
             case 2:
 
-                inst = 'You will use the keyboard to make your choice\nbetween the pretend rewards shown on the ' \
-                       'left and\nright side of the screen.'
+                if self.outcomeopt == 'Yes':
 
-            case 3:
+                    inst = 'You have $' + str('{:.2f}'.format(self.startmoney)) + ' in starting money. Your final ' \
+                                                                                  'payment\nwill depend on the ' \
+                                                                                  'choices you make in this task.'
 
-                inst = 'Even though these money rewards are pretend,\ntry to choose as if you were being offered ' \
-                       'these rewards\nfor real.'
+                else:
+
+                    inst = 'Even though these money rewards are pretend,\ntry to choose as if you were being offered ' \
+                           'these rewards\nfor real.'
 
             case _:
 
@@ -291,13 +299,16 @@ class PdParticipant(participant.Participant):
 
 class CEDParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, smallrew, largerew):
+    def __init__(self, expid, trials, outdir, task, minrew, maxrew, outcome, buttonbox):
         super().__init__(expid, trials, outdir, task)
+
+        self.outcomeopt = outcome
+        self.buttonbox = buttonbox
 
         # Experiment settingsguis output dataframe
         dict_simulsettings = {
-                              'Smallest Reward': [smallrew],
-                              'Largest Reward': [largerew]
+                              'Smallest Reward': [minrew],
+                              'Largest Reward': [maxrew]
                               }
 
         self.set_settings(dict_simulsettings)
@@ -362,7 +373,7 @@ class CEDParticipant(participant.Participant):
             case 4:
 
                 inst = 'For example, you may have to choose between\ncompleting extra rounds of the easiest task ' \
-                       'for $1\nor extra rounds of the hardest task for $7.'
+                       'for $1\nor extra rounds of the hardest task for $10.'
 
             case 5:
 
@@ -370,18 +381,37 @@ class CEDParticipant(participant.Participant):
 
             case 6:
 
-                inst = 'Any one of the choices you make could determine\nwhat task you complete extra rounds of and' \
-                       ' how much\nyou are paid for completing that task.'
+                if self.outcomeopt == 'Yes':
+
+                    inst = 'Any one of the choices you make could determine\nwhat task you complete extra rounds of ' \
+                           'and how much\nyou are paid for completing that task.'
+
+                else:
+
+                    inst = 'Take as much time as you need to choose. After a\nwhile, the decision will disappear, ' \
+                           'but those choices\nwill be shown again at the end.'
 
             case 7:
 
-                inst = 'We will pick one of your choices at random. It does\nnot matter how well you do on the task ' \
-                       'chosen. You\nwill be paid as long as you maintain your effort.'
+                if self.outcomeopt == 'Yes':
+
+                    inst = 'We will pick one of your choices at random. It does\nnot matter how well you do on the ' \
+                           'task chosen. You\nwill be paid as long as you maintain your effort.'
+
+                else:
+
+                    inst = 'Let the experimenter know you are ready.'
 
             case 8:
 
-                inst = 'Take as much time as you need to choose. After a\nwhile, the decision will disappear, but ' \
-                       'those choices\nwill be shown again at the end.'
+                if self.outcomeopt == 'Yes':
+
+                    inst = 'Take as much time as you need to choose. After a\nwhile, the decision will disappear, ' \
+                           'but those choices\nwill be shown again at the end.'
+
+                else:
+
+                    inst = 'Let the experimenter know you are ready.'
 
             case _:
 

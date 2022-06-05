@@ -6,9 +6,10 @@ import random
 
 class PBTParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, rounds):
+    def __init__(self, expid, trials, outdir, task, rounds, buttonbox):
         super().__init__(expid, trials, outdir, task)
 
+        self.buttonbox = buttonbox
         self.rounds = int(rounds)
         self.globallocal = random.choice(['Global', 'Local'])
 

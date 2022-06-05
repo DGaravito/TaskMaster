@@ -19,9 +19,6 @@ class PrSettings(settings.Settings):
         # center window
         self.centerscreen()
 
-        # STT default
-        self.stt = 0
-
         # Add in elements
         self.elements()
 
@@ -104,9 +101,6 @@ class NBackSettings(settings.Settings):
         # center window
         self.centerscreen()
 
-        # STT default
-        self.stt = 0
-
         # Add in elements
         self.elements()
 
@@ -149,6 +143,7 @@ class NBackSettings(settings.Settings):
         layout.addRow(QLabel('Number of trials:'), self.trialsin)
         layout.addRow(QLabel('Number of rounds (do you want more than 1 round of X number of trials?):'), self.roundsin)
         layout.addRow(QLabel('What type of n-Back?:'), self.design)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?:'), self.buttonbox)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
@@ -157,13 +152,21 @@ class NBackSettings(settings.Settings):
 
         self.setLayout(over_layout)
 
+    def clickbox(self):
+
+        if self.buttonbox.isChecked():
+            self.buttonboxstate = 'Yes'
+        else:
+            self.buttonboxstate = 'No'
+
     def submitsettings(self):
 
         person = memoryp.NbParticipant(self.idform.text(),
                                        self.trialsin.text(),
                                        self.wdset.text(),
                                        self.design.currentText(),
-                                       self.roundsin.text())
+                                       self.roundsin.text(),
+                                       self.buttonboxstate)
 
         self.exp = memorygui.NbExp(person)
         self.exp.show()

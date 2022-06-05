@@ -10,10 +10,14 @@ import random
 
 class ARTTParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, risklist, amblist, rewmin, rewmax, structure):
+    def __init__(self, expid, trials, outdir, task, risklist, amblist, rewmin, rewmax, structure, outcome, money,
+                 buttonbox):
         super().__init__(expid, trials, outdir, task)
 
+        self.buttonbox = buttonbox
+        self.startmoney = money
         self.inst = 0
+        self.outcomeopt = outcome
         self.outcomelist = []
 
         self.structure = structure
@@ -161,26 +165,105 @@ class ARTTParticipant(participant.Participant):
         df_simultrial = pd.DataFrame(data=df_simultrial)
         self.set_performance(df_simultrial)
 
-        # Add the potential outcome of this choice to the list for post-task rewards. If they chose the sure thing...
-        if response == 0:
+        # only do the following if the user wanted a random reward/loss at the end
+        if self.outcomeopt == 'Yes':
 
-            # then add the fixed value to the list
-            self.outcomelist.append(float(self.design['r_fix']))
+            # Add the potential outcome of this choice to the list for post-task rewards.
+            # If they chose the sure thing...
+            if response == 0:
 
-        # if not...
-        else:
+                # then add the fixed value to the list
+                self.outcomelist.append(float(self.design['r_fix']))
 
-            # actually generate a random probability to see if they win the gamble
-            actualprob = random.uniform(0.0, 1.0)
-
-            # if they win, add the reward
-            if actualprob > float(self.design['p_var']):
-                self.outcomelist.append(float(self.design['r_var']))
-
-            # if they don't, add 0
+            # if not...
             else:
-                self.outcomelist.append(0.0)
 
+                # actually generate a random probability to see if they win the gamble
+                actualprob = random.uniform(0.0, 1.0)
+
+                # if they win, add the reward
+                if actualprob > float(self.design['p_var']):
+                    self.outcomelist.append(float(self.design['r_var']))
+
+                # if they don't, add 0
+                else:
+                    self.outcomelist.append(0.0)
+
+            if response == 0:
+
+                # if they only have gains...
+                if self.design == 'Gains only':
+
+                    # then add the fixed gain to the list
+                    self.outcomelist.append('$' + str('{:.2f}'.format(float(self.design['r_fix']))))
+
+                # if they only have losses...
+                elif self.design == 'Losses only':
+
+                    # then add the fixed loss to the list
+                    self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.design['r_fix']))))
+
+                # if they have gains and losses...
+                else:
+
+                    # Then look at the state to see if it was a gain or loss
+                    if self.state == "Gain":
+                        self.outcomelist.append('$' + str('{:.2f}'.format(float(self.design['r_fix']))))
+
+                    else:
+                        self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.design['r_fix']))))
+
+            # if they chose the gamble...
+            else:
+
+                # actually generate a random probability to see if they win the gamble
+                actualprob = random.uniform(0.0, 1.0)
+
+                # if they only have gains...
+                if self.design == 'Gains only':
+
+                    # if they win, add the reward
+                    if actualprob > float(self.design['p_var']):
+                        self.outcomelist.append('$' + str('{:.2f}'.format(float(self.design['r_var']))))
+
+                    # if not, add 0
+                    else:
+                        self.outcomelist.append(self.outcomelist.append('$0.00'))
+
+                # if they only have losses...
+                elif self.design == 'Losses only':
+
+                    # if they lose, add the loss
+                    if actualprob < float(self.design['p_var']):
+                        self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.design['r_var']))))
+
+                    # if not, add 0
+                    else:
+                        self.outcomelist.append(self.outcomelist.append('$0.00'))
+
+                # if they have gains and losses...
+                else:
+
+                    # Then look at the state to see if it was a gain or loss
+                    if self.state[1] == "Gain":
+
+                        # if they win, add the reward
+                        if actualprob > float(self.design['p_var']):
+                            self.outcomelist.append('$' + str('{:.2f}'.format(float(self.design['r_var']))))
+
+                        # if not, add 0
+                        else:
+                            self.outcomelist.append(self.outcomelist.append('$0.00'))
+
+                    else:
+
+                        # if they lose, add the loss
+                        if actualprob < float(self.design['p_var']):
+                            self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.design['r_var']))))
+
+                        # if not, add 0
+                        else:
+                            self.outcomelist.append(self.outcomelist.append('$0.00'))
 
     def get_instructions(self, instint):
         """
@@ -198,8 +281,16 @@ class ARTTParticipant(participant.Participant):
 
             case 2:
 
-                inst = 'You have $25 in starting money. Your final payment\nwill depend on the choices you make ' \
-                       'in this task.'
+                if self.outcomeopt == 'Yes':
+
+                    inst = 'You have $' + str('{:.2f}'.format(self.startmoney)) + ' in starting money. Your final ' \
+                                                                                  'payment\nwill depend on the ' \
+                                                                                  'choices you make in this task.'
+
+                else:
+
+                    inst = 'Even though these money rewards are pretend,\ntry to choose as if you were being offered ' \
+                           'these rewards\nfor real.'
 
             case 3:
 
@@ -237,7 +328,7 @@ class ARTTParticipant(participant.Participant):
             case 12:
 
                 inst = 'Although there could be many possible combinations\nof red and blue chips in the mystery' \
-                       ' bags, remember\nthat these gambles still have actual chances of winning and losing.'.'
+                       ' bags, remember\nthat these gambles still have actual chances of winning and losing.'
 
             case _:
 
@@ -248,9 +339,12 @@ class ARTTParticipant(participant.Participant):
 
 class RAParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, minimum, maximum):
+    def __init__(self, expid, trials, outdir, task, minimum, maximum, outcome, money, buttonbox):
         super().__init__(expid, trials, outdir, task)
 
+        self.buttonbox = buttonbox
+        self.startmoney = money
+        self.outcomeopt = outcome
         self.trialtext = []
         self.outcomelist = []
 
@@ -316,25 +410,29 @@ class RAParticipant(participant.Participant):
         df_simultrial = pd.DataFrame(data=df_simultrial)
         self.set_performance(df_simultrial)
 
-        # Add the potential outcome of this choice to the list for post-task rewards. If they chose the sure thing...
-        if response == 0:
+        # only do the following if the user wanted a random reward/loss at the end
+        if self.outcomeopt == 'Yes':
 
-            # then add the fixed value to the list
-            self.outcomelist.append(0.0)
+            # Add the potential outcome of this choice to the list for post-task rewards.
+            # If they chose the sure thing...
+            if response == 0:
 
-        # if not...
-        else:
+                # then add the fixed value to the list
+                self.outcomelist.append('$0.00')
 
-            # actually flip a coin to see if they win the gamble
-            coin = random.randint(1, 2)
-
-            # if they win, add the reward
-            if coin == 1:
-                self.outcomelist.append(float(self.gainint))
-
-            # if they don't, add 0
+            # if not...
             else:
-                self.outcomelist.append((-1 * self.lossfloat))
+
+                # actually flip a coin to see if they win the gamble
+                coin = random.randint(1, 2)
+
+                # if they win, add the reward
+                if coin == 1:
+                    self.outcomelist.append('$' + str('{:.2f}'.format(float(self.gainint))))
+
+                # if they don't, add the loss
+                else:
+                    self.outcomelist.append('-$' + str('{:.2f}'.format(self.lossfloat)))
 
     def get_instructions(self, instint):
         """
@@ -357,8 +455,16 @@ class RAParticipant(participant.Participant):
 
             case 3:
 
-                inst = 'Even though these money rewards are pretend,\ntry to choose as if you were being offered ' \
-                       'these rewards\nfor real.'
+                if self.outcomeopt == 'Yes':
+
+                    inst = 'You have $' + str('{:.2f}'.format(self.startmoney)) + ' in starting money. Your final ' \
+                                                                                  'payment\nwill depend on the ' \
+                                                                                  'choices you make in this task.'
+
+                else:
+
+                    inst = 'Even though these money rewards are pretend,\ntry to choose as if you were being offered ' \
+                           'these rewards\nfor real.'
 
             case _:
 
@@ -369,9 +475,12 @@ class RAParticipant(participant.Participant):
 
 class FrameParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, minimum, maximum, design, ftt):
+    def __init__(self, expid, trials, outdir, task, minimum, maximum, design, ftt, outcome, money, buttonbox):
         super().__init__(expid, trials, outdir, task)
 
+        self.buttonbox = buttonbox
+        self.startmoney = money
+        self.outcomeopt = outcome
         self.design = design
         self.ftt = ftt
         self.maxrew = maximum
@@ -621,25 +730,86 @@ class FrameParticipant(participant.Participant):
         df_simultrial = pd.DataFrame(data=df_simultrial)
         self.set_performance(df_simultrial)
 
-        # Add the potential outcome of this choice to the list for post-task rewards. If they chose the sure thing...
-        if response == 0:
+        # only do the following if the user wanted a random reward/loss at the end
+        if self.outcomeopt == 'Yes':
 
-            # then add the fixed value to the list
-            self.outcomelist.append(float(self.trialdesign[0]))
+            # Add the potential outcome of this choice to the list for post-task rewards.
+            # If they chose the sure thing...
+            if response == 0:
 
-        # if not...
-        else:
+                # if they only have gains...
+                if self.design == 'Gains only':
 
-            # actually generate a random probability to see if they win the gamble
-            actualprob = random.uniform(0.0, 1.0)
+                    # then add the fixed gain to the list
+                    self.outcomelist.append('$' + str('{:.2f}'.format(float(self.trialdesign[0]))))
 
-            # if they win, add the reward
-            if actualprob > float(self.trialdesign[1]):
-                self.outcomelist.append(float(self.trialdesign[2]))
+                # if they only have losses...
+                elif self.design == 'Losses only':
 
-            # if they don't, add 0
+                    # then add the fixed loss to the list
+                    self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.trialdesign[0]))))
+
+                # if they have gains and losses...
+                else:
+
+                    # Then look at the state to see if it was a gain or loss
+                    if self.state[1] == "Gain":
+                        self.outcomelist.append('$' + str('{:.2f}'.format(float(self.trialdesign[0]))))
+
+                    else:
+                        self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.trialdesign[0]))))
+
+            # if they chose the gamble...
             else:
-                self.outcomelist.append(0.0)
+
+                # actually generate a random probability to see if they win the gamble
+                actualprob = random.uniform(0.0, 1.0)
+
+                # if they only have gains...
+                if self.design == 'Gains only':
+
+                    # if they win, add the reward
+                    if actualprob > float(self.trialdesign[1]):
+                        self.outcomelist.append('$' + str('{:.2f}'.format(float(self.trialdesign[2]))))
+
+                    # if not, add 0
+                    else:
+                        self.outcomelist.append(self.outcomelist.append('$0.00'))
+
+                # if they only have losses...
+                elif self.design == 'Losses only':
+
+                    # if they lose, add the loss
+                    if actualprob < float(self.trialdesign[1]):
+                        self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.trialdesign[2]))))
+
+                    # if not, add 0
+                    else:
+                        self.outcomelist.append(self.outcomelist.append('$0.00'))
+
+                # if they have gains and losses...
+                else:
+
+                    # Then look at the state to see if it was a gain or loss
+                    if self.state[1] == "Gain":
+
+                        # if they win, add the reward
+                        if actualprob > float(self.trialdesign[1]):
+                            self.outcomelist.append('$' + str('{:.2f}'.format(float(self.trialdesign[2]))))
+
+                        # if not, add 0
+                        else:
+                            self.outcomelist.append(self.outcomelist.append('$0.00'))
+
+                    else:
+
+                        # if they lose, add the loss
+                        if actualprob < float(self.trialdesign[1]):
+                            self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.trialdesign[2]))))
+
+                        # if not, add 0
+                        else:
+                            self.outcomelist.append(self.outcomelist.append('$0.00'))
 
     def get_instructions(self, instint):
         """
@@ -662,8 +832,16 @@ class FrameParticipant(participant.Participant):
 
             case 3:
 
-                inst = 'Even though these money rewards are pretend,\ntry to choose as if you were being offered ' \
-                       'these rewards\nfor real.'
+                if self.outcomeopt == 'Yes':
+
+                    inst = 'You have $' + str('{:.2f}'.format(self.startmoney)) + ' in starting money. Your final ' \
+                                                                                  'payment\nwill depend on the ' \
+                                                                                  'choices you make in this task.'
+
+                else:
+
+                    inst = 'Even though these money rewards are pretend,\ntry to choose as if you were being offered ' \
+                           'these rewards\nfor real.'
 
             case _:
 
