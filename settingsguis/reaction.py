@@ -62,9 +62,9 @@ class SSSettings(settings.Settings):
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
         layout.addRow(QLabel('Number of trials:'), self.trialsin)
-        layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(QLabel('Maximal reaction time (in milliseconds)?'), self.maxrtin)
         layout.addRow(QLabel('Number of blocks?'), self.blocksin)
+        layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
         # Add form layout to overarching layout
@@ -140,9 +140,9 @@ class EGNGSettings(settings.Settings):
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
         layout.addRow(QLabel('Number of trials:'), self.trialsin)
-        layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(QLabel('Maximal reaction time (in milliseconds)?'), self.maxrtin)
         layout.addRow(QLabel('Number of blocks?'), self.blocksin)
+        layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
         # Add form layout to overarching layout

@@ -263,6 +263,7 @@ class RAExp(QWidget):
         self.response = 0
         self.person = person
         self.trialsdone = 0
+        self.inst = 0
 
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
@@ -444,6 +445,14 @@ class RAExp(QWidget):
         elif key in ['g', 'G']:
             self.generatenext()
 
+        elif key in ['i', 'I']:
+            self.inst += 1
+
+            self.middle.setText(self.person.get_instructions(self.inst))
+
+            if self.inst == 5:
+                self.inst = 0
+
 
 class FrameExp(QWidget):
     keyPressed = pyqtSignal(str)
@@ -454,6 +463,7 @@ class FrameExp(QWidget):
         self.response = 0
         self.person = person
         self.trialsdone = 0
+        self.inst = 0
 
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
@@ -636,3 +646,11 @@ class FrameExp(QWidget):
 
         elif key in ['g', 'G']:
             self.jitter()
+
+        elif key in ['i', 'I']:
+            self.inst += 1
+
+            self.middle.setText(self.person.get_instructions(self.inst))
+
+            if self.inst == 5:
+                self.inst = 0

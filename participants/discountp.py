@@ -133,7 +133,6 @@ class DdParticipant(participant.Participant):
         return inst
 
 
-
 class PdParticipant(participant.Participant):
 
     def __init__(self, expid, trials, outdir, task, design, minimum, maximum):
@@ -259,62 +258,49 @@ class PdParticipant(participant.Participant):
         df_simultrial = pd.DataFrame(data=df_simultrial)
         self.set_performance(df_simultrial)
 
+    def get_instructions(self, instint):
+        """
+        Takes in an int and returns the appropriate instructions string
+        :param instint: an int that is supplied and incremented by the expguis
+        :return: a string containing the appropriate instructions that the expguis puts up
+        """
+
+        match instint:
+
+            case 1:
+
+                inst = 'In this task, you will be making choices between\n guarantees of winning or losing some money' \
+                       ' or taking\ngambles to win more money or lose less money.'
+
+            case 2:
+
+                inst = 'You will use the keyboard to make your choice\nbetween the pretend rewards shown on the ' \
+                       'left and\nright side of the screen.'
+
+            case 3:
+
+                inst = 'Even though these money rewards are pretend,\ntry to choose as if you were being offered ' \
+                       'these rewards\nfor real.'
+
+            case _:
+
+                inst = 'Let the experimenter know you are ready.'
+
+        return inst
+
 
 class CEDParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew):
+    def __init__(self, expid, trials, outdir, task, smallrew, largerew):
         super().__init__(expid, trials, outdir, task)
 
-        self.engine = self.create_dd_engine(self.task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew)
-
-        # Compute an optimal design for the first trial
-        self.design = self.engine.get_design('optimal')
-
         # Experiment settingsguis output dataframe
-        dict_simulsettings = {'Immediate Option Delay': [ss_del],
-                              'Shortest Delay': [ll_shortdel],
-                              'Longest Delay': [ll_longdel],
-                              'Smallest Smaller Sooner Reward': [ss_smallrew],
-                              'Largest Smaller Sooner Reward': [(float(ll_rew) - float(ss_smallrew))],
-                              'Larger Later Reward': [ll_rew]
+        dict_simulsettings = {
+                              'Smallest Reward': [smallrew],
+                              'Largest Reward': [largerew]
                               }
 
         self.set_settings(dict_simulsettings)
-
-    def create_dd_engine(self, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew):
-
-        model = ModelHyp()
-
-        grid_design = {
-            # [Now]
-            't_ss': [float(ss_del)],
-
-            # [1 week, 2 weeks, ..., longdelay] in weeks
-            't_ll': np.arange(float(ll_shortdel), float(ll_longdel), .5),
-
-            # [smallreward, smallreward + $1, ..., bigreward]
-            'r_ss': np.arange(float(ss_smallrew), float(ll_rew), .5),
-
-            # [bigreward]
-            'r_ll': [float(ll_rew)]
-        }
-
-        grid_param = {
-            # 50 points on [10^-5, ..., 1] in a log scale
-            'k': np.logspace(-5, 0, 50, base=10),
-
-            # 10 points on (0, 5] in a linear scale
-            'tau': np.linspace(0, 5, 11)[1:]
-        }
-
-        grid_response = {
-            'choice': [0, 1]
-        }
-
-        # Set up engine
-        engine = Engine(task, model, grid_design, grid_param, grid_response)
-
-        return engine
 
     def get_design_text(self):
 
@@ -341,15 +327,47 @@ class CEDParticipant(participant.Participant):
 
         df_simultrial = {
             'trial': [trial],
-            'SSAmount': [float(self.design['r_ss'])],
-            'LLAmount': [float(self.design['r_ll'])],
-            'LLDelay': [float(self.design['t_ll'])],
-            'response': [response],
-            'mean_k': [self.engine.post_mean[0]],
-            'mean_tau': [self.engine.post_mean[1]],
-            'sd_k': [self.engine.post_sd[0]],
-            'sd_tau': [self.engine.post_sd[1]]
+            'left task': [float(self.design['r_ss'])],
+            'left value': [float(self.design['r_ll'])],
+            'right task': [float(self.design['t_ll'])],
+            'right value': [response],
+            'response': [response]
         }
 
         df_simultrial = pd.DataFrame(data=df_simultrial)
         self.set_performance(df_simultrial)
+
+    def get_instructions(self, instint):
+        """
+        Takes in an int and returns the appropriate instructions string
+        :param instint: an int that is supplied and incremented by the expguis
+        :return: a string containing the appropriate instructions that the expguis puts up
+        """
+
+        match instint:
+
+            case 1:
+
+                inst = 'In this task, you will choose between completing\nadditional rounds of easier tasks for ' \
+                       'smaller amounts\nof money or harder tasks for larger amounts of money.'
+
+            case 2:
+
+                inst = 'In the end, one choice you make will be picked at\nrandom by the computer, and you will be ' \
+                       'assigned to do\nthat task for the amount of money listed in that choice.'
+
+            case 3:
+
+                inst = 'You will really receive this money, as long as you\ntry as hard and do about as well as you ' \
+                       'did each\ntask before.'
+
+            case 4:
+
+                inst = 'Remember, you may have to do up to 10 additional rounds\nof the task you choose. Please take' \
+                       ' your time\nand decide carefully for each question.'
+
+            case _:
+
+                inst = 'Let the experimenter know you are ready.'
+
+        return inst

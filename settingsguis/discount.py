@@ -181,7 +181,7 @@ class PdSettings(settings.Settings):
         self.hide()
 
 
-class CEDTSettings(settings.Settings):  # TODO Review CEDT for proper variables
+class CEDTSettings(settings.Settings):
 
     def __init__(self):
         super().__init__()
@@ -219,35 +219,21 @@ class CEDTSettings(settings.Settings):  # TODO Review CEDT for proper variables
         self.trialsin = QSpinBox()
         self.trialsin.setSpecialValueText('10')
 
-        # Immediate Delay input
-        self.imdin = QSpinBox()
-        self.imdin.setSpecialValueText('0')
+        # reward min input
+        self.minrewin = QSpinBox()
+        self.minrewin.setSpecialValueText('1')
 
-        # Short Delay input
-        self.sdin = QSpinBox()
-        self.sdin.setSpecialValueText('1')
-
-        # Long Delay input
-        self.ldin = QSpinBox()
-        self.ldin.setSpecialValueText('52')
-
-        # SS reward input
-        self.ssrewin = QSpinBox()
-        self.ssrewin.setSpecialValueText('1')
-
-        # LL reward input
-        self.llrewin = QSpinBox()
-        self.llrewin.setSpecialValueText('250')
+        # reward max input
+        self.maxrewin = QSpinBox()
+        self.maxrewin.setSpecialValueText('250')
 
         # Make form layout for all the settingsguis
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
         layout.addRow(QLabel('Number of trials:'), self.trialsin)
-        layout.addRow(QLabel('Shortest delay in immediate option (weeks):'), self.imdin)
-        layout.addRow(QLabel('Shortest delay in delayed option (weeks):'), self.sdin)
-        layout.addRow(QLabel('Longest delay in delayed option (weeks):'), self.ldin)
-        layout.addRow(QLabel('Smallest reward in immediate option:'), self.ssrewin)
+        layout.addRow(QLabel('Smallest reward amount:'), self.minrewin)
+        layout.addRow(QLabel('Largest reward amount:'), self.maxrewin)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
@@ -261,11 +247,8 @@ class CEDTSettings(settings.Settings):  # TODO Review CEDT for proper variables
                                           self.trialsin.text(),
                                           self.wdset.text(),
                                           'CogED Task',
-                                          self.imdin.text(),
-                                          self.sdin.text(),
-                                          self.ldin.text(),
-                                          self.ssrewin.text(),
-                                          self.llrewin.text())
+                                          self.minrewin.text(),
+                                          self.maxrewin.text())
 
         self.exp = discountgui.CEDiscountExp(person)
         self.exp.show()

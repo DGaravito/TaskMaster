@@ -207,6 +207,7 @@ class PDiscountExp(QWidget):
         self.response = 0
         self.person = person
         self.trialsdone = 0
+        self.inst = 0
 
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
@@ -604,5 +605,5 @@ class CEDiscountExp(QWidget):
 
             self.middle.setText(self.person.get_instructions(self.inst))
 
-            if self.inst == 5:
+            if self.inst == 6:
                 self.inst = 0
