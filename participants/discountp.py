@@ -348,23 +348,40 @@ class CEDParticipant(participant.Participant):
 
             case 1:
 
-                inst = 'In this task, you will choose between completing\nadditional rounds of easier tasks for ' \
-                       'smaller amounts\nof money or harder tasks for larger amounts of money.'
+                inst = 'Remember those memory tasks? Now you will make\ndecisions about these tasks.'
 
             case 2:
 
-                inst = 'In the end, one choice you make will be picked at\nrandom by the computer, and you will be ' \
-                       'assigned to do\nthat task for the amount of money listed in that choice.'
+                inst = 'You will first see one option by itself. Use this\ntime to think about how much you would ' \
+                       'like to repeat\nthe task for that amount of money.'
 
             case 3:
 
-                inst = 'You will really receive this money, as long as you\ntry as hard and do about as well as you ' \
-                       'did each\ntask before.'
+                inst = 'Next, you will see two options, each including a\ndollar amount and a task.'
 
             case 4:
 
-                inst = 'Remember, you may have to do up to 10 additional rounds\nof the task you choose. Please take' \
-                       ' your time\nand decide carefully for each question.'
+                inst = 'For example, you may have to choose between\ncompleting extra rounds of the easiest task ' \
+                       'for $1\nor extra rounds of the hardest task for $7.'
+
+            case 5:
+
+                inst = 'There is no right answer! Just choose the option\nthat you would prefer.'
+
+            case 6:
+
+                inst = 'Any one of the choices you make could determine\nwhat task you complete extra rounds of and' \
+                       ' how much\nyou are paid for completing that task.'
+
+            case 7:
+
+                inst = 'We will pick one of your choices at random. It does\nnot matter how well you do on the task ' \
+                       'chosen. You\nwill be paid as long as you maintain your effort.'
+
+            case 8:
+
+                inst = 'Take as much time as you need to choose. After a\nwhile, the decision will disappear, but ' \
+                       'those choices\nwill be shown again at the end.'
 
             case _:
 

@@ -603,6 +603,8 @@ class FrameExp(QWidget):
             self.left.setText('')
             self.rightgain.setText('')
             self.rightloss.setText('')
+
+
             self.instructions.setText('Thank you!')
             self.middle.setText('You may now quit the application.')
 

@@ -283,7 +283,14 @@ class NbExp(QWidget):
 
             self.roundsdone += 1
 
-            self.middle.setText(self.person.nextround(self.roundsdone))
+            text = self.person.nextround(self.roundsdone)
+
+            self.instructions.setText(text[0])
+            self.middle.setText(text[1])
+
+            if self.person.roundperformance < 70:
+
+                self.roundsdone -= 1
 
             if self.person.rounds == self.roundsdone:
 
@@ -306,6 +313,8 @@ class NbExp(QWidget):
         if key in ['g', 'G']:
 
             self.generatenext()
+
+            self.instructions.setText('Press C if the letter is a false alarm. Press M if the letter is a target')
 
         if key in ['m', 'M']:
 

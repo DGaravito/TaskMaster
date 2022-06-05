@@ -14,9 +14,9 @@ class ARTTParticipant(participant.Participant):
         super().__init__(expid, trials, outdir, task)
 
         self.inst = 0
+        self.outcomelist = []
 
         self.structure = structure
-
         self.create_structure()
 
         self.engine = self.create_artt_engine(self.task, risklist, amblist, rewmin, rewmax)
@@ -161,6 +161,27 @@ class ARTTParticipant(participant.Participant):
         df_simultrial = pd.DataFrame(data=df_simultrial)
         self.set_performance(df_simultrial)
 
+        # Add the potential outcome of this choice to the list for post-task rewards. If they chose the sure thing...
+        if response == 0:
+
+            # then add the fixed value to the list
+            self.outcomelist.append(float(self.design['r_fix']))
+
+        # if not...
+        else:
+
+            # actually generate a random probability to see if they win the gamble
+            actualprob = random.uniform(0.0, 1.0)
+
+            # if they win, add the reward
+            if actualprob > float(self.design['p_var']):
+                self.outcomelist.append(float(self.design['r_var']))
+
+            # if they don't, add 0
+            else:
+                self.outcomelist.append(0.0)
+
+
     def get_instructions(self, instint):
         """
         Takes in an int and returns the appropriate instructions string
@@ -216,12 +237,7 @@ class ARTTParticipant(participant.Participant):
             case 12:
 
                 inst = 'Although there could be many possible combinations\nof red and blue chips in the mystery' \
-                       ' bags, remember\nthat these gambles still represent real bags.'
-
-            case 13:
-
-                inst = 'If you wish, you can inspect the bags and the chips\nafter the study is over to ensure ' \
-                       'fairness.'
+                       ' bags, remember\nthat these gambles still have actual chances of winning and losing.'.'
 
             case _:
 
@@ -236,6 +252,7 @@ class RAParticipant(participant.Participant):
         super().__init__(expid, trials, outdir, task)
 
         self.trialtext = []
+        self.outcomelist = []
 
         self.create_stim(minimum, maximum)
 
@@ -299,6 +316,26 @@ class RAParticipant(participant.Participant):
         df_simultrial = pd.DataFrame(data=df_simultrial)
         self.set_performance(df_simultrial)
 
+        # Add the potential outcome of this choice to the list for post-task rewards. If they chose the sure thing...
+        if response == 0:
+
+            # then add the fixed value to the list
+            self.outcomelist.append(0.0)
+
+        # if not...
+        else:
+
+            # actually flip a coin to see if they win the gamble
+            coin = random.randint(1, 2)
+
+            # if they win, add the reward
+            if coin == 1:
+                self.outcomelist.append(float(self.gainint))
+
+            # if they don't, add 0
+            else:
+                self.outcomelist.append((-1 * self.lossfloat))
+
     def get_instructions(self, instint):
         """
         Takes in an int and returns the appropriate instructions string
@@ -341,6 +378,7 @@ class FrameParticipant(participant.Participant):
         self.minrew = minimum
         self.order = []
         self.trialdesign = []
+        self.outcomelist = []
 
         self.set_order()
 
@@ -582,6 +620,26 @@ class FrameParticipant(participant.Participant):
 
         df_simultrial = pd.DataFrame(data=df_simultrial)
         self.set_performance(df_simultrial)
+
+        # Add the potential outcome of this choice to the list for post-task rewards. If they chose the sure thing...
+        if response == 0:
+
+            # then add the fixed value to the list
+            self.outcomelist.append(float(self.trialdesign[0]))
+
+        # if not...
+        else:
+
+            # actually generate a random probability to see if they win the gamble
+            actualprob = random.uniform(0.0, 1.0)
+
+            # if they win, add the reward
+            if actualprob > float(self.trialdesign[1]):
+                self.outcomelist.append(float(self.trialdesign[2]))
+
+            # if they don't, add 0
+            else:
+                self.outcomelist.append(0.0)
 
     def get_instructions(self, instint):
         """

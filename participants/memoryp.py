@@ -201,6 +201,8 @@ class NbParticipant(participant.Participant):
 
         super().__init__(expid, trials, outdir, task)
 
+        self.roundperformance = 0.0
+        self.roundsum = 0
         self.rounds = int(rounds)
         self.backlist = ['1', '1', '1', '1']
 
@@ -213,21 +215,39 @@ class NbParticipant(participant.Participant):
 
     def nextround(self, roundsdone):
 
-        if roundsdone == self.rounds:
+        self.roundperformance = self.roundsum/self.get_trials()
 
-            prompt = 'Thank you! This task is complete.'
+        if (roundsdone == self.rounds) & (self.roundperformance >= 0.5):
+
+            prompt2 = 'Thank you! This task is complete.'
+            prompt1 = 'You got ' + str('{:.1f}'.format(self.roundperformance)) + '% correct.'
 
         else:
 
             self.backlist = ['1', '1', '1', '1']
 
-            prompt = 'Please let the researcher know you are ready'
+            if self.roundperformance >= 0.5:
+                prompt1 = 'You got ' + str('{:.1f}'.format((self.roundperformance*100))) + '% correct.'
 
-        return prompt
+            else:
+                prompt1 = 'You got ' + str('{:.1f}'.format(self.roundperformance)) + '% correct. Please try harder.'
+
+            prompt2 = 'Please let the researcher know you are ready'
+
+        prompts = [prompt1, prompt2]
+
+        self.roundperformance = 0.0
+        self.roundsum = 0
+
+        return prompts
 
     def get_trial_text(self):
 
-        newletter = random.choice(string.ascii_uppercase)
+        while True:
+            newletter = random.choice(string.ascii_uppercase)
+
+            if newletter not in ['a', 'e', 'i', 'o', 't', 'u', 'v', 'w', 'x', 'y', 'z']:
+                break
 
         self.backlist.append(newletter)
 
@@ -292,6 +312,8 @@ class NbParticipant(participant.Participant):
             'response': [response],
             'correct': [correct]
         }
+
+        self.roundsum += correct
 
         df_simultrial = pd.DataFrame(data=df_simultrial)
 
