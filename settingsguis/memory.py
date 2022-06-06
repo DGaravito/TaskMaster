@@ -69,7 +69,7 @@ class PrSettings(settings.Settings):
 
         self.setLayout(over_layout)
 
-    def clickBox(self):
+    def clickbox(self):
 
         if self.stttoggle.isChecked():
             self.stt = 1
@@ -128,10 +128,6 @@ class NBackSettings(settings.Settings):
         self.trialsin = QSpinBox()
         self.trialsin.setSpecialValueText('30')
 
-        # Rounds input
-        self.roundsin = QSpinBox()
-        self.roundsin.setSpecialValueText('1')
-
         # Dropdown box for gains, losses, or both
         self.design = QComboBox()
         self.design.addItems(['1-back', '2-back', '3-back', '4-back'])
@@ -141,7 +137,7 @@ class NBackSettings(settings.Settings):
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
         layout.addRow(QLabel('Number of trials:'), self.trialsin)
-        layout.addRow(QLabel('Number of rounds (do you want more than 1 round of X number of trials?):'), self.roundsin)
+        layout.addRow(QLabel('Number of rounds (do you want more than 1 round of X number of trials?):'), self.blocksin)
         layout.addRow(QLabel('What type of n-Back?:'), self.design)
         layout.addRow(QLabel('Are you using a button-box instead of the keyboard?:'), self.buttonbox)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)

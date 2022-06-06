@@ -71,7 +71,8 @@ class DdSettings(settings.Settings):
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
-        layout.addRow(QLabel('Number of trials:'), self.trialsin)
+        layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
+        layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         layout.addRow(QLabel('Shortest delay in immediate option (weeks):'), self.imdin)
         layout.addRow(QLabel('Shortest delay in delayed option (weeks):'), self.sdin)
         layout.addRow(QLabel('Longest delay in delayed option (weeks):'), self.ldin)
@@ -103,6 +104,7 @@ class DdSettings(settings.Settings):
                                          self.ldin.text(),
                                          self.ssrewin.text(),
                                          self.llrewin.text(),
+                                         self.blocksin.text(),
                                          self.buttonboxstate)
 
         self.exp = discountgui.DDiscountExp(person)
@@ -172,7 +174,8 @@ class PdSettings(settings.Settings):
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
-        layout.addRow(QLabel('Number of trials:'), self.trialsin)
+        layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
+        layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         layout.addRow(QLabel('Smallest amount of money:'), self.rewmin)
         layout.addRow(QLabel('Biggest amount of money:'), self.rewmax)
         layout.addRow(QLabel('What type of questions do you want?:'), self.design)
@@ -200,20 +203,34 @@ class PdSettings(settings.Settings):
             self.outcome = 'No'
 
     def submitsettings(self):
-        person = discountp.PdParticipant(self.idform.text(),
-                                         self.trialsin.text(),
-                                         self.wdset.text(),
-                                         'Probability Discounting',
-                                         self.design.currentText(),
-                                         self.rewmin.text(),
-                                         self.rewmax.text(),
-                                         self.outcome,
-                                         self.smoneyin.text(),
-                                         self.buttonboxstate)
 
-        self.exp = discountgui.PDiscountExp(person)
-        self.exp.show()
-        self.hide()
+        if (
+                (
+                        (
+                                int(
+                                    self.trialsin.text()
+                                ) % 2
+                        ) == 0
+                ) & self.design.currentText() == 'Gains and Losses'
+        ) | self.design.currentText() in ['Gains only', 'Losses only']:
+            person = discountp.PdParticipant(self.idform.text(),
+                                             self.trialsin.text(),
+                                             self.wdset.text(),
+                                             'Probability Discounting',
+                                             self.design.currentText(),
+                                             self.rewmin.text(),
+                                             self.rewmax.text(),
+                                             self.outcome,
+                                             self.smoneyin.text(),
+                                             self.blocksin.text(),
+                                             self.buttonboxstate)
+
+            self.exp = discountgui.PDiscountExp(person)
+            self.exp.show()
+            self.hide()
+
+        else:
+            self.matherrordialog(2)
 
 
 class CEDTSettings(settings.Settings):
@@ -252,24 +269,29 @@ class CEDTSettings(settings.Settings):
 
         # Trials input
         self.trialsin = QSpinBox()
-        self.trialsin.setSpecialValueText('10')
-
-        # reward min input
-        self.minrewin = QSpinBox()
-        self.minrewin.setSpecialValueText('1')
+        self.trialsin.setSpecialValueText('12')
 
         # reward max input
         self.maxrewin = QSpinBox()
-        self.maxrewin.setSpecialValueText('250')
+        self.maxrewin.setSpecialValueText('25')
+
+        # checkbox for getting a random outcome
+        self.outcometoggle = QCheckBox('', self)
+        self.outcometoggle.stateChanged.connect(self.clickbox)
+
+        # Dropdown box for stim names
+        self.names = QComboBox()
+        self.names.addItems(['a, e, i, u', 'Black, Red, Blue, Purple'])
 
         # Make form layout for all the settingsguis
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
-        layout.addRow(QLabel('Number of trials:'), self.trialsin)
-        layout.addRow(QLabel('Smallest reward amount:'), self.minrewin)
+        layout.addRow(QLabel('Number of trials per block (make sure it\'s divisible by 4):'), self.trialsin)
+        layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         layout.addRow(QLabel('Largest reward amount:'), self.maxrewin)
         layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
+        layout.addRow(QLabel('What names would you like to use for the stimuli?'), self.names)
         layout.addRow(QLabel('Are you using a button-box instead of the keyboard?:'), self.buttonbox)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
@@ -292,15 +314,22 @@ class CEDTSettings(settings.Settings):
             self.outcome = 'No'
 
     def submitsettings(self):
-        person = discountp.CEDParticipant(self.idform.text(),
-                                          self.trialsin.text(),
-                                          self.wdset.text(),
-                                          'CogED Task',
-                                          self.minrewin.text(),
-                                          self.maxrewin.text(),
-                                          self.outcome,
-                                          self.buttonboxstate)
 
-        self.exp = discountgui.CEDiscountExp(person)
-        self.exp.show()
-        self.hide()
+        if (int(self.trialsin.text()) % 6) == 0:
+
+            person = discountp.CEDParticipant(self.idform.text(),
+                                              self.trialsin.text(),
+                                              self.wdset.text(),
+                                              'CogED Task',
+                                              self.maxrewin.text(),
+                                              self.outcome,
+                                              self.names.currentText(),
+                                              self.blocksin.text(),
+                                              self.buttonboxstate)
+
+            self.exp = discountgui.CEDiscountExp(person)
+            self.exp.show()
+            self.hide()
+
+        else:
+            self.matherrordialog(5)

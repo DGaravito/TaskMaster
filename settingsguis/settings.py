@@ -1,4 +1,5 @@
-from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton,  QLineEdit, QVBoxLayout, QDialog, QCheckBox
+from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QSpinBox, QLineEdit, QVBoxLayout, QDialog, \
+    QCheckBox
 from PyQt6.QtCore import Qt
 
 from os import path
@@ -58,24 +59,36 @@ class MathErrorBox(QDialog):
         self.mainerror = QLabel('Your number of trials isn\'t compatible with the settingsguis and/or task you chose!')
         self.mainerror.setStyleSheet('padding :5px')
 
-        if state == 1:
+        match state:
 
-            self.followup = QLabel('There are 4 pictures for stimuli, so the total number of trials must be ' +
-                                   'divisible by 4.')
+            case 1:
 
-        elif state == 2:
+                self.followup = QLabel('There are 4 pictures for stimuli, so the total number of trials must be ' +
+                                       'divisible by 4.')
 
-            self.followup = QLabel('You enabled gains and losses, so your number of trials should be divisible by 2.')
+            case 2:
 
-        elif state == 3:
+                self.followup = QLabel('You enabled gains and losses, so your number of trials should be divisible by'
+                                       ' 2.')
 
-            self.followup = QLabel('You enabled FTT, so your number of trials should be divisible by 3.')
+            case 3:
 
-        elif state == 4:
+                self.followup = QLabel('You enabled FTT, so your number of trials should be divisible by 3.')
 
-            self.followup = QLabel('You enabled FTT and need gains and losses, so your number of trials should be ' +
-                                   ' divisible by 6 (minimum Gist, Mixed, and Verbatim version of 1 gain and 1 loss ' +
-                                   ' question.')
+            case 4:
+
+                self.followup = QLabel('You enabled FTT and need gains and losses, so your number of trials should'
+                                       ' be divisible by 6 (minimum Gist, Mixed, and Verbatim version of 1 gain and'
+                                       ' 1 loss question.')
+
+            case 5:
+
+                self.followup = QLabel('There are 4 task difficulty levels, so the total number of trials must be ' +
+                                       'divisible by 6 (enough for each difficulty to be compared).')
+
+            case _:
+
+                self.followup = QLabel('I don\'t know what you put, but the math doesn\'t work out')
 
         self.followup.setStyleSheet('padding :5px')
 
@@ -124,6 +137,10 @@ class Settings(QWidget):
         self.buttonbox = QCheckBox()
         self.buttonbox.stateChanged.connect(self.clickbox)
 
+        # Blocks input
+        self.blocksin = QSpinBox()
+        self.blocksin.setSpecialValueText('1')
+
         # WD input
         self.wdset = QLineEdit()
         self.wdset.setText('C:/Users/dgaravito/Desktop')
@@ -159,3 +176,9 @@ class Settings(QWidget):
 
     def submitsettings(self):
         print('If you see this, panic')
+
+    def matherrordialog(self, state):
+
+        error = MathErrorBox(state)
+
+        error.exec()

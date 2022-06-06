@@ -11,10 +11,11 @@ import random
 class ARTTParticipant(participant.Participant):
 
     def __init__(self, expid, trials, outdir, task, risklist, amblist, rewmin, rewmax, structure, outcome, money,
-                 buttonbox):
+                 rounds, buttonbox):
         super().__init__(expid, trials, outdir, task)
 
         self.buttonbox = buttonbox
+        self.rounds = int(rounds)
         self.startmoney = money
         self.inst = 0
         self.outcomeopt = outcome
@@ -33,7 +34,8 @@ class ARTTParticipant(participant.Participant):
                               'Ambiguous Probabilities': [amblist],
                               'Fixed Reward': [rewmin],
                               'Largest Reward': [rewmax],
-                              'Design': [structure]
+                              'Design': [structure],
+                              'Blocks': [rounds]
                               }
 
         self.set_settings(dict_simulsettings)
@@ -47,7 +49,7 @@ class ARTTParticipant(participant.Participant):
 
         if self.structure == 'Gains and Losses':
 
-            multnum = int(self.get_trials() / 2)
+            multnum = int((self.get_trials() / 2) * self.rounds)
             gainlosscond = ['Gain', 'Loss']
             multiplier = [multnum, multnum]
             self.order = sum([[s] * n for s, n in zip(gainlosscond, multiplier)], [])
@@ -135,6 +137,18 @@ class ARTTParticipant(participant.Participant):
             picstring = 'ARTT_ambig_' + str(round(self.design['a_var'] * 100)) + '.bmp'
 
         return [fixedstring, otherstring, picstring, bluered]
+
+    def nextround(self, blocks):
+
+        if blocks == self.rounds:
+
+            prompt = 'Thank you! This task is complete.'
+
+        else:
+
+            prompt = 'Please wait for the next round.'
+
+        return prompt
 
     def engineupdate(self, response):
 
@@ -339,9 +353,10 @@ class ARTTParticipant(participant.Participant):
 
 class RAParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, minimum, maximum, outcome, money, buttonbox):
+    def __init__(self, expid, trials, outdir, task, minimum, maximum, outcome, money, rounds, buttonbox):
         super().__init__(expid, trials, outdir, task)
 
+        self.rounds = int(rounds)
         self.buttonbox = buttonbox
         self.startmoney = money
         self.outcomeopt = outcome
@@ -352,7 +367,8 @@ class RAParticipant(participant.Participant):
 
         # Experiment settingsguis output dataframe
         dict_simulsettings = {'Minimum Reward': [minimum],
-                              'Maximum Reward': [maximum]
+                              'Maximum Reward': [maximum],
+                              'Blocks': [rounds]
                               }
 
         self.set_settings(dict_simulsettings)
@@ -396,6 +412,18 @@ class RAParticipant(participant.Participant):
 
         # Return the values to the expguis
         return [gainstring, lossstring]
+
+    def nextround(self, blocks):
+
+        if blocks == self.rounds:
+
+            prompt = 'Thank you! This task is complete.'
+
+        else:
+
+            prompt = 'Please wait for the next round.'
+
+        return prompt
 
     def updateoutput(self, response, trial):
 
@@ -475,9 +503,10 @@ class RAParticipant(participant.Participant):
 
 class FrameParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, minimum, maximum, design, ftt, outcome, money, buttonbox):
+    def __init__(self, expid, trials, outdir, task, minimum, maximum, design, ftt, outcome, money, rounds, buttonbox):
         super().__init__(expid, trials, outdir, task)
 
+        self.rounds = rounds
         self.buttonbox = buttonbox
         self.startmoney = money
         self.outcomeopt = outcome
@@ -715,6 +744,18 @@ class FrameParticipant(participant.Participant):
 
         # Return the values to the expguis
         return [leftstring, righttopstring, rightbottomstring]
+
+    def nextround(self, blocks):
+
+        if blocks == self.rounds:
+
+            prompt = 'Thank you! This task is complete.'
+
+        else:
+
+            prompt = 'Please wait for the next round.'
+
+        return prompt
 
     def updateoutput(self, response, trial):
 

@@ -84,7 +84,8 @@ class ARTTSettings(settings.Settings):
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
-        layout.addRow(QLabel('Number of trials:'), self.trialsin)
+        layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
+        layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         # layout.addRow(QLabel('Enter the probablities for risky trials:'), self.probriskin)
         # layout.addRow(QLabel('Enter the proportions covered for ambiguous trials:'), self.probambin)
         layout.addRow(QLabel('Fixed reward/loss magnitude:'), self.srewin)
@@ -121,22 +122,35 @@ class ARTTSettings(settings.Settings):
         # ambstring = self.probambin.text()
         # amblist = list(ambstring.split(", "))
 
-        person = gamblep.ARTTParticipant(self.idform.text(),
-                                         self.trialsin.text(),
-                                         self.wdset.text(),
-                                         TaskCRA(),
-                                         self.probabilities,
-                                         self.proportions,
-                                         self.srewin.text(),
-                                         self.lrewin.text(),
-                                         self.design.currentText(),
-                                         self.outcome,
-                                         self.smoneyin.text(),
-                                         self.buttonboxstate)
+        if (
+                (
+                        (
+                                int(
+                                    self.trialsin.text()
+                                ) % 2
+                        ) == 0
+                ) & self.design.currentText() == 'Gains and Losses'
+        ) | self.design.currentText() in ['Gains only', 'Losses only']:
+            person = gamblep.ARTTParticipant(self.idform.text(),
+                                             self.trialsin.text(),
+                                             self.wdset.text(),
+                                             TaskCRA(),
+                                             self.probabilities,
+                                             self.proportions,
+                                             self.srewin.text(),
+                                             self.lrewin.text(),
+                                             self.design.currentText(),
+                                             self.outcome,
+                                             self.smoneyin.text(),
+                                             self.blocksin.text(),
+                                             self.buttonboxstate)
 
-        self.exp = gamblegui.ARTTExp(person)
-        self.exp.show()
-        self.hide()
+            self.exp = gamblegui.ARTTExp(person)
+            self.exp.show()
+            self.hide()
+
+        else:
+            self.matherrordialog(2)
 
 
 class RASettings(settings.Settings):
@@ -200,7 +214,8 @@ class RASettings(settings.Settings):
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
-        layout.addRow(QLabel('Number of trials:'), self.trialsin)
+        layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
+        layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         layout.addRow(QLabel('Smallest possible gain:'), self.minin)
         layout.addRow(QLabel('Largest possible gain:'), self.maxin)
         layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
@@ -236,6 +251,7 @@ class RASettings(settings.Settings):
                                        self.maxin.text(),
                                        self.outcome,
                                        self.smoneyin.text(),
+                                       self.blocksin.text(),
                                        self.buttonboxstate)
 
         self.exp = gamblegui.RAExp(person)
@@ -313,7 +329,8 @@ class FrameSettings(settings.Settings):
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
-        layout.addRow(QLabel('Number of trials:'), self.trialsin)
+        layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
+        layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         layout.addRow(QLabel('Minimum expected value:'), self.minin)
         layout.addRow(QLabel('Maximum expected value:'), self.maxin)
         layout.addRow(QLabel('What type of questions do you want?:'), self.design)
@@ -376,14 +393,9 @@ class FrameSettings(settings.Settings):
                                               self.ftt,
                                               self.outcome,
                                               self.smoneyin.text(),
+                                              self.blocksin.text(),
                                               self.buttonboxstate)
 
             self.exp = gamblegui.FrameExp(person)
             self.exp.show()
             self.hide()
-
-    def matherrordialog(self, state):
-
-        error = settings.MathErrorBox(state)
-
-        error.exec()

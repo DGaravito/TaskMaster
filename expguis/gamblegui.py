@@ -15,6 +15,7 @@ class ARTTExp(QWidget):
         self.response = 0
         self.person = person
         self.trialsdone = 0
+        self.roundsdone = 0
         self.inst = 0
 
         if self.person.buttonbox == 'Yes':
@@ -185,22 +186,26 @@ class ARTTExp(QWidget):
             self.timerresponse.start(5000)
 
         else:
-            self.person.output()
 
             self.left.setText('')
 
             self.righttoptext.setText('')
             self.righttoptext.setText('')
 
-            self.instructions.setText('Thank you!')
+            self.roundsdone += 1
+            self.trialsdone = 0
 
-            if self.person.outcomeopt == 'Yes':
+            self.middle.setText(self.person.nextround(self.roundsdone))
 
-                outcome = random.choice(self.person.outcomelist)
-                self.middle.setText('Your outcome: ' + outcome)
+            if self.person.rounds == self.roundsdone:
 
-            else:
-                self.middle.setText('You may now quit the application.')
+                self.person.output()
+                self.instructions.setText('Thank you!')
+
+                if self.person.outcomeopt == 'Yes':
+
+                    outcome = random.choice(self.person.outcomelist)
+                    self.middle.setText('Your outcome: ' + outcome)
 
     def timerwarning(self):
 
@@ -280,6 +285,7 @@ class RAExp(QWidget):
         self.response = 0
         self.person = person
         self.trialsdone = 0
+        self.roundsdone = 0
         self.inst = 0
 
         if self.person.buttonbox == 'Yes':
@@ -427,15 +433,20 @@ class RAExp(QWidget):
             self.left.setText('')
             self.rightgain.setText('')
             self.rightloss.setText('')
-            self.instructions.setText('Thank you!')
 
-            if self.person.outcomeopt == 'Yes':
+            self.roundsdone += 1
+            self.trialsdone = 0
 
-                outcome = random.choice(self.person.outcomelist)
-                self.middle.setText('Your outcome: ' + outcome)
+            self.middle.setText(self.person.nextround(self.roundsdone))
 
-            else:
-                self.middle.setText('You may now quit the application.')
+            if self.person.rounds == self.roundsdone:
+
+                self.person.output()
+                self.instructions.setText('Thank you!')
+
+                if self.person.outcomeopt == 'Yes':
+                    outcome = random.choice(self.person.outcomelist)
+                    self.middle.setText('Your outcome: ' + outcome)
 
     def timerwarning(self):
 
@@ -496,6 +507,7 @@ class FrameExp(QWidget):
         self.response = 0
         self.person = person
         self.trialsdone = 0
+        self.roundsdone = 0
         self.inst = 0
 
         if self.person.buttonbox == 'Yes':
@@ -646,16 +658,19 @@ class FrameExp(QWidget):
             self.rightgain.setText('')
             self.rightloss.setText('')
 
-            if self.person.outcomeopt == 'Yes':
+            self.roundsdone += 1
+            self.trialsdone = 0
 
-                outcome = random.choice(self.person.outcomelist)
-                self.middle.setText('Your outcome: ' + outcome)
+            self.middle.setText(self.person.nextround(self.roundsdone))
 
-            else:
-                self.middle.setText('You may now quit the application.')
+            if self.person.rounds == self.roundsdone:
 
-            self.instructions.setText('Thank you!')
+                self.person.output()
+                self.instructions.setText('Thank you!')
 
+                if self.person.outcomeopt == 'Yes':
+                    outcome = random.choice(self.person.outcomelist)
+                    self.middle.setText('Your outcome: ' + outcome)
 
     def timerwarning(self):
 

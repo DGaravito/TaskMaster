@@ -42,10 +42,6 @@ class PBTSettings(settings.Settings):
 
         over_layout.addWidget(self.header)
 
-        # Blocks input
-        self.blocksin = QSpinBox()
-        self.blocksin.setSpecialValueText('2')
-
         # Trials input
         self.trialsin = QSpinBox()
         self.trialsin.setSpecialValueText('120')
@@ -88,10 +84,4 @@ class PBTSettings(settings.Settings):
             self.hide()
 
         else:
-            self.matherrordialog()
-
-    def matherrordialog(self):
-
-        error = settings.MathErrorBox(1)
-
-        error.exec()
+            self.matherrordialog(1)

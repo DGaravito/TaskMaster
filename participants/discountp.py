@@ -10,9 +10,11 @@ import random
 
 class DdParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew, buttonbox):
+    def __init__(self, expid, trials, outdir, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew, rounds,
+                 buttonbox):
         super().__init__(expid, trials, outdir, task)
 
+        self.rounds = rounds
         self.buttonbox = buttonbox
 
         self.engine = self.create_dd_engine(self.task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew)
@@ -26,7 +28,8 @@ class DdParticipant(participant.Participant):
                               'Longest Delay': [ll_longdel],
                               'Smallest Smaller Sooner Reward': [ss_smallrew],
                               'Largest Smaller Sooner Reward': [(float(ll_rew) - float(ss_smallrew))],
-                              'Larger Later Reward': [ll_rew]
+                              'Larger Later Reward': [ll_rew],
+                              'Blocks': [rounds]
                               }
 
         self.set_settings(dict_simulsettings)
@@ -87,6 +90,18 @@ class DdParticipant(participant.Participant):
         # Generate new optimal design based on previous design and response
         self.design = self.engine.get_design('optimal')
 
+    def nextround(self, blocks):
+
+        if blocks == self.rounds:
+
+            prompt = 'Thank you! This task is complete.'
+
+        else:
+
+            prompt = 'Please wait for the next round.'
+
+        return prompt
+
     def updateoutput(self, response, trial):
 
         df_simultrial = {
@@ -137,23 +152,27 @@ class DdParticipant(participant.Participant):
 
 class PdParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, design, minimum, maximum, outcome, money, buttonbox):
+    def __init__(self, expid, trials, outdir, task, design, minimum, maximum, outcome, money, rounds, buttonbox):
         super().__init__(expid, trials, outdir, task)
 
         self.buttonbox = buttonbox
+        self.rounds = rounds
+
         self.design = design
         self.maximum = float(maximum)
         self.minimum = float(minimum)
         self.trialdesign = []
         self.startmoney = money
         self.outcomeopt = outcome
+        self.outcomelist = []
 
         self.create_design()
 
         # Experiment settingsguis output dataframe
         dict_simulsettings = {'Design': [design],
                               'Minimum Reward': [minimum],
-                              'Maximum Reward': [maximum]
+                              'Maximum Reward': [maximum],
+                              'Blocks': [rounds]
                               }
 
         self.set_settings(dict_simulsettings)
@@ -249,6 +268,18 @@ class PdParticipant(participant.Participant):
         # Return the values to the expguis
         return [leftstring, rightstring, barvalue]
 
+    def nextround(self, blocks):
+
+        if blocks == self.rounds:
+
+            prompt = 'Thank you! This task is complete.'
+
+        else:
+
+            prompt = 'Please wait for the next round.'
+
+        return prompt
+
     def updateoutput(self, response, trial):
 
         df_simultrial = {
@@ -262,6 +293,87 @@ class PdParticipant(participant.Participant):
 
         df_simultrial = pd.DataFrame(data=df_simultrial)
         self.set_performance(df_simultrial)
+
+        # only do the following if the user wanted a random reward/loss at the end
+        if self.outcomeopt == 'Yes':
+
+            # Add the potential outcome of this choice to the list for post-task rewards.
+            # If they chose the sure thing...
+            if response == 0:
+
+                # if they only have gains...
+                if self.design == 'Gains only':
+
+                    # then add the fixed gain to the list
+                    self.outcomelist.append('$' + str('{:.2f}'.format(float(self.trialdesign[0]))))
+
+                # if they only have losses...
+                elif self.design == 'Losses only':
+
+                    # then add the fixed loss to the list
+                    self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.trialdesign[0]))))
+
+                # if they have gains and losses...
+                else:
+
+                    # Then look at the state to see if it was a gain or loss
+                    if self.state == "Gain":
+                        self.outcomelist.append('$' + str('{:.2f}'.format(float(self.trialdesign[0]))))
+
+                    else:
+                        self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.trialdesign[0]))))
+
+            # if they chose the gamble...
+            else:
+
+                # actually generate a random probability to see if they win the gamble
+                actualprob = random.uniform(0.0, 1.0)
+
+                # if they only have gains...
+                if self.design == 'Gains only':
+
+                    # if they win, add the reward
+                    if actualprob > float(self.trialdesign[1]):
+                        self.outcomelist.append('$' + str('{:.2f}'.format(float(self.maximum))))
+
+                    # if not, add 0
+                    else:
+                        self.outcomelist.append(self.outcomelist.append('$0.00'))
+
+                # if they only have losses...
+                elif self.design == 'Losses only':
+
+                    # if they lose, add the loss
+                    if actualprob < float(self.trialdesign[1]):
+                        self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.maximum))))
+
+                    # if not, add 0
+                    else:
+                        self.outcomelist.append(self.outcomelist.append('$0.00'))
+
+                # if they have gains and losses...
+                else:
+
+                    # Then look at the state to see if it was a gain or loss
+                    if self.state[1] == "Gain":
+
+                        # if they win, add the reward
+                        if actualprob > float(self.trialdesign[1]):
+                            self.outcomelist.append('$' + str('{:.2f}'.format(float(self.maximum))))
+
+                        # if not, add 0
+                        else:
+                            self.outcomelist.append(self.outcomelist.append('$0.00'))
+
+                    else:
+
+                        # if they lose, add the loss
+                        if actualprob < float(self.trialdesign[1]):
+                            self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.maximum))))
+
+                        # if not, add 0
+                        else:
+                            self.outcomelist.append(self.outcomelist.append('$0.00'))
 
     def get_instructions(self, instint):
         """
@@ -299,54 +411,306 @@ class PdParticipant(participant.Participant):
 
 class CEDParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, minrew, maxrew, outcome, buttonbox):
+    def __init__(self, expid, trials, outdir, task, maxrew, outcome, names, rounds, buttonbox):
         super().__init__(expid, trials, outdir, task)
 
+        self.rounds = rounds
+
         self.outcomeopt = outcome
+        self.outcomelist = []
         self.buttonbox = buttonbox
+
+        if names == 'a, e, i, u':
+
+            self.stimnames = ['a', 'e', 'i', 'u']
+
+        else:
+
+            self.stimnames = ['Black', 'Red', 'Blue', 'Purple']
+
+        # setting the default amounts for the tasks
+        self.onebackamount = float(maxrew)
+        self.fourbackamount = float(maxrew)
+
+        # anything above one (but below four) back gets two values: one when the easier task, one when the harder
+        self.twoeasyamount = float(maxrew)
+        self.threeeasyamount = float(maxrew)
+
+        self.twohardamount = float(maxrew)
+        self.threehardamount = float(maxrew)
+
+        # set up the modifiers
+
+        self.onetwomodifier = 0.0
+        self.onethreemodifier = 0.0
+        self.onefourmodifier = 0.0
+        self.twothreemodifier = 0.0
+        self.twofourmodifier = 0.0
+        self.threefourmodifier = 0.0
 
         # Experiment settingsguis output dataframe
         dict_simulsettings = {
-                              'Smallest Reward': [minrew],
                               'Largest Reward': [maxrew]
                               }
 
         self.set_settings(dict_simulsettings)
 
+        self.set_structure()
+
+    def set_structure(self):
+
+        multnum = int(self.get_trials() / 6)
+        gainlosscond = ['1-2', '1-3', '1-4', '2-3', '2-4', '3-4']
+        multiplier = [multnum, multnum, multnum, multnum, multnum, multnum]
+        self.order = sum([[s] * n for s, n in zip(gainlosscond, multiplier)], [])
+        random.shuffle(self.order)
+
+    def set_design_text(self):
+
+        self.state = self.order.pop()
+
+        self.randomside = random.randint(1, 2)
+
+        match self.state:
+
+            case '1-2':
+
+                if self.randomside == 1:
+
+                    self.lefttask = self.stimnames[0]
+                    self.leftmoney = str('{:.2f}'.format(self.onebackamount + self.onetwomodifier))
+                    self.righttask = self.stimnames[1]
+                    self.rightmoney = str('{:.2f}'.format(self.twohardamount))
+
+                else:
+
+                    self.lefttask = self.stimnames[1]
+                    self.leftmoney = str('{:.2f}'.format(self.twohardamount))
+                    self.righttask = self.stimnames[0]
+                    self.rightmoney = str('{:.2f}'.format(self.onebackamount + self.onetwomodifier))
+
+            case '1-3':
+
+                if self.randomside == 1:
+
+                    self.lefttask = self.stimnames[0]
+                    self.leftmoney = str('{:.2f}'.format(self.onebackamount + self.onethreemodifier))
+                    self.righttask = self.stimnames[2]
+                    self.rightmoney = str('{:.2f}'.format(self.threehardamount))
+
+                else:
+
+                    self.lefttask = self.stimnames[2]
+                    self.leftmoney = str('{:.2f}'.format(self.threehardamount))
+                    self.righttask = self.stimnames[0]
+                    self.rightmoney = str('{:.2f}'.format(self.onebackamount + self.onethreemodifier))
+
+            case '1-4':
+
+                if self.randomside == 1:
+
+                    self.lefttask = self.stimnames[0]
+                    self.leftmoney = str('{:.2f}'.format(self.onebackamount + self.onefourmodifier))
+                    self.righttask = self.stimnames[3]
+                    self.rightmoney = str('{:.2f}'.format(self.fourbackamount))
+
+                else:
+
+                    self.lefttask = self.stimnames[3]
+                    self.leftmoney = str('{:.2f}'.format(self.fourbackamount))
+                    self.righttask = self.stimnames[0]
+                    self.rightmoney = str('{:.2f}'.format(self.onebackamount + self.onefourmodifier))
+
+            case '2-3':
+
+                if self.randomside == 1:
+
+                    self.lefttask = self.stimnames[1]
+                    self.leftmoney = str('{:.2f}'.format(self.twoeasyamount + self.twothreemodifier))
+                    self.righttask = self.stimnames[2]
+                    self.rightmoney = str('{:.2f}'.format(self.threehardamount))
+
+                else:
+
+                    self.lefttask = self.stimnames[2]
+                    self.leftmoney = str('{:.2f}'.format(self.threehardamount))
+                    self.righttask = self.stimnames[1]
+                    self.rightmoney = str('{:.2f}'.format(self.twoeasyamount + self.twothreemodifier))
+
+            case '2-4':
+
+                if self.randomside == 1:
+
+                    self.lefttask = self.stimnames[1]
+                    self.leftmoney = str('{:.2f}'.format(self.twoeasyamount + self.twofourmodifier))
+                    self.righttask = self.stimnames[3]
+                    self.rightmoney = str('{:.2f}'.format(self.fourbackamount))
+
+                else:
+
+                    self.lefttask = self.stimnames[3]
+                    self.leftmoney = str('{:.2f}'.format(self.fourbackamount))
+                    self.righttask = self.stimnames[1]
+                    self.rightmoney = str('{:.2f}'.format(self.twoeasyamount + self.twofourmodifier))
+
+            case '3-4':
+
+                if self.randomside == 1:
+
+                    self.lefttask = self.stimnames[2]
+                    self.leftmoney = str('{:.2f}'.format(self.threeeasyamount + self.threefourmodifier))
+                    self.righttask = self.stimnames[3]
+                    self.rightmoney = str('{:.2f}'.format(self.fourbackamount))
+
+                else:
+
+                    self.lefttask = self.stimnames[3]
+                    self.leftmoney = str('{:.2f}'.format(self.fourbackamount))
+                    self.righttask = self.stimnames[2]
+                    self.rightmoney = str('{:.2f}'.format(self.threeeasyamount + self.threefourmodifier))
+
+            case _:
+
+                print('Panic!')
+
     def get_design_text(self):
 
-        if int(self.design['t_ss']) == 0:
-            leftstring = 'Getting $' + str('{:.2f}'.format(self.design['r_ss'])) + '\nnow'
-
-        else:
-            leftstring = 'Getting $' + str('{:.2f}'.format(self.design['r_ll'])) + '\nafter '\
-                         + str(int(self.design['t_ss'])) + ' weeks'
-
-        rightstring = 'Getting $' + str('{:.2f}'.format(self.design['r_ll'])) + '\nafter '\
-                      + str(int(self.design['t_ll'])) + ' weeks'
+        leftstring = 'Doing extra rounds of the ' + self.lefttask + 'task\nfor $' + self.leftmoney
+        rightstring = 'Doing extra rounds of the ' + self.righttask + 'task\nfor $' + self.rightmoney
 
         return [leftstring, rightstring]
 
-    def engineupdate(self, response):
-        # Update engine with the response and current design
-        self.engine.update(self.design, response)
+    def nextround(self, blocks):
 
-        # Generate new optimal design based on previous design and response
-        self.design = self.engine.get_design('optimal')
+        if blocks == self.rounds:
+
+            prompt = 'Thank you! This task is complete.'
+
+        else:
+
+            prompt = 'Please wait for the next round.'
+
+        return prompt
 
     def updateoutput(self, response, trial):
 
         df_simultrial = {
             'trial': [trial],
-            'left task': [float(self.design['r_ss'])],
-            'left value': [float(self.design['r_ll'])],
-            'right task': [float(self.design['t_ll'])],
-            'right value': [response],
+            'left task': [self.lefttask],
+            'left value': [self.leftmoney],
+            'right task': [self.righttask],
+            'right value': [self.rightmoney],
             'response': [response]
         }
 
         df_simultrial = pd.DataFrame(data=df_simultrial)
         self.set_performance(df_simultrial)
+
+        randomrounds = random.randint(1,10)
+
+        # only do the following if the user wanted a random reward/loss at the end
+        if self.outcomeopt == 'Yes':
+
+            # Add their choice (with the random number of rounds)
+            # if they chose the left option...
+            if response == 0:
+
+                outcomestring = str(randomrounds) + ' rounds of the ' + self.lefttask + ' task for $' + self.leftmoney
+
+            # if they chose the right option...
+            else:
+
+                outcomestring = str(randomrounds) + ' rounds of the ' + self.righttask + ' task for $' + self.rightmoney
+
+            self.outcomelist.append(outcomestring)
+
+        modifiermod = 0.5 / trial
+
+        match self.state:
+
+            case '1-2':
+
+                if self.randomside == 1 & response == 0:
+
+                    self.onetwomodifier = self.onetwomodifier - modifiermod
+
+                elif self.randomside == 2 & response == 1:
+
+                    self.onetwomodifier = self.onetwomodifier - modifiermod
+
+                else:
+
+                    self.onetwomodifier = self.onetwomodifier + modifiermod
+
+            case '1-3':
+
+                if self.randomside == 1 & response == 0:
+
+                    self.onethreemodifier = self.onethreemodifier - modifiermod
+
+                elif self.randomside == 2 & response == 1:
+
+                    self.onethreemodifier = self.onethreemodifier - modifiermod
+
+                else:
+
+                    self.onethreemodifier = self.onethreemodifier + modifiermod
+
+            case '1-4':
+
+                if self.randomside == 1 & response == 0:
+
+                    self.onefourmodifier = self.onefourmodifier - modifiermod
+
+                elif self.randomside == 2 & response == 1:
+
+                    self.onefourmodifier = self.onefourmodifier - modifiermod
+
+                else:
+
+                    self.onefourmodifier = self.onefourmodifier + modifiermod
+
+            case '2-3':
+
+                if self.randomside == 1 & response == 0:
+
+                    self.twothreemodifier = self.twothreemodifier - modifiermod
+
+                elif self.randomside == 2 & response == 1:
+
+                    self.twothreemodifier = self.twothreemodifier - modifiermod
+
+                else:
+
+                    self.twothreemodifier = self.twothreemodifier + modifiermod
+
+            case '2-4':
+
+                if self.randomside == 1 & response == 0:
+
+                    self.twofourmodifier = self.twofourmodifier - modifiermod
+
+                elif self.randomside == 2 & response == 1:
+
+                    self.twofourmodifier = self.twofourmodifier - modifiermod
+
+                else:
+
+                    self.twofourmodifier = self.twofourmodifier + modifiermod
+
+            case '3-4':
+
+                if self.randomside == 1 & response == 0:
+
+                    self.threefourmodifier = self.threefourmodifier - modifiermod
+
+                elif self.randomside == 2 & response == 1:
+
+                    self.threefourmodifier = self.threefourmodifier - modifiermod
+
+                else:
+
+                    self.threefourmodifier = self.threefourmodifier + modifiermod
 
     def get_instructions(self, instint):
         """

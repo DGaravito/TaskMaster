@@ -50,10 +50,6 @@ class SSSettings(settings.Settings):
         self.maxrtin = QSpinBox()
         self.maxrtin.setSpecialValueText('1500')
 
-        # Blocks input
-        self.blocksin = QSpinBox()
-        self.blocksin.setSpecialValueText('3')
-
         # Make form layout for all the settingsguis
         layout = QFormLayout()
 
@@ -133,10 +129,6 @@ class EGNGSettings(settings.Settings):
         # Reaction time input
         self.maxrtin = QSpinBox()
         self.maxrtin.setSpecialValueText('1500')
-
-        # Blocks input
-        self.blocksin = QSpinBox()
-        self.blocksin.setSpecialValueText('3')
 
         # Make form layout for all the settingsguis
         layout = QFormLayout()

@@ -1,3 +1,5 @@
+import random
+
 from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QProgressBar
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal
@@ -13,6 +15,7 @@ class DDiscountExp(QWidget):
         self.response = 0
         self.person = person
         self.trialsdone = 0
+        self.roundsdone = 0
 
         if self.person.buttonbox == 'Yes':
             self.leftkey = ['1']
@@ -158,8 +161,16 @@ class DDiscountExp(QWidget):
 
             self.left.setText('')
             self.right.setText('')
-            self.instructions.setText('Thank you!')
-            self.middle.setText('You may now quit the application.')
+
+            self.roundsdone += 1
+            self.trialsdone = 0
+
+            self.middle.setText(self.person.nextround(self.roundsdone))
+
+            if self.person.rounds == self.roundsdone:
+
+                self.person.output()
+                self.instructions.setText('Thank you!')
 
     def timerwarning(self):
 
@@ -216,6 +227,7 @@ class PDiscountExp(QWidget):
         self.response = 0
         self.person = person
         self.trialsdone = 0
+        self.roundsdone = 0
         self.inst = 0
 
         if self.person.buttonbox == 'Yes':
@@ -377,8 +389,21 @@ class PDiscountExp(QWidget):
 
             self.left.setText('')
             self.right.setText('')
-            self.instructions.setText('Thank you!')
-            self.middle.setText('You may now quit the application.')
+
+            self.roundsdone += 1
+            self.trialsdone = 0
+
+            self.middle.setText(self.person.nextround(self.roundsdone))
+
+            if self.person.rounds == self.roundsdone:
+
+                self.person.output()
+                self.instructions.setText('Thank you!')
+
+                if self.person.outcomeopt == 'Yes':
+
+                    outcome = random.choice(self.person.outcomelist)
+                    self.middle.setText('Your outcome: ' + outcome)
 
     def timerwarning(self):
 
@@ -442,6 +467,8 @@ class CEDiscountExp(QWidget):
         self.response = 0
         self.person = person
         self.trialsdone = 0
+        self.roundsdone = 0
+        self.extradelay = [0, 2000, 4000]
 
         if self.person.buttonbox == 'Yes':
             self.leftkey = ['1']
@@ -467,16 +494,20 @@ class CEDiscountExp(QWidget):
         self.keyPressed.connect(self.keyaction)
 
         # Make timer for jitter screen
-        self.timerjitter = QTimer()
-        self.timerjitter.timeout.connect(self.generatenext)
+        self.jittertimer = QTimer()
+        self.jittertimer.timeout.connect(self.generatenext)
 
         # Make timer for participants taking too long
-        self.timerresponse = QTimer()
-        self.timerresponse.timeout.connect(self.timerwarning)
+        self.responsetimer = QTimer()
+        self.responsetimer.timeout.connect(self.timerwarning)
 
         # Make timer for resetting after the above time warning
-        self.timerreset = QTimer()
-        self.timerreset.timeout.connect(self.responsereset)
+        self.resettimer = QTimer()
+        self.resettimer.timeout.connect(self.responsereset)
+
+        # Make timer for second half of trial to appear on screen
+        self.secondhalftimer = QTimer()
+        self.secondhalftimer.timeout.connect(self.displaysecondhalf)
 
     def elements(self):
 
@@ -553,56 +584,65 @@ class CEDiscountExp(QWidget):
 
         self.person.updateoutput(self.response, self.trialsdone)
 
-        self.timerjitter.start(1000)
+        self.jittertimer.start(1000)
 
     def generatenext(self):
 
-        self.timerjitter.stop()
-        if self.trialsdone == 0:
-
-            strings = self.person.get_design_text()
-            self.left.setText(strings[0])
-            self.right.setText(strings[1])
-            self.middle.setText('OR')
+        self.jittertimer.stop()
+        if self.person.get_trials() > self.trialsdone:
 
             self.trialsdone += 1
 
-            self.timerresponse.start(5000)
-
-        elif self.person.get_trials() > self.trialsdone:
-
-            self.person.engineupdate(self.response)
-
             strings = self.person.get_design_text()
             self.left.setText(strings[0])
-            self.right.setText(strings[1])
-            self.middle.setText('OR')
-
-            self.trialsdone += 1
-
-            self.timerresponse.start(5000)
+            self.secondhalftimer.start(random.choice(self.extradelay))
 
         else:
             self.person.output()
 
             self.left.setText('')
             self.right.setText('')
-            self.instructions.setText('Thank you!')
-            self.middle.setText('You may now quit the application.')
+
+            self.roundsdone += 1
+            self.trialsdone = 0
+
+            self.middle.setText(self.person.nextround(self.roundsdone))
+
+            if self.person.rounds == self.roundsdone:
+
+                self.person.output()
+                self.instructions.setText('Thank you!')
+
+                if self.person.outcomeopt == 'Yes':
+
+                    outcome = random.choice(self.person.outcomelist)
+                    self.middle.setText('Your outcome: ' + outcome)
+
+    def displaysecondhalf(self):
+
+        self.secondhalftimer.stop()
+
+        strings = self.person.get_design_text()
+
+        self.right.setText(strings[1])
+        self.middle.setText('OR')
+
+        self.responsetimer.start(5000)
 
     def timerwarning(self):
 
-        self.timerresponse.stop()
+        self.responsetimer.stop()
+        self.secondhalftimer.stop()
 
         self.left.setText('')
         self.right.setText('')
         self.middle.setText('Please try to be quicker')
 
-        self.timerreset.start(1000)
+        self.resettimer.start(1000)
 
     def responsereset(self):
 
-        self.timerreset.stop()
+        self.resettimer.stop()
 
         strings = self.person.get_design_text()
         self.left.setText(strings[0])
@@ -610,11 +650,11 @@ class CEDiscountExp(QWidget):
 
         self.middle.setText('OR')
 
-        self.timerresponse.start(5000)
+        self.responsetimer.start(5000)
 
     def keyaction(self, key):
 
-        self.timerresponse.stop()
+        self.responsetimer.stop()
 
         if key in self.leftkey:
             self.response = 0

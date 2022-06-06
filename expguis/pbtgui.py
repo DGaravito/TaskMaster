@@ -137,12 +137,11 @@ class PBTExp(QWidget):
             self.ititimer.stop()
 
             self.roundsdone += 1
+            self.trialsdone = 0
 
             self.middle.setPixmap(QPixmap())
 
             self.middle.setText(self.person.nextround(self.roundsdone))
-
-            self.trialsdone = 0
 
             if self.person.rounds == self.roundsdone:
 
