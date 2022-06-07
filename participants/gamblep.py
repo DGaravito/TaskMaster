@@ -158,7 +158,16 @@ class ARTTParticipant(participant.Participant):
         # Generate new optimal design based on previous design and response
         self.design = self.engine.get_design('optimal')
 
-    def updateoutput(self, response, trial):
+    def updateoutput(self, trial, onset, time, response):
+        """
+        Records the stats
+        :param trial: the number of the trial that was just completed
+        :param onset: onset time for the trial
+        :param time: participants's reaction time
+        :param response: integer with either 0 or 1 depending on if the person chose left or right. Default is 3 in case
+        the participants doesn't answer in time.
+        :return: updates the performance dataframe in the superclass
+        """
 
         df_simultrial = {
             'trial': [trial],
@@ -167,7 +176,9 @@ class ARTTParticipant(participant.Participant):
             'Proportion Risky': [float(self.design['p_var'])],
             'Fixed Reward': [self.design['r_fix']],
             'Variable Reward': [self.design['r_var']],
+            'onset': [onset],
             'response': [response],
+            'reaction time': [time],
             'mean_alpha': [self.engine.post_mean[0]],
             'mean_beta': [self.engine.post_mean[1]],
             'mean_gamma': [self.engine.post_mean[2]],
@@ -425,14 +436,25 @@ class RAParticipant(participant.Participant):
 
         return prompt
 
-    def updateoutput(self, response, trial):
+    def updateoutput(self, trial, onset, time, response):
+        """
+        Records the stats
+        :param trial: the number of the trial that was just completed
+        :param onset: onset time for the trial
+        :param time: participants's reaction time
+        :param response: integer with either 0 or 1 depending on if the person chose left or right. Default is 3 in case
+        the participants doesn't answer in time.
+        :return: updates the performance dataframe in the superclass
+        """
 
         df_simultrial = {
             'trial': [trial],
             'gain': [str('{:.2f}'.format(self.gainint))],
             'loss': [str('{:.2f}'.format(self.lossfloat))],
             'certain': [0],
-            'response': [response]
+            'onset': [onset],
+            'response': [response],
+            'reaction time': [time]
         }
 
         df_simultrial = pd.DataFrame(data=df_simultrial)
@@ -757,7 +779,16 @@ class FrameParticipant(participant.Participant):
 
         return prompt
 
-    def updateoutput(self, response, trial):
+    def updateoutput(self, trial, onset, time, response):
+        """
+        Records the stats
+        :param trial: the number of the trial that was just completed
+        :param onset: onset time for the trial
+        :param time: participants's reaction time
+        :param response: integer with either 0 or 1 depending on if the person chose left or right. Default is 3 in case
+        the participants doesn't answer in time.
+        :return: updates the performance dataframe in the superclass
+        """
 
         df_simultrial = {
             'trial': [trial],
@@ -765,7 +796,9 @@ class FrameParticipant(participant.Participant):
             'SureAmount': [str('{:.2f}'.format(self.trialdesign[0]))],
             'RiskyAmount': [str('{:.2f}'.format(self.trialdesign[2]))],
             'RiskyProbability': [self.trialdesign[1]],
-            'response': [response]
+            'onset': [onset],
+            'response': [response],
+            'reaction time': [time]
         }
 
         df_simultrial = pd.DataFrame(data=df_simultrial)

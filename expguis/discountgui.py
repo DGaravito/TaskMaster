@@ -1,4 +1,5 @@
 import random
+import time
 
 from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QProgressBar
 from PyQt6.QtGui import QFont
@@ -125,7 +126,10 @@ class DDiscountExp(QWidget):
 
         self.person.engineupdate(self.response)
 
-        self.person.updateoutput(self.response, self.trialsdone)
+        endtime = time.time()
+        rt = endtime - self.starttime
+
+        self.person.updateoutput(self.trialsdone, self.starttime, rt, self.response)
 
         self.timerjitter.start(1000)
 
@@ -140,6 +144,8 @@ class DDiscountExp(QWidget):
             self.middle.setText('OR')
 
             self.trialsdone += 1
+
+            self.starttime = time.time()
 
             self.timerresponse.start(5000)
 
@@ -360,7 +366,10 @@ class PDiscountExp(QWidget):
 
         if self.trialsdone != 0:
 
-            self.person.updateoutput(self.response, self.trialsdone)
+            endtime = time.time()
+            rt = endtime - self.starttime
+
+            self.person.updateoutput(self.trialsdone, self.starttime, rt, self.response)
 
         self.person.set_design_text()
 
@@ -371,6 +380,8 @@ class PDiscountExp(QWidget):
         self.timerjitter.stop()
         if self.person.get_trials() > self.trialsdone:
 
+            self.trialsdone += 1
+
             info = self.person.get_design_text()
             self.left.setText(info[0])
             self.leftbar.setValue(100)
@@ -380,7 +391,7 @@ class PDiscountExp(QWidget):
 
             self.middle.setText('OR')
 
-            self.trialsdone += 1
+            self.starttime = time.time()
 
             self.timerresponse.start(5000)
 
@@ -580,9 +591,12 @@ class CEDiscountExp(QWidget):
         self.right.setText('')
         self.middle.setText('+')
 
+        endtime = time.time()
+        rt = endtime - self.starttime
+
         self.person.engineupdate(self.response)
 
-        self.person.updateoutput(self.response, self.trialsdone)
+        self.person.updateoutput(self.trialsdone,self.starttime, rt, self.response)
 
         self.jittertimer.start(1000)
 
@@ -626,6 +640,8 @@ class CEDiscountExp(QWidget):
 
         self.right.setText(strings[1])
         self.middle.setText('OR')
+
+        self.starttime = time.time()
 
         self.responsetimer.start(5000)
 

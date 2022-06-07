@@ -167,7 +167,7 @@ class PBTExp(QWidget):
         endtime = time.time()
         rt = endtime - self.starttime
 
-        self.person.updateoutput(self.trialsdone, self.picstring, rt, 'None')
+        self.person.updateoutput(self.trialsdone, self.picstring, self.starttime, rt, 'None')
 
         self.iti()
 
@@ -187,7 +187,7 @@ class PBTExp(QWidget):
             endtime = time.time()
             rt = endtime - self.starttime
 
-            self.person.updateoutput(self.trialsdone, self.picstring, rt, 'Square')
+            self.person.updateoutput(self.trialsdone, self.picstring, self.starttime, rt, 'Square')
             self.iti()
 
         if key in self.leftkey:
@@ -198,7 +198,7 @@ class PBTExp(QWidget):
             endtime = time.time()
             rt = endtime - self.starttime
 
-            self.person.updateoutput(self.trialsdone, self.picstring, rt, 'Cross')
+            self.person.updateoutput(self.trialsdone, self.picstring, self.starttime, rt, 'Cross')
             self.iti()
 
         if key in ['i', 'I']:

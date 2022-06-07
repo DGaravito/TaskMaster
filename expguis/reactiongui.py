@@ -174,7 +174,7 @@ class SSExp(QWidget):
         endtime = time.time()
         rt = endtime - self.starttime
 
-        self.person.updateoutput(self.trialsdone, self.picstring, rt)
+        self.person.updateoutput(self.trialsdone, self.picstring, self.starttime, rt)
 
         self.iti()
 
@@ -209,7 +209,7 @@ class SSExp(QWidget):
             endtime = time.time()
             rt = endtime - self.starttime
 
-            self.person.updateoutput(self.trialsdone, self.picstring, rt, 2)
+            self.person.updateoutput(self.trialsdone, self.picstring, self.starttime, rt, 2)
             self.iti()
 
         if key in self.leftkey:
@@ -221,7 +221,7 @@ class SSExp(QWidget):
             endtime = time.time()
             rt = endtime - self.starttime
 
-            self.person.updateoutput(self.trialsdone, self.picstring, rt, 1)
+            self.person.updateoutput(self.trialsdone, self.picstring, self.starttime, rt, 1)
             self.iti()
 
         if key in ['i', 'I']:

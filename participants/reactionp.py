@@ -90,14 +90,15 @@ class SSParticipant(participant.Participant):
 
         return time
 
-    def updateoutput(self, trial, pic, time, signal, response=0):
+    def updateoutput(self, trial, pic, onset, time, signal, response=0):
         """
         evaluates whether the person responded correctly and records the stats
         :param trial: the number of the trial that was just completed
         :param pic: string with the picture name in it, so we can see if the participants gave the correct answer
+        :param onset: onset time for the trial
         :param time: participants's reaction time
         :param signal: boolean; did this trial have a stop signal?
-        :param response: integer with either 0 or 1 depending on if the person chose x or square. Default is 3 in case
+        :param response: integer with either 0 or 1 depending on if the person chose left or right. Default is 3 in case
         the participants doesn't answer in time.
         :return: updates the performance dataframe in the superclass
         """
@@ -135,6 +136,7 @@ class SSParticipant(participant.Participant):
             'signal': [signal],
             'signal timer': [self.timer],
             'left or right': [picstripped],
+            'onset': [onset],
             'response': [response],
             'reaction time': [time],
             'correct': [correct]

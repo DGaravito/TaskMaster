@@ -2,6 +2,8 @@ from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QVBoxLay
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 
+import time
+
 
 class PrExp(QWidget):
     keyPressed = pyqtSignal(str)
@@ -286,6 +288,8 @@ class NbExp(QWidget):
 
             self.middle.setText(self.person.get_trial_text())
 
+            self.starttime = time.time()
+
             self.timer.start(3000)
 
         else:
@@ -312,7 +316,10 @@ class NbExp(QWidget):
 
         self.trialsdone += 1
 
-        self.person.updateoutput(self.trialsdone)
+        endtime = time.time()
+        rt = endtime - self.starttime
+
+        self.person.updateoutput(self.trialsdone, self.starttime, rt)
         self.generatenext()
 
         self.timer.start(3000)
@@ -330,14 +337,22 @@ class NbExp(QWidget):
 
             self.timer.stop()
             self.trialsdone += 1
-            self.person.updateoutput(self.trialsdone, 1)
+
+            endtime = time.time()
+            rt = endtime - self.starttime
+
+            self.person.updateoutput(self.trialsdone, self.starttime, rt, 1)
             self.generatenext()
 
         if key in self.leftkey:
 
             self.timer.stop()
             self.trialsdone += 1
-            self.person.updateoutput(self.trialsdone, 0)
+
+            endtime = time.time()
+            rt = endtime - self.starttime
+
+            self.person.updateoutput(self.trialsdone, self.starttime, rt, 0)
             self.generatenext()
 
         if key in ['i', 'I']:

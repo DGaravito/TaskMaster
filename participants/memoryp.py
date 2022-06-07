@@ -254,10 +254,12 @@ class NbParticipant(participant.Participant):
 
         return newletter
 
-    def updateoutput(self, trial, response=3):
+    def updateoutput(self, trial, onset, time, response=3):
         """
         evaluates whether the person got the n-back correct based on their response
         :param trial: the trial that was just completed
+        :param onset: onset time for the trial
+        :param time: participants's reaction time
         :param response: integer with either 0 or 1 depending on if the person thought the letter was a false-alarm
         or a target. Default is 3 in case the participants doesn't answer in time.
         :return: updates the performance dataframe in the superclass
@@ -310,7 +312,9 @@ class NbParticipant(participant.Participant):
         df_simultrial = {
             'trial': [trial],
             'letter': [self.backlist[-1]],
+            'onset': [onset],
             'response': [response],
+            'reaction time': [time],
             'correct': [correct]
         }
 

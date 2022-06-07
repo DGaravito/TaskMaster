@@ -1,4 +1,5 @@
 import random
+import time
 from pathlib import Path
 
 from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QProgressBar
@@ -154,9 +155,12 @@ class ARTTExp(QWidget):
 
         if self.trialsdone > 0:
 
+            endtime = time.time()
+            rt = endtime - self.starttime
+
             self.person.engineupdate(self.response)
 
-            self.person.updateoutput(self.response, self.trialsdone)
+            self.person.updateoutput(self.trialsdone, self.starttime, rt, self.response)
 
         self.timerjitter.start(1000)
 
@@ -164,6 +168,8 @@ class ARTTExp(QWidget):
 
         self.timerjitter.stop()
         if self.trialsdone < self.person.get_trials():
+
+            self.trialsdone += 1
 
             info = self.person.get_design_text()
             self.left.setText(info[0])
@@ -181,7 +187,7 @@ class ARTTExp(QWidget):
 
             self.middle.setText('OR')
 
-            self.trialsdone += 1
+            self.starttime = time.time()
 
             self.timerresponse.start(5000)
 
@@ -404,7 +410,10 @@ class RAExp(QWidget):
         self.rightloss.setText('')
         self.middle.setText('+')
 
-        self.person.updateoutput(self.response, self.trialsdone)
+        endtime = time.time()
+        rt = endtime - self.starttime
+
+        self.person.updateoutput(self.trialsdone, self.starttime, rt, self.response)
 
         self.person.set_design_text()
 
@@ -415,6 +424,8 @@ class RAExp(QWidget):
         self.timerjitter.stop()
         if self.trialsdone < self.person.get_trials():
 
+            self.trialsdone += 1
+
             info = self.person.get_design_text()
             self.left.setText('Getting $0')
 
@@ -423,7 +434,7 @@ class RAExp(QWidget):
 
             self.middle.setText('OR')
 
-            self.trialsdone += 1
+            self.starttime = time.time()
 
             self.timerresponse.start(5000)
 
@@ -628,7 +639,10 @@ class FrameExp(QWidget):
 
         if self.trialsdone > 0:
 
-            self.person.updateoutput(self.response, self.trialsdone)
+            endtime = time.time()
+            rt = endtime - self.starttime
+
+            self.person.updateoutput(self.trialsdone, self.starttime, rt, self.response)
 
         self.person.set_design_text()
 
@@ -639,6 +653,8 @@ class FrameExp(QWidget):
         self.timerjitter.stop()
         if self.trialsdone < self.person.get_trials():
 
+            self.trialsdone += 1
+
             info = self.person.get_design_text()
             self.left.setText(info[0])
 
@@ -647,7 +663,7 @@ class FrameExp(QWidget):
 
             self.middle.setText('OR')
 
-            self.trialsdone += 1
+            self.starttime = time.time()
 
             self.timerresponse.start(5000)
 

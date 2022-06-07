@@ -102,14 +102,24 @@ class DdParticipant(participant.Participant):
 
         return prompt
 
-    def updateoutput(self, response, trial):
+    def updateoutput(self, trial, onset, time, response):
+        """
+        records stats for the trial
+        :param trial: the number of the trial that was just completed
+        :param onset: onset time for the trial
+        :param time: participants's reaction time
+        :param response: integer with either 0 or 1 depending on if the person chose left or right
+        :return: updates the performance dataframe in the superclass
+        """
 
         df_simultrial = {
             'trial': [trial],
+            'onset': [onset],
             'SSAmount': [float(self.design['r_ss'])],
             'LLAmount': [float(self.design['r_ll'])],
             'LLDelay': [float(self.design['t_ll'])],
             'response': [response],
+            'reaction time': [time],
             'mean_k': [self.engine.post_mean[0]],
             'mean_tau': [self.engine.post_mean[1]],
             'sd_k': [self.engine.post_sd[0]],
@@ -280,7 +290,15 @@ class PdParticipant(participant.Participant):
 
         return prompt
 
-    def updateoutput(self, response, trial):
+    def updateoutput(self, trial, onset, time, response):
+        """
+        records stats for the trial
+        :param trial: the number of the trial that was just completed
+        :param onset: onset time for the trial
+        :param time: participants's reaction time
+        :param response: integer with either 0 or 1 depending on if the person chose left or right
+        :return: updates the performance dataframe in the superclass
+        """
 
         df_simultrial = {
             'trial': [trial],
@@ -288,7 +306,9 @@ class PdParticipant(participant.Participant):
             'SureAmount': [str('{:.2f}'.format(self.trialdesign[0]))],
             'RiskyAmount': [self.maximum],
             'RiskyProbability': [str(self.trialdesign[1])],
-            'response': [response]
+            'onset': [onset],
+            'response': [response],
+            'reaction time': [time]
         }
 
         df_simultrial = pd.DataFrame(data=df_simultrial)
@@ -592,7 +612,15 @@ class CEDParticipant(participant.Participant):
 
         return prompt
 
-    def updateoutput(self, response, trial):
+    def updateoutput(self, trial, onset, time, response):
+        """
+        records stats for the trial
+        :param trial: the number of the trial that was just completed
+        :param onset: onset time for the trial
+        :param time: participants's reaction time
+        :param response: integer with either 0 or 1 depending on if the person chose left or right
+        :return: updates the performance dataframe in the superclass
+        """
 
         df_simultrial = {
             'trial': [trial],
@@ -600,7 +628,9 @@ class CEDParticipant(participant.Participant):
             'left value': [self.leftmoney],
             'right task': [self.righttask],
             'right value': [self.rightmoney],
-            'response': [response]
+            'onset': [onset],
+            'response': [response],
+            'reaction time': [time]
         }
 
         df_simultrial = pd.DataFrame(data=df_simultrial)

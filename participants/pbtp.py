@@ -60,11 +60,12 @@ class PBTParticipant(participant.Participant):
 
         return pic
 
-    def updateoutput(self, trial, pic, time, response=3):
+    def updateoutput(self, trial, pic, onset, time, response=3):
         """
-        evaluates whether the person got the n-back correct based on their response
+        evaluates whether the person got the trial correct based on their response
         :param trial: the number of the trial that was just completed
         :param pic: string with the picture name in it, so we can see if the participants gave the correct answer
+        :param onset: onset time for the trial
         :param time: participants's reaction time
         :param response: integer with either 0 or 1 depending on if the person chose x or square. Default is 3 in case
         the participants doesn't answer in time.
@@ -111,6 +112,7 @@ class PBTParticipant(participant.Participant):
             'trial': [trial],
             'block': [self.globallocal],
             'picture': [pic],
+            'onset': [onset],
             'response': [response],
             'reaction time': [time],
             'correct': [correct]
