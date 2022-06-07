@@ -8,7 +8,7 @@ from participants import nactp
 from expguis import nactgui
 
 
-class NACTSettings(settings.Settings):  # TODO Make this negative attention specific
+class NACTSettings(settings.Settings):
 
     def __init__(self):
         super().__init__()
@@ -18,9 +18,6 @@ class NACTSettings(settings.Settings):  # TODO Make this negative attention spec
 
         # center window
         self.centerscreen()
-
-        # STT default
-        self.stt = 0
 
         # Add in elements
         self.elements()
@@ -45,25 +42,21 @@ class NACTSettings(settings.Settings):  # TODO Make this negative attention spec
 
         over_layout.addWidget(self.header)
 
-        # Pairs input
-        self.pairsin = QSpinBox()
-        self.pairsin.setSpecialValueText('30')
-
-        # ST Trials input
+        # Trials input
         self.trialsin = QSpinBox()
-        self.trialsin.setSpecialValueText('3')
+        self.trialsin.setSpecialValueText('200')
 
-        # ST Trials input
-        self.stttoggle = QCheckBox('STT?', self)
-        self.stttoggle.stateChanged.connect(self.clickBox)
+        # Starting money input
+        self.smoneyin = QSpinBox()
+        self.smoneyin.setSpecialValueText('25')
 
         # Make form layout for all the settingsguis
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
-        layout.addRow(QLabel('Number of word pairs (Max: 30):'), self.pairsin)
-        layout.addRow(QLabel('Number of blocks:'), self.blocksin)
-        layout.addRow(QLabel('Number of trials per block (make sure it\'s divisible by 4):'), self.trialsin)
+        layout.addRow(QLabel('Number of trials:'), self.trialsin)
+        layout.addRow(QLabel('How much participant starting money?:'), self.smoneyin)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?:'), self.buttonbox)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
@@ -74,19 +67,19 @@ class NACTSettings(settings.Settings):  # TODO Make this negative attention spec
 
     def clickBox(self):
 
-        if self.stttoggle.isChecked():
-            self.stt = 1
+        if self.buttonbox.isChecked():
+            self.buttonboxstate = 'Yes'
         else:
-            self.stt = 0
+            self.buttonboxstate = 'No'
 
     def submitsettings(self):
 
         person = nactp.NACTParticipant(self.idform.text(),
-                                       self.pairsin.text(),
+                                       self.trialsin.text(),
                                        self.wdset.text(),
                                        'Negative Attention Capture',
-                                       self.trialsin.text(),
-                                       self.stt)
+                                       self.smoneyin.text(),
+                                       self.buttonboxstate)
 
         self.exp = nactgui.NACTExp(person)
         self.exp.show()
