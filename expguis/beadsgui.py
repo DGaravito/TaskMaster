@@ -205,7 +205,7 @@ class BeadsExp(QWidget):
         self.right = QLabel('')
         self.right.setFont(QFont('Helvetica', 40))
 
-        self.middle = QLabel('Press G to Start and I for Instructions')
+        self.middle = QLabel('Press \"G\" to start and \"I\" for instructions')
         self.middle.setFont(QFont('Helvetica', 30))
 
         # Put Left and Right jars, plus middle for instructions, in horizontal layout

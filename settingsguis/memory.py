@@ -60,7 +60,7 @@ class PrSettings(settings.Settings):
         layout.addRow(QLabel('Subject ID:'), self.idform)
         layout.addRow(QLabel('Number of word pairs (Max: 30):'), self.pairsin)
         layout.addRow(QLabel('Number of study-test trials:'), self.trialsin)
-        layout.addRow(QLabel('Do you want an STT trial?:'), self.stttoggle)
+        layout.addRow(QLabel('Do you want an STT trial?'), self.stttoggle)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
@@ -138,8 +138,8 @@ class NBackSettings(settings.Settings):
         layout.addRow(QLabel('Subject ID:'), self.idform)
         layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
         layout.addRow(QLabel('Number of blocks:'), self.blocksin)
-        layout.addRow(QLabel('What type of n-Back?:'), self.design)
-        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?:'), self.buttonbox)
+        layout.addRow(QLabel('Type of n-Back:'), self.design)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttonbox)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 

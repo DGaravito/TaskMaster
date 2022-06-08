@@ -55,8 +55,8 @@ class NACTSettings(settings.Settings):
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
         layout.addRow(QLabel('Number of trials:'), self.trialsin)
-        layout.addRow(QLabel('How much participant starting money?:'), self.smoneyin)
-        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?:'), self.buttonbox)
+        layout.addRow(QLabel('Participant starting money:'), self.smoneyin)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttonbox)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 

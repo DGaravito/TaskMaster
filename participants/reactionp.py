@@ -13,14 +13,9 @@ class SSParticipant(participant.Participant):
         self.blocks = int(blocks)
         self.timer = 250
         self.globallocal = random.choice(['Global', 'Local'])
+        self.maxrt = maxrt
 
-        multnum = int(int(trials)/2)
-        picturenames = ['SS_LeftArrow.jpg', 'SS_RightArrow.jpg']
-        multiplier = [multnum, multnum]
-        self.piclist = sum([[s] * n for s, n in zip(picturenames, multiplier)], [])
-
-        self.picorder = list(self.piclist)
-        random.shuffle(self.picorder)
+        self.set_structure()
 
         # Experiment settingsguis output dataframe
         dict_simulsettings = {
@@ -29,6 +24,15 @@ class SSParticipant(participant.Participant):
         }
 
         self.set_settings(dict_simulsettings)
+
+    def set_structure(self):
+        multnum = int((self.get_trials() / 2) * self.blocks)
+        picturenames = ['SS_LeftArrow.jpg', 'SS_RightArrow.jpg']
+        multiplier = [multnum, multnum]
+        self.piclist = sum([[s] * n for s, n in zip(picturenames, multiplier)], [])
+
+        self.picorder = list(self.piclist)
+        random.shuffle(self.picorder)
 
     def nextround(self, blocks):
 
@@ -53,7 +57,7 @@ class SSParticipant(participant.Participant):
 
     def set_timer(self, signal, correct):
 
-        if signal:
+        if signal == 1:
 
             if correct == 1:
 
@@ -80,9 +84,9 @@ class SSParticipant(participant.Participant):
 
             self.timer = 10
 
-        elif self.timer >= 5000:
+        elif self.timer > self.maxrt:
 
-            self.timer = 4990
+            self.timer = self.maxrt
 
     def get_timer(self):
 
@@ -90,7 +94,7 @@ class SSParticipant(participant.Participant):
 
         return time
 
-    def updateoutput(self, trial, pic, onset, time, signal, response=0):
+    def updateoutput(self, trial, pic, onset, time, signal=0, response=0):
         """
         evaluates whether the person responded correctly and records the stats
         :param trial: the number of the trial that was just completed
@@ -103,7 +107,7 @@ class SSParticipant(participant.Participant):
         :return: updates the performance dataframe in the superclass
         """
 
-        if signal:
+        if signal == 1:
 
             if response == 0:
                 correct = 1

@@ -78,7 +78,7 @@ class DdSettings(settings.Settings):
         layout.addRow(QLabel('Longest delay in delayed option (weeks):'), self.ldin)
         layout.addRow(QLabel('Smallest reward in immediate option:'), self.ssrewin)
         layout.addRow(QLabel('Biggest reward in delayed option:'), self.llrewin)
-        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?:'), self.buttonbox)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttonbox)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
@@ -178,10 +178,10 @@ class PdSettings(settings.Settings):
         layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         layout.addRow(QLabel('Smallest amount of money:'), self.rewmin)
         layout.addRow(QLabel('Biggest amount of money:'), self.rewmax)
-        layout.addRow(QLabel('What type of questions do you want?:'), self.design)
+        layout.addRow(QLabel('What type of questions do you want?'), self.design)
         layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
-        layout.addRow(QLabel('How much participant starting money (only used if above is checked):'), self.smoneyin)
-        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?:'), self.buttonbox)
+        layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttonbox)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
@@ -292,7 +292,7 @@ class CEDTSettings(settings.Settings):
         layout.addRow(QLabel('Largest reward amount:'), self.maxrewin)
         layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         layout.addRow(QLabel('What names would you like to use for the stimuli?'), self.names)
-        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?:'), self.buttonbox)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttonbox)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 

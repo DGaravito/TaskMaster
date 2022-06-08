@@ -132,16 +132,16 @@ class SSExp(QWidget):
 
             if signalrand == 1:
 
-                self.signal = False
+                self.signal = 0
 
             else:
 
-                self.signal = True
+                self.signal = 1
                 self.signaltimer.start(self.person.get_timer())
 
             self.starttime = time.time()
 
-            self.timer.start(5000)
+            self.timer.start(2500)
 
         else:
 
