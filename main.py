@@ -63,7 +63,7 @@ class SelectWindow(QWidget):
         self.pdbutton.clicked.connect(lambda: self.selection('PD'))
 
         # CEDT button
-        self.cedtbutton = QPushButton('CEDT (WIP)')
+        self.cedtbutton = QPushButton('CEDT')
         self.cedtbutton.clicked.connect(lambda: self.selection('CEDT'))
 
         # ARTT button
@@ -87,7 +87,7 @@ class SelectWindow(QWidget):
         self.pbtbutton.clicked.connect(lambda: self.selection('PBT'))
 
         # Negative Attentional Capture button
-        self.nactbutton = QPushButton('NACT (WIP)')
+        self.nactbutton = QPushButton('NACT')
         self.nactbutton.clicked.connect(lambda: self.selection('NACT'))
 
         # Stop Signal button

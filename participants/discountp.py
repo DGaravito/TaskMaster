@@ -434,7 +434,7 @@ class CEDParticipant(participant.Participant):
     def __init__(self, expid, trials, outdir, task, maxrew, outcome, names, rounds, buttonbox):
         super().__init__(expid, trials, outdir, task)
 
-        self.rounds = rounds
+        self.rounds = int(rounds)
 
         self.outcomeopt = outcome
         self.outcomelist = []
@@ -468,6 +468,15 @@ class CEDParticipant(participant.Participant):
         self.twofourmodifier = 0.0
         self.threefourmodifier = 0.0
 
+        # set up trial counts for modifiers
+
+        self.onetwotrials = 0
+        self.onethreetrials = 0
+        self.onefourtrials = 0
+        self.twothreetrials = 0
+        self.twofourtrials = 0
+        self.threefourtrials = 0
+
         # Experiment settingsguis output dataframe
         dict_simulsettings = {
                               'Largest Reward': [maxrew]
@@ -479,7 +488,7 @@ class CEDParticipant(participant.Participant):
 
     def set_structure(self):
 
-        multnum = int(self.get_trials() / 6)
+        multnum = int((self.get_trials() * self.rounds) / 6)
         gainlosscond = ['1-2', '1-3', '1-4', '2-3', '2-4', '3-4']
         multiplier = [multnum, multnum, multnum, multnum, multnum, multnum]
         self.order = sum([[s] * n for s, n in zip(gainlosscond, multiplier)], [])
@@ -494,6 +503,8 @@ class CEDParticipant(participant.Participant):
         match self.state:
 
             case '1-2':
+
+                self.onetwotrials += 1
 
                 if self.randomside == 1:
 
@@ -511,6 +522,8 @@ class CEDParticipant(participant.Participant):
 
             case '1-3':
 
+                self.onethreetrials += 1
+
                 if self.randomside == 1:
 
                     self.lefttask = self.stimnames[0]
@@ -526,6 +539,8 @@ class CEDParticipant(participant.Participant):
                     self.rightmoney = str('{:.2f}'.format(self.onebackamount + self.onethreemodifier))
 
             case '1-4':
+
+                self.onefourtrials += 1
 
                 if self.randomside == 1:
 
@@ -543,6 +558,8 @@ class CEDParticipant(participant.Participant):
 
             case '2-3':
 
+                self.twothreetrials += 1
+
                 if self.randomside == 1:
 
                     self.lefttask = self.stimnames[1]
@@ -559,6 +576,8 @@ class CEDParticipant(participant.Participant):
 
             case '2-4':
 
+                self.twofourtrials += 1
+
                 if self.randomside == 1:
 
                     self.lefttask = self.stimnames[1]
@@ -574,6 +593,8 @@ class CEDParticipant(participant.Participant):
                     self.rightmoney = str('{:.2f}'.format(self.twoeasyamount + self.twofourmodifier))
 
             case '3-4':
+
+                self.threefourtrials += 1
 
                 if self.randomside == 1:
 
@@ -595,22 +616,10 @@ class CEDParticipant(participant.Participant):
 
     def get_design_text(self):
 
-        leftstring = 'Doing extra rounds of the ' + self.lefttask + 'task\nfor $' + self.leftmoney
-        rightstring = 'Doing extra rounds of the ' + self.righttask + 'task\nfor $' + self.rightmoney
+        leftstring = 'Doing extra rounds of the\n\"' + self.lefttask + '\" task for $' + self.leftmoney
+        rightstring = 'Doing extra rounds of the\n\"' + self.righttask + '\" task for $' + self.rightmoney
 
         return [leftstring, rightstring]
-
-    def nextround(self, blocks):
-
-        if blocks == self.rounds:
-
-            prompt = 'Thank you! This task is complete.'
-
-        else:
-
-            prompt = 'Please wait for the next round.'
-
-        return prompt
 
     def updateoutput(self, trial, onset, time, response):
         """
@@ -636,10 +645,11 @@ class CEDParticipant(participant.Participant):
         df_simultrial = pd.DataFrame(data=df_simultrial)
         self.set_performance(df_simultrial)
 
-        randomrounds = random.randint(1,10)
-
         # only do the following if the user wanted a random reward/loss at the end
         if self.outcomeopt == 'Yes':
+
+            # Generate a random number of rounds to be done for that task
+            randomrounds = random.randint(1, 10)
 
             # Add their choice (with the random number of rounds)
             # if they chose the left option...
@@ -654,93 +664,93 @@ class CEDParticipant(participant.Participant):
 
             self.outcomelist.append(outcomestring)
 
-        modifiermod = 0.5 / trial
+        modifiermod = 0.5
 
         match self.state:
 
             case '1-2':
 
-                if self.randomside == 1 & response == 0:
+                if (self.randomside == 1) & (response == 0):
 
-                    self.onetwomodifier = self.onetwomodifier - modifiermod
+                    self.onetwomodifier = self.onetwomodifier - (modifiermod / float(self.onetwotrials))
 
-                elif self.randomside == 2 & response == 1:
+                elif (self.randomside == 2) & (response == 1):
 
-                    self.onetwomodifier = self.onetwomodifier - modifiermod
+                    self.onetwomodifier = self.onetwomodifier - (modifiermod / float(self.onetwotrials))
 
                 else:
 
-                    self.onetwomodifier = self.onetwomodifier + modifiermod
+                    self.onetwomodifier = self.onetwomodifier + (modifiermod / float(self.onetwotrials))
 
             case '1-3':
 
-                if self.randomside == 1 & response == 0:
+                if (self.randomside == 1) & (response == 0):
 
-                    self.onethreemodifier = self.onethreemodifier - modifiermod
+                    self.onethreemodifier = self.onethreemodifier - (modifiermod / float(self.onethreetrials))
 
-                elif self.randomside == 2 & response == 1:
+                elif (self.randomside == 2) & (response == 1):
 
-                    self.onethreemodifier = self.onethreemodifier - modifiermod
+                    self.onethreemodifier = self.onethreemodifier - (modifiermod / float(self.onethreetrials))
 
                 else:
 
-                    self.onethreemodifier = self.onethreemodifier + modifiermod
+                    self.onethreemodifier = self.onethreemodifier + (modifiermod / float(self.onethreetrials))
 
             case '1-4':
 
-                if self.randomside == 1 & response == 0:
+                if (self.randomside == 1) & (response == 0):
 
-                    self.onefourmodifier = self.onefourmodifier - modifiermod
+                    self.onefourmodifier = self.onefourmodifier - (modifiermod / float(self.onefourtrials))
 
-                elif self.randomside == 2 & response == 1:
+                elif (self.randomside == 2) & (response == 1):
 
-                    self.onefourmodifier = self.onefourmodifier - modifiermod
+                    self.onefourmodifier = self.onefourmodifier - (modifiermod / float(self.onefourtrials))
 
                 else:
 
-                    self.onefourmodifier = self.onefourmodifier + modifiermod
+                    self.onefourmodifier = self.onefourmodifier + (modifiermod / float(self.onefourtrials))
 
             case '2-3':
 
-                if self.randomside == 1 & response == 0:
+                if (self.randomside == 1) & (response == 0):
 
-                    self.twothreemodifier = self.twothreemodifier - modifiermod
+                    self.twothreemodifier = self.twothreemodifier - (modifiermod / float(self.twothreetrials))
 
-                elif self.randomside == 2 & response == 1:
+                elif (self.randomside == 2) & (response == 1):
 
-                    self.twothreemodifier = self.twothreemodifier - modifiermod
+                    self.twothreemodifier = self.twothreemodifier - (modifiermod / float(self.twothreetrials))
 
                 else:
 
-                    self.twothreemodifier = self.twothreemodifier + modifiermod
+                    self.twothreemodifier = self.twothreemodifier + (modifiermod / float(self.twothreetrials))
 
             case '2-4':
 
-                if self.randomside == 1 & response == 0:
+                if (self.randomside == 1) & (response == 0):
 
-                    self.twofourmodifier = self.twofourmodifier - modifiermod
+                    self.twofourmodifier = self.twofourmodifier - (modifiermod / float(self.twofourtrials))
 
-                elif self.randomside == 2 & response == 1:
+                elif (self.randomside == 2) & (response == 1):
 
-                    self.twofourmodifier = self.twofourmodifier - modifiermod
+                    self.twofourmodifier = self.twofourmodifier - (modifiermod / float(self.twofourtrials))
 
                 else:
 
-                    self.twofourmodifier = self.twofourmodifier + modifiermod
+                    self.twofourmodifier = self.twofourmodifier + (modifiermod / float(self.twofourtrials))
 
             case '3-4':
 
-                if self.randomside == 1 & response == 0:
+                if (self.randomside == 1) & (response == 0):
 
-                    self.threefourmodifier = self.threefourmodifier - modifiermod
+                    self.threefourmodifier = self.threefourmodifier - (modifiermod / float(self.threefourtrials))
 
-                elif self.randomside == 2 & response == 1:
+                elif (self.randomside == 2) & (response == 1):
 
-                    self.threefourmodifier = self.threefourmodifier - modifiermod
+                    self.threefourmodifier = self.threefourmodifier - (modifiermod / float(self.threefourtrials))
 
                 else:
 
-                    self.threefourmodifier = self.threefourmodifier + modifiermod
+                    self.threefourmodifier = self.threefourmodifier + (modifiermod / float(self.threefourtrials))
 
     def get_instructions(self, instint):
         """

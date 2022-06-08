@@ -63,12 +63,15 @@ class PrExp(QWidget):
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
         self.left.setFont(QFont('Helvetica', 40))
+        self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.right = QLabel('')
         self.right.setFont(QFont('Helvetica', 40))
+        self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.middle = QLabel('Press \"I\"')
+        self.middle = QLabel('Press \"G\" to start, \"I\" for instructions')
         self.middle.setFont(QFont('Helvetica', 30))
+        self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Put Left and Right options in horizontal layout
         explayout = QHBoxLayout()
@@ -253,7 +256,7 @@ class NbExp(QWidget):
 
         # Make the middle for the actualy n-back task
 
-        self.middle = QLabel(self.person.nextround(0))
+        self.middle = QLabel('Press \"G\" to start, \"I\" for instructions')
         self.middle.setFont(QFont('Helvetica', 40))
 
         # center middle
@@ -295,6 +298,7 @@ class NbExp(QWidget):
         else:
 
             self.roundsdone += 1
+            self.trialsdone = 0
 
             text = self.person.nextround(self.roundsdone)
 

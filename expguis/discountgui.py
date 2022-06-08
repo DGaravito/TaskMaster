@@ -77,12 +77,15 @@ class DDiscountExp(QWidget):
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
         self.left.setFont(QFont('Helvetica', 40))
+        self.left.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.right = QLabel('')
         self.right.setFont(QFont('Helvetica', 40))
+        self.right.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.middle = QLabel('Press G to Start')
         self.middle.setFont(QFont('Helvetica', 30))
+        self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Put Left and Right options in horizontal layout
         explayout = QHBoxLayout()
@@ -295,12 +298,15 @@ class PDiscountExp(QWidget):
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
         self.left.setFont(QFont('Helvetica', 40))
+        self.left.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.right = QLabel('')
         self.right.setFont(QFont('Helvetica', 40))
+        self.right.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.middle = QLabel('Press G to Start')
         self.middle.setFont(QFont('Helvetica', 30))
+        self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Put Left and Right words for options in horizontal layout
         expverblayout = QHBoxLayout()
@@ -544,12 +550,15 @@ class CEDiscountExp(QWidget):
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
         self.left.setFont(QFont('Helvetica', 40))
+        self.left.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.right = QLabel('')
         self.right.setFont(QFont('Helvetica', 40))
+        self.right.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.middle = QLabel('Press G to Start')
         self.middle.setFont(QFont('Helvetica', 30))
+        self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Put Left and Right options in horizontal layout
         explayout = QHBoxLayout()
@@ -594,25 +603,26 @@ class CEDiscountExp(QWidget):
         endtime = time.time()
         rt = endtime - self.starttime
 
-        self.person.engineupdate(self.response)
-
-        self.person.updateoutput(self.trialsdone,self.starttime, rt, self.response)
+        self.person.updateoutput(self.trialsdone, self.starttime, rt, self.response)
 
         self.jittertimer.start(1000)
 
     def generatenext(self):
 
         self.jittertimer.stop()
+
         if self.person.get_trials() > self.trialsdone:
 
+            self.person.set_design_text()
             self.trialsdone += 1
 
             strings = self.person.get_design_text()
             self.left.setText(strings[0])
+            self.middle.setText('')
+            self.right.setText('')
             self.secondhalftimer.start(random.choice(self.extradelay))
 
         else:
-            self.person.output()
 
             self.left.setText('')
             self.right.setText('')
@@ -620,17 +630,24 @@ class CEDiscountExp(QWidget):
             self.roundsdone += 1
             self.trialsdone = 0
 
-            self.middle.setText(self.person.nextround(self.roundsdone))
+            if self.person.rounds == int(self.roundsdone):
 
-            if self.person.rounds == self.roundsdone:
-
-                self.person.output()
                 self.instructions.setText('Thank you!')
 
                 if self.person.outcomeopt == 'Yes':
 
-                    outcome = random.choice(self.person.outcomelist)
-                    self.middle.setText('Your outcome: ' + outcome)
+                    outcome = 'Your outcome: ' + random.choice(self.person.outcomelist)
+                    self.middle.setText(outcome)
+
+                else:
+
+                    self.middle.setText('Thank you! This task is complete.')
+
+                self.person.output()
+
+            else:
+
+                self.middle.setText('Please wait for the next round.')
 
     def displaysecondhalf(self):
 

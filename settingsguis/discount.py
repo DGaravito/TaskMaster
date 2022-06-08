@@ -273,7 +273,7 @@ class CEDTSettings(settings.Settings):
 
         # reward max input
         self.maxrewin = QSpinBox()
-        self.maxrewin.setSpecialValueText('25')
+        self.maxrewin.setSpecialValueText('5')
 
         # checkbox for getting a random outcome
         self.outcometoggle = QCheckBox('', self)
@@ -287,7 +287,7 @@ class CEDTSettings(settings.Settings):
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
-        layout.addRow(QLabel('Number of trials per block (make sure it\'s divisible by 4):'), self.trialsin)
+        layout.addRow(QLabel('Number of trials per block (make sure it\'s divisible by 6):'), self.trialsin)
         layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         layout.addRow(QLabel('Largest reward amount:'), self.maxrewin)
         layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)

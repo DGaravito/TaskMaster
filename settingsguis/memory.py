@@ -136,8 +136,8 @@ class NBackSettings(settings.Settings):
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
-        layout.addRow(QLabel('Number of trials:'), self.trialsin)
-        layout.addRow(QLabel('Number of rounds (do you want more than 1 round of X number of trials?):'), self.blocksin)
+        layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
+        layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         layout.addRow(QLabel('What type of n-Back?:'), self.design)
         layout.addRow(QLabel('Are you using a button-box instead of the keyboard?:'), self.buttonbox)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
@@ -161,7 +161,7 @@ class NBackSettings(settings.Settings):
                                        self.trialsin.text(),
                                        self.wdset.text(),
                                        self.design.currentText(),
-                                       self.roundsin.text(),
+                                       self.blocksin.text(),
                                        self.buttonboxstate)
 
         self.exp = memorygui.NbExp(person)

@@ -78,7 +78,7 @@ class NACTExp(QWidget):
 
         middlelayout = QHBoxLayout()
 
-        self.middle = QLabel('Please let the researcher know you are ready')
+        self.middle = QLabel('Press \"G\" to start, \"I\" for instructions')
         self.middle.setFont(QFont('Helvetica', 40))
         self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.middle.setScaledContents(True)

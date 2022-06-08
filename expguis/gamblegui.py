@@ -83,9 +83,11 @@ class ARTTExp(QWidget):
         # Left option (and middle stuff) with font settingsguis
         self.left = QLabel('')
         self.left.setFont(QFont('Helvetica', 40))
+        self.left.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.middle = QLabel('Press G to Start')
         self.middle.setFont(QFont('Helvetica', 30))
+        self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Set up right option stuff
 
@@ -353,15 +355,19 @@ class RAExp(QWidget):
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
         self.left.setFont(QFont('Helvetica', 40))
+        self.left.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.rightgain = QLabel('')
         self.rightgain.setFont(QFont('Helvetica', 40))
+        self.rightgain.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.rightloss = QLabel('')
         self.rightloss.setFont(QFont('Helvetica', 40))
+        self.rightloss.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.middle = QLabel('Press G to Start')
         self.middle.setFont(QFont('Helvetica', 30))
+        self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Put Left and Right visual options in horizontal layout
         gamblelayout = QVBoxLayout()
@@ -580,15 +586,19 @@ class FrameExp(QWidget):
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
         self.left.setFont(QFont('Helvetica', 40))
+        self.left.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.rightgain = QLabel('')
         self.rightgain.setFont(QFont('Helvetica', 40))
+        self.rightgain.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.rightloss = QLabel('')
         self.rightloss.setFont(QFont('Helvetica', 40))
+        self.rightloss.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.middle = QLabel('Press G to Start')
         self.middle.setFont(QFont('Helvetica', 30))
+        self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Put gamble parts in vertical layout
         gamblelayout = QVBoxLayout()

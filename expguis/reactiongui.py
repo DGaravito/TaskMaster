@@ -64,8 +64,8 @@ class SSExp(QWidget):
         self.quitbutton.setFixedHeight(20)
 
         # Instructions
-        self.instructions = QLabel('Press ' + self.leftkey[0] + ' for crosses. Press ' + self.rightkey[0] +
-                                   ' for squares.')
+        self.instructions = QLabel('Press ' + self.leftkey[0] + ' for left arrows. Press ' + self.rightkey[0] +
+                                   ' for right arrows.')
 
         # setting font style and size
         self.instructions.setFont(QFont('Helvetica', 25))
@@ -80,7 +80,7 @@ class SSExp(QWidget):
 
         middlelayout = QHBoxLayout()
 
-        self.middle = QLabel('Please let the researcher know you are ready')
+        self.middle = QLabel('Press \"G\" to start, \"I\" for instructions')
         self.middle.setFont(QFont('Helvetica', 40))
 
         # center middle
