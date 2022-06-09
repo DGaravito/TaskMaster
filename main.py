@@ -51,7 +51,6 @@ class SelectWindow(QWidget):
         self.header.move(0, 10)
 
         # center header
-
         self.header.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # DD button
@@ -59,7 +58,7 @@ class SelectWindow(QWidget):
         self.ddbutton.clicked.connect(lambda: self.selection('DD'))
 
         # PD button
-        self.pdbutton = QPushButton('PD')
+        self.pdbutton = QPushButton('Probability Discounting')
         self.pdbutton.clicked.connect(lambda: self.selection('PD'))
 
         # CEDT button
@@ -71,11 +70,11 @@ class SelectWindow(QWidget):
         self.arttbutton.clicked.connect(lambda: self.selection('ARTT'))
 
         # Risk Aversion button
-        self.rabutton = QPushButton('RA')
+        self.rabutton = QPushButton('Risk Aversion')
         self.rabutton.clicked.connect(lambda: self.selection('RA'))
 
         # Framing button
-        self.framebutton = QPushButton('Framing')
+        self.framebutton = QPushButton('Framing Task')
         self.framebutton.clicked.connect(lambda: self.selection('Framing'))
 
         # Beads Task button

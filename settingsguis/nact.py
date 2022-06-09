@@ -67,7 +67,8 @@ class NACTSettings(settings.Settings):
         layout.addRow(QLabel('Participant starting money:'), self.smoneyin)
         layout.addRow(QLabel('Minimum money a participant could have at the end:'), self.minmoneyin)
         layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttonbox)
-        layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
+        layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
         # Add form layout to overarching layout
@@ -90,7 +91,7 @@ class NACTSettings(settings.Settings):
         if ((.15*hightrials) + (.03 * lowtrials)) <= (float(self.smoneyin.text()) - float(self.minmoneyin.text())):
 
             person = nactp.NACTParticipant(self.idform.text(),
-                                           self.wdset.text(),
+                                           self.wd,
                                            'Negative Attention Capture',
                                            hightrials,
                                            lowtrials,

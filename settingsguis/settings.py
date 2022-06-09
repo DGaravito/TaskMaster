@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QSpinBox, QLineEdit, QVBoxLayout, QDialog, \
-    QCheckBox
+    QCheckBox, QFileDialog
 from PyQt6.QtCore import Qt
 
 from os import path
@@ -128,6 +128,9 @@ class Settings(QWidget):
         self.ftt = 'No'
         self.stt = 0
 
+        # Default directory
+        self.wd = 'No directory selected'
+
         # center window
         self.centerscreen()
 
@@ -149,8 +152,9 @@ class Settings(QWidget):
         self.blocksin.setSpecialValueText('1')
 
         # WD input
-        self.wdset = QLineEdit()
-        self.wdset.setText('C:/Users/dgaravito/Desktop')
+        self.wdset = QPushButton('Select Directory')
+        self.wdset.clicked.connect(self.fileselect)
+        self.wdlabel = QLabel(self.wd)
 
         # Submit button
         self.submit = QPushButton('Submit')
@@ -169,7 +173,7 @@ class Settings(QWidget):
 
     def checksettings(self):
 
-        if path.isdir(self.wdset.text()):
+        if path.isdir(self.wd):
             self.submitsettings()
 
         else:
@@ -189,3 +193,7 @@ class Settings(QWidget):
         error = MathErrorBox(state)
 
         error.exec()
+
+    def fileselect(self):
+        self.wd = str(QFileDialog.getExistingDirectory(self, 'Select Directory'))
+        self.wdlabel.setText(self.wd)

@@ -58,7 +58,8 @@ class SSSettings(settings.Settings):
         layout.addRow(QLabel('Maximum reaction time (in milliseconds; max is 2000):'), self.maxrtin)
         layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttonbox)
-        layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
+        layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
         # Add form layout to overarching layout
@@ -77,7 +78,7 @@ class SSSettings(settings.Settings):
 
         person = reactionp.SSParticipant(self.idform.text(),
                                          self.trialsin.text(),
-                                         self.wdset.text(),
+                                         self.wd,
                                          'Stop-Signal Task',
                                          self.maxrtin.text(),
                                          self.blocksin.text(),
@@ -137,7 +138,8 @@ class EGNGSettings(settings.Settings):
         layout.addRow(QLabel('Number of trials:'), self.trialsin)
         layout.addRow(QLabel('Maximal reaction time (in milliseconds)?'), self.maxrtin)
         layout.addRow(QLabel('Number of blocks?'), self.blocksin)
-        layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
+        layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
         # Add form layout to overarching layout
@@ -149,7 +151,7 @@ class EGNGSettings(settings.Settings):
 
         person = reactionp.EGNGParticipant(self.idform.text(),
                                            self.trialsin.text(),
-                                           self.wdset.text(),
+                                           self.wd,
                                            'Emo Go/No-Go',
                                            self.maxrtin.text(),
                                            self.blocksin.text(),

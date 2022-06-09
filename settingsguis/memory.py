@@ -61,7 +61,8 @@ class PrSettings(settings.Settings):
         layout.addRow(QLabel('Number of word pairs (Max: 30):'), self.pairsin)
         layout.addRow(QLabel('Number of study-test trials:'), self.trialsin)
         layout.addRow(QLabel('Do you want an STT trial?'), self.stttoggle)
-        layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
+        layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
         # Add form layout to overarching layout
@@ -80,7 +81,7 @@ class PrSettings(settings.Settings):
 
         person = memoryp.PrParticipant(self.idform.text(),
                                        self.pairsin.text(),
-                                       self.wdset.text(),
+                                       self.wd,
                                        'Pair Recall Memory',
                                        self.trialsin.text(),
                                        self.stt)
@@ -140,7 +141,8 @@ class NBackSettings(settings.Settings):
         layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         layout.addRow(QLabel('Type of n-Back:'), self.design)
         layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttonbox)
-        layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
+        layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
         # Add form layout to overarching layout
@@ -159,7 +161,7 @@ class NBackSettings(settings.Settings):
 
         person = memoryp.NbParticipant(self.idform.text(),
                                        self.trialsin.text(),
-                                       self.wdset.text(),
+                                       self.wd,
                                        self.design.currentText(),
                                        self.blocksin.text(),
                                        self.buttonboxstate)

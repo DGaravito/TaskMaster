@@ -94,7 +94,8 @@ class ARTTSettings(settings.Settings):
         layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
         layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttonbox)
-        layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
+        layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
         # Add form layout to overarching layout
@@ -133,7 +134,7 @@ class ARTTSettings(settings.Settings):
         ) | (self.design.currentText() in ['Gains only', 'Losses only']):
             person = gamblep.ARTTParticipant(self.idform.text(),
                                              self.trialsin.text(),
-                                             self.wdset.text(),
+                                             self.wd,
                                              TaskCRA(),
                                              self.probabilities,
                                              self.proportions,
@@ -221,7 +222,8 @@ class RASettings(settings.Settings):
         layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
         layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttonbox)
-        layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
+        layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
         # Add form layout to overarching layout
@@ -245,7 +247,7 @@ class RASettings(settings.Settings):
 
         person = gamblep.RAParticipant(self.idform.text(),
                                        self.trialsin.text(),
-                                       self.wdset.text(),
+                                       self.wd,
                                        'Risk Aversion',
                                        self.minin.text(),
                                        self.maxin.text(),
@@ -338,7 +340,8 @@ class FrameSettings(settings.Settings):
         layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
         layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttonbox)
-        layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
+        layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
         # Add form layout to overarching layout
@@ -385,7 +388,7 @@ class FrameSettings(settings.Settings):
 
             person = gamblep.FrameParticipant(self.idform.text(),
                                               self.trialsin.text(),
-                                              self.wdset.text(),
+                                              self.wd,
                                               'Framing',
                                               self.minin.text(),
                                               self.maxin.text(),

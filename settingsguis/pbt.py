@@ -53,7 +53,8 @@ class PBTSettings(settings.Settings):
         layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         layout.addRow(QLabel('Number of trials per block (make sure it\'s divisible by 4):'), self.trialsin)
         layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttonbox)
-        layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
+        layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
         # Add form layout to overarching layout
@@ -74,7 +75,7 @@ class PBTSettings(settings.Settings):
 
             person = pbtp.PBTParticipant(self.idform.text(),
                                          self.trialsin.text(),
-                                         self.wdset.text(),
+                                         self.wd,
                                          'Perceptual Bias Task',
                                          self.blocksin.text(),
                                          self.buttonboxstate)

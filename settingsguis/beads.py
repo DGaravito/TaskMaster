@@ -56,7 +56,8 @@ class BeadsSettings(settings.Settings):
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
         layout.addRow(QLabel('Number of trials:'), self.trialsin)
-        layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
+        layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
 
         # Add form layout to overarching layout
@@ -68,7 +69,7 @@ class BeadsSettings(settings.Settings):
 
         person = beadsp.BeadsParticipant(self.idform.text(),
                                          self.trialsin.text(),
-                                         self.wdset.text(),
+                                         self.wd,
                                          'Beads Task')
 
         self.exp = beadsgui.BeadsExp(person)
