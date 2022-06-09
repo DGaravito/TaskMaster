@@ -42,20 +42,30 @@ class NACTSettings(settings.Settings):
 
         over_layout.addWidget(self.header)
 
-        # Trials input
-        self.trialsin = QSpinBox()
-        self.trialsin.setSpecialValueText('200')
+        # Low Value Trials input
+        self.lowtrialsin = QSpinBox()
+        self.lowtrialsin.setSpecialValueText('120')
+
+        # High Value Trials input
+        self.hightrialsin = QSpinBox()
+        self.hightrialsin.setSpecialValueText('120')
 
         # Starting money input
         self.smoneyin = QSpinBox()
         self.smoneyin.setSpecialValueText('25')
 
+        # Starting money input
+        self.minmoneyin = QSpinBox()
+        self.minmoneyin.setSpecialValueText('3')
+
         # Make form layout for all the settingsguis
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
-        layout.addRow(QLabel('Number of trials:'), self.trialsin)
+        layout.addRow(QLabel('Number of high value ($0.15) trials:'), self.hightrialsin)
+        layout.addRow(QLabel('Number of low value ($0.03) trials:'), self.lowtrialsin)
         layout.addRow(QLabel('Participant starting money:'), self.smoneyin)
+        layout.addRow(QLabel('Minimum money a participant could have at the end:'), self.minmoneyin)
         layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttonbox)
         layout.addRow(QLabel('Where do you want to save the output?'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
@@ -74,13 +84,22 @@ class NACTSettings(settings.Settings):
 
     def submitsettings(self):
 
-        person = nactp.NACTParticipant(self.idform.text(),
-                                       self.trialsin.text(),
-                                       self.wdset.text(),
-                                       'Negative Attention Capture',
-                                       self.smoneyin.text(),
-                                       self.buttonboxstate)
+        hightrials = int(self.hightrialsin.text())
+        lowtrials = int(self.lowtrialsin.text())
 
-        self.exp = nactgui.NACTExp(person)
-        self.exp.show()
-        self.hide()
+        if ((.15*hightrials) + (.03 * lowtrials)) <= (float(self.smoneyin.text()) - float(self.minmoneyin.text())):
+
+            person = nactp.NACTParticipant(self.idform.text(),
+                                           self.wdset.text(),
+                                           'Negative Attention Capture',
+                                           hightrials,
+                                           lowtrials,
+                                           self.smoneyin.text(),
+                                           self.buttonboxstate)
+
+            self.exp = nactgui.NACTExp(person)
+            self.exp.show()
+            self.hide()
+
+        else:
+            self.matherrordialog(6)

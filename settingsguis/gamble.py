@@ -129,8 +129,8 @@ class ARTTSettings(settings.Settings):
                                     self.trialsin.text()
                                 ) % 2
                         ) == 0
-                ) & self.design.currentText() == 'Gains and Losses'
-        ) | self.design.currentText() in ['Gains only', 'Losses only']:
+                ) & (self.design.currentText() == 'Gains and Losses')
+        ) | (self.design.currentText() in ['Gains only', 'Losses only']):
             person = gamblep.ARTTParticipant(self.idform.text(),
                                              self.trialsin.text(),
                                              self.wdset.text(),

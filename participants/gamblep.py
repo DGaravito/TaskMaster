@@ -16,7 +16,7 @@ class ARTTParticipant(participant.Participant):
 
         self.buttonbox = buttonbox
         self.rounds = int(rounds)
-        self.startmoney = money
+        self.startmoney = float(money)
         self.inst = 0
         self.outcomeopt = outcome
         self.outcomelist = []
@@ -528,14 +528,14 @@ class FrameParticipant(participant.Participant):
     def __init__(self, expid, trials, outdir, task, minimum, maximum, design, ftt, outcome, money, rounds, buttonbox):
         super().__init__(expid, trials, outdir, task)
 
-        self.rounds = rounds
+        self.rounds = int(rounds)
         self.buttonbox = buttonbox
-        self.startmoney = money
+        self.startmoney = float(money)
         self.outcomeopt = outcome
         self.design = design
         self.ftt = ftt
-        self.maxrew = maximum
-        self.minrew = minimum
+        self.maxrew = float(maximum)
+        self.minrew = float(minimum)
         self.order = []
         self.trialdesign = []
         self.outcomelist = []
@@ -589,7 +589,7 @@ class FrameParticipant(participant.Participant):
         """
 
         gambleprob = random.uniform(.01, .99)
-        gambleamount = random.uniform(float(self.minrew), float(self.maxrew))
+        gambleamount = random.uniform(self.minrew, self.maxrew)
         sureamount = gambleamount*gambleprob
 
         self.trialdesign = [sureamount, gambleprob, gambleamount]

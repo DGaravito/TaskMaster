@@ -47,9 +47,6 @@ class NACTExp(QWidget):
         self.ititimer = QTimer()
         self.ititimer.timeout.connect(self.generatenext)
 
-        self.blankouttimer = QTimer()
-        self.blankouttimer.timeout.connect(self.blankout)
-
     def elements(self):
 
         # Make overarching layout
@@ -81,7 +78,6 @@ class NACTExp(QWidget):
         self.middle = QLabel('Press \"G\" to start, \"I\" for instructions')
         self.middle.setFont(QFont('Helvetica', 40))
         self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.middle.setScaledContents(True)
 
         self.left = QLabel('')
         self.left.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -179,12 +175,12 @@ class NACTExp(QWidget):
                 pathstring = 'assets/' + pic + '.bmp'
                 self.pixmaps.append(QPixmap(pathstring))
 
-            self.topleft.setPixmap(self.pixmaps[0].scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
-            self.left.setPixmap(self.pixmaps[1].scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
-            self.bottomleft.setPixmap(self.pixmaps[2].scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
-            self.bottomright.setPixmap(self.pixmaps[3].scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
-            self.right.setPixmap(self.pixmaps[4].scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
-            self.topright.setPixmap(self.pixmaps[5].scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
+            self.topleft.setPixmap(self.pixmaps[0].scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio))
+            self.left.setPixmap(self.pixmaps[1].scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio))
+            self.bottomleft.setPixmap(self.pixmaps[2].scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio))
+            self.bottomright.setPixmap(self.pixmaps[3].scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio))
+            self.right.setPixmap(self.pixmaps[4].scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio))
+            self.topright.setPixmap(self.pixmaps[5].scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio))
 
             self.middle.setText('+')
 
@@ -209,12 +205,12 @@ class NACTExp(QWidget):
 
             self.middle.setText(self.person.nextround())
 
-            if self.person.parts == 2:
+            if self.person.part == 3:
 
                 self.person.output()
                 self.instructions.setText('Thank you!')
 
-    def iti(self, reaction, response):
+    def iti(self, reaction, response=3):
 
         self.topleft.setPixmap(QPixmap())
         self.left.setPixmap(QPixmap())
@@ -234,7 +230,7 @@ class NACTExp(QWidget):
         endtime = time.time()
         rt = endtime - self.starttime
 
-        self.iti(rt, 'None')
+        self.iti(rt)
 
     def keyaction(self, key):
 
@@ -252,7 +248,7 @@ class NACTExp(QWidget):
             endtime = time.time()
             rt = endtime - self.starttime
 
-            self.iti(rt, '-')
+            self.iti(rt, 1)
 
         if key in self.leftkey:
 
@@ -262,7 +258,7 @@ class NACTExp(QWidget):
             endtime = time.time()
             rt = endtime - self.starttime
 
-            self.iti(rt, '|')
+            self.iti(rt, 0)
 
         if key in ['i', 'I']:
 
@@ -271,19 +267,19 @@ class NACTExp(QWidget):
             if self.person.part == 1:
 
                 if self.inst == 4:
-                    pixmap = QPixmap('../assets/NACT_Part1Ex1.bmp')
+                    pixmap = QPixmap('assets/NACT_Part1Ex1.bmp')
                     self.middle.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
 
                 elif self.inst == 5:
-                    pixmap = QPixmap('../assets/NACT_Part1Ex2.bmp')
+                    pixmap = QPixmap('assets/NACT_Part1Ex2.bmp')
                     self.middle.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
 
                 elif self.inst == 12:
-                    pixmap = QPixmap('../assets/NACT_FixEx.bmp')
+                    pixmap = QPixmap('assets/NACT_FixEx.bmp')
                     self.middle.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
 
                 else:
-                    self.middle.setText(self.person.get_instructions(self.person.globallocal, self.inst))
+                    self.middle.setText(self.person.get_instructions(self.inst))
 
                 if self.inst == 14:
                     self.inst = 0
@@ -291,19 +287,19 @@ class NACTExp(QWidget):
             else:
 
                 if self.inst == 5:
-                    pixmap = QPixmap('../assets/NACT_Part2Ex1.bmp')
+                    pixmap = QPixmap('assets/NACT_Part2Ex1.bmp')
                     self.middle.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
 
                 elif self.inst == 6:
-                    pixmap = QPixmap('../assets/NACT_Part2Ex2.bmp')
+                    pixmap = QPixmap('assets/NACT_Part2Ex2.bmp')
                     self.middle.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
 
                 elif self.inst == 8:
-                    pixmap = QPixmap('../assets/NACT_FixEx.bmp')
+                    pixmap = QPixmap('assets/NACT_FixEx.bmp')
                     self.middle.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
 
                 else:
-                    self.middle.setText(self.person.get_instructions(self.person.globallocal, self.inst))
+                    self.middle.setText(self.person.get_instructions(self.inst))
 
                 if self.inst == 13:
                     self.inst = 0

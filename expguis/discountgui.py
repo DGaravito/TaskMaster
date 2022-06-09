@@ -620,7 +620,7 @@ class CEDiscountExp(QWidget):
             self.left.setText(strings[0])
             self.middle.setText('')
             self.right.setText('')
-            self.secondhalftimer.start(random.choice(self.extradelay))
+            self.secondhalftimer.start(1000 + random.choice(self.extradelay))
 
         else:
 
@@ -630,24 +630,13 @@ class CEDiscountExp(QWidget):
             self.roundsdone += 1
             self.trialsdone = 0
 
-            if self.person.rounds == int(self.roundsdone):
+            self.middle.setText(self.person.nextround(self.roundsdone))
+
+            if self.person.rounds == self.roundsdone:
 
                 self.instructions.setText('Thank you!')
 
-                if self.person.outcomeopt == 'Yes':
-
-                    outcome = 'Your outcome: ' + random.choice(self.person.outcomelist)
-                    self.middle.setText(outcome)
-
-                else:
-
-                    self.middle.setText('Thank you! This task is complete.')
-
                 self.person.output()
-
-            else:
-
-                self.middle.setText('Please wait for the next round.')
 
     def displaysecondhalf(self):
 

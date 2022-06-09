@@ -6,7 +6,10 @@ import random
 
 class NACTParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, money, buttonbox):
+    def __init__(self, expid, outdir, task, hightrials, lowtrials, money, buttonbox):
+
+        trials = lowtrials + hightrials
+
         super().__init__(expid, trials, outdir, task)
 
         self.highcolor = random.choice(['Green', 'Red'])
@@ -23,17 +26,14 @@ class NACTParticipant(participant.Participant):
         self.startmoney = float(money)
         self.buttonbox = buttonbox
 
-        highvaluetrials = round((self.get_trials()-700)/-4)
-        lowvaluetrials = round(700-(highvaluetrials*5))
-
-        self.set_design(highvaluetrials, lowvaluetrials)
+        self.set_design(hightrials, lowtrials)
 
         # Experiment settingsguis output dataframe
         dict_simulsettings = {
             'Starting money': [money],
-            'Low value trials': [lowvaluetrials],
+            'Low value trials': [lowtrials],
             'Low value color': [self.lowcolor],
-            'High value trials': [highvaluetrials],
+            'High value trials': [hightrials],
             'High value color': [self.highcolor]
         }
 
@@ -66,21 +66,65 @@ class NACTParticipant(participant.Participant):
         return prompt
 
     def get_trial_pic(self):
+        """
+        technically a setter and getter. depending on the part of the task, you'll generate something different
+        :return: randomized list of picture strings to the gui so that the pictures appear on screen
+        """
 
+        # have a list of all possible colors (not including the high and low value colors)
         colors = ['White', 'Purple', 'Yellow', 'Orange', 'Teal', 'Blue']
-        random.shuffle(colors)
-        shape = random.choice(['Cir', 'Dia'])
 
+        # shuffle the list of colors
+        random.shuffle(colors)
+
+        # make an empty list that will be filled with your picture strings
         pics = []
 
+        # set a string that is equal to the prefix for all pictures
         prefix = 'NACT_'
 
-        signalplace = random.randint(0, 5)
+        # pop the value, which determines whether the trial will include the high or low value color
+        self.trialvalue = self.picorder.pop()
 
-        value = self.picorder.pop()
+        # randomly pick whether the signal will have a horizontal or vertical line
+        self.signalnumber = random.randint(1, 2)
 
         if self.part == 1:
+            # In part one, we need everything to be circles, and the high or low value color will always be the
+            # stimuli that the participant focuses on
 
+            # for those remaining distractor colors, turn them each into strings for a picture
+            for color in colors:
+
+                distractornumber = str(random.randint(1, 2))
+
+                distractorstring = prefix + 'd' + color + 'Cir' + distractornumber
+                pics.append(distractorstring)
+
+            # shuffle the list of distractor pictures
+            random.shuffle(pics)
+
+            # get a string to represent the signal picture
+            signalstring = prefix + 's' + self.trialvalue + 'Cir' + str(self.signalnumber)
+
+            # generate a random integer that will be used to pic a random distractor so that you can...
+            signalplace = random.randint(0, 5)
+
+            # ...replace one of the distractors with this signal string!
+            pics[signalplace] = signalstring
+
+        else:
+            # for part two, we need to have all the distractors one shape and the signal be the other shape
+            # We also need to add the high or low value color in the list but can't make it a signal because we
+            # don't have an asset for that
+
+            # remove one of the colors; that will be our signal color
+            signalcolor = colors.pop()
+
+            # pick a random shape for all the distractors to be
+            shape = random.choice(['Cir', 'Dia'])
+
+            # for those remaining distractor colors, turn them each into strings for a picture
             for color in colors:
 
                 distractornumber = str(random.randint(1, 2))
@@ -88,65 +132,56 @@ class NACTParticipant(participant.Participant):
                 distractorstring = prefix + 'd' + color + shape + distractornumber
                 pics.append(distractorstring)
 
+            # next, shuffle the picture strings
             random.shuffle(pics)
 
-            signalnumber = str(random.randint(1, 2))
-
-            signalstring = prefix + 's' + value + shape + signalnumber
-
-            pics[signalplace] = signalstring
-
-        else:
-
-            for color in colors:
-
-                distractorletter = random.choice(['s', 'd'])
-                distractornumber = str(random.randint(1, 2))
-
-                distractorstring = prefix + distractorletter + color + shape + distractornumber
-                pics.append(distractorstring)
-
-            random.shuffle(pics)
-
+            # if the distractors are circles, make the signal a diamond, and vice versa
             if shape == 'Cir':
 
                 signalshape = 'Dia'
 
             else:
 
-                signalshape = 'Dia'
+                signalshape = 'Cir'
 
-            signalnumber = str(random.randint(1, 2))
+            # get a string to represent the signal picture
+            signalstring = prefix + 's' + signalcolor + signalshape + str(self.signalnumber)
 
-            self.signalstring = prefix + 's' + value + signalshape + signalnumber
+            # generate a random integer that will be used to pic a random distractor so that you can...
+            signalplace = random.randint(0, 4)
 
-            pics[signalplace] = self.signalstring
+            # ...replace one of the distractors with this signal string!
+            pics[signalplace] = signalstring
 
+            # add in a distractor that has the high or low value color
+            valuedistractornumber = str(random.randint(1, 2))
+            valuedistractorstring = prefix + 'd' + self.trialvalue + shape + valuedistractornumber
+            pics.append(valuedistractorstring)
+
+        # shuffle the list of picture strings
+        random.shuffle(pics)
+
+        # return the pictures
         return pics
 
-    def updateoutput(self, trial, onset, rt, response=3):
+    def updateoutput(self, trial, onset, rt, response):
         """
         evaluates whether the person got the trial correct based on their response, updates the performance dataframe
         in the superclass, and gives feedback
         :param trial: the number of the trial that was just completed
         :param onset: onset time for trial
         :param rt: participants's reaction time
-        :param response: integer with either 0 or 1 depending on if the person chose x or square. Default is 3 in case
-        the participants doesn't answer in time.
-        :return: feedback string: how much money they lost and their total money
+        :param response: int with 0, 1, or 3 depending on what the person chose (3 if they didn't choose).
+        :return: feedback string: how much money they lost and their total money (or a fixation cross), which is use
+         in the iti
         """
 
-        if self.signalstring in ['NACT_sRedCir1', 'NACT_sRedDia1', 'NACT_sGreenCir1', 'NACT_sGreebDia1']:
+        # find out whether the participant was correct
+        if self.signalnumber == 1:
 
-            if response == '|':
-                correct = 1
+            stimstring = 'Vertical'
 
-            else:
-                correct = 0
-
-        elif self.signalstring in ['NACT_sRedCir2', 'NACT_sRedDia2', 'NACT_sGreenCir2', 'NACT_sGreebDia2']:
-
-            if response == '-':
+            if response == 0:
                 correct = 1
 
             else:
@@ -154,45 +189,66 @@ class NACTParticipant(participant.Participant):
 
         else:
 
-            correct = 0
+            stimstring = 'Horizontal'
 
+            if response == 1:
+                correct = 1
+
+            else:
+                correct = 0
+
+        # if you're in the first part...
+        if self.part == 1:
+
+            # and you are correct...
+            if correct == 1:
+
+                # you lose nothing.
+                feedback = 0.0
+
+            # and you are incorrect on a high value trial...
+            elif (correct == 0) & (self.highcolor == self.trialvalue):
+
+                # you lose 15 cents.
+                feedback = 0.15
+
+            # and you are incorrect on a low value trial...
+            else:
+
+                # you lose 3 cents.
+                feedback = 0.03
+
+            # subtract how much yuou lost from the starting money
+            self.startmoney -= feedback
+
+            # create a string to inform the participant
+            feedbackstring = 'You lost $' + str('{:.2f}'.format(feedback)) + '. You have $' + \
+                             str('{:.2f}'.format(self.startmoney)) + ' left.'
+
+        # If you are in part 2, just create a fixation cross
+        else:
+            feedbackstring = '+'
+
+        # create a dictionary of the trial info so that you can update the overall performance dataframe
         df_simultrial = {
             'trial': [trial],
             'onset time': [onset],
             'part': [self.part],
-            'picture': [self.signalstring],
+            'value color': [self.trialvalue],
+            'signal': [stimstring],
             'response': [response],
             'reaction time': [rt],
-            'correct': [correct]
+            'correct': [correct],
+            'money remaining': [self.startmoney]
         }
 
-        if self.part == 1:
-
-            if correct == 1:
-
-                feedback = 0.0
-
-            elif (correct == 0) & (self.highcolor in self.signalstring):
-
-                feedback = 0.15
-
-            else:
-
-                feedback = 0.03
-
-            self.startmoney -= feedback
-
-            feedbackstring = 'You lost $' + str('{:.2f}'.format(feedback)) + '. You have $' + \
-                             str('{:.2f}'.format(self.startmoney)) + ' left.'
-
-        else:
-
-            feedbackstring = '+'
-
+        # turn the dictionary into a dataframe
         df_simultrial = pd.DataFrame(data=df_simultrial)
 
+        # update the overall performance dataframe
         self.set_performance(df_simultrial)
 
+        # return the string for the iti
         return feedbackstring
 
     def get_instructions(self, instint):
@@ -257,7 +313,7 @@ class NACTParticipant(participant.Participant):
                 case 1:
 
                     inst = 'In this part of the task, you need to look\nfor the shape that is different from all the' \
-                           ' others).'
+                           ' others.'
 
                 case 2:
 

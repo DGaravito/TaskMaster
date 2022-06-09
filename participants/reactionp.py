@@ -13,7 +13,7 @@ class SSParticipant(participant.Participant):
         self.blocks = int(blocks)
         self.timer = 250
         self.globallocal = random.choice(['Global', 'Local'])
-        self.maxrt = maxrt
+        self.maxrt = int(maxrt)
 
         self.set_structure()
 

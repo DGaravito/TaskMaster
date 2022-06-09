@@ -203,7 +203,7 @@ class NbParticipant(participant.Participant):
 
         self.buttonbox = buttonbox
         self.roundperformance = 0.0
-        self.roundsum = 0
+        self.roundsumcorrect = 0
         self.rounds = int(rounds)
         self.backlist = ['1', '1', '1', '1']
 
@@ -216,7 +216,7 @@ class NbParticipant(participant.Participant):
 
     def nextround(self, roundsdone):
 
-        self.roundperformance = self.roundsum/self.get_trials()
+        self.roundperformance = self.roundsumcorrect/self.get_trials()
 
         if (roundsdone == self.rounds) & (self.roundperformance >= 0.5):
 
@@ -238,7 +238,7 @@ class NbParticipant(participant.Participant):
         prompts = [prompt1, prompt2]
 
         self.roundperformance = 0.0
-        self.roundsum = 0
+        self.roundsumcorrect = 0
 
         return prompts
 
@@ -318,7 +318,7 @@ class NbParticipant(participant.Participant):
             'correct': [correct]
         }
 
-        self.roundsum += correct
+        self.roundsumcorrect += correct
 
         df_simultrial = pd.DataFrame(data=df_simultrial)
 

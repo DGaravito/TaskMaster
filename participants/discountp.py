@@ -14,7 +14,7 @@ class DdParticipant(participant.Participant):
                  buttonbox):
         super().__init__(expid, trials, outdir, task)
 
-        self.rounds = rounds
+        self.rounds = int(rounds)
         self.buttonbox = buttonbox
 
         self.engine = self.create_dd_engine(self.task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew)
@@ -166,13 +166,13 @@ class PdParticipant(participant.Participant):
         super().__init__(expid, trials, outdir, task)
 
         self.buttonbox = buttonbox
-        self.rounds = rounds
+        self.rounds = int(rounds)
 
         self.design = design
         self.maximum = float(maximum)
         self.minimum = float(minimum)
         self.trialdesign = []
-        self.startmoney = money
+        self.startmoney = float(money)
         self.outcomeopt = outcome
         self.outcomelist = []
 
@@ -613,6 +613,24 @@ class CEDParticipant(participant.Participant):
             case _:
 
                 print('Panic!')
+
+    def nextround(self, roundsdone):
+
+        if self.rounds == roundsdone:
+
+            if self.outcomeopt == 'Yes':
+
+                prompt = 'Your outcome: ' + random.choice(self.outcomelist)
+
+            else:
+
+                prompt = 'Thank you! This task is complete.'
+
+        else:
+
+            prompt = 'Please wait for the next round.'
+
+        return prompt
 
     def get_design_text(self):
 

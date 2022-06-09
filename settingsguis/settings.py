@@ -56,40 +56,47 @@ class MathErrorBox(QDialog):
 
         # Make labels for text
 
-        self.mainerror = QLabel('Your number of trials isn\'t compatible with the settingsguis and/or task you chose!')
+        self.mainerror = QLabel('Your number of trials isn\'t compatible with the settings and/or task you chose!')
         self.mainerror.setStyleSheet('padding :5px')
 
         match state:
 
             case 1:
 
-                self.followup = QLabel('There are 4 pictures for stimuli, so the total number of trials must be ' +
-                                       'divisible by 4.')
+                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
+                                 'divisible by 4.'
 
             case 2:
 
-                self.followup = QLabel('You enabled gains and losses, so your number of trials should be divisible by'
-                                       ' 2.')
+                followupstring = 'You enabled gains and losses, so your number of trials should be divisible by 2.'
 
             case 3:
 
-                self.followup = QLabel('You enabled FTT, so your number of trials should be divisible by 3.')
+                followupstring = 'You enabled FTT, so your number of trials should be divisible by 3.'
 
             case 4:
 
-                self.followup = QLabel('You enabled FTT and need gains and losses, so your number of trials should'
-                                       ' be divisible by 6 (minimum Gist, Mixed, and Verbatim version of 1 gain and'
-                                       ' 1 loss question.')
+                followupstring = 'You enabled FTT and need gains and losses, so your number of trials should' \
+                                 ' be divisible by 6 (minimum Gist, Mixed, and Verbatim version of 1 gain and' \
+                                 ' 1 loss question.'
 
             case 5:
 
-                self.followup = QLabel('There are 4 task difficulty levels, so the total number of trials must be ' +
-                                       'divisible by 6 (enough for each difficulty to be compared).')
+                followupstring = 'There are 4 task difficulty levels, so the total number of trials must be ' \
+                                 'divisible by 6 (enough for each difficulty to be compared).'
+
+            case 6:
+
+                followupstring = 'It seems that the number of high value and low trials you entered means that ' \
+                                 'the participant could end up with less money than the minimum allowed.' \
+                                 '\n(# of low value trials X $0.15) + (# of low value trials X $0.03) <= ' \
+                                 'starting money - minimum money that a participant can leave with.'
 
             case _:
 
-                self.followup = QLabel('I don\'t know what you put, but the math doesn\'t work out')
+                followupstring = 'I don\'t know what you put, but the math doesn\'t work out'
 
+        self.followup = QLabel(followupstring)
         self.followup.setStyleSheet('padding :5px')
 
         # Add stuff to overarching layout
