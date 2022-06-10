@@ -10,11 +10,10 @@ import random
 
 class ARTTParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, risklist, amblist, rewmin, rewmax, structure, outcome, money,
-                 rounds, buttonbox):
-        super().__init__(expid, trials, outdir, task)
+    def __init__(self, expid, trials, session, outdir, task, risklist, amblist, rewmin, rewmax, structure, outcome,
+                 money, rounds, buttonbox, eyetracking, fmri):
+        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
 
-        self.buttonbox = buttonbox
         self.rounds = int(rounds)
         self.startmoney = float(money)
         self.inst = 0
@@ -364,11 +363,11 @@ class ARTTParticipant(participant.Participant):
 
 class RAParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, minimum, maximum, outcome, money, rounds, buttonbox):
-        super().__init__(expid, trials, outdir, task)
+    def __init__(self, expid, trials, session, outdir, task, minimum, maximum, outcome, money, rounds, buttonbox,
+                 eyetracking, fmri):
+        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
 
         self.rounds = int(rounds)
-        self.buttonbox = buttonbox
         self.startmoney = money
         self.outcomeopt = outcome
         self.trialtext = []
@@ -525,11 +524,11 @@ class RAParticipant(participant.Participant):
 
 class FrameParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, minimum, maximum, design, ftt, outcome, money, rounds, buttonbox):
-        super().__init__(expid, trials, outdir, task)
+    def __init__(self, expid, trials, session, outdir, task, minimum, maximum, design, ftt, outcome, money, rounds,
+                 buttonbox, eyetracking, fmri):
+        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
 
         self.rounds = int(rounds)
-        self.buttonbox = buttonbox
         self.startmoney = float(money)
         self.outcomeopt = outcome
         self.design = design

@@ -16,6 +16,9 @@ class PrSettings(settings.Settings):
         # setting  the geometry of window
         self.setGeometry(0, 0, 650, 350)
 
+        # Default for whether to use STT trial
+        self.stt = 'No'
+
         # center window
         self.centerscreen()
 
@@ -52,15 +55,17 @@ class PrSettings(settings.Settings):
 
         # ST Trials input
         self.stttoggle = QCheckBox('STT?', self)
-        self.stttoggle.stateChanged.connect(self.clickBox)
+        self.stttoggle.stateChanged.connect(self.clickbox)
 
         # Make form layout for all the settingsguis
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
+        layout.addRow(QLabel('Session name/number (enter \'Practice\' to not have output):'), self.sessionin)
         layout.addRow(QLabel('Number of word pairs (Max: 30):'), self.pairsin)
         layout.addRow(QLabel('Number of study-test trials:'), self.trialsin)
         layout.addRow(QLabel('Do you want an STT trial?'), self.stttoggle)
+        layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
@@ -73,18 +78,25 @@ class PrSettings(settings.Settings):
     def clickbox(self):
 
         if self.stttoggle.isChecked():
-            self.stt = 1
+            self.stt = 'Yes'
         else:
-            self.stt = 0
+            self.stt = 'No'
+
+        if self.eyetrackingtoggle.isChecked():
+            self.eyetracking = 'Yes'
+        else:
+            self.eyetracking = 'No'
 
     def submitsettings(self):
 
         person = memoryp.PrParticipant(self.idform.text(),
                                        self.pairsin.text(),
+                                       self.sessionin.text(),
                                        self.wd,
                                        'Pair Recall Memory',
                                        self.trialsin.text(),
-                                       self.stt)
+                                       self.stt,
+                                       self.eyetracking)
 
         self.exp = memorygui.PrExp(person)
         self.exp.show()
@@ -137,10 +149,12 @@ class NBackSettings(settings.Settings):
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
+        layout.addRow(QLabel('Session name/number (enter \'Practice\' to not have output):'), self.sessionin)
         layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
         layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         layout.addRow(QLabel('Type of n-Back:'), self.design)
-        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttonbox)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
+        layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
@@ -152,19 +166,27 @@ class NBackSettings(settings.Settings):
 
     def clickbox(self):
 
-        if self.buttonbox.isChecked():
+        if self.buttontoggle.isChecked():
             self.buttonboxstate = 'Yes'
         else:
             self.buttonboxstate = 'No'
+
+        if self.eyetrackingtoggle.isChecked():
+            self.eyetracking = 'Yes'
+        else:
+            self.eyetracking = 'No'
 
     def submitsettings(self):
 
         person = memoryp.NbParticipant(self.idform.text(),
                                        self.trialsin.text(),
+                                       self.sessionin.text(),
                                        self.wd,
                                        self.design.currentText(),
                                        self.blocksin.text(),
-                                       self.buttonboxstate)
+                                       self.buttonboxstate,
+                                       self.eyetracking,
+                                       self.fmri)
 
         self.exp = memorygui.NbExp(person)
         self.exp.show()

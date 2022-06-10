@@ -19,14 +19,6 @@ class ARTTExp(QWidget):
         self.roundsdone = 0
         self.inst = 0
 
-        if self.person.buttonbox == 'Yes':
-            self.leftkey = ['1']
-            self.rightkey = ['2']
-
-        else:
-            self.leftkey = ['C', 'c']
-            self.rightkey = ['M', 'm']
-
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
@@ -255,11 +247,11 @@ class ARTTExp(QWidget):
 
         self.timerresponse.stop()
 
-        if key in self.leftkey:
+        if key in self.person.leftkey:
             self.response = 0
             self.jitter()
 
-        elif key in self.rightkey:
+        elif key in self.person.rightkey:
             self.response = 1
             self.jitter()
 
@@ -295,14 +287,6 @@ class RAExp(QWidget):
         self.trialsdone = 0
         self.roundsdone = 0
         self.inst = 0
-
-        if self.person.buttonbox == 'Yes':
-            self.leftkey = ['1']
-            self.rightkey = ['2']
-
-        else:
-            self.leftkey = ['C', 'c']
-            self.rightkey = ['M', 'm']
 
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
@@ -495,11 +479,11 @@ class RAExp(QWidget):
 
         self.timerresponse.stop()
 
-        if key in self.leftkey:
+        if key in self.person.leftkey:
             self.response = 0
             self.jitter()
 
-        elif key in self.rightkey:
+        elif key in self.person.rightkey:
             self.response = 1
             self.jitter()
 
@@ -526,14 +510,6 @@ class FrameExp(QWidget):
         self.trialsdone = 0
         self.roundsdone = 0
         self.inst = 0
-
-        if self.person.buttonbox == 'Yes':
-            self.leftkey = ['1']
-            self.rightkey = ['2']
-
-        else:
-            self.leftkey = ['C', 'c']
-            self.rightkey = ['M', 'm']
 
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
@@ -728,11 +704,11 @@ class FrameExp(QWidget):
 
         self.timerresponse.stop()
 
-        if key in self.leftkey:
+        if key in self.person.leftkey:
             self.response = 0
             self.jitter()
 
-        elif key in self.rightkey:
+        elif key in self.person.rightkey:
             self.response = 1
             self.jitter()
 

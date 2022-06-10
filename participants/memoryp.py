@@ -7,13 +7,10 @@ import string
 
 class PrParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, design, stt):
-        super().__init__(expid, trials, outdir, task)
+    def __init__(self, expid, trials, session, outdir, task, design, stt, eyetracking):
+        super().__init__(expid, trials, session, outdir, task, eyetracking)
 
-        design = design
-        stt = stt
-
-        if stt == 1:
+        if stt == 'Yes':
             structstr = 'STT' + ('ST' * (int(design) - 1))
             self.structure = list(structstr)
 
@@ -197,11 +194,9 @@ class PrParticipant(participant.Participant):
 
 class NbParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, rounds, buttonbox):
+    def __init__(self, expid, trials, session, outdir, task, rounds, buttonbox, eyetracking, fmri):
+        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
 
-        super().__init__(expid, trials, outdir, task)
-
-        self.buttonbox = buttonbox
         self.roundperformance = 0.0
         self.roundsumcorrect = 0
         self.rounds = int(rounds)

@@ -17,14 +17,6 @@ class NACTExp(QWidget):
         self.trialsdone = 0
         self.inst = 0
 
-        if self.person.buttonbox == 'Yes':
-            self.leftkey = ['1']
-            self.rightkey = ['2']
-
-        else:
-            self.leftkey = ['C', 'c']
-            self.rightkey = ['M', 'm']
-
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
@@ -240,7 +232,7 @@ class NACTExp(QWidget):
             self.inst = 0
             self.generatenext()
 
-        if key in self.rightkey:
+        if key in self.person.rightkey:
 
             self.timer.stop()
             self.trialsdone += 1
@@ -250,7 +242,7 @@ class NACTExp(QWidget):
 
             self.iti(rt, 1)
 
-        if key in self.leftkey:
+        if key in self.person.leftkey:
 
             self.timer.stop()
             self.trialsdone += 1

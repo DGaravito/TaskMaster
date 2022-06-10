@@ -7,20 +7,31 @@ import xlsxwriter
 
 
 class Participant(object):
-    def __init__(self, expid, trials, outdir, task):
+    def __init__(self, expid, trials, session, outdir, task, buttonbox='No', eyetrack='No', fmri='No'):
 
+        # set up keys depending on buttonbox option
+        if buttonbox == 'Yes':
+            self.leftkey = ['1']
+            self.rightkey = ['2']
+
+        else:
+            self.leftkey = ['C', 'c']
+            self.rightkey = ['M', 'm']
+
+        # Set up class variables
+        self.eyetracking = eyetrack
+        self.fmri = fmri
         self.expid = expid
-
         self.trials = trials
-
         self.outdir = outdir
-
         self.task = task
+        self.session = session
 
         # Experiment settingsguis output dataframe
         self.dict_settings = {
             'Participant ID': [self.expid],
             'Task': [self.task],
+            'Session': [self.task],
             'Number of trials': [self.trials]
         }
 
@@ -50,66 +61,68 @@ class Participant(object):
 
     def output(self):
 
-        match self.task:
+        if self.session not in ['Practice', 'practice']:
 
-            case TaskDD():
-                taskstr = '_DD'
+            match self.task:
 
-            case 'Probability Discounting':
-                taskstr = '_PD'
+                case TaskDD():
+                    taskstr = '_DD'
 
-            case 'CogED Task':
-                taskstr = '_CEDT'
+                case 'Probability Discounting':
+                    taskstr = '_PD'
 
-            case TaskCRA():
-                taskstr = '_ARTT'
+                case 'CogED Task':
+                    taskstr = '_CEDT'
 
-            case 'Risk Aversion':
-                taskstr = '_RA'
+                case TaskCRA():
+                    taskstr = '_ARTT'
 
-            case 'Framing Task':
-                taskstr = '_Framing'
+                case 'Risk Aversion':
+                    taskstr = '_RA'
 
-            case 'Beads Task':
-                taskstr = '_Beads'
+                case 'Framing Task':
+                    taskstr = '_Framing'
 
-            case 'Perceptual Bias Task':
-                taskstr = '_PBT'
+                case 'Beads Task':
+                    taskstr = '_Beads'
 
-            case 'Negative Attention Capture':
-                taskstr = '_NACT'
+                case 'Perceptual Bias Task':
+                    taskstr = '_PBT'
 
-            case 'Stop-Signal Task':
-                taskstr = '_SS'
+                case 'Negative Attention Capture Task':
+                    taskstr = '_NACT'
 
-            case 'Emo Go/No-Go':
-                taskstr = '_EGNG'
+                case 'Stop-Signal Task':
+                    taskstr = '_SS'
 
-            case 'Pair Recall Memory':
-                taskstr = '_PR'
+                case 'Emo Go/No-Go':
+                    taskstr = '_EGNG'
 
-            case '1-back':
-                taskstr = '_' + self.task
+                case 'Pair Recall Memory':
+                    taskstr = '_PR'
 
-            case '2-back':
-                taskstr = '_' + self.task
+                case '1-back':
+                    taskstr = '_' + self.task
 
-            case '3-back':
-                taskstr = '_' + self.task
+                case '2-back':
+                    taskstr = '_' + self.task
 
-            case '4-back':
-                taskstr = '_' + self.task
+                case '3-back':
+                    taskstr = '_' + self.task
 
-            case _:
-                taskstr = '_'
+                case '4-back':
+                    taskstr = '_' + self.task
 
-        os.chdir(self.outdir)
+                case _:
+                    taskstr = '_'
 
-        writer = pd.ExcelWriter(self.expid + taskstr + '.xlsx', engine='xlsxwriter')
+            os.chdir(self.outdir)
 
-        # Write each dataframe to a different worksheet.
-        self.df_settings.to_excel(writer, sheet_name='Sheet1')
-        self.df_performance.to_excel(writer, sheet_name='Sheet2')
+            writer = pd.ExcelWriter(self.expid + taskstr + '.xlsx', engine='xlsxwriter')
 
-        # Close the Pandas Excel writer and output the Excel file.
-        writer.save()
+            # Write each dataframe to a different worksheet.
+            self.df_settings.to_excel(writer, sheet_name='Sheet1')
+            self.df_performance.to_excel(writer, sheet_name='Sheet2')
+
+            # Close the Pandas Excel writer and output the Excel file.
+            writer.save()

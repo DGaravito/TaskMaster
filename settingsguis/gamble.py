@@ -84,6 +84,7 @@ class ARTTSettings(settings.Settings):
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
+        layout.addRow(QLabel('Session name/number (enter \'Practice\' to not have output):'), self.sessionin)
         layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
         layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         # layout.addRow(QLabel('Enter the probablities for risky trials:'), self.probriskin)
@@ -93,7 +94,9 @@ class ARTTSettings(settings.Settings):
         layout.addRow(QLabel('What type of questions do you want?'), self.design)
         layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
-        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttonbox)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
+        layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
         layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
@@ -105,7 +108,7 @@ class ARTTSettings(settings.Settings):
 
     def clickbox(self):
 
-        if self.buttonbox.isChecked():
+        if self.buttontoggle.isChecked():
             self.buttonboxstate = 'Yes'
         else:
             self.buttonboxstate = 'No'
@@ -114,6 +117,16 @@ class ARTTSettings(settings.Settings):
             self.outcome = 'Yes'
         else:
             self.outcome = 'No'
+
+        if self.eyetrackingtoggle.isChecked():
+            self.eyetracking = 'Yes'
+        else:
+            self.eyetracking = 'No'
+
+        if self.fmritoggle.isChecked():
+            self.fmri = 'Yes'
+        else:
+            self.fmri = 'No'
 
     def submitsettings(self):
 
@@ -134,6 +147,7 @@ class ARTTSettings(settings.Settings):
         ) | (self.design.currentText() in ['Gains only', 'Losses only']):
             person = gamblep.ARTTParticipant(self.idform.text(),
                                              self.trialsin.text(),
+                                             self.sessionin.text(),
                                              self.wd,
                                              TaskCRA(),
                                              self.probabilities,
@@ -144,7 +158,9 @@ class ARTTSettings(settings.Settings):
                                              self.outcome,
                                              self.smoneyin.text(),
                                              self.blocksin.text(),
-                                             self.buttonboxstate)
+                                             self.buttonboxstate,
+                                             self.eyetracking,
+                                             self.fmri)
 
             self.exp = gamblegui.ARTTExp(person)
             self.exp.show()
@@ -215,13 +231,16 @@ class RASettings(settings.Settings):
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
+        layout.addRow(QLabel('Session name/number (enter \'Practice\' to not have output):'), self.sessionin)
         layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
         layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         layout.addRow(QLabel('Smallest possible gain:'), self.minin)
         layout.addRow(QLabel('Largest possible gain:'), self.maxin)
         layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
-        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttonbox)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
+        layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
         layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
@@ -233,7 +252,7 @@ class RASettings(settings.Settings):
 
     def clickbox(self):
 
-        if self.buttonbox.isChecked():
+        if self.buttontoggle.isChecked():
             self.buttonboxstate = 'Yes'
         else:
             self.buttonboxstate = 'No'
@@ -243,10 +262,21 @@ class RASettings(settings.Settings):
         else:
             self.outcome = 'No'
 
+        if self.eyetrackingtoggle.isChecked():
+            self.eyetracking = 'Yes'
+        else:
+            self.eyetracking = 'No'
+
+        if self.fmritoggle.isChecked():
+            self.fmri = 'Yes'
+        else:
+            self.fmri = 'No'
+
     def submitsettings(self):
 
         person = gamblep.RAParticipant(self.idform.text(),
                                        self.trialsin.text(),
+                                       self.sessionin.text(),
                                        self.wd,
                                        'Risk Aversion',
                                        self.minin.text(),
@@ -254,7 +284,9 @@ class RASettings(settings.Settings):
                                        self.outcome,
                                        self.smoneyin.text(),
                                        self.blocksin.text(),
-                                       self.buttonboxstate)
+                                       self.buttonboxstate,
+                                       self.eyetracking,
+                                       self.fmri)
 
         self.exp = gamblegui.RAExp(person)
         self.exp.show()
@@ -331,6 +363,7 @@ class FrameSettings(settings.Settings):
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
+        layout.addRow(QLabel('Session name/number (enter \'Practice\' to not have output):'), self.sessionin)
         layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
         layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         layout.addRow(QLabel('Minimum expected value:'), self.minin)
@@ -339,7 +372,9 @@ class FrameSettings(settings.Settings):
         layout.addRow(QLabel('Do you want FTT truncations (i.e., Gist, Mixed, Verbatim)?'), self.ftttoggle)
         layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
-        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttonbox)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
+        layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
         layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
@@ -351,7 +386,7 @@ class FrameSettings(settings.Settings):
 
     def clickbox(self):
 
-        if self.buttonbox.isChecked():
+        if self.buttontoggle.isChecked():
             self.buttonboxstate = 'Yes'
         else:
             self.buttonboxstate = 'No'
@@ -365,6 +400,16 @@ class FrameSettings(settings.Settings):
             self.outcome = 'Yes'
         else:
             self.outcome = 'No'
+
+        if self.eyetrackingtoggle.isChecked():
+            self.eyetracking = 'Yes'
+        else:
+            self.eyetracking = 'No'
+
+        if self.fmritoggle.isChecked():
+            self.fmri = 'Yes'
+        else:
+            self.fmri = 'No'
 
     def submitsettings(self):
 
@@ -388,8 +433,9 @@ class FrameSettings(settings.Settings):
 
             person = gamblep.FrameParticipant(self.idform.text(),
                                               self.trialsin.text(),
+                                              self.sessionin.text(),
                                               self.wd,
-                                              'Framing',
+                                              'Framing Task',
                                               self.minin.text(),
                                               self.maxin.text(),
                                               self.design.currentText(),
@@ -397,7 +443,9 @@ class FrameSettings(settings.Settings):
                                               self.outcome,
                                               self.smoneyin.text(),
                                               self.blocksin.text(),
-                                              self.buttonboxstate)
+                                              self.buttonboxstate,
+                                              self.eyetracking,
+                                              self.fmri)
 
             self.exp = gamblegui.FrameExp(person)
             self.exp.show()

@@ -24,16 +24,12 @@ class WDErrorBox(QDialog):
         self.mainerror = QLabel('It looks like you entered an invalid directory!')
         self.mainerror.setStyleSheet('padding :5px')
 
-        self.windowsex = QLabel('Windows example: \'C:/Users/dgara/desktop\'')
-        self.windowsex.setStyleSheet('padding :5px')
-
-        self.macex = QLabel('Mac example: \'Users/DGara/desktop\'')
-        self.macex.setStyleSheet('padding :5px')
+        self.instruction = QLabel('Use the settings window to select a directory to save your output to.')
+        self.instruction.setStyleSheet('padding :5px')
 
         # Add stuff to overarching layout
         dialayout.addWidget(self.mainerror),
-        dialayout.addWidget(self.windowsex),
-        dialayout.addWidget(self.macex)
+        dialayout.addWidget(self.instruction)
 
         self.setLayout(dialayout)
 
@@ -83,9 +79,14 @@ class MathErrorBox(QDialog):
             case 5:
 
                 followupstring = 'There are 4 task difficulty levels, so the total number of trials must be ' \
-                                 'divisible by 6 (enough for each difficulty to be compared).'
+                                 'divisible by 3 (enough for 1 to be compared to 2, 3, and 4) in the original task.'
 
             case 6:
+
+                followupstring = 'There are 4 task difficulty levels, so the total number of trials must be ' \
+                                 'divisible by 6 (enough for each difficulty to be compared) in the alternate task.'
+
+            case 7:
 
                 followupstring = 'It seems that the number of high value and low trials you entered means that ' \
                                  'the participant could end up with less money than the minimum allowed.' \
@@ -122,11 +123,12 @@ class Settings(QWidget):
         # setting the minimum window size
         self.setMinimumSize(500, 350)
 
-        # Defaults for various tasks
+        # Defaults for various tasks and options
         self.buttonboxstate = 'No'
         self.outcome = 'No'
+        self.eyetracking = 'No'
+        self.fmri = 'No'
         self.ftt = 'No'
-        self.stt = 0
 
         # Default directory
         self.wd = 'No directory selected'
@@ -139,13 +141,25 @@ class Settings(QWidget):
         self.quitbutton.clicked.connect(QApplication.instance().quit)
         self.quitbutton.resize(self.quitbutton.sizeHint())
 
-        # ID form
+        # ID
         self.idform = QLineEdit()
         self.idform.setText('9999')
 
+        # Session form
+        self.sessionin = QLineEdit()
+        self.sessionin.setText('1')
+
         # Button check
-        self.buttonbox = QCheckBox()
-        self.buttonbox.stateChanged.connect(self.clickbox)
+        self.buttontoggle = QCheckBox()
+        self.buttontoggle.stateChanged.connect(self.clickbox)
+
+        # Eyetracking check
+        self.eyetrackingtoggle = QCheckBox()
+        self.eyetrackingtoggle.stateChanged.connect(self.clickbox)
+
+        # fMRI check
+        self.fmritoggle = QCheckBox()
+        self.fmritoggle.stateChanged.connect(self.clickbox)
 
         # Blocks input
         self.blocksin = QSpinBox()

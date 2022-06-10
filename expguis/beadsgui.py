@@ -344,10 +344,10 @@ class BeadsExp(QWidget):
 
     def keyaction(self, key):
 
-        if key in ['c', 'C']:
+        if key in self.person.leftkey():
             self.middle.setText('Click on the jar you want to choose\nPress \"M\" to go back')
 
-        elif key in ['m', 'M']:
+        elif key in self.person.rightkey():
 
             self.middle.setText('')
 

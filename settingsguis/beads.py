@@ -55,7 +55,9 @@ class BeadsSettings(settings.Settings):
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
+        layout.addRow(QLabel('Session name/number (enter \'Practice\' to not have output):'), self.sessionin)
         layout.addRow(QLabel('Number of trials:'), self.trialsin)
+        layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
@@ -65,12 +67,21 @@ class BeadsSettings(settings.Settings):
 
         self.setLayout(over_layout)
 
+    def clickbox(self):
+
+        if self.eyetrackingtoggle.isChecked():
+            self.eyetracking = 'Yes'
+        else:
+            self.eyetracking = 'No'
+
     def submitsettings(self):
 
         person = beadsp.BeadsParticipant(self.idform.text(),
                                          self.trialsin.text(),
+                                         self.sessionin.text(),
                                          self.wd,
-                                         'Beads Task')
+                                         'Beads Task',
+                                         self.eyetracking)
 
         self.exp = beadsgui.BeadsExp(person)
         self.exp.show()

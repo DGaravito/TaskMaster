@@ -17,14 +17,6 @@ class PBTExp(QWidget):
         self.roundsdone = 0
         self.inst = 0
 
-        if self.person.buttonbox == 'Yes':
-            self.leftkey = ['1']
-            self.rightkey = ['2']
-
-        else:
-            self.leftkey = ['C', 'c']
-            self.rightkey = ['M', 'm']
-
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
@@ -179,7 +171,7 @@ class PBTExp(QWidget):
             self.inst = 1
             self.iti()
 
-        if key in self.rightkey:
+        if key in self.person.rightkey:
 
             self.timer.stop()
             self.trialsdone += 1
@@ -190,7 +182,7 @@ class PBTExp(QWidget):
             self.person.updateoutput(self.trialsdone, self.picstring, self.starttime, rt, 'Square')
             self.iti()
 
-        if key in self.leftkey:
+        if key in self.person.leftkey:
 
             self.timer.stop()
             self.trialsdone += 1

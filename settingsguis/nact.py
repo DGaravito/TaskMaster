@@ -62,11 +62,13 @@ class NACTSettings(settings.Settings):
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
+        layout.addRow(QLabel('Session name/number (enter \'Practice\' to not have output):'), self.sessionin)
         layout.addRow(QLabel('Number of high value ($0.15) trials:'), self.hightrialsin)
         layout.addRow(QLabel('Number of low value ($0.03) trials:'), self.lowtrialsin)
         layout.addRow(QLabel('Participant starting money:'), self.smoneyin)
         layout.addRow(QLabel('Minimum money a participant could have at the end:'), self.minmoneyin)
-        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttonbox)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
+        layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
@@ -78,10 +80,15 @@ class NACTSettings(settings.Settings):
 
     def clickBox(self):
 
-        if self.buttonbox.isChecked():
+        if self.buttontoggle.isChecked():
             self.buttonboxstate = 'Yes'
         else:
             self.buttonboxstate = 'No'
+
+        if self.eyetrackingtoggle.isChecked():
+            self.eyetracking = 'Yes'
+        else:
+            self.eyetracking = 'No'
 
     def submitsettings(self):
 
@@ -91,16 +98,18 @@ class NACTSettings(settings.Settings):
         if ((.15*hightrials) + (.03 * lowtrials)) <= (float(self.smoneyin.text()) - float(self.minmoneyin.text())):
 
             person = nactp.NACTParticipant(self.idform.text(),
+                                           self.sessionin.text(),
                                            self.wd,
-                                           'Negative Attention Capture',
+                                           'Negative Attention Capture Task',
                                            hightrials,
                                            lowtrials,
                                            self.smoneyin.text(),
-                                           self.buttonboxstate)
+                                           self.buttonboxstate,
+                                           self.eyetracking)
 
             self.exp = nactgui.NACTExp(person)
             self.exp.show()
             self.hide()
 
         else:
-            self.matherrordialog(6)
+            self.matherrordialog(7)

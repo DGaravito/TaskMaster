@@ -18,14 +18,6 @@ class DDiscountExp(QWidget):
         self.trialsdone = 0
         self.roundsdone = 0
 
-        if self.person.buttonbox == 'Yes':
-            self.leftkey = ['1']
-            self.rightkey = ['2']
-
-        else:
-            self.leftkey = ['C', 'c']
-            self.rightkey = ['M', 'm']
-
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
@@ -207,11 +199,11 @@ class DDiscountExp(QWidget):
 
         self.timerresponse.stop()
 
-        if key in self.leftkey:
+        if key in self.person.leftkey:
             self.response = 0
             self.jitter()
 
-        elif key in self.rightkey:
+        elif key in self.person.rightkey:
             self.response = 1
             self.jitter()
 
@@ -238,14 +230,6 @@ class PDiscountExp(QWidget):
         self.trialsdone = 0
         self.roundsdone = 0
         self.inst = 0
-
-        if self.person.buttonbox == 'Yes':
-            self.leftkey = ['1']
-            self.rightkey = ['2']
-
-        else:
-            self.leftkey = ['C', 'c']
-            self.rightkey = ['M', 'm']
 
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
@@ -454,11 +438,11 @@ class PDiscountExp(QWidget):
 
         self.timerresponse.stop()
 
-        if key in self.leftkey:
+        if key in self.person.leftkey:
             self.response = 0
             self.jitter()
 
-        elif key in self.rightkey:
+        elif key in self.person.rightkey:
             self.response = 1
             self.jitter()
 
@@ -486,14 +470,6 @@ class CEDiscountExp(QWidget):
         self.trialsdone = 0
         self.roundsdone = 0
         self.extradelay = [0, 2000, 4000]
-
-        if self.person.buttonbox == 'Yes':
-            self.leftkey = ['1']
-            self.rightkey = ['2']
-
-        else:
-            self.leftkey = ['C', 'c']
-            self.rightkey = ['M', 'm']
 
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
@@ -678,11 +654,11 @@ class CEDiscountExp(QWidget):
 
         self.responsetimer.stop()
 
-        if key in self.leftkey:
+        if key in self.person.leftkey:
             self.response = 0
             self.jitter()
 
-        elif key in self.rightkey:
+        elif key in self.person.rightkey:
             self.response = 1
             self.jitter()
 

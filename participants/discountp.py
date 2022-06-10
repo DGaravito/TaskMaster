@@ -10,12 +10,11 @@ import random
 
 class DdParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew, rounds,
-                 buttonbox):
-        super().__init__(expid, trials, outdir, task)
+    def __init__(self, expid, trials, session, outdir, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew,
+                 rounds, buttonbox, eyetracking, fmri):
+        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
 
         self.rounds = int(rounds)
-        self.buttonbox = buttonbox
 
         self.engine = self.create_dd_engine(self.task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew)
 
@@ -162,10 +161,10 @@ class DdParticipant(participant.Participant):
 
 class PdParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, design, minimum, maximum, outcome, money, rounds, buttonbox):
-        super().__init__(expid, trials, outdir, task)
+    def __init__(self, expid, trials, session, outdir, task, design, minimum, maximum, outcome, money, rounds,
+                 buttonbox, eyetracking, fmri):
+        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
 
-        self.buttonbox = buttonbox
         self.rounds = int(rounds)
 
         self.design = design
@@ -431,14 +430,15 @@ class PdParticipant(participant.Participant):
 
 class CEDParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, outdir, task, maxrew, outcome, names, rounds, buttonbox):
-        super().__init__(expid, trials, outdir, task)
+    def __init__(self, expid, trials, session, outdir, task, maxrew, outcome, names, version, rounds, buttonbox,
+                 eyetracking, fmri):
+        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
 
         self.rounds = int(rounds)
+        self.version = version
 
         self.outcomeopt = outcome
         self.outcomelist = []
-        self.buttonbox = buttonbox
 
         if names == 'a, e, i, u':
 
@@ -479,7 +479,8 @@ class CEDParticipant(participant.Participant):
 
         # Experiment settingsguis output dataframe
         dict_simulsettings = {
-                              'Largest Reward': [maxrew]
+            'Maximum Reward': [maxrew],
+            'Version': [version]
                               }
 
         self.set_settings(dict_simulsettings)
@@ -488,11 +489,21 @@ class CEDParticipant(participant.Participant):
 
     def set_structure(self):
 
-        multnum = int((self.get_trials() * self.rounds) / 6)
-        gainlosscond = ['1-2', '1-3', '1-4', '2-3', '2-4', '3-4']
-        multiplier = [multnum, multnum, multnum, multnum, multnum, multnum]
-        self.order = sum([[s] * n for s, n in zip(gainlosscond, multiplier)], [])
-        random.shuffle(self.order)
+        if self.version == 'Alternate':
+
+            multnum = int((self.get_trials() * self.rounds) / 6)
+            gainlosscond = ['1-2', '1-3', '1-4', '2-3', '2-4', '3-4']
+            multiplier = [multnum, multnum, multnum, multnum, multnum, multnum]
+            self.order = sum([[s] * n for s, n in zip(gainlosscond, multiplier)], [])
+            random.shuffle(self.order)
+
+        else:
+
+            multnum = int((self.get_trials() * self.rounds) / 3)
+            gainlosscond = ['1-2', '1-3', '1-4']
+            multiplier = [multnum, multnum, multnum]
+            self.order = sum([[s] * n for s, n in zip(gainlosscond, multiplier)], [])
+            random.shuffle(self.order)
 
     def set_design_text(self):
 

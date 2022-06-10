@@ -206,14 +206,6 @@ class NbExp(QWidget):
         self.roundsdone = 0
         self.inst = 0
 
-        if self.person.buttonbox == 'Yes':
-            self.leftkey = ['1']
-            self.rightkey = ['2']
-
-        else:
-            self.leftkey = ['C', 'c']
-            self.rightkey = ['M', 'm']
-
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 

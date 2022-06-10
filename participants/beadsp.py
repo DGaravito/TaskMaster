@@ -6,8 +6,8 @@ import random
 
 class BeadsParticipant(participant.Participant):
 
-    def __init__(self, expid, rounds, outdir, task):
-        super().__init__(expid, rounds, outdir, task)
+    def __init__(self, expid, rounds, session, outdir, task, eyetracking):
+        super().__init__(expid, rounds, session, outdir, task, eyetracking)
 
         self.blue_jar = ['BeadsTask_BlueBead',
                          'BeadsTask_BlueBead',

@@ -19,14 +19,6 @@ class SSExp(QWidget):
         self.inst = 0
         self.signal = False
 
-        if self.person.buttonbox == 'Yes':
-            self.leftkey = ['1']
-            self.rightkey = ['2']
-
-        else:
-            self.leftkey = ['C', 'c']
-            self.rightkey = ['M', 'm']
-
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
@@ -200,7 +192,7 @@ class SSExp(QWidget):
             self.inst = 1
             self.iti()
 
-        if key in self.rightkey:
+        if key in self.person.rightkey:
 
             self.timer.stop()
             self.signaltimer.stop()
@@ -212,7 +204,7 @@ class SSExp(QWidget):
             self.person.updateoutput(self.trialsdone, self.picstring, self.starttime, rt, 2)
             self.iti()
 
-        if key in self.leftkey:
+        if key in self.person.leftkey:
 
             self.timer.stop()
             self.signaltimer.stop()

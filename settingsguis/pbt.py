@@ -50,9 +50,11 @@ class PBTSettings(settings.Settings):
         layout = QFormLayout()
 
         layout.addRow(QLabel('Subject ID:'), self.idform)
+        layout.addRow(QLabel('Session name/number (enter \'Practice\' to not have output):'), self.sessionin)
         layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         layout.addRow(QLabel('Number of trials per block (make sure it\'s divisible by 4):'), self.trialsin)
-        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttonbox)
+        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
+        layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         layout.addRow(self.submit, self.quitbutton)
@@ -64,10 +66,15 @@ class PBTSettings(settings.Settings):
 
     def clickbox(self):
 
-        if self.buttonbox.isChecked():
+        if self.buttontoggle.isChecked():
             self.buttonboxstate = 'Yes'
         else:
             self.buttonboxstate = 'No'
+
+        if self.eyetrackingtoggle.isChecked():
+            self.eyetracking = 'Yes'
+        else:
+            self.eyetracking = 'No'
 
     def submitsettings(self):
 
@@ -75,10 +82,12 @@ class PBTSettings(settings.Settings):
 
             person = pbtp.PBTParticipant(self.idform.text(),
                                          self.trialsin.text(),
+                                         self.sessionin.text(),
                                          self.wd,
                                          'Perceptual Bias Task',
                                          self.blocksin.text(),
-                                         self.buttonboxstate)
+                                         self.buttonboxstate,
+                                         self.eyetracking)
 
             self.exp = pbtgui.PBTExp(person)
             self.exp.show()

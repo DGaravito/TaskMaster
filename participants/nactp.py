@@ -6,11 +6,11 @@ import random
 
 class NACTParticipant(participant.Participant):
 
-    def __init__(self, expid, outdir, task, hightrials, lowtrials, money, buttonbox):
+    def __init__(self, expid, session, outdir, task, hightrials, lowtrials, money, buttonbox, eyetracking, fmri):
 
         trials = lowtrials + hightrials
 
-        super().__init__(expid, trials, outdir, task)
+        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
 
         self.highcolor = random.choice(['Green', 'Red'])
 
@@ -24,7 +24,6 @@ class NACTParticipant(participant.Participant):
 
         self.part = 1
         self.startmoney = float(money)
-        self.buttonbox = buttonbox
 
         self.set_design(hightrials, lowtrials)
 
