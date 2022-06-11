@@ -112,8 +112,6 @@ class DDiscountExp(gui.Experiment):
 
         self.timer.stop()
 
-        self.responseenabled = 0
-
         self.left.setText('')
         self.right.setText('')
         self.middle.setText('Please try to be quicker')
@@ -123,6 +121,7 @@ class DDiscountExp(gui.Experiment):
 
         else:
             self.response = 'None'
+            self.responseenabled = 0
             self.iti()
 
     def responsereset(self):
@@ -308,8 +307,6 @@ class PDiscountExp(gui.Experiment):
 
         self.timer.stop()
 
-        self.responseenabled = 0
-
         self.left.setText('')
         self.leftbar.setValue(0)
 
@@ -322,6 +319,7 @@ class PDiscountExp(gui.Experiment):
 
         else:
             self.response = 'None'
+            self.responseenabled = 0
             self.iti()
 
     def responsereset(self):
@@ -493,8 +491,6 @@ class CEDiscountExp(gui.Experiment):
         self.timer.stop()
         self.secondhalftimer.stop()
 
-        self.responseenabled = 0
-
         self.left.setText('')
         self.right.setText('')
         self.middle.setText('Please try to be quicker')
@@ -504,6 +500,7 @@ class CEDiscountExp(gui.Experiment):
 
         else:
             self.response = 'None'
+            self.responseenabled = 0
             self.iti()
 
     def responsereset(self):

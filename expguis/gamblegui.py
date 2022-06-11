@@ -150,8 +150,6 @@ class ARTTExp(gui.Experiment):
 
         self.timer.stop()
 
-        self.responseenabled = 0
-
         self.left.setText('')
 
         self.rightpic.setPixmap(QPixmap())
@@ -165,6 +163,7 @@ class ARTTExp(gui.Experiment):
 
         else:
             self.response = 'None'
+            self.responseenabled = 0
             self.iti()
 
     def responsereset(self):
@@ -354,8 +353,6 @@ class RAExp(gui.Experiment):
 
         self.timer.stop()
 
-        self.responseenabled = 0
-
         self.left.setText('')
 
         self.rightgain.setText('')
@@ -367,6 +364,7 @@ class RAExp(gui.Experiment):
 
         else:
             self.response = 'None'
+            self.responseenabled = 0
             self.iti()
 
     def responsereset(self):
@@ -542,8 +540,6 @@ class FrameExp(gui.Experiment):
 
         self.timer.stop()
 
-        self.responseenabled = 0
-
         self.left.setText('')
 
         self.rightgain.setText('')
@@ -555,6 +551,7 @@ class FrameExp(gui.Experiment):
 
         else:
             self.response = 'None'
+            self.responseenabled = 0
             self.iti()
 
     def responsereset(self):
