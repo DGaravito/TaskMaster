@@ -1,88 +1,30 @@
 import random
 import time
-from pathlib import Path
 
-from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QProgressBar
+from PyQt6.QtWidgets import QLabel, QVBoxLayout, QHBoxLayout
 from PyQt6.QtGui import QFont, QPixmap
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QDir
+from PyQt6.QtCore import Qt, pyqtSignal
+
+from expguis import gui
 
 
-class ARTTExp(QWidget):
+class ARTTExp(gui.Experiment):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):
-        super().__init__()
-
-        self.response = 0
-        self.person = person
-        self.trialsdone = 0
-        self.roundsdone = 0
-        self.inst = 0
-
-        # Window title
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-
-        # center window
-        self.centerscreen()
-
-        # add the assets folder
-
-        toassets = str(Path('..').resolve())
-        QDir.addSearchPath('assets', toassets)
-
-        # Add in elements
-        self.elements()
-
-        # Show all elements
-        self.showMaximized()
-
-        # Attach keyboard keys to functions
-        self.keyPressed.connect(self.keyaction)
-
-        # Make timer for jitter screen
-        self.timerjitter = QTimer()
-        self.timerjitter.timeout.connect(self.generatenext)
-
-        # Make timer for participants taking too long
-        self.timerresponse = QTimer()
-        self.timerresponse.timeout.connect(self.timerwarning)
-
-        # Make timer for resetting after the above time warning
-        self.timerreset = QTimer()
-        self.timerreset.timeout.connect(self.responsereset)
+        super().__init__(person)
 
     def elements(self):
-
-        # Make overarching layout
-        instquitlayout = QVBoxLayout()
-
-        # Quit button
-        self.quitbutton = QPushButton('Quit')
-        self.quitbutton.clicked.connect(QApplication.instance().quit)
-        self.quitbutton.setFixedWidth(40)
-        self.quitbutton.setFixedHeight(20)
-
         # Instructions
-        self.instructions = QLabel('Press ' + self.leftkey[0] + ' for the left option and ' + self.rightkey[0]
-                                   + ' for the right option')
+        self.instructions = QLabel('Press ' + self.person.leftkey[0] + ' for the left option and ' +
+                                   self.person.rightkey[0] + ' for the right option')
 
-        # setting font style and size
-        self.instructions.setFont(QFont('Helvetica', 25))
-
-        # center Instructions
-        self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # Left option (and middle stuff) with font settingsguis
+        # Set up Left option
         self.left = QLabel('')
         self.left.setFont(QFont('Helvetica', 40))
         self.left.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.middle = QLabel('Press G to Start')
-        self.middle.setFont(QFont('Helvetica', 30))
-        self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # Set up right option stuff
-
+        # Set up right option
         self.righttoptext = QLabel('')
         self.righttoptext.setFont(QFont('Helvetica', 40))
         self.righttoptext.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -96,7 +38,6 @@ class ARTTExp(QWidget):
         self.rightbottomtext.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Put right option stuff in a vertical layout
-
         rightlayout = QVBoxLayout()
 
         rightlayout.addWidget(self.righttoptext)
@@ -116,28 +57,17 @@ class ARTTExp(QWidget):
 
         # Put everything in vertical layout
 
-        instquitlayout.addWidget(self.instructions)
-        instquitlayout.addStretch(1)
-        instquitlayout.addLayout(explayout)
-        instquitlayout.addStretch(1)
-        instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addWidget(self.instructions)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addLayout(explayout)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addWidget(self.quitbutton)
 
         # Set up layout
 
-        self.setLayout(instquitlayout)
+        self.setLayout(self.instquitlayout)
 
-    def centerscreen(self):
-
-        qr = self.frameGeometry()
-        cp = self.screen().availableGeometry().center()
-
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
-
-    def keyPressEvent(self, keyevent):
-        self.keyPressed.emit(keyevent.text())
-
-    def jitter(self):
+    def iti(self):
 
         self.left.setText('')
 
@@ -147,20 +77,20 @@ class ARTTExp(QWidget):
 
         self.middle.setText('+')
 
-        if self.trialsdone > 0:
+        endtime = time.time()
+        rt = endtime - self.starttime
 
-            endtime = time.time()
-            rt = endtime - self.starttime
+        self.person.updateoutput(self.trialsdone, self.starttime, rt, self.response)
 
+        if self.response != 'None':
             self.person.engineupdate(self.response)
 
-            self.person.updateoutput(self.trialsdone, self.starttime, rt, self.response)
-
-        self.timerjitter.start(1000)
+        if self.person.fmri == 'No':
+            self.ititimer.start(1000)
 
     def generatenext(self):
 
-        self.timerjitter.stop()
+        self.ititimer.stop()
         if self.trialsdone < self.person.get_trials():
 
             self.trialsdone += 1
@@ -183,7 +113,10 @@ class ARTTExp(QWidget):
 
             self.starttime = time.time()
 
-            self.timerresponse.start(5000)
+            self.timer.start(5000)
+
+            if self.person.fmri == 'Yes':
+                self.ititimer.start(5500)
 
         else:
 
@@ -207,9 +140,9 @@ class ARTTExp(QWidget):
                     outcome = random.choice(self.person.outcomelist)
                     self.middle.setText('Your outcome: ' + outcome)
 
-    def timerwarning(self):
+    def timeout(self):
 
-        self.timerresponse.stop()
+        self.timer.stop()
 
         self.left.setText('')
 
@@ -219,11 +152,16 @@ class ARTTExp(QWidget):
 
         self.middle.setText('Please try to be quicker')
 
-        self.timerreset.start(1000)
+        if self.person.fmri == 'No':
+            self.trialresettimer.start(1000)
+
+        else:
+            self.response = 'None'
+            self.iti()
 
     def responsereset(self):
 
-        self.timerreset.stop()
+        self.trialresettimer.stop()
 
         info = self.person.get_design_text()
         self.left.setText(info[0])
@@ -241,19 +179,19 @@ class ARTTExp(QWidget):
 
         self.middle.setText('OR')
 
-        self.timerresponse.start(5000)
+        self.timer.start(5000)
 
     def keyaction(self, key):
 
-        self.timerresponse.stop()
-
         if key in self.person.leftkey:
+            self.timer.stop()
             self.response = 0
-            self.jitter()
+            self.iti()
 
         elif key in self.person.rightkey:
+            self.timer.stop()
             self.response = 1
-            self.jitter()
+            self.iti()
 
         elif key in ['g', 'G']:
             self.generatenext()
@@ -276,65 +214,17 @@ class ARTTExp(QWidget):
                 self.inst = 0
 
 
-class RAExp(QWidget):
+class RAExp(gui.Experiment):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):
-        super().__init__()
-
-        self.response = 0
-        self.person = person
-        self.trialsdone = 0
-        self.roundsdone = 0
-        self.inst = 0
-
-        # Window title
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-
-        # center window
-        self.centerscreen()
-
-        # Add in elements
-        self.elements()
-
-        # Show all elements
-        self.showMaximized()
-
-        # Attach keyboard keys to functions
-        self.keyPressed.connect(self.keyaction)
-
-        # Make timer for jitter screen
-        self.timerjitter = QTimer()
-        self.timerjitter.timeout.connect(self.generatenext)
-
-        # Make timer for participants taking too long
-        self.timerresponse = QTimer()
-        self.timerresponse.timeout.connect(self.timerwarning)
-
-        # Make timer for resetting after the above time warning
-        self.timerreset = QTimer()
-        self.timerreset.timeout.connect(self.responsereset)
+        super().__init__(person)
 
     def elements(self):
 
-        # Make overarching layout
-        instquitlayout = QVBoxLayout()
-
-        # Quit button
-        self.quitbutton = QPushButton('Quit')
-        self.quitbutton.clicked.connect(QApplication.instance().quit)
-        self.quitbutton.setFixedWidth(40)
-        self.quitbutton.setFixedHeight(20)
-
         # Instructions
-        self.instructions = QLabel('Press ' + self.leftkey[0] + ' for the left option and ' + self.rightkey[0]
-                                   + ' for the right option')
-
-        # setting font style and size
-        self.instructions.setFont(QFont('Helvetica', 25))
-
-        # center Instructions
-        self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.instructions = QLabel('Press ' + self.person.leftkey[0] + ' for the left option and ' +
+                                   self.person.rightkey[0] + ' for the right option')
 
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
@@ -348,10 +238,6 @@ class RAExp(QWidget):
         self.rightloss = QLabel('')
         self.rightloss.setFont(QFont('Helvetica', 40))
         self.rightloss.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.middle = QLabel('Press G to Start')
-        self.middle.setFont(QFont('Helvetica', 30))
-        self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Put Left and Right visual options in horizontal layout
         gamblelayout = QVBoxLayout()
@@ -372,28 +258,17 @@ class RAExp(QWidget):
 
         # Put everything in vertical layout
 
-        instquitlayout.addWidget(self.instructions)
-        instquitlayout.addStretch(1)
-        instquitlayout.addLayout(mainhlayout)
-        instquitlayout.addStretch(1)
-        instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addWidget(self.instructions)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addLayout(mainhlayout)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addWidget(self.quitbutton)
 
         # Set up layout
 
-        self.setLayout(instquitlayout)
+        self.setLayout(self.instquitlayout)
 
-    def centerscreen(self):
-
-        qr = self.frameGeometry()
-        cp = self.screen().availableGeometry().center()
-
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
-
-    def keyPressEvent(self, keyevent):
-        self.keyPressed.emit(keyevent.text())
-
-    def jitter(self):
+    def iti(self):
 
         self.left.setText('')
         self.rightgain.setText('')
@@ -407,11 +282,12 @@ class RAExp(QWidget):
 
         self.person.set_design_text()
 
-        self.timerjitter.start(1000)
+        if self.person.fmri == 'No':
+            self.ititimer.start(1000)
 
     def generatenext(self):
 
-        self.timerjitter.stop()
+        self.ititimer.stop()
         if self.trialsdone < self.person.get_trials():
 
             self.trialsdone += 1
@@ -426,7 +302,10 @@ class RAExp(QWidget):
 
             self.starttime = time.time()
 
-            self.timerresponse.start(5000)
+            self.timer.start(5000)
+
+            if self.person.fmri == 'Yes':
+                self.ititimer.start(5500)
 
         else:
             self.person.output()
@@ -449,9 +328,9 @@ class RAExp(QWidget):
                     outcome = random.choice(self.person.outcomelist)
                     self.middle.setText('Your outcome: ' + outcome)
 
-    def timerwarning(self):
+    def timeout(self):
 
-        self.timerresponse.stop()
+        self.timer.stop()
 
         self.left.setText('')
 
@@ -459,11 +338,16 @@ class RAExp(QWidget):
         self.rightloss.setText('')
         self.middle.setText('Please try to be quicker')
 
-        self.timerreset.start(1000)
+        if self.person.fmri == 'No':
+            self.trialresettimer.start(1000)
+
+        else:
+            self.response = 'None'
+            self.iti()
 
     def responsereset(self):
 
-        self.timerreset.stop()
+        self.trialresettimer.stop()
 
         info = self.person.get_design_text()
         self.left.setText('0')
@@ -473,19 +357,21 @@ class RAExp(QWidget):
 
         self.middle.setText('OR')
 
-        self.timerresponse.start(5000)
+        self.timer.start(5000)
 
     def keyaction(self, key):
 
-        self.timerresponse.stop()
-
         if key in self.person.leftkey:
+
+            self.timer.stop()
             self.response = 0
-            self.jitter()
+            self.iti()
 
         elif key in self.person.rightkey:
+
+            self.timer.stop()
             self.response = 1
-            self.jitter()
+            self.iti()
 
         elif key in ['g', 'G']:
             self.generatenext()
@@ -499,65 +385,17 @@ class RAExp(QWidget):
                 self.inst = 0
 
 
-class FrameExp(QWidget):
+class FrameExp(gui.Experiment):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):
-        super().__init__()
-
-        self.response = 0
-        self.person = person
-        self.trialsdone = 0
-        self.roundsdone = 0
-        self.inst = 0
-
-        # Window title
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-
-        # center window
-        self.centerscreen()
-
-        # Add in elements
-        self.elements()
-
-        # Show all elements
-        self.showMaximized()
-
-        # Attach keyboard keys to functions
-        self.keyPressed.connect(self.keyaction)
-
-        # Make timer for jitter screen
-        self.timerjitter = QTimer()
-        self.timerjitter.timeout.connect(self.generatenext)
-
-        # Make timer for participants taking too long
-        self.timerresponse = QTimer()
-        self.timerresponse.timeout.connect(self.timerwarning)
-
-        # Make timer for resetting after the above time warning
-        self.timerreset = QTimer()
-        self.timerreset.timeout.connect(self.responsereset)
+        super().__init__(person)
 
     def elements(self):
 
-        # Make overarching layout
-        instquitlayout = QVBoxLayout()
-
-        # Quit button
-        self.quitbutton = QPushButton('Quit')
-        self.quitbutton.clicked.connect(QApplication.instance().quit)
-        self.quitbutton.setFixedWidth(40)
-        self.quitbutton.setFixedHeight(20)
-
         # Instructions
-        self.instructions = QLabel('Press ' + self.leftkey[0] + ' for the left option and ' + self.rightkey[0]
-                                   + ' for the right option')
-
-        # setting font style and size
-        self.instructions.setFont(QFont('Helvetica', 25))
-
-        # center Instructions
-        self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.instructions = QLabel('Press ' + self.person.leftkey[0] + ' for the left option and ' +
+                                   self.person.rightkey[0] + ' for the right option')
 
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
@@ -571,10 +409,6 @@ class FrameExp(QWidget):
         self.rightloss = QLabel('')
         self.rightloss.setFont(QFont('Helvetica', 40))
         self.rightloss.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.middle = QLabel('Press G to Start')
-        self.middle.setFont(QFont('Helvetica', 30))
-        self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Put gamble parts in vertical layout
         gamblelayout = QVBoxLayout()
@@ -594,29 +428,16 @@ class FrameExp(QWidget):
         mainhlayout.addStretch(1)
 
         # Put everything in vertical layout
-
-        instquitlayout.addWidget(self.instructions)
-        instquitlayout.addStretch(1)
-        instquitlayout.addLayout(mainhlayout)
-        instquitlayout.addStretch(1)
-        instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addWidget(self.instructions)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addLayout(mainhlayout)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addWidget(self.quitbutton)
 
         # Set up layout
+        self.setLayout(self.instquitlayout)
 
-        self.setLayout(instquitlayout)
-
-    def centerscreen(self):
-
-        qr = self.frameGeometry()
-        cp = self.screen().availableGeometry().center()
-
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
-
-    def keyPressEvent(self, keyevent):
-        self.keyPressed.emit(keyevent.text())
-
-    def jitter(self):
+    def iti(self):
 
         self.left.setText('')
         self.rightgain.setText('')
@@ -630,13 +451,17 @@ class FrameExp(QWidget):
 
             self.person.updateoutput(self.trialsdone, self.starttime, rt, self.response)
 
+        else:
+            self.ititimer.start(1000)
+
         self.person.set_design_text()
 
-        self.timerjitter.start(1000)
+        if (self.person.fmri == 'No') & (self.trialsdone > 0):
+            self.ititimer.start(1000)
 
     def generatenext(self):
 
-        self.timerjitter.stop()
+        self.ititimer().stop()
         if self.trialsdone < self.person.get_trials():
 
             self.trialsdone += 1
@@ -651,7 +476,10 @@ class FrameExp(QWidget):
 
             self.starttime = time.time()
 
-            self.timerresponse.start(5000)
+            self.timer.start(5000)
+
+            if self.person.fmri == 'Yes':
+                self.ititimer.start(5500)
 
         else:
             self.person.output()
@@ -674,9 +502,9 @@ class FrameExp(QWidget):
                     outcome = random.choice(self.person.outcomelist)
                     self.middle.setText('Your outcome: ' + outcome)
 
-    def timerwarning(self):
+    def timeout(self):
 
-        self.timerresponse.stop()
+        self.timer.stop()
 
         self.left.setText('')
 
@@ -684,11 +512,16 @@ class FrameExp(QWidget):
         self.rightloss.setText('')
         self.middle.setText('Please try to be quicker')
 
-        self.timerreset.start(1000)
+        if self.person.fmri == 'No':
+            self.trialresettimer.start(1000)
+
+        else:
+            self.response = 'None'
+            self.iti()
 
     def responsereset(self):
 
-        self.timerreset.stop()
+        self.trialresettimer.stop()
 
         info = self.person.get_design_text()
         self.left.setText(info[0])
@@ -698,22 +531,22 @@ class FrameExp(QWidget):
 
         self.middle.setText('OR')
 
-        self.timerresponse.start(5000)
+        self.timer.start(5000)
 
     def keyaction(self, key):
 
-        self.timerresponse.stop()
-
         if key in self.person.leftkey:
+            self.timer.stop()
             self.response = 0
-            self.jitter()
+            self.iti()
 
         elif key in self.person.rightkey:
+            self.timer.stop()
             self.response = 1
-            self.jitter()
+            self.iti()
 
         elif key in ['g', 'G']:
-            self.jitter()
+            self.iti()
 
         elif key in ['i', 'I']:
             self.inst += 1

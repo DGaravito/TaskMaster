@@ -190,7 +190,7 @@ class ARTTParticipant(participant.Participant):
         self.set_performance(df_simultrial)
 
         # only do the following if the user wanted a random reward/loss at the end
-        if self.outcomeopt == 'Yes':
+        if (self.outcomeopt == 'Yes') & (response != 'None'):
 
             # Add the potential outcome of this choice to the list for post-task rewards.
             # If they chose the sure thing...
@@ -460,7 +460,7 @@ class RAParticipant(participant.Participant):
         self.set_performance(df_simultrial)
 
         # only do the following if the user wanted a random reward/loss at the end
-        if self.outcomeopt == 'Yes':
+        if (self.outcomeopt == 'Yes') & (response != 'None'):
 
             # Add the potential outcome of this choice to the list for post-task rewards.
             # If they chose the sure thing...
@@ -804,7 +804,7 @@ class FrameParticipant(participant.Participant):
         self.set_performance(df_simultrial)
 
         # only do the following if the user wanted a random reward/loss at the end
-        if self.outcomeopt == 'Yes':
+        if (self.outcomeopt == 'Yes') & (response != 'None'):
 
             # Add the potential outcome of this choice to the list for post-task rewards.
             # If they chose the sure thing...

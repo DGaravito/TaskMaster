@@ -185,8 +185,7 @@ class NBackSettings(settings.Settings):
                                        self.design.currentText(),
                                        self.blocksin.text(),
                                        self.buttonboxstate,
-                                       self.eyetracking,
-                                       self.fmri)
+                                       self.eyetracking)
 
         self.exp = memorygui.NbExp(person)
         self.exp.show()

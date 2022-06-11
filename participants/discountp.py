@@ -314,7 +314,7 @@ class PdParticipant(participant.Participant):
         self.set_performance(df_simultrial)
 
         # only do the following if the user wanted a random reward/loss at the end
-        if self.outcomeopt == 'Yes':
+        if (self.outcomeopt == 'Yes') & (response != 'None'):
 
             # Add the potential outcome of this choice to the list for post-task rewards.
             # If they chose the sure thing...
@@ -675,7 +675,7 @@ class CEDParticipant(participant.Participant):
         self.set_performance(df_simultrial)
 
         # only do the following if the user wanted a random reward/loss at the end
-        if self.outcomeopt == 'Yes':
+        if (self.outcomeopt == 'Yes') & (response != 'None'):
 
             # Generate a random number of rounds to be done for that task
             randomrounds = random.randint(1, 10)
@@ -695,91 +695,93 @@ class CEDParticipant(participant.Participant):
 
         modifiermod = 0.5
 
-        match self.state:
+        if response != 'None':
 
-            case '1-2':
+            match self.state:
 
-                if (self.randomside == 1) & (response == 0):
+                case '1-2':
 
-                    self.onetwomodifier = self.onetwomodifier - (modifiermod / float(self.onetwotrials))
+                    if (self.randomside == 1) & (response == 0):
 
-                elif (self.randomside == 2) & (response == 1):
+                        self.onetwomodifier = self.onetwomodifier - (modifiermod / float(self.onetwotrials))
 
-                    self.onetwomodifier = self.onetwomodifier - (modifiermod / float(self.onetwotrials))
+                    elif (self.randomside == 2) & (response == 1):
 
-                else:
+                        self.onetwomodifier = self.onetwomodifier - (modifiermod / float(self.onetwotrials))
 
-                    self.onetwomodifier = self.onetwomodifier + (modifiermod / float(self.onetwotrials))
+                    else:
 
-            case '1-3':
+                        self.onetwomodifier = self.onetwomodifier + (modifiermod / float(self.onetwotrials))
 
-                if (self.randomside == 1) & (response == 0):
+                case '1-3':
 
-                    self.onethreemodifier = self.onethreemodifier - (modifiermod / float(self.onethreetrials))
+                    if (self.randomside == 1) & (response == 0):
 
-                elif (self.randomside == 2) & (response == 1):
+                        self.onethreemodifier = self.onethreemodifier - (modifiermod / float(self.onethreetrials))
 
-                    self.onethreemodifier = self.onethreemodifier - (modifiermod / float(self.onethreetrials))
+                    elif (self.randomside == 2) & (response == 1):
 
-                else:
+                        self.onethreemodifier = self.onethreemodifier - (modifiermod / float(self.onethreetrials))
 
-                    self.onethreemodifier = self.onethreemodifier + (modifiermod / float(self.onethreetrials))
+                    else:
 
-            case '1-4':
+                        self.onethreemodifier = self.onethreemodifier + (modifiermod / float(self.onethreetrials))
 
-                if (self.randomside == 1) & (response == 0):
+                case '1-4':
 
-                    self.onefourmodifier = self.onefourmodifier - (modifiermod / float(self.onefourtrials))
+                    if (self.randomside == 1) & (response == 0):
 
-                elif (self.randomside == 2) & (response == 1):
+                        self.onefourmodifier = self.onefourmodifier - (modifiermod / float(self.onefourtrials))
 
-                    self.onefourmodifier = self.onefourmodifier - (modifiermod / float(self.onefourtrials))
+                    elif (self.randomside == 2) & (response == 1):
 
-                else:
+                        self.onefourmodifier = self.onefourmodifier - (modifiermod / float(self.onefourtrials))
 
-                    self.onefourmodifier = self.onefourmodifier + (modifiermod / float(self.onefourtrials))
+                    else:
 
-            case '2-3':
+                        self.onefourmodifier = self.onefourmodifier + (modifiermod / float(self.onefourtrials))
 
-                if (self.randomside == 1) & (response == 0):
+                case '2-3':
 
-                    self.twothreemodifier = self.twothreemodifier - (modifiermod / float(self.twothreetrials))
+                    if (self.randomside == 1) & (response == 0):
 
-                elif (self.randomside == 2) & (response == 1):
+                        self.twothreemodifier = self.twothreemodifier - (modifiermod / float(self.twothreetrials))
 
-                    self.twothreemodifier = self.twothreemodifier - (modifiermod / float(self.twothreetrials))
+                    elif (self.randomside == 2) & (response == 1):
 
-                else:
+                        self.twothreemodifier = self.twothreemodifier - (modifiermod / float(self.twothreetrials))
 
-                    self.twothreemodifier = self.twothreemodifier + (modifiermod / float(self.twothreetrials))
+                    else:
 
-            case '2-4':
+                        self.twothreemodifier = self.twothreemodifier + (modifiermod / float(self.twothreetrials))
 
-                if (self.randomside == 1) & (response == 0):
+                case '2-4':
 
-                    self.twofourmodifier = self.twofourmodifier - (modifiermod / float(self.twofourtrials))
+                    if (self.randomside == 1) & (response == 0):
 
-                elif (self.randomside == 2) & (response == 1):
+                        self.twofourmodifier = self.twofourmodifier - (modifiermod / float(self.twofourtrials))
 
-                    self.twofourmodifier = self.twofourmodifier - (modifiermod / float(self.twofourtrials))
+                    elif (self.randomside == 2) & (response == 1):
 
-                else:
+                        self.twofourmodifier = self.twofourmodifier - (modifiermod / float(self.twofourtrials))
 
-                    self.twofourmodifier = self.twofourmodifier + (modifiermod / float(self.twofourtrials))
+                    else:
 
-            case '3-4':
+                        self.twofourmodifier = self.twofourmodifier + (modifiermod / float(self.twofourtrials))
 
-                if (self.randomside == 1) & (response == 0):
+                case '3-4':
 
-                    self.threefourmodifier = self.threefourmodifier - (modifiermod / float(self.threefourtrials))
+                    if (self.randomside == 1) & (response == 0):
 
-                elif (self.randomside == 2) & (response == 1):
+                        self.threefourmodifier = self.threefourmodifier - (modifiermod / float(self.threefourtrials))
 
-                    self.threefourmodifier = self.threefourmodifier - (modifiermod / float(self.threefourtrials))
+                    elif (self.randomside == 2) & (response == 1):
 
-                else:
+                        self.threefourmodifier = self.threefourmodifier - (modifiermod / float(self.threefourtrials))
 
-                    self.threefourmodifier = self.threefourmodifier + (modifiermod / float(self.threefourtrials))
+                    else:
+
+                        self.threefourmodifier = self.threefourmodifier + (modifiermod / float(self.threefourtrials))
 
     def get_instructions(self, instint):
         """

@@ -6,11 +6,11 @@ import random
 
 class NACTParticipant(participant.Participant):
 
-    def __init__(self, expid, session, outdir, task, hightrials, lowtrials, money, buttonbox, eyetracking, fmri):
+    def __init__(self, expid, session, outdir, task, hightrials, lowtrials, money, buttonbox, eyetracking):
 
         trials = lowtrials + hightrials
 
-        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
+        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking)
 
         self.highcolor = random.choice(['Green', 'Red'])
 

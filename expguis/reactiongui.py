@@ -1,110 +1,48 @@
 import random
 import time
-from pathlib import Path
 
-from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
-from PyQt6.QtGui import QFont, QPixmap
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QDir
+from PyQt6.QtWidgets import QHBoxLayout
+from PyQt6.QtGui import QPixmap
+from PyQt6.QtCore import Qt, QTimer, pyqtSignal
+
+from expguis import gui
 
 
-class SSExp(QWidget):
+class SSExp(gui.Experiment):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):
-        super().__init__()
+        super().__init__(person)
 
-        self.person = person
-        self.trialsdone = 0
-        self.roundsdone = 0
-        self.inst = 0
-        self.signal = False
-
-        # Window title
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-
-        # center window
-        self.centerscreen()
-
-        # Add in elements
-        self.elements()
+        # Make timer to indicate when a signal should be sent (in signal trials)
+        self.signaltimer = QTimer()
+        self.signaltimer.timeout.connect(self.sendsignal)
 
         # Show all elements
         self.showMaximized()
 
-        # Attach keyboard keys to functions
-        self.keyPressed.connect(self.keyaction)
-
-        # Make timer to transition word pairs
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.timeout)
-
-        self.ititimer = QTimer()
-        self.ititimer.timeout.connect(self.generatenext)
-
-        self.signaltimer = QTimer()
-        self.signaltimer.timeout.connect(self.sendsignal)
-
     def elements(self):
 
-        # Make overarching layout
-        mainlayout = QVBoxLayout()
-
-        # Quit button
-        self.quitbutton = QPushButton('Quit')
-        self.quitbutton.clicked.connect(QApplication.instance().quit)
-        self.quitbutton.setFixedWidth(40)
-        self.quitbutton.setFixedHeight(20)
-
-        # Instructions
-        self.instructions = QLabel('Press ' + self.leftkey[0] + ' for left arrows. Press ' + self.rightkey[0] +
-                                   ' for right arrows.')
-
-        # setting font style and size
-        self.instructions.setFont(QFont('Helvetica', 25))
-        self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # add the assets folder
-
-        toassets = str(Path('..').resolve())
-        QDir.addSearchPath('assets', toassets)
-
-        # Make middle for pictures and text
-
+        # Make middle layout for pictures and text
         middlelayout = QHBoxLayout()
-
-        self.middle = QLabel('Press \"G\" to start, \"I\" for instructions')
-        self.middle.setFont(QFont('Helvetica', 40))
-
-        # center middle
-        self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.middle.setScaledContents(True)
 
         middlelayout.addStretch(1)
         middlelayout.addWidget(self.middle)
         middlelayout.addStretch(1)
 
+        # Instructions
+        self.instructions.setText('Press ' + self.person.leftkey[0] + ' for left arrows. Press ' +
+                                  self.person.rightkey[0] + ' for right arrows.')
+
         # Put everything in vertical layout
+        self.instquitlayout.addWidget(self.instructions)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addLayout(middlelayout)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addWidget(self.quitbutton)
 
-        mainlayout.addWidget(self.instructions)
-        mainlayout.addStretch(1)
-        mainlayout.addLayout(middlelayout)
-        mainlayout.addStretch(1)
-        mainlayout.addWidget(self.quitbutton)
-
-        # Set up layout
-
-        self.setLayout(mainlayout)
-
-    def centerscreen(self):
-
-        qr = self.frameGeometry()
-        cp = self.screen().availableGeometry().center()
-
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
-
-    def keyPressEvent(self, keyevent):
-        self.keyPressed.emit(keyevent.text())
+        # set layout
+        self.setLayout(self.instquitlayout)
 
     def generatenext(self):
 
@@ -134,6 +72,7 @@ class SSExp(QWidget):
             self.starttime = time.time()
 
             self.timer.start(2500)
+            self.ititimer.start(3000)
 
         else:
 
@@ -151,12 +90,6 @@ class SSExp(QWidget):
 
                 self.person.output()
                 self.instructions.setText('Thank you!')
-
-    def iti(self):
-
-        self.middle.setPixmap(QPixmap())
-
-        self.ititimer.start(500)
 
     def timeout(self):
 
@@ -188,9 +121,9 @@ class SSExp(QWidget):
 
         if key in ['g', 'G']:
 
-            self.middle.setText('')
             self.inst = 1
             self.iti()
+            self.ititimer.start(500)
 
         if key in self.person.rightkey:
 

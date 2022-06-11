@@ -194,8 +194,8 @@ class PrParticipant(participant.Participant):
 
 class NbParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, session, outdir, task, rounds, buttonbox, eyetracking, fmri):
-        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
+    def __init__(self, expid, trials, session, outdir, task, rounds, buttonbox, eyetracking):
+        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking)
 
         self.roundperformance = 0.0
         self.roundsumcorrect = 0

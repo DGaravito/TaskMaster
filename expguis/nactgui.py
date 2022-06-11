@@ -1,75 +1,26 @@
 import time
-from pathlib import Path
 import random
 
-from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
-from PyQt6.QtGui import QFont, QPixmap
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QDir
+from PyQt6.QtWidgets import QLabel, QHBoxLayout
+from PyQt6.QtGui import QPixmap
+from PyQt6.QtCore import Qt, pyqtSignal
+
+from expguis import gui
 
 
-class NACTExp(QWidget):
+class NACTExp(gui.Experiment):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):
-        super().__init__()
-
-        self.person = person
-        self.trialsdone = 0
-        self.inst = 0
-
-        # Window title
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-
-        # center window
-        self.centerscreen()
-
-        # Add in elements
-        self.elements()
-
-        # Show all elements
-        self.showMaximized()
-
-        # Attach keyboard keys to functions
-        self.keyPressed.connect(self.keyaction)
-
-        # Make timer to transition word pairs
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.timeout)
-
-        self.ititimer = QTimer()
-        self.ititimer.timeout.connect(self.generatenext)
+        super().__init__(person)
 
     def elements(self):
-
-        # Make overarching layout
-        mainlayout = QVBoxLayout()
-
-        # Quit button
-        self.quitbutton = QPushButton('Quit')
-        self.quitbutton.clicked.connect(QApplication.instance().quit)
-        self.quitbutton.setFixedWidth(40)
-        self.quitbutton.setFixedHeight(20)
-
         # Instructions
-        self.instructions = QLabel('Press ' + self.leftkey[0] + ' for |. Press ' + self.rightkey[0] +
+        self.instructions = QLabel('Press ' + self.person.leftkey[0] + ' for |. Press ' + self.person.rightkey[0] +
                                    ' for -.')
 
-        # setting font style and size
-        self.instructions.setFont(QFont('Helvetica', 25))
-        self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # add the assets folder
-
-        toassets = str(Path('..').resolve())
-        QDir.addSearchPath('assets', toassets)
-
-        # Make middle for pictures and text
-
+        # Make middle layout for pictures and text
         middlelayout = QHBoxLayout()
-
-        self.middle = QLabel('Press \"G\" to start, \"I\" for instructions')
-        self.middle.setFont(QFont('Helvetica', 40))
-        self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.left = QLabel('')
         self.left.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -88,7 +39,6 @@ class NACTExp(QWidget):
         middlelayout.addStretch(1)
 
         # Make middle top for pictures
-
         middletoplayout = QHBoxLayout()
 
         self.topleft = QLabel('')
@@ -125,30 +75,19 @@ class NACTExp(QWidget):
 
         # Put everything in vertical layout
 
-        mainlayout.addWidget(self.instructions)
-        mainlayout.addStretch(1)
-        mainlayout.addLayout(middletoplayout)
-        mainlayout.addStretch(1)
-        mainlayout.addLayout(middlelayout)
-        mainlayout.addStretch(1)
-        mainlayout.addLayout(middlebottomlayout)
-        mainlayout.addStretch(1)
-        mainlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addWidget(self.instructions)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addLayout(middletoplayout)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addLayout(middlelayout)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addLayout(middlebottomlayout)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addWidget(self.quitbutton)
 
         # Set up layout
 
-        self.setLayout(mainlayout)
-
-    def centerscreen(self):
-
-        qr = self.frameGeometry()
-        cp = self.screen().availableGeometry().center()
-
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
-
-    def keyPressEvent(self, keyevent):
-        self.keyPressed.emit(keyevent.text())
+        self.setLayout(self.instquitlayout)
 
     def generatenext(self):
 
@@ -181,6 +120,7 @@ class NACTExp(QWidget):
             randomtimer = random.randint(1200, 1500)
 
             self.timer.start(randomtimer)
+            self.ititimer.start(randomtimer+1000)
 
         else:
 
@@ -202,7 +142,7 @@ class NACTExp(QWidget):
                 self.person.output()
                 self.instructions.setText('Thank you!')
 
-    def iti(self, reaction, response=3):
+    def iti(self):
 
         self.topleft.setPixmap(QPixmap())
         self.left.setPixmap(QPixmap())
@@ -211,10 +151,6 @@ class NACTExp(QWidget):
         self.right.setPixmap(QPixmap())
         self.topright.setPixmap(QPixmap())
 
-        self.middle.setText(self.person.updateoutput(self.trialsdone, self.starttime, reaction, response))
-
-        self.ititimer.start(1000)
-
     def timeout(self):
 
         self.timer.stop()
@@ -222,7 +158,9 @@ class NACTExp(QWidget):
         endtime = time.time()
         rt = endtime - self.starttime
 
-        self.iti(rt)
+        self.middle.setText(self.person.updateoutput(self.trialsdone, self.starttime, rt, 3))
+
+        self.iti()
 
     def keyaction(self, key):
 
@@ -240,7 +178,9 @@ class NACTExp(QWidget):
             endtime = time.time()
             rt = endtime - self.starttime
 
-            self.iti(rt, 1)
+            self.middle.setText(self.person.updateoutput(self.trialsdone, self.starttime, rt, 1))
+
+            self.iti()
 
         if key in self.person.leftkey:
 
@@ -250,7 +190,9 @@ class NACTExp(QWidget):
             endtime = time.time()
             rt = endtime - self.starttime
 
-            self.iti(rt, 0)
+            self.middle.setText(self.person.updateoutput(self.trialsdone, self.starttime, rt, 0))
+
+            self.iti()
 
         if key in ['i', 'I']:
 

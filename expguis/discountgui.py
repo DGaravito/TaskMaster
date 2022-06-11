@@ -1,70 +1,23 @@
 import random
 import time
 
-from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QProgressBar
+from PyQt6.QtWidgets import QLabel, QHBoxLayout, QProgressBar
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 
+from expguis import gui
 
-class DDiscountExp(QWidget):
+
+class DDiscountExp(gui.Experiment):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):
-        super().__init__()
-
-        self.inst = 0
-        self.response = 0
-        self.person = person
-        self.trialsdone = 0
-        self.roundsdone = 0
-
-        # Window title
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-
-        # center window
-        self.centerscreen()
-
-        # Add in elements
-        self.elements()
-
-        # Show all elements
-        self.showMaximized()
-
-        # Attach keyboard keys to functions
-        self.keyPressed.connect(self.keyaction)
-
-        # Make timer for jitter screen
-        self.timerjitter = QTimer()
-        self.timerjitter.timeout.connect(self.generatenext)
-
-        # Make timer for participants taking too long
-        self.timerresponse = QTimer()
-        self.timerresponse.timeout.connect(self.timerwarning)
-
-        # Make timer for resetting after the above time warning
-        self.timerreset = QTimer()
-        self.timerreset.timeout.connect(self.responsereset)
+        super().__init__(person)
 
     def elements(self):
-
-        # Make overarching layout
-        instquitlayout = QVBoxLayout()
-
-        # Quit button
-        self.quitbutton = QPushButton('Quit')
-        self.quitbutton.clicked.connect(QApplication.instance().quit)
-        self.quitbutton.setFixedWidth(40)
-        self.quitbutton.setFixedHeight(20)
-
         # Instructions
-        self.instructions = QLabel('Press ' + self.leftkey[0] + ' for the left option and ' + self.rightkey[0]
-                                   + ' for the right option')
-
-        # setting font style and size
-        self.instructions.setFont(QFont('Helvetica', 25))
-
-        # center Instructions
-        self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.instructions = QLabel('Press ' + self.person.leftkey[0] + ' for the left option and ' +
+                                   self.person.rightkey[0] + ' for the right option')
 
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
@@ -74,10 +27,6 @@ class DDiscountExp(QWidget):
         self.right = QLabel('')
         self.right.setFont(QFont('Helvetica', 40))
         self.right.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.middle = QLabel('Press G to Start')
-        self.middle.setFont(QFont('Helvetica', 30))
-        self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Put Left and Right options in horizontal layout
         explayout = QHBoxLayout()
@@ -91,29 +40,16 @@ class DDiscountExp(QWidget):
         explayout.addStretch(1)
 
         # Put everything in vertical layout
-
-        instquitlayout.addWidget(self.instructions)
-        instquitlayout.addStretch(1)
-        instquitlayout.addLayout(explayout)
-        instquitlayout.addStretch(1)
-        instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addWidget(self.instructions)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addLayout(explayout)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addWidget(self.quitbutton)
 
         # Set up layout
+        self.setLayout(self.instquitlayout)
 
-        self.setLayout(instquitlayout)
-
-    def centerscreen(self):
-
-        qr = self.frameGeometry()
-        cp = self.screen().availableGeometry().center()
-
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
-
-    def keyPressEvent(self, keyevent):
-        self.keyPressed.emit(keyevent.text())
-
-    def jitter(self):
+    def iti(self):
 
         self.left.setText('')
         self.right.setText('')
@@ -126,12 +62,17 @@ class DDiscountExp(QWidget):
 
         self.person.updateoutput(self.trialsdone, self.starttime, rt, self.response)
 
-        self.timerjitter.start(1000)
+        if self.response != 'None':
+            self.person.engineupdate(self.response)
+
+        if self.person.fmri == 'No':
+            self.ititimer.start(1000)
 
     def generatenext(self):
 
-        self.timerjitter.stop()
-        if self.trialsdone == 0:
+        self.ititimer.stop()
+
+        if self.person.get_trials() > self.trialsdone:
 
             strings = self.person.get_design_text()
             self.left.setText(strings[0])
@@ -140,22 +81,10 @@ class DDiscountExp(QWidget):
 
             self.trialsdone += 1
 
-            self.starttime = time.time()
+            self.timer.start(5000)
 
-            self.timerresponse.start(5000)
-
-        elif self.person.get_trials() > self.trialsdone:
-
-            self.person.engineupdate(self.response)
-
-            strings = self.person.get_design_text()
-            self.left.setText(strings[0])
-            self.right.setText(strings[1])
-            self.middle.setText('OR')
-
-            self.trialsdone += 1
-
-            self.timerresponse.start(5000)
+            if self.person.fmri == 'Yes':
+                self.ititimer.start(5500)
 
         else:
             self.person.output()
@@ -173,19 +102,24 @@ class DDiscountExp(QWidget):
                 self.person.output()
                 self.instructions.setText('Thank you!')
 
-    def timerwarning(self):
+    def timeout(self):
 
-        self.timerresponse.stop()
+        self.timer.stop()
 
         self.left.setText('')
         self.right.setText('')
         self.middle.setText('Please try to be quicker')
 
-        self.timerreset.start(1000)
+        if self.person.fmri == 'No':
+            self.trialresettimer.start(1000)
+
+        else:
+            self.response = 'None'
+            self.iti()
 
     def responsereset(self):
 
-        self.timerreset.stop()
+        self.trialresettimer.stop()
 
         strings = self.person.get_design_text()
         self.left.setText(strings[0])
@@ -193,19 +127,21 @@ class DDiscountExp(QWidget):
 
         self.middle.setText('OR')
 
-        self.timerresponse.start(5000)
+        self.timer.start(5000)
 
     def keyaction(self, key):
 
-        self.timerresponse.stop()
-
         if key in self.person.leftkey:
+
+            self.timer.stop()
             self.response = 0
-            self.jitter()
+            self.iti()
 
         elif key in self.person.rightkey:
+
+            self.timer.stop()
             self.response = 1
-            self.jitter()
+            self.iti()
 
         elif key in ['g', 'G']:
             self.generatenext()
@@ -219,65 +155,17 @@ class DDiscountExp(QWidget):
                 self.inst = 0
 
 
-class PDiscountExp(QWidget):
+class PDiscountExp(gui.Experiment):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):
-        super().__init__()
-
-        self.response = 0
-        self.person = person
-        self.trialsdone = 0
-        self.roundsdone = 0
-        self.inst = 0
-
-        # Window title
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-
-        # center window
-        self.centerscreen()
-
-        # Add in elements
-        self.elements()
-
-        # Show all elements
-        self.showMaximized()
-
-        # Attach keyboard keys to functions
-        self.keyPressed.connect(self.keyaction)
-
-        # Make timer for jitter screen
-        self.timerjitter = QTimer()
-        self.timerjitter.timeout.connect(self.generatenext)
-
-        # Make timer for participants taking too long
-        self.timerresponse = QTimer()
-        self.timerresponse.timeout.connect(self.timerwarning)
-
-        # Make timer for resetting after the above time warning
-        self.timerreset = QTimer()
-        self.timerreset.timeout.connect(self.responsereset)
+        super().__init__(person)
 
     def elements(self):
 
-        # Make overarching layout
-        instquitlayout = QVBoxLayout()
-
-        # Quit button
-        self.quitbutton = QPushButton('Quit')
-        self.quitbutton.clicked.connect(QApplication.instance().quit)
-        self.quitbutton.setFixedWidth(40)
-        self.quitbutton.setFixedHeight(20)
-
         # Instructions
-        self.instructions = QLabel('Press ' + self.leftkey[0] + ' for the left option and ' + self.rightkey[0]
-                                   + ' for the right option')
-
-        # setting font style and size
-        self.instructions.setFont(QFont('Helvetica', 25))
-
-        # center Instructions
-        self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.instructions = QLabel('Press ' + self.person.leftkey[0] + ' for the left option and ' +
+                                   self.person.rightkey[0] + ' for the right option')
 
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
@@ -287,10 +175,6 @@ class PDiscountExp(QWidget):
         self.right = QLabel('')
         self.right.setFont(QFont('Helvetica', 40))
         self.right.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.middle = QLabel('Press G to Start')
-        self.middle.setFont(QFont('Helvetica', 30))
-        self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Put Left and Right words for options in horizontal layout
         expverblayout = QHBoxLayout()
@@ -321,32 +205,19 @@ class PDiscountExp(QWidget):
         expvislayout.addWidget(self.rightbar)
         expvislayout.addStretch(1)
 
-        # Put everything in vertical layout
-
-        instquitlayout.addWidget(self.instructions)
-        instquitlayout.addStretch(1)
-        instquitlayout.addLayout(expverblayout)
-        instquitlayout.addStretch(1)
-        instquitlayout.addLayout(expvislayout)
-        instquitlayout.addStretch(1)
-        instquitlayout.addWidget(self.quitbutton)
+        # Put everything in vertical layou
+        self.instquitlayout.addWidget(self.instructions)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addLayout(expverblayout)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addLayout(expvislayout)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addWidget(self.quitbutton)
 
         # Set up layout
+        self.setLayout(self.instquitlayout)
 
-        self.setLayout(instquitlayout)
-
-    def centerscreen(self):
-
-        qr = self.frameGeometry()
-        cp = self.screen().availableGeometry().center()
-
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
-
-    def keyPressEvent(self, keyevent):
-        self.keyPressed.emit(keyevent.text())
-
-    def jitter(self):
+    def iti(self):
 
         self.left.setText('')
         self.leftbar.setValue(0)
@@ -361,13 +232,17 @@ class PDiscountExp(QWidget):
 
             self.person.updateoutput(self.trialsdone, self.starttime, rt, self.response)
 
-        self.person.set_design_text()
+            if self.person.fmri == 'No':
+                self.ititimer.start(1000)
 
-        self.timerjitter.start(1000)
+        else:
+            self.ititimer.start(1000)
+
+        self.person.set_design_text()
 
     def generatenext(self):
 
-        self.timerjitter.stop()
+        self.ititimer.stop()
         if self.person.get_trials() > self.trialsdone:
 
             self.trialsdone += 1
@@ -383,7 +258,10 @@ class PDiscountExp(QWidget):
 
             self.starttime = time.time()
 
-            self.timerresponse.start(5000)
+            self.timer.start(5000)
+
+            if self.person.fmri == 'Yes':
+                self.ititimer.start(5500)
 
         else:
             self.person.output()
@@ -406,9 +284,9 @@ class PDiscountExp(QWidget):
                     outcome = random.choice(self.person.outcomelist)
                     self.middle.setText('Your outcome: ' + outcome)
 
-    def timerwarning(self):
+    def timeout(self):
 
-        self.timerresponse.stop()
+        self.timer.stop()
 
         self.left.setText('')
         self.leftbar.setValue(0)
@@ -417,11 +295,16 @@ class PDiscountExp(QWidget):
         self.rightbar.setValue(0)
         self.middle.setText('Please try to be quicker')
 
-        self.timerreset.start(1000)
+        if self.person.fmri == 'No':
+            self.trialresettimer.start(1000)
+
+        else:
+            self.response = 'None'
+            self.iti()
 
     def responsereset(self):
 
-        self.timerreset.stop()
+        self.trialresettimer.stop()
 
         info = self.person.get_design_text()
         self.left.setText(info[0])
@@ -432,22 +315,24 @@ class PDiscountExp(QWidget):
 
         self.middle.setText('OR')
 
-        self.timerresponse.start(5000)
+        self.timer.start(5000)
 
     def keyaction(self, key):
 
-        self.timerresponse.stop()
-
         if key in self.person.leftkey:
+
+            self.timer.stop()
             self.response = 0
-            self.jitter()
+            self.iti()
 
         elif key in self.person.rightkey:
+
+            self.timer.stop()
             self.response = 1
-            self.jitter()
+            self.iti()
 
         elif key in ['g', 'G']:
-            self.jitter()
+            self.iti()
 
         elif key in ['i', 'I']:
             self.inst += 1
@@ -458,45 +343,13 @@ class PDiscountExp(QWidget):
                 self.inst = 0
 
 
-class CEDiscountExp(QWidget):
+class CEDiscountExp(gui.Experiment):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):
-        super().__init__()
+        super().__init__(person)
 
-        self.inst = 0
-        self.response = 0
-        self.person = person
-        self.trialsdone = 0
-        self.roundsdone = 0
         self.extradelay = [0, 2000, 4000]
-
-        # Window title
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-
-        # center window
-        self.centerscreen()
-
-        # Add in elements
-        self.elements()
-
-        # Show all elements
-        self.showMaximized()
-
-        # Attach keyboard keys to functions
-        self.keyPressed.connect(self.keyaction)
-
-        # Make timer for jitter screen
-        self.jittertimer = QTimer()
-        self.jittertimer.timeout.connect(self.generatenext)
-
-        # Make timer for participants taking too long
-        self.responsetimer = QTimer()
-        self.responsetimer.timeout.connect(self.timerwarning)
-
-        # Make timer for resetting after the above time warning
-        self.resettimer = QTimer()
-        self.resettimer.timeout.connect(self.responsereset)
 
         # Make timer for second half of trial to appear on screen
         self.secondhalftimer = QTimer()
@@ -504,24 +357,9 @@ class CEDiscountExp(QWidget):
 
     def elements(self):
 
-        # Make overarching layout
-        instquitlayout = QVBoxLayout()
-
-        # Quit button
-        self.quitbutton = QPushButton('Quit')
-        self.quitbutton.clicked.connect(QApplication.instance().quit)
-        self.quitbutton.setFixedWidth(40)
-        self.quitbutton.setFixedHeight(20)
-
         # Instructions
-        self.instructions = QLabel('Press ' + self.leftkey[0] + ' for the left option and ' + self.rightkey[0]
-                                   + ' for the right option')
-
-        # setting font style and size
-        self.instructions.setFont(QFont('Helvetica', 25))
-
-        # center Instructions
-        self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.instructions = QLabel('Press ' + self.person.leftkey[0] + ' for the left option and ' +
+                                   self.person.rightkey[0] + ' for the right option')
 
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
@@ -531,10 +369,6 @@ class CEDiscountExp(QWidget):
         self.right = QLabel('')
         self.right.setFont(QFont('Helvetica', 40))
         self.right.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.middle = QLabel('Press G to Start')
-        self.middle.setFont(QFont('Helvetica', 30))
-        self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Put Left and Right options in horizontal layout
         explayout = QHBoxLayout()
@@ -548,29 +382,16 @@ class CEDiscountExp(QWidget):
         explayout.addStretch(1)
 
         # Put everything in vertical layout
-
-        instquitlayout.addWidget(self.instructions)
-        instquitlayout.addStretch(1)
-        instquitlayout.addLayout(explayout)
-        instquitlayout.addStretch(1)
-        instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addWidget(self.instructions)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addLayout(explayout)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addWidget(self.quitbutton)
 
         # Set up layout
+        self.setLayout(self.instquitlayout)
 
-        self.setLayout(instquitlayout)
-
-    def centerscreen(self):
-
-        qr = self.frameGeometry()
-        cp = self.screen().availableGeometry().center()
-
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
-
-    def keyPressEvent(self, keyevent):
-        self.keyPressed.emit(keyevent.text())
-
-    def jitter(self):
+    def iti(self):
 
         self.left.setText('')
         self.right.setText('')
@@ -581,11 +402,12 @@ class CEDiscountExp(QWidget):
 
         self.person.updateoutput(self.trialsdone, self.starttime, rt, self.response)
 
-        self.jittertimer.start(1000)
+        if self.person.fmri == 'No':
+            self.ititimer.start(1000)
 
     def generatenext(self):
 
-        self.jittertimer.stop()
+        self.timer.stop()
 
         if self.person.get_trials() > self.trialsdone:
 
@@ -596,7 +418,9 @@ class CEDiscountExp(QWidget):
             self.left.setText(strings[0])
             self.middle.setText('')
             self.right.setText('')
-            self.secondhalftimer.start(1000 + random.choice(self.extradelay))
+
+            extra = random.choice(self.extradelay)
+            self.secondhalftimer.start(1000 + extra)
 
         else:
 
@@ -625,22 +449,30 @@ class CEDiscountExp(QWidget):
 
         self.starttime = time.time()
 
-        self.responsetimer.start(5000)
+        self.timer.start(5000)
 
-    def timerwarning(self):
+        if self.person.fmri == 'Yes':
+            self.ititimer.start(5500)
 
-        self.responsetimer.stop()
+    def timeout(self):
+
+        self.timer.stop()
         self.secondhalftimer.stop()
 
         self.left.setText('')
         self.right.setText('')
         self.middle.setText('Please try to be quicker')
 
-        self.resettimer.start(1000)
+        if self.person.fmri == 'No':
+            self.trialresettimer.start(1000)
+
+        else:
+            self.response = 'None'
+            self.iti()
 
     def responsereset(self):
 
-        self.resettimer.stop()
+        self.trialresettimer.stop()
 
         strings = self.person.get_design_text()
         self.left.setText(strings[0])
@@ -648,19 +480,21 @@ class CEDiscountExp(QWidget):
 
         self.middle.setText('OR')
 
-        self.responsetimer.start(5000)
+        self.timer.start(5000)
 
     def keyaction(self, key):
 
-        self.responsetimer.stop()
-
         if key in self.person.leftkey:
+
+            self.timer.stop()
             self.response = 0
-            self.jitter()
+            self.iti()
 
         elif key in self.person.rightkey:
+
+            self.timer.stop()
             self.response = 1
-            self.jitter()
+            self.iti()
 
         elif key in ['g', 'G']:
             self.generatenext()
