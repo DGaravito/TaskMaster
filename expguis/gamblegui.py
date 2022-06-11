@@ -115,6 +115,8 @@ class ARTTExp(gui.Experiment):
 
             self.timer.start(5000)
 
+            self.responseenabled = 1
+
             if self.person.fmri == 'Yes':
                 self.ititimer.start(5500)
 
@@ -140,9 +142,15 @@ class ARTTExp(gui.Experiment):
                     outcome = random.choice(self.person.outcomelist)
                     self.middle.setText('Your outcome: ' + outcome)
 
+            else:
+
+                self.betweenrounds = 1
+
     def timeout(self):
 
         self.timer.stop()
+
+        self.responseenabled = 0
 
         self.left.setText('')
 
@@ -183,20 +191,28 @@ class ARTTExp(gui.Experiment):
 
     def keyaction(self, key):
 
-        if key in self.person.leftkey:
+        if (key in ['g', 'G']) & (self.betweenrounds == 1):
+
+            self.betweenrounds = 0
+            self.generatenext()
+
+        if (key in self.person.leftkey) & (self.responseenabled == 1):
+
+            self.responseenabled = 0
+
             self.timer.stop()
             self.response = 0
             self.iti()
 
-        elif key in self.person.rightkey:
+        if (key in self.person.rightkey) & (self.responseenabled == 1):
+
+            self.responseenabled = 0
+
             self.timer.stop()
             self.response = 1
             self.iti()
 
-        elif key in ['g', 'G']:
-            self.generatenext()
-
-        elif key in ['i', 'I']:
+        if (key in ['i', 'I']) & (self.betweenrounds == 1):
             self.inst += 1
 
             if self.inst == 5:
@@ -304,6 +320,8 @@ class RAExp(gui.Experiment):
 
             self.timer.start(5000)
 
+            self.responseenabled = 1
+
             if self.person.fmri == 'Yes':
                 self.ititimer.start(5500)
 
@@ -328,9 +346,15 @@ class RAExp(gui.Experiment):
                     outcome = random.choice(self.person.outcomelist)
                     self.middle.setText('Your outcome: ' + outcome)
 
+            else:
+
+                self.betweenrounds = 1
+
     def timeout(self):
 
         self.timer.stop()
+
+        self.responseenabled = 0
 
         self.left.setText('')
 
@@ -361,22 +385,28 @@ class RAExp(gui.Experiment):
 
     def keyaction(self, key):
 
-        if key in self.person.leftkey:
+        if (key in ['g', 'G']) & (self.betweenrounds == 1):
+
+            self.betweenrounds = 0
+            self.generatenext()
+
+        if (key in self.person.leftkey) & (self.responseenabled == 1):
+
+            self.responseenabled = 0
 
             self.timer.stop()
             self.response = 0
             self.iti()
 
-        elif key in self.person.rightkey:
+        if (key in self.person.rightkey) & (self.responseenabled == 1):
+
+            self.responseenabled = 0
 
             self.timer.stop()
             self.response = 1
             self.iti()
 
-        elif key in ['g', 'G']:
-            self.generatenext()
-
-        elif key in ['i', 'I']:
+        if (key in ['i', 'I']) & (self.betweenrounds == 1):
             self.inst += 1
 
             self.middle.setText(self.person.get_instructions(self.inst))
@@ -478,6 +508,8 @@ class FrameExp(gui.Experiment):
 
             self.timer.start(5000)
 
+            self.responseenabled = 1
+
             if self.person.fmri == 'Yes':
                 self.ititimer.start(5500)
 
@@ -502,9 +534,15 @@ class FrameExp(gui.Experiment):
                     outcome = random.choice(self.person.outcomelist)
                     self.middle.setText('Your outcome: ' + outcome)
 
+            else:
+
+                self.betweenrounds = 1
+
     def timeout(self):
 
         self.timer.stop()
+
+        self.responseenabled = 0
 
         self.left.setText('')
 
@@ -535,20 +573,26 @@ class FrameExp(gui.Experiment):
 
     def keyaction(self, key):
 
-        if key in self.person.leftkey:
+        if (key in ['g', 'G']) & (self.betweenrounds == 1):
+
+            self.betweenrounds = 0
+            self.iti()
+
+        if (key in self.person.leftkey) & (self.responseenabled == 1):
+
+            self.responseenabled = 0
             self.timer.stop()
             self.response = 0
             self.iti()
 
-        elif key in self.person.rightkey:
+        if (key in self.person.rightkey) & (self.responseenabled == 1):
+
+            self.responseenabled = 0
             self.timer.stop()
             self.response = 1
             self.iti()
 
-        elif key in ['g', 'G']:
-            self.iti()
-
-        elif key in ['i', 'I']:
+        if (key in ['i', 'I']) & (self.betweenrounds == 1):
             self.inst += 1
 
             self.middle.setText(self.person.get_instructions(self.inst))

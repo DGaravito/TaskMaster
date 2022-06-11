@@ -124,13 +124,15 @@ class PrExp(gui.Experiment):
 
         string = self.person.starttrial()
         self.instructions.setText(string)
+        self.betweenrounds = 1
 
     def keyaction(self, key):
 
-        if key in ['g', 'G']:
+        if (key in ['g', 'G']) & (self.betweenrounds == 1):
+            self.betweenrounds = 0
             self.generatenext()
 
-        if key in ['i', 'I']:
+        if (key in ['i', 'I']) & (self.betweenrounds == 1):
 
             self.inst += 1
             self.middle.setText(self.person.get_instructions(self.inst))
@@ -178,6 +180,7 @@ class NbExp(gui.Experiment):
 
             self.timer.start(3000)
             self.ititimer.start(3500)
+            self.responseenabled = 1
 
         else:
 
@@ -198,8 +201,14 @@ class NbExp(gui.Experiment):
                 self.person.output()
                 self.instructions.setText('Thank you!')
 
+            else:
+
+                self.betweenrounds = 1
+
     def timeout(self):
         self.timer.stop()
+
+        self.responseenabled = 0
 
         self.trialsdone += 1
 
@@ -211,14 +220,18 @@ class NbExp(gui.Experiment):
 
     def keyaction(self, key):
 
-        if key in ['g', 'G']:
+        if (key in ['g', 'G']) & (self.betweenrounds == 1):
+
+            self.betweenrounds = 0
 
             self.generatenext()
 
             self.instructions.setText('Press ' + self.person.leftkey[0] + ' if the letter is a false alarm. Press ' +
                                       self.person.rightkey[0] + ' if the letter is a target')
 
-        if key in self.person.rightkey:
+        if (key in self.person.rightkey) & (self.responseenabled == 1):
+
+            self.responseenabled = 0
 
             self.timer.stop()
             self.trialsdone += 1
@@ -229,7 +242,9 @@ class NbExp(gui.Experiment):
             self.person.updateoutput(self.trialsdone, self.starttime, rt, 1)
             self.iti()
 
-        if key in self.person.leftkey:
+        if (key in self.person.leftkey) & (self.responseenabled == 1):
+
+            self.responseenabled = 0
 
             self.timer.stop()
             self.trialsdone += 1
@@ -240,7 +255,7 @@ class NbExp(gui.Experiment):
             self.person.updateoutput(self.trialsdone, self.starttime, rt, 0)
             self.iti()
 
-        if key in ['i', 'I']:
+        if (key in ['i', 'I']) & (self.betweenrounds == 1):
 
             self.inst += 1
             self.middle.setText(self.person.get_instructions(self.inst))

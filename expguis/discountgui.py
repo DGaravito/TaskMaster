@@ -86,6 +86,8 @@ class DDiscountExp(gui.Experiment):
             if self.person.fmri == 'Yes':
                 self.ititimer.start(5500)
 
+            self.responseenabled = 1
+
         else:
             self.person.output()
 
@@ -102,9 +104,15 @@ class DDiscountExp(gui.Experiment):
                 self.person.output()
                 self.instructions.setText('Thank you!')
 
+            else:
+
+                self.betweenrounds = 1
+
     def timeout(self):
 
         self.timer.stop()
+
+        self.responseenabled = 0
 
         self.left.setText('')
         self.right.setText('')
@@ -131,22 +139,28 @@ class DDiscountExp(gui.Experiment):
 
     def keyaction(self, key):
 
-        if key in self.person.leftkey:
+        if (key in ['g', 'G']) & (self.betweenrounds == 1):
+
+            self.betweenrounds = 0
+            self.generatenext()
+
+        if (key in self.person.leftkey) & (self.responseenabled == 1):
+
+            self.responseenabled = 0
 
             self.timer.stop()
             self.response = 0
             self.iti()
 
-        elif key in self.person.rightkey:
+        if (key in self.person.rightkey) & (self.responseenabled == 1):
+
+            self.responseenabled = 0
 
             self.timer.stop()
             self.response = 1
             self.iti()
 
-        elif key in ['g', 'G']:
-            self.generatenext()
-
-        elif key in ['i', 'I']:
+        if (key in ['i', 'I']) & (self.betweenrounds == 1):
             self.inst += 1
 
             self.middle.setText(self.person.get_instructions(self.inst))
@@ -263,6 +277,8 @@ class PDiscountExp(gui.Experiment):
             if self.person.fmri == 'Yes':
                 self.ititimer.start(5500)
 
+            self.responseenabled = 1
+
         else:
             self.person.output()
 
@@ -284,9 +300,15 @@ class PDiscountExp(gui.Experiment):
                     outcome = random.choice(self.person.outcomelist)
                     self.middle.setText('Your outcome: ' + outcome)
 
+            else:
+
+                self.betweenrounds = 1
+
     def timeout(self):
 
         self.timer.stop()
+
+        self.responseenabled = 0
 
         self.left.setText('')
         self.leftbar.setValue(0)
@@ -319,22 +341,28 @@ class PDiscountExp(gui.Experiment):
 
     def keyaction(self, key):
 
-        if key in self.person.leftkey:
+        if (key in ['g', 'G']) & (self.betweenrounds == 1):
+
+            self.betweenrounds = 0
+            self.iti()
+
+        if (key in self.person.leftkey) & (self.responseenabled == 1):
+
+            self.responseenabled = 0
 
             self.timer.stop()
             self.response = 0
             self.iti()
 
-        elif key in self.person.rightkey:
+        if (key in self.person.rightkey) & (self.responseenabled == 1):
+
+            self.responseenabled = 0
 
             self.timer.stop()
             self.response = 1
             self.iti()
 
-        elif key in ['g', 'G']:
-            self.iti()
-
-        elif key in ['i', 'I']:
+        if (key in ['i', 'I']) & (self.betweenrounds == 1):
             self.inst += 1
 
             self.middle.setText(self.person.get_instructions(self.inst))
@@ -422,6 +450,8 @@ class CEDiscountExp(gui.Experiment):
             extra = random.choice(self.extradelay)
             self.secondhalftimer.start(1000 + extra)
 
+            self.responseenabled = 1
+
         else:
 
             self.left.setText('')
@@ -437,6 +467,10 @@ class CEDiscountExp(gui.Experiment):
                 self.instructions.setText('Thank you!')
 
                 self.person.output()
+
+            else:
+
+                self.betweenrounds = 1
 
     def displaysecondhalf(self):
 
@@ -458,6 +492,8 @@ class CEDiscountExp(gui.Experiment):
 
         self.timer.stop()
         self.secondhalftimer.stop()
+
+        self.responseenabled = 0
 
         self.left.setText('')
         self.right.setText('')
@@ -484,22 +520,28 @@ class CEDiscountExp(gui.Experiment):
 
     def keyaction(self, key):
 
-        if key in self.person.leftkey:
+        if (key in ['g', 'G']) & (self.betweenrounds == 1):
+
+            self.betweenrounds = 0
+            self.generatenext()
+
+        if (key in self.person.leftkey) & (self.responseenabled == 1):
+
+            self.responseenabled = 0
 
             self.timer.stop()
             self.response = 0
             self.iti()
 
-        elif key in self.person.rightkey:
+        if (key in self.person.rightkey) & (self.responseenabled == 1):
+
+            self.responseenabled = 0
 
             self.timer.stop()
             self.response = 1
             self.iti()
 
-        elif key in ['g', 'G']:
-            self.generatenext()
-
-        elif key in ['i', 'I']:
+        if (key in ['i', 'I']) & (self.betweenrounds == 1):
             self.inst += 1
 
             self.middle.setText(self.person.get_instructions(self.inst))

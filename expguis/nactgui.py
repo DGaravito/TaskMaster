@@ -122,6 +122,8 @@ class NACTExp(gui.Experiment):
             self.timer.start(randomtimer)
             self.ititimer.start(randomtimer+1000)
 
+            self.responseenabled = 1
+
         else:
 
             self.ititimer.stop()
@@ -142,6 +144,9 @@ class NACTExp(gui.Experiment):
                 self.person.output()
                 self.instructions.setText('Thank you!')
 
+            else:
+                self.betweenrounds = 1
+
     def iti(self):
 
         self.topleft.setPixmap(QPixmap())
@@ -155,6 +160,8 @@ class NACTExp(gui.Experiment):
 
         self.timer.stop()
 
+        self.responseenabled = 0
+
         endtime = time.time()
         rt = endtime - self.starttime
 
@@ -164,13 +171,16 @@ class NACTExp(gui.Experiment):
 
     def keyaction(self, key):
 
-        if key in ['g', 'G']:
+        if (key in ['g', 'G']) & (self.betweenrounds == 1):
 
             self.middle.setText('')
             self.inst = 0
             self.generatenext()
+            self.betweenrounds = 0
 
-        if key in self.person.rightkey:
+        if (key in self.person.rightkey) & (self.responseenabled == 1):
+
+            self.responseenabled = 0
 
             self.timer.stop()
             self.trialsdone += 1
@@ -182,7 +192,9 @@ class NACTExp(gui.Experiment):
 
             self.iti()
 
-        if key in self.person.leftkey:
+        if (key in self.person.leftkey) & (self.responseenabled == 1):
+
+            self.responseenabled = 0
 
             self.timer.stop()
             self.trialsdone += 1
@@ -194,7 +206,7 @@ class NACTExp(gui.Experiment):
 
             self.iti()
 
-        if key in ['i', 'I']:
+        if (key in ['i', 'I']) & (self.betweenrounds == 1):
 
             self.inst += 1
 

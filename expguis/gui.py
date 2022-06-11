@@ -15,6 +15,8 @@ class Experiment(QWidget):
         self.trialsdone = 0
         self.roundsdone = 0
         self.inst = 0
+        self.responseenabled = 0
+        self.betweenrounds = 1
 
         # eyetracking setup
         if self.person.eyetracking == 'Yes':
