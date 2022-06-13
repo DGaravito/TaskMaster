@@ -16,8 +16,8 @@ class NACTExp(gui.Experiment):
 
     def elements(self):
         # Instructions
-        self.instructions = QLabel('Press ' + self.person.leftkey[0] + ' for |. Press ' + self.person.rightkey[0] +
-                                   ' for -.')
+        self.instructions.setText('Press ' + self.person.leftkey[0] + ' for |. Press ' + self.person.rightkey[0] +
+                                  ' for -.')
 
         # Make middle layout for pictures and text
         middlelayout = QHBoxLayout()

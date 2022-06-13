@@ -1,14 +1,16 @@
 from pathlib import Path
 
-from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QVBoxLayout, QHBoxLayout,\
+from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout,\
     QDialog, QGridLayout, QSlider
 from PyQt6.QtGui import QFont, QPixmap
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QDir
 
+from expguis import gui
+
 
 class BeadsConfidence(QDialog):
     """
-        This is a popup window that allows for user input to indicate confidence in their jar choice for the bead task.
+    This is a popup window that allows for user input to indicate confidence in their jar choice for the bead task.
     """
 
     def __init__(self):
@@ -110,16 +112,12 @@ class BeadsInventory(QDialog):
         self.setLayout(layout)
 
 
-class BeadsExp(QWidget):
+class BeadsExp(gui.Experiment):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):
-        super().__init__()
+        super().__init__(person)
 
-        self.inst = 0
-        self.response = 0
-        self.person = person
-        self.roundsdone = 0
         self.beadsdrawn = 0
         self.beadlist = ['',
                          '',
@@ -142,18 +140,6 @@ class BeadsExp(QWidget):
                          '',
                          '']
 
-        # Window title
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-
-        # center window
-        self.centerscreen()
-
-        # Add in elements
-        self.elements()
-
-        # Show all elements
-        self.showMaximized()
-
         # Make timer for jitter screen
         self.jittertimer = QTimer()
         self.jittertimer.timeout.connect(self.newround)
@@ -162,41 +148,18 @@ class BeadsExp(QWidget):
         self.starttimer = QTimer()
         self.starttimer.timeout.connect(self.startround)
 
-        # Attach keyboard keys to functions
-        self.keyPressed.connect(self.keyaction)
-
         # Attach left and right to functions
         self.left.mousePressEvent = self.choseleftjar
         self.right.mousePressEvent = self.choserightjar
 
     def elements(self):
 
-        # Make overarching layout
-        totallayout = QVBoxLayout()
-
-        # Quit button
-        self.quitbutton = QPushButton('Quit')
-        self.quitbutton.clicked.connect(QApplication.instance().quit)
-        self.quitbutton.setFixedWidth(40)
-        self.quitbutton.setFixedHeight(20)
-
         # Inventory button
         self.invbutton = QPushButton('Beads you\'ve drawn')
         self.invbutton.clicked.connect(self.openinventory)
 
         # Instructions
-        self.instructions = QLabel('Press \"M\" to draw a bead and \"C\" to choose a jar')
-
-        # setting font style and size
-        self.instructions.setFont(QFont('Helvetica', 25))
-
-        # center Instructions
-        self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # add the assets folder
-
-        toassets = str(Path('..').resolve())
-        QDir.addSearchPath('assets', toassets)
+        self.instructions.setText('Press \"M\" to draw a bead and \"C\" to choose a jar')
 
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
@@ -228,26 +191,15 @@ class BeadsExp(QWidget):
 
         # Put everything in vertical layout
 
-        totallayout.addWidget(self.instructions)
-        totallayout.addStretch(1)
-        totallayout.addLayout(mainhlayout)
-        totallayout.addStretch(1)
-        totallayout.addLayout(quitinvlayout)
+        self.instquitlayout.addWidget(self.instructions)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addLayout(mainhlayout)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addLayout(quitinvlayout)
 
         # Set up layout
 
-        self.setLayout(totallayout)
-
-    def keyPressEvent(self, keyevent):
-        self.keyPressed.emit(keyevent.text())
-
-    def centerscreen(self):
-
-        qr = self.frameGeometry()
-        cp = self.screen().availableGeometry().center()
-
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
+        self.setLayout(self.instquitlayout)
 
     def choseleftjar(self, event):
 
@@ -347,7 +299,7 @@ class BeadsExp(QWidget):
         if key in self.person.leftkey():
             self.middle.setText('Click on the jar you want to choose\nPress \"M\" to go back')
 
-        elif key in self.person.rightkey():
+        if key in self.person.rightkey():
 
             self.middle.setText('')
 
@@ -357,10 +309,10 @@ class BeadsExp(QWidget):
             else:
                 self.middle.setText('Max number of beads drawn')
 
-        elif key in ['g', 'G']:
+        if key in ['g', 'G']:
             self.jitter()
 
-        elif key in ['i', 'I']:
+        if key in ['i', 'I']:
             self.inst += 1
             self.middle.setText(self.person.get_instructions(self.inst))
 

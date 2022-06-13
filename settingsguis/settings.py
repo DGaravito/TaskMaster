@@ -121,7 +121,7 @@ class Settings(QWidget):
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
         # setting the minimum window size
-        self.setMinimumSize(500, 350)
+        self.setMinimumSize(500, 500)
 
         # Defaults for various tasks and options
         self.buttonboxstate = 'No'

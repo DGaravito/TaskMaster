@@ -28,6 +28,9 @@ class Experiment(QWidget):
         # center window
         self.centerscreen()
 
+        # full screen
+        self.showMaximized()
+
         # Add the assets folder for pictures
         toassets = str(Path('..').resolve())
         QDir.addSearchPath('assets', toassets)

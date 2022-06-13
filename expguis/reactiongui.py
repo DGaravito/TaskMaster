@@ -18,9 +18,6 @@ class SSExp(gui.Experiment):
         self.signaltimer = QTimer()
         self.signaltimer.timeout.connect(self.sendsignal)
 
-        # Show all elements
-        self.showMaximized()
-
     def elements(self):
 
         # Make middle layout for pictures and text

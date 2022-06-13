@@ -19,8 +19,8 @@ class PBTExp(gui.Experiment):
 
     def elements(self):
         # Instructions
-        self.instructions = QLabel('Press ' + self.person.leftkey[0] + ' for crosses. Press ' +
-                                   self.person.rightkey[0] + ' for squares.')
+        self.instructions.setText('Press ' + self.person.leftkey[0] + ' for crosses. Press ' +
+                                  self.person.rightkey[0] + ' for squares.')
 
         # Make middle for pictures and text
         middlelayout = QHBoxLayout()

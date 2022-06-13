@@ -16,8 +16,8 @@ class DDiscountExp(gui.Experiment):
 
     def elements(self):
         # Instructions
-        self.instructions = QLabel('Press ' + self.person.leftkey[0] + ' for the left option and ' +
-                                   self.person.rightkey[0] + ' for the right option')
+        self.instructions.setText('Press ' + self.person.leftkey[0] + ' for the left option and ' +
+                                  self.person.rightkey[0] + ' for the right option')
 
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
@@ -177,8 +177,8 @@ class PDiscountExp(gui.Experiment):
     def elements(self):
 
         # Instructions
-        self.instructions = QLabel('Press ' + self.person.leftkey[0] + ' for the left option and ' +
-                                   self.person.rightkey[0] + ' for the right option')
+        self.instructions.setText('Press ' + self.person.leftkey[0] + ' for the left option and ' +
+                                  self.person.rightkey[0] + ' for the right option')
 
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
@@ -384,8 +384,8 @@ class CEDiscountExp(gui.Experiment):
     def elements(self):
 
         # Instructions
-        self.instructions = QLabel('Press ' + self.person.leftkey[0] + ' for the left option and ' +
-                                   self.person.rightkey[0] + ' for the right option')
+        self.instructions.setText('Press ' + self.person.leftkey[0] + ' for the left option and ' +
+                                  self.person.rightkey[0] + ' for the right option')
 
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
