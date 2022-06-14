@@ -146,43 +146,46 @@ class SelectWindow(QWidget):
         match choice:
 
             case str('DD'):
-                self.w = settingsguis.discount.DdSettings()
+                self.w = settingsguis.discount.DdSettings('DD')
 
             case str('PD'):
-                self.w = settingsguis.discount.PdSettings()
+                self.w = settingsguis.discount.PdSettings('PD')
 
             case str('CEDT'):
-                self.w = settingsguis.discount.CEDTSettings()
+                self.w = settingsguis.discount.CEDTSettings('CEDT')
 
             case str('ARTT'):
-                self.w = settingsguis.gamble.ARTTSettings()
+                self.w = settingsguis.gamble.ARTTSettings('ARTT')
 
             case str('RA'):
-                self.w = settingsguis.gamble.RASettings()
+                self.w = settingsguis.gamble.RASettings('RA')
 
             case str('Framing'):
-                self.w = settingsguis.gamble.FrameSettings()
+                self.w = settingsguis.gamble.FrameSettings('Framing')
 
             case str('Beads'):
-                self.w = settingsguis.beads.BeadsSettings()
+                self.w = settingsguis.beads.BeadsSettings('Beads')
 
             case str('PBT'):
-                self.w = settingsguis.pbt.PBTSettings()
+                self.w = settingsguis.pbt.PBTSettings('PBT')
 
             case str('NACT'):
-                self.w = settingsguis.nact.NACTSettings()
+                self.w = settingsguis.nact.NACTSettings('NACT')
 
             case str('SS'):
-                self.w = settingsguis.reaction.SSSettings()
+                self.w = settingsguis.reaction.SSSettings('SS')
 
             case str('PR'):
-                self.w = settingsguis.memory.PrSettings()
+                self.w = settingsguis.memory.PrSettings('PR')
 
             case str('NB'):
-                self.w = settingsguis.memory.NBackSettings()
+                self.w = settingsguis.memory.NBackSettings('1-back')
 
             case str('EGNG'):
-                self.w = settingsguis.reaction.EGNGSettings()
+                self.w = settingsguis.reaction.EGNGSettings('EGNG')
+
+            case str('GNG'):
+                self.w = settingsguis.reaction.GNGSettings('GNG')
 
             case _:
                 self.w = QLabel('Panic')

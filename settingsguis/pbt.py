@@ -10,20 +10,11 @@ from expguis import pbtgui
 
 class PBTSettings(settings.Settings):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, task):
+        super().__init__(task)
 
         # setting  the geometry of window
         self.setGeometry(0, 0, 650, 350)
-
-        # center window
-        self.centerscreen()
-
-        # Add in elements
-        self.elements()
-
-        # Show all elements
-        self.show()
 
     def elements(self):
         # Make overarching layout

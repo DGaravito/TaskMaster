@@ -8,8 +8,7 @@ from os import path
 class WDErrorBox(QDialog):
     """
     This is a popup window that may come up after the settingsguis window checks to see if the directory that the user
-    put in is actually a directory. If not, this popup lets the user know that they goofed and gives them examples to
-    reference when redoing the settingsguis window
+    put in is actually a directory. If not, this popup lets the user know that they goofed.
     """
 
     def __init__(self):
@@ -25,6 +24,36 @@ class WDErrorBox(QDialog):
         self.mainerror.setStyleSheet('padding :5px')
 
         self.instruction = QLabel('Use the settings window to select a directory to save your output to.')
+        self.instruction.setStyleSheet('padding :5px')
+
+        # Add stuff to overarching layout
+        dialayout.addWidget(self.mainerror),
+        dialayout.addWidget(self.instruction)
+
+        self.setLayout(dialayout)
+
+
+class FileErrorBox(QDialog):
+    """
+    This is a popup window that may come up after the settingsguis window checks to see if the file that the user
+    will create alreaedy exists. If so, this popup lets the user know that they goofed and tells them to delete the
+    old file or change their settings
+    """
+
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle('Error')
+
+        # Make  layout
+        dialayout = QVBoxLayout()
+
+        # Make labels for text
+        self.mainerror = QLabel('It looks like your file already exists!')
+        self.mainerror.setStyleSheet('padding :5px')
+
+        self.instruction = QLabel('Either delete the old file, pick a new directory, or change your ID, session name' +
+                                  ', or task.')
         self.instruction.setStyleSheet('padding :5px')
 
         # Add stuff to overarching layout
@@ -114,7 +143,7 @@ class Settings(QWidget):
     that the user inputted a valid directory, etc.
     """
 
-    def __init__(self):
+    def __init__(self, task):
         super().__init__()
 
         # Window title
@@ -124,6 +153,7 @@ class Settings(QWidget):
         self.setMinimumSize(500, 500)
 
         # Defaults for various tasks and options
+        self.task = task
         self.buttonboxstate = 'No'
         self.outcome = 'No'
         self.eyetracking = 'No'
@@ -147,7 +177,7 @@ class Settings(QWidget):
 
         # Session form
         self.sessionin = QLineEdit()
-        self.sessionin.setText('1')
+        self.sessionin.setText('Pretest')
 
         # Button check
         self.buttontoggle = QCheckBox()
@@ -174,6 +204,18 @@ class Settings(QWidget):
         self.submit = QPushButton('Submit')
         self.submit.clicked.connect(self.checksettings)
 
+        # Add in elements
+        self.elements()
+
+        # Show all elements
+        self.show()
+
+    def elements(self):
+        """
+        This is a placeholder function. All settings windows will have some unique settings stuff for the window.
+        This is intentionally left blank for that reason.
+        """
+
     def centerscreen(self):
         qr = self.frameGeometry()
         cp = self.screen().availableGeometry().center()
@@ -188,7 +230,13 @@ class Settings(QWidget):
     def checksettings(self):
 
         if path.isdir(self.wd):
-            self.submitsettings()
+
+            if path.isfile(self.wd + '/' + self.idform.text() + '_' + self.task + '_' + self.sessionin.text() +
+                           '.xlsx'):
+                self.fileerrordialog()
+
+            else:
+                self.submitsettings()
 
         else:
             self.wderrordialog()
@@ -196,6 +244,12 @@ class Settings(QWidget):
     def wderrordialog(self):
 
         error = WDErrorBox()
+
+        error.exec()
+
+    def fileerrordialog(self):
+
+        error = FileErrorBox()
 
         error.exec()
 

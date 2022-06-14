@@ -10,23 +10,14 @@ from expguis import memorygui
 
 class PrSettings(settings.Settings):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, task):
+        super().__init__(task)
 
-        # setting  the geometry of window
+        # setting the geometry of window
         self.setGeometry(0, 0, 650, 350)
 
         # Default for whether to use STT trial
         self.stt = 'No'
-
-        # center window
-        self.centerscreen()
-
-        # Add in elements
-        self.elements()
-
-        # Show all elements
-        self.show()
 
     def elements(self):
         # Make overarching layout
@@ -105,20 +96,11 @@ class PrSettings(settings.Settings):
 
 class NBackSettings(settings.Settings):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, task):
+        super().__init__(task)
 
         # setting  the geometry of window
         self.setGeometry(0, 0, 650, 350)
-
-        # center window
-        self.centerscreen()
-
-        # Add in elements
-        self.elements()
-
-        # Show all elements
-        self.show()
 
     def elements(self):
         # Make overarching layout
@@ -144,6 +126,7 @@ class NBackSettings(settings.Settings):
         # Dropdown box for gains, losses, or both
         self.design = QComboBox()
         self.design.addItems(['1-back', '2-back', '3-back', '4-back'])
+        self.design.currentIndexChanged.connect(self.taskchange)
 
         # Make form layout for all the settingsguis
         layout = QFormLayout()
@@ -175,6 +158,10 @@ class NBackSettings(settings.Settings):
             self.eyetracking = 'Yes'
         else:
             self.eyetracking = 'No'
+
+    def taskchange(self):
+
+        self.task = self.design.currentText()
 
     def submitsettings(self):
 
