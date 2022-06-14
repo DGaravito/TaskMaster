@@ -16,6 +16,9 @@ class BeadsSettings(settings.Settings):
         # setting the geometry of window
         self.setGeometry(0, 0, 650, 350)
 
+        # center window
+        self.centerscreen()
+
     def elements(self):
         # Make overarching layout
         over_layout = QVBoxLayout()

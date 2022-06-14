@@ -13,9 +13,6 @@ class PrSettings(settings.Settings):
     def __init__(self, task):
         super().__init__(task)
 
-        # setting the geometry of window
-        self.setGeometry(0, 0, 650, 350)
-
         # Default for whether to use STT trial
         self.stt = 'No'
 
@@ -98,9 +95,6 @@ class NBackSettings(settings.Settings):
 
     def __init__(self, task):
         super().__init__(task)
-
-        # setting  the geometry of window
-        self.setGeometry(0, 0, 650, 350)
 
     def elements(self):
         # Make overarching layout

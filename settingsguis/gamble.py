@@ -14,9 +14,6 @@ class ARTTSettings(settings.Settings):
     def __init__(self, task):
         super().__init__(task)
 
-        # setting the geometry of window
-        self.setGeometry(0, 0, 650, 350)
-
     def elements(self):
         # Make overarching layout
         over_layout = QVBoxLayout()
@@ -163,9 +160,6 @@ class RASettings(settings.Settings):
     def __init__(self, task):
         super().__init__(task)
 
-        # setting the geometry of window
-        self.setGeometry(0, 0, 650, 350)
-
     def elements(self):
         # Make overarching layout
         over_layout = QVBoxLayout()
@@ -273,9 +267,6 @@ class FrameSettings(settings.Settings):
 
     def __init__(self, task):
         super().__init__(task)
-
-        # setting the geometry of window
-        self.setGeometry(0, 0, 650, 350)
 
     def elements(self):
         # Make overarching layout

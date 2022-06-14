@@ -149,8 +149,11 @@ class Settings(QWidget):
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
-        # setting the minimum window size
-        self.setMinimumSize(500, 500)
+        # setting  the geometry of window
+        self.setGeometry(0, 0, 700, 400)
+
+        # center window
+        self.centerscreen()
 
         # Defaults for various tasks and options
         self.task = task
@@ -162,9 +165,6 @@ class Settings(QWidget):
 
         # Default directory
         self.wd = 'No directory selected'
-
-        # center window
-        self.centerscreen()
 
         # Quit button
         self.quitbutton = QPushButton('Quit')
