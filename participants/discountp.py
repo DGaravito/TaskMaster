@@ -16,15 +16,16 @@ class DdParticipant(participant.Participant):
 
         self.rounds = int(rounds)
 
-        self.engine = self.create_dd_engine(self.task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew)
+        self.engine = self.create_dd_engine(self.task, float(ss_del), float(ll_shortdel), float(ll_longdel),
+                                            float(ss_smallrew), float(ll_rew))
 
         # Compute an optimal design for the first trial
         self.design = self.engine.get_design('optimal')
 
         # Experiment settingsguis output dataframe
         dict_simulsettings = {'Immediate Option Delay': [ss_del],
-                              'Shortest Delay': [ll_shortdel],
-                              'Longest Delay': [ll_longdel],
+                              'Shortest Delay (weeks)': [ll_shortdel],
+                              'Longest Delay (weeks)': [ll_longdel],
                               'Smallest Smaller Sooner Reward': [ss_smallrew],
                               'Largest Smaller Sooner Reward': [(float(ll_rew) - float(ss_smallrew))],
                               'Larger Later Reward': [ll_rew],
@@ -37,18 +38,26 @@ class DdParticipant(participant.Participant):
 
         model = ModelHyp()
 
+        timerange = [ll_shortdel]
+
+        if (self.get_trials()-2) > 0:
+            for trial in range(self.get_trials()-2):
+                timerange.append(random.uniform(ll_shortdel, ll_longdel))
+
+        timerange.append(ll_longdel)
+
         grid_design = {
             # [Now]
-            't_ss': [float(ss_del)],
+            't_ss': [ss_del],
 
             # [1 week, 2 weeks, ..., longdelay] in weeks
-            't_ll': np.arange(float(ll_shortdel), float(ll_longdel), .5),
+            't_ll': timerange,
 
             # [smallreward, smallreward + $1, ..., bigreward]
-            'r_ss': np.arange(float(ss_smallrew), float(ll_rew), .5),
+            'r_ss': np.arange(ss_smallrew, ll_rew, .5),
 
             # [bigreward]
-            'r_ll': [float(ll_rew)]
+            'r_ll': [ll_rew]
         }
 
         grid_param = {
@@ -68,6 +77,59 @@ class DdParticipant(participant.Participant):
 
         return engine
 
+    def get_timestring(self, startingweeks):
+
+        timestring = ''
+        days = float(startingweeks * 7)
+
+        if days >= 365.2422:
+
+            years = int(days/365.2422)
+            timestring = timestring + str(years) + ' years'
+            days = float(days - (years * 365.2422))
+
+            if int(days) > 0:
+
+                timestring = timestring + ', '
+
+            else:
+
+                timestring = timestring + '.'
+
+        if days >= 30.437:
+
+            months = int(days/30.437)
+            timestring = timestring + str(months) + ' months'
+            days = float(days - (months * 30.437))
+
+            if int(days) > 0:
+
+                timestring = timestring + ', '
+
+            else:
+
+                timestring = timestring + '.'
+
+        if days >= 7:
+
+            weeks = int(days/7)
+            timestring = timestring + str(weeks) + ' weeks'
+            days = float(days - (weeks * 7))
+
+            if int(days) > 0:
+
+                timestring = timestring + ', '
+
+            else:
+
+                timestring = timestring + '.'
+
+        if int(days) > 0:
+
+            timestring = timestring + str(int(days)) + ' days.'
+
+        return timestring
+
     def get_design_text(self):
 
         if int(self.design['t_ss']) == 0:
@@ -75,10 +137,10 @@ class DdParticipant(participant.Participant):
 
         else:
             leftstring = 'Getting $' + str('{:.2f}'.format(self.design['r_ll'])) + '\nafter '\
-                         + str(int(self.design['t_ss'])) + ' weeks'
+                         + self.get_timestring(float(self.design['t_ss']))
 
         rightstring = 'Getting $' + str('{:.2f}'.format(self.design['r_ll'])) + '\nafter '\
-                      + str(int(self.design['t_ll'])) + ' weeks'
+                      + self.get_timestring(float(self.design['t_ll']))
 
         return [leftstring, rightstring]
 
@@ -436,6 +498,7 @@ class CEDParticipant(participant.Participant):
 
         self.rounds = int(rounds)
         self.version = version
+        self.modifier = float(maxrew)/4
 
         self.outcomeopt = outcome
         self.outcomelist = []
@@ -627,6 +690,14 @@ class CEDParticipant(participant.Participant):
 
     def nextround(self, roundsdone):
 
+        # reset trial counts for modifiers
+        self.onetwotrials = 0
+        self.onethreetrials = 0
+        self.onefourtrials = 0
+        self.twothreetrials = 0
+        self.twofourtrials = 0
+        self.threefourtrials = 0
+
         if self.rounds == roundsdone:
 
             if self.outcomeopt == 'Yes':
@@ -693,8 +764,6 @@ class CEDParticipant(participant.Participant):
 
             self.outcomelist.append(outcomestring)
 
-        modifiermod = 0.5
-
         if response != 'None':
 
             match self.state:
@@ -703,85 +772,85 @@ class CEDParticipant(participant.Participant):
 
                     if (self.randomside == 1) & (response == 0):
 
-                        self.onetwomodifier = self.onetwomodifier - (modifiermod / float(self.onetwotrials))
+                        self.onetwomodifier = self.onetwomodifier - (self.modifier / float(self.onetwotrials))
 
                     elif (self.randomside == 2) & (response == 1):
 
-                        self.onetwomodifier = self.onetwomodifier - (modifiermod / float(self.onetwotrials))
+                        self.onetwomodifier = self.onetwomodifier - (self.modifier / float(self.onetwotrials))
 
                     else:
 
-                        self.onetwomodifier = self.onetwomodifier + (modifiermod / float(self.onetwotrials))
+                        self.onetwomodifier = self.onetwomodifier + (self.modifier / float(self.onetwotrials))
 
                 case '1-3':
 
                     if (self.randomside == 1) & (response == 0):
 
-                        self.onethreemodifier = self.onethreemodifier - (modifiermod / float(self.onethreetrials))
+                        self.onethreemodifier = self.onethreemodifier - (self.modifier / float(self.onethreetrials))
 
                     elif (self.randomside == 2) & (response == 1):
 
-                        self.onethreemodifier = self.onethreemodifier - (modifiermod / float(self.onethreetrials))
+                        self.onethreemodifier = self.onethreemodifier - (self.modifier / float(self.onethreetrials))
 
                     else:
 
-                        self.onethreemodifier = self.onethreemodifier + (modifiermod / float(self.onethreetrials))
+                        self.onethreemodifier = self.onethreemodifier + (self.modifier / float(self.onethreetrials))
 
                 case '1-4':
 
                     if (self.randomside == 1) & (response == 0):
 
-                        self.onefourmodifier = self.onefourmodifier - (modifiermod / float(self.onefourtrials))
+                        self.onefourmodifier = self.onefourmodifier - (self.modifier / float(self.onefourtrials))
 
                     elif (self.randomside == 2) & (response == 1):
 
-                        self.onefourmodifier = self.onefourmodifier - (modifiermod / float(self.onefourtrials))
+                        self.onefourmodifier = self.onefourmodifier - (self.modifier / float(self.onefourtrials))
 
                     else:
 
-                        self.onefourmodifier = self.onefourmodifier + (modifiermod / float(self.onefourtrials))
+                        self.onefourmodifier = self.onefourmodifier + (self.modifier / float(self.onefourtrials))
 
                 case '2-3':
 
                     if (self.randomside == 1) & (response == 0):
 
-                        self.twothreemodifier = self.twothreemodifier - (modifiermod / float(self.twothreetrials))
+                        self.twothreemodifier = self.twothreemodifier - (self.modifier / float(self.twothreetrials))
 
                     elif (self.randomside == 2) & (response == 1):
 
-                        self.twothreemodifier = self.twothreemodifier - (modifiermod / float(self.twothreetrials))
+                        self.twothreemodifier = self.twothreemodifier - (self.modifier / float(self.twothreetrials))
 
                     else:
 
-                        self.twothreemodifier = self.twothreemodifier + (modifiermod / float(self.twothreetrials))
+                        self.twothreemodifier = self.twothreemodifier + (self.modifier / float(self.twothreetrials))
 
                 case '2-4':
 
                     if (self.randomside == 1) & (response == 0):
 
-                        self.twofourmodifier = self.twofourmodifier - (modifiermod / float(self.twofourtrials))
+                        self.twofourmodifier = self.twofourmodifier - (self.modifier / float(self.twofourtrials))
 
                     elif (self.randomside == 2) & (response == 1):
 
-                        self.twofourmodifier = self.twofourmodifier - (modifiermod / float(self.twofourtrials))
+                        self.twofourmodifier = self.twofourmodifier - (self.modifier / float(self.twofourtrials))
 
                     else:
 
-                        self.twofourmodifier = self.twofourmodifier + (modifiermod / float(self.twofourtrials))
+                        self.twofourmodifier = self.twofourmodifier + (self.modifier / float(self.twofourtrials))
 
                 case '3-4':
 
                     if (self.randomside == 1) & (response == 0):
 
-                        self.threefourmodifier = self.threefourmodifier - (modifiermod / float(self.threefourtrials))
+                        self.threefourmodifier = self.threefourmodifier - (self.modifier / float(self.threefourtrials))
 
                     elif (self.randomside == 2) & (response == 1):
 
-                        self.threefourmodifier = self.threefourmodifier - (modifiermod / float(self.threefourtrials))
+                        self.threefourmodifier = self.threefourmodifier - (self.modifier / float(self.threefourtrials))
 
                     else:
 
-                        self.threefourmodifier = self.threefourmodifier + (modifiermod / float(self.threefourtrials))
+                        self.threefourmodifier = self.threefourmodifier + (self.modifier / float(self.threefourtrials))
 
     def get_instructions(self, instint):
         """

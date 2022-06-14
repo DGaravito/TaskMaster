@@ -54,7 +54,7 @@ class PrSettings(settings.Settings):
         self.trialsin.setSpecialValueText('3')
 
         # ST Trials input
-        self.stttoggle = QCheckBox('STT?', self)
+        self.stttoggle = QCheckBox(self)
         self.stttoggle.stateChanged.connect(self.clickbox)
 
         # Make form layout for all the settingsguis
@@ -68,7 +68,7 @@ class PrSettings(settings.Settings):
         layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
-        layout.addRow(self.submit, self.quitbutton)
+        layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout
         over_layout.addLayout(layout)
@@ -157,7 +157,7 @@ class NBackSettings(settings.Settings):
         layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
-        layout.addRow(self.submit, self.quitbutton)
+        layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout
         over_layout.addLayout(layout)

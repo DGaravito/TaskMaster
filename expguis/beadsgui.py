@@ -168,9 +168,6 @@ class BeadsExp(gui.Experiment):
         self.right = QLabel('')
         self.right.setFont(QFont('Helvetica', 40))
 
-        self.middle = QLabel('Press \"G\" to start and \"I\" for instructions')
-        self.middle.setFont(QFont('Helvetica', 30))
-
         # Put Left and Right jars, plus middle for instructions, in horizontal layout
         mainhlayout = QHBoxLayout()
 
@@ -228,6 +225,8 @@ class BeadsExp(gui.Experiment):
 
     def jitter(self):
 
+        print('jitter')
+
         self.left.setPixmap(QPixmap())
         self.right.setPixmap(QPixmap())
         self.middle.setText('+')
@@ -235,6 +234,8 @@ class BeadsExp(gui.Experiment):
         self.jittertimer.start(1000)
 
     def newround(self):
+
+        print('round')
 
         self.jittertimer.stop()
         self.middle.setText(self.person.nextround(self.roundsdone))
@@ -288,7 +289,7 @@ class BeadsExp(gui.Experiment):
 
         pixmap = QPixmap(newbead)
 
-        self.middle.setPixmap(pixmap.scaled(100, 100, Qt.AspectRatioMode.KeepAspectRatio))
+        self.middle.setPixmap(pixmap.scaled(50, 50, Qt.AspectRatioMode.KeepAspectRatio))
 
         self.beadsdrawn += 1
 
@@ -296,10 +297,10 @@ class BeadsExp(gui.Experiment):
 
     def keyaction(self, key):
 
-        if key in self.person.leftkey():
-            self.middle.setText('Click on the jar you want to choose\nPress \"M\" to go back')
+        if key in self.person.leftkey:
+            self.middle.setText('Click on the jar\nyou want to choose')
 
-        if key in self.person.rightkey():
+        if key in self.person.rightkey:
 
             self.middle.setText('')
 
@@ -307,10 +308,11 @@ class BeadsExp(gui.Experiment):
                 self.drawbead()
 
             else:
-                self.middle.setText('Max number of beads drawn')
+                self.middle.setText('Max number of\nbeads drawn')
 
         if key in ['g', 'G']:
             self.jitter()
+            self.middle.setFont(QFont('Helvetica', 20))
 
         if key in ['i', 'I']:
             self.inst += 1

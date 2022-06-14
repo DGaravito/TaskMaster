@@ -118,7 +118,7 @@ class Participant(object):
 
             os.chdir(self.outdir)
 
-            writer = pd.ExcelWriter(self.expid + taskstr + '.xlsx', engine='xlsxwriter')
+            writer = pd.ExcelWriter(self.expid + taskstr + '_' + self.session + '.xlsx', engine='xlsxwriter')
 
             # Write each dataframe to a different worksheet.
             self.df_settings.to_excel(writer, sheet_name='Sheet1')

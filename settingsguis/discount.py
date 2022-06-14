@@ -84,7 +84,7 @@ class DdSettings(settings.Settings):
         layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
         layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
-        layout.addRow(self.submit, self.quitbutton)
+        layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout
         over_layout.addLayout(layout)
@@ -204,7 +204,7 @@ class PdSettings(settings.Settings):
         layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
         layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
-        layout.addRow(self.submit, self.quitbutton)
+        layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout
         over_layout.addLayout(layout)
@@ -242,8 +242,8 @@ class PdSettings(settings.Settings):
                                     self.trialsin.text()
                                 ) % 2
                         ) == 0
-                ) & self.design.currentText() == 'Gains and Losses'
-        ) | self.design.currentText() in ['Gains only', 'Losses only']:
+                ) & (self.design.currentText() in ['Gains and Losses'])
+        ) | (self.design.currentText() in ['Gains only', 'Losses only']):
             person = discountp.PdParticipant(self.idform.text(),
                                              self.trialsin.text(),
                                              self.sessionin.text(),
@@ -337,7 +337,7 @@ class CEDTSettings(settings.Settings):
         layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
         layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
-        layout.addRow(self.submit, self.quitbutton)
+        layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout
         over_layout.addLayout(layout)

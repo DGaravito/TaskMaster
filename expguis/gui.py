@@ -101,7 +101,6 @@ class Experiment(QWidget):
 
         # center middle
         self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.middle.setScaledContents(True)
 
     def elements(self):
         """

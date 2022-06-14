@@ -579,6 +579,14 @@ class FrameParticipant(participant.Participant):
             multiplier = [multnum, multnum]
             self.order = sum([[s] * n for s, n in zip(gainlosscond, multiplier)], [])
 
+        elif self.design == 'Gains only':
+
+            self.order = ['Gain'] * self.get_trials()
+
+        else:
+
+            self.order = ['Loss'] * self.get_trials()
+
         random.shuffle(self.order)
 
     def set_design_text(self):

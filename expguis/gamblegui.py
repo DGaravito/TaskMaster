@@ -430,19 +430,19 @@ class FrameExp(gui.Experiment):
         self.left.setFont(QFont('Helvetica', 40))
         self.left.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.rightgain = QLabel('')
-        self.rightgain.setFont(QFont('Helvetica', 40))
-        self.rightgain.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.righttop = QLabel('')
+        self.righttop.setFont(QFont('Helvetica', 40))
+        self.righttop.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.rightloss = QLabel('')
-        self.rightloss.setFont(QFont('Helvetica', 40))
-        self.rightloss.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.rightbottom = QLabel('')
+        self.rightbottom.setFont(QFont('Helvetica', 40))
+        self.rightbottom.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Put gamble parts in vertical layout
         gamblelayout = QVBoxLayout()
 
-        gamblelayout.addWidget(self.rightgain)
-        gamblelayout.addWidget(self.rightloss)
+        gamblelayout.addWidget(self.righttop)
+        gamblelayout.addWidget(self.rightbottom)
 
         # Put Left and Right words for options in horizontal layout
         mainhlayout = QHBoxLayout()
@@ -468,8 +468,8 @@ class FrameExp(gui.Experiment):
     def iti(self):
 
         self.left.setText('')
-        self.rightgain.setText('')
-        self.rightloss.setText('')
+        self.righttop.setText('')
+        self.rightbottom.setText('')
         self.middle.setText('+')
 
         if self.trialsdone > 0:
@@ -489,16 +489,18 @@ class FrameExp(gui.Experiment):
 
     def generatenext(self):
 
-        self.ititimer().stop()
+        self.ititimer.stop()
         if self.trialsdone < self.person.get_trials():
+
+            print('if')
 
             self.trialsdone += 1
 
             info = self.person.get_design_text()
             self.left.setText(info[0])
 
-            self.rightgain.setText(info[1])
-            self.rightloss.setText(info[2])
+            self.righttop.setText(info[1])
+            self.rightbottom.setText(info[2])
 
             self.middle.setText('OR')
 
@@ -515,8 +517,8 @@ class FrameExp(gui.Experiment):
             self.person.output()
 
             self.left.setText('')
-            self.rightgain.setText('')
-            self.rightloss.setText('')
+            self.righttop.setText('')
+            self.rightbottom.setText('')
 
             self.roundsdone += 1
             self.trialsdone = 0
@@ -542,8 +544,8 @@ class FrameExp(gui.Experiment):
 
         self.left.setText('')
 
-        self.rightgain.setText('')
-        self.rightloss.setText('')
+        self.righttop.setText('')
+        self.rightbottom.setText('')
         self.middle.setText('Please try to be quicker')
 
         if self.person.fmri == 'No':
@@ -561,8 +563,8 @@ class FrameExp(gui.Experiment):
         info = self.person.get_design_text()
         self.left.setText(info[0])
 
-        self.rightgain.setText(info[1])
-        self.rightloss.setText(info[2])
+        self.righttop.setText(info[1])
+        self.rightbottom.setText(info[2])
 
         self.middle.setText('OR')
 

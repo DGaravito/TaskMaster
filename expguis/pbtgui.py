@@ -51,7 +51,7 @@ class PBTExp(gui.Experiment):
 
             # Make a pixmap of the picture and then set the middle to that pixmap
             pixmap = QPixmap(pathstring)
-            self.middle.setPixmap(pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
+            self.middle.setPixmap(pixmap.scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
 
             self.starttime = time.time()
 
@@ -105,6 +105,7 @@ class PBTExp(gui.Experiment):
             self.inst = 1
             self.iti()
             self.betweenrounds = 0
+            self.ititimer.start(1000)
 
         if (key in self.person.rightkey) & (self.responseenabled == 1):
 

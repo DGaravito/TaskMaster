@@ -55,18 +55,17 @@ class DDiscountExp(gui.Experiment):
         self.right.setText('')
         self.middle.setText('+')
 
-        self.person.engineupdate(self.response)
+        if self.trialsdone != 0:
+            endtime = time.time()
+            rt = endtime - self.starttime
 
-        endtime = time.time()
-        rt = endtime - self.starttime
+            self.person.updateoutput(self.trialsdone, self.starttime, rt, self.response)
 
-        self.person.updateoutput(self.trialsdone, self.starttime, rt, self.response)
+            if self.response != 'None':
+                self.person.engineupdate(self.response)
 
-        if self.response != 'None':
-            self.person.engineupdate(self.response)
-
-        if self.person.fmri == 'No':
-            self.ititimer.start(1000)
+            if self.person.fmri == 'No':
+                self.ititimer.start(1000)
 
     def generatenext(self):
 
@@ -82,6 +81,7 @@ class DDiscountExp(gui.Experiment):
             self.trialsdone += 1
 
             self.timer.start(5000)
+            self.starttime = time.time()
 
             if self.person.fmri == 'Yes':
                 self.ititimer.start(5500)
@@ -141,7 +141,8 @@ class DDiscountExp(gui.Experiment):
         if (key in ['g', 'G']) & (self.betweenrounds == 1):
 
             self.betweenrounds = 0
-            self.generatenext()
+            self.iti()
+            self.ititimer.start(500)
 
         if (key in self.person.leftkey) & (self.responseenabled == 1):
 
@@ -434,6 +435,7 @@ class CEDiscountExp(gui.Experiment):
     def generatenext(self):
 
         self.timer.stop()
+        self.ititimer.stop()
 
         if self.person.get_trials() > self.trialsdone:
 

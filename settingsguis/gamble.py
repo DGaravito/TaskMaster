@@ -99,7 +99,7 @@ class ARTTSettings(settings.Settings):
         layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
         layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
-        layout.addRow(self.submit, self.quitbutton)
+        layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout
         over_layout.addLayout(layout)
@@ -243,7 +243,7 @@ class RASettings(settings.Settings):
         layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
         layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
-        layout.addRow(self.submit, self.quitbutton)
+        layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout
         over_layout.addLayout(layout)
@@ -377,7 +377,7 @@ class FrameSettings(settings.Settings):
         layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
         layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
-        layout.addRow(self.submit, self.quitbutton)
+        layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout
         over_layout.addLayout(layout)
