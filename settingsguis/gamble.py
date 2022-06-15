@@ -114,6 +114,12 @@ class ARTTSettings(settings.Settings):
             self.fmri = 'No'
 
     def submitsettings(self):
+        """
+        Checks to make sure the math works out for the submitted settings. If Gains and Losses is selected, then the
+        number of trials should be divisible by 2. If only gains or losses is selected, then you can just be good to go.
+        If the math fails, through the respective math error. If the user is good to go, make an ARTT participant with
+        the user's settings and then replace the settings window with an ARTT window using the ARTT participant.
+        """
 
         # riskstring = self.probriskin.text()
         # risklist = list(riskstring.split(", "))

@@ -117,6 +117,7 @@ class SelectWindow(QWidget):
         # Create layout for design options
         layout = QGridLayout()
 
+        # Add all the buttons to that layout
         layout.addWidget(self.ddbutton, 0, 0)
         layout.addWidget(self.pdbutton, 0, 1)
         layout.addWidget(self.cedtbutton, 0, 2)
@@ -133,6 +134,7 @@ class SelectWindow(QWidget):
         layout.addWidget(self.nbackbutton, 4, 1)
         layout.addWidget(self.quitbutton, 5, 0, 1, 3)
 
+        # set the layout as the window's layout
         self.setLayout(layout)
 
     def selection(self, choice=''):
@@ -202,7 +204,7 @@ def main():
     app.exec()
 
 
-# Main loop
+# Main loop that activates the main function
 if __name__ == '__main__':
 
     main()
