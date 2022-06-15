@@ -217,6 +217,10 @@ class Settings(QWidget):
         """
 
     def centerscreen(self):
+        """
+        Finds the geometry of the computer's screen and moves the window to the center of it
+        """
+
         qr = self.frameGeometry()
         cp = self.screen().availableGeometry().center()
 
@@ -224,10 +228,19 @@ class Settings(QWidget):
         self.move(qr.topLeft())
 
     def clickbox(self):
+        """
+        This is a function that will activate whenever you click on one of the checkboxes
+        """
 
         print('if you see this, panic')
 
     def checksettings(self):
+        """
+        Once you hit submit, the following function is called, which figures out if the selected directory is valid. If
+        not, it calls the directory error function. If the directory is valid, it then checks if a file exists in that
+        location that would be overwritten. If there is, it calls the file error function. If there is not pre-existing
+        file, then it calls the function that submits the settings.
+        """
 
         if path.isdir(self.wd):
 
@@ -242,26 +255,49 @@ class Settings(QWidget):
             self.wderrordialog()
 
     def wderrordialog(self):
+        """
+        This function activates if there is the output directory submitted is not valid
+        """
 
         error = WDErrorBox()
 
         error.exec()
 
     def fileerrordialog(self):
+        """
+        This function activates if the output directory is valid but a file exists there that would be overwritten if
+        the program were to run with the selected task.
+        """
 
         error = FileErrorBox()
 
         error.exec()
 
-    def submitsettings(self):
-        print('If you see this, panic')
-
     def matherrordialog(self, state):
+        """
+        This function activates if there is a problem with the settings such that the math doesn't work out. It takes
+        one argument which determines the text of the resulting error dialog window.
+        :param state: an integer that indicates what type of math error happened and what the resulting text in the
+        error should be.
+        """
 
         error = MathErrorBox(state)
 
         error.exec()
 
+    def submitsettings(self):
+        """
+        This function activates if you hit submit on a settings window and both the directory is valid and a file
+        doesn't already exist. Since the resulting actions will depend on the selected task, this is left blank here.
+        """
+
+        print('If you see this, panic')
+
     def fileselect(self):
+        """
+        This function creates a dialog window to select a directory that will be the output directoty and then sets
+        the class variable (and associated QLabel) for the working directory to the directory you chose
+        """
+
         self.wd = str(QFileDialog.getExistingDirectory(self, 'Select Directory'))
         self.wdlabel.setText(self.wd)

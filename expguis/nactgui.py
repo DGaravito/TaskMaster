@@ -3,7 +3,8 @@ import random
 
 from PyQt6.QtWidgets import QLabel, QHBoxLayout
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtCore import Qt, pyqtSignal, QUrl
+from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
 
 from expguis import gui
 
@@ -13,6 +14,13 @@ class NACTExp(gui.Experiment):
 
     def __init__(self, person):
         super().__init__(person)
+
+        self.player = QMediaPlayer()
+        audio_output = QAudioOutput()
+        url = QUrl.fromLocalFile('assets/Beep.mp3')
+        self.player.setAudioOutput(audio_output)
+        audio_output.setVolume(50)
+        self.player.setSource(url)
 
     def elements(self):
         # Instructions
@@ -164,6 +172,7 @@ class NACTExp(gui.Experiment):
 
         endtime = time.time()
         rt = endtime - self.starttime
+        self.player.play()
 
         self.middle.setText(self.person.updateoutput(self.trialsdone, self.starttime, rt, 3))
 
