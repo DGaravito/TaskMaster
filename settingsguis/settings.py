@@ -149,7 +149,7 @@ class Settings(QWidget):
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
-        # setting  the geometry of window
+        # setting the geometry of window
         self.setGeometry(0, 0, 700, 400)
 
         # center window

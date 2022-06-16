@@ -10,20 +10,13 @@ class SelectWindow(QWidget):
     This class is a window that has buttons for every task I have incorporated (or plan to incorporate) at the moment
     """
 
-    def centerscreen(self):
-        qr = self.frameGeometry()
-        cp = self.screen().availableGeometry().center()
-
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
-
     def __init__(self):
         super().__init__()
 
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
-        # setting  the geometry of window
+        # setting the geometry of window
         self.setGeometry(0, 0, 400, 400)
 
         # setting the minimum window size
@@ -136,6 +129,17 @@ class SelectWindow(QWidget):
 
         # set the layout as the window's layout
         self.setLayout(layout)
+
+    def centerscreen(self):
+        """
+        Finds the geometry of the comnputer screen and moves to the center of the screen
+        """
+
+        qr = self.frameGeometry()
+        cp = self.screen().availableGeometry().center()
+
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def selection(self, choice=''):
         """
