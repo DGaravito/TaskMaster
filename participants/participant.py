@@ -1,5 +1,5 @@
-from adopy.tasks.dd import *
-from adopy.tasks.cra import *
+from adopy.tasks.dd import TaskDD
+from adopy.tasks.cra import TaskCRA
 import pandas as pd
 
 import os
