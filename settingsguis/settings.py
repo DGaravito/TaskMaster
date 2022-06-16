@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QSpinBox, QLineEdit, QVBoxLayout, QDialog, \
-    QCheckBox, QFileDialog
+    QCheckBox, QFileDialog, QFormLayout
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QFont
 
 from os import path
 
@@ -162,38 +163,73 @@ class Settings(QWidget):
         self.eyetracking = 'No'
         self.fmri = 'No'
         self.ftt = 'No'
+        self.stt = 'No'
 
         # Default directory
         self.wd = 'No directory selected'
 
-        # Quit button
-        self.quitbutton = QPushButton('Quit')
-        self.quitbutton.clicked.connect(QApplication.instance().quit)
-        self.quitbutton.resize(self.quitbutton.sizeHint())
+        # Make overarching layout
+        self.over_layout = QVBoxLayout()
+
+        # Make a label with instructions
+        self.header = QLabel('Enter the appropriate values:', self)
+        self.header.setFont(QFont('Helvetica', 30))
+        self.header.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # Add header to overarching layout
+        self.over_layout.addWidget(self.header)
+
+        # Make form layout for all the settingsguis
+        self.layout = QFormLayout()
 
         # ID
         self.idform = QLineEdit()
         self.idform.setText('9999')
+        self.layout.addRow(QLabel('Subject ID:'), self.idform)
 
         # Session form
         self.sessionin = QLineEdit()
         self.sessionin.setText('Pretest')
+        self.layout.addRow(QLabel('Session name/number (enter \"Practice\" to not have output):'), self.sessionin)
 
-        # Button check
-        self.buttontoggle = QCheckBox()
-        self.buttontoggle.stateChanged.connect(self.clickbox)
-
-        # Eyetracking check
-        self.eyetrackingtoggle = QCheckBox()
-        self.eyetrackingtoggle.stateChanged.connect(self.clickbox)
-
-        # fMRI check
-        self.fmritoggle = QCheckBox()
-        self.fmritoggle.stateChanged.connect(self.clickbox)
+        # Trials input
+        self.trialsin = QSpinBox()
+        self.trialsin.setValue(5)
+        self.trialsin.setRange(1, 1000)
 
         # Blocks input
         self.blocksin = QSpinBox()
-        self.blocksin.setSpecialValueText('1')
+        self.blocksin.setValue(1)
+        self.blocksin.setMinimum(1)
+
+        # Starting money input
+        self.smoneyin = QSpinBox()
+        self.smoneyin.setValue(25)
+        self.smoneyin.setRange(0, 10000)
+
+        # Button checkbox
+        self.buttontoggle = QCheckBox()
+        self.buttontoggle.stateChanged.connect(self.clickbox)
+
+        # Eyetracking checkbox
+        self.eyetrackingtoggle = QCheckBox()
+        self.eyetrackingtoggle.stateChanged.connect(self.clickbox)
+
+        # fMRI checkbox
+        self.fmritoggle = QCheckBox()
+        self.fmritoggle.stateChanged.connect(self.clickbox)
+
+        # FTT checkbox for framing task
+        self.ftttoggle = QCheckBox()
+        self.ftttoggle.stateChanged.connect(self.clickbox)
+
+        # ST Trials checkbox for paired recall task
+        self.stttoggle = QCheckBox()
+        self.stttoggle.stateChanged.connect(self.clickbox)
+
+        # checkbox for getting a random outcome
+        self.outcometoggle = QCheckBox()
+        self.outcometoggle.stateChanged.connect(self.clickbox)
 
         # WD input
         self.wdset = QPushButton('Select Directory')
@@ -203,6 +239,11 @@ class Settings(QWidget):
         # Submit button
         self.submit = QPushButton('Submit')
         self.submit.clicked.connect(self.checksettings)
+
+        # Quit button
+        self.quitbutton = QPushButton('Quit')
+        self.quitbutton.clicked.connect(QApplication.instance().quit)
+        self.quitbutton.resize(self.quitbutton.sizeHint())
 
         # Add in elements
         self.elements()
@@ -229,10 +270,35 @@ class Settings(QWidget):
 
     def clickbox(self):
         """
-        This is a function that will activate whenever you click on one of the checkboxes
+        This is a function that will activate whenever you click on one of the checkboxes. When one box is clicked, the
+        function will check the status of every box and edit the respective class variable based on the state of the
+        box.
         """
 
-        print('if you see this, panic')
+        if self.buttontoggle.isChecked():
+            self.buttonboxstate = 'Yes'
+        else:
+            self.buttonboxstate = 'No'
+
+        if self.outcometoggle.isChecked():
+            self.outcome = 'Yes'
+        else:
+            self.outcome = 'No'
+
+        if self.eyetrackingtoggle.isChecked():
+            self.eyetracking = 'Yes'
+        else:
+            self.eyetracking = 'No'
+
+        if self.fmritoggle.isChecked():
+            self.fmri = 'Yes'
+        else:
+            self.fmri = 'No'
+
+        if self.ftttoggle.isChecked():
+            self.ftt = 'Yes'
+        else:
+            self.ftt = 'No'
 
     def checksettings(self):
         """

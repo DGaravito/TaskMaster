@@ -1,6 +1,4 @@
-from PyQt6.QtWidgets import QLabel, QSpinBox, QFormLayout, QVBoxLayout, QCheckBox, QComboBox
-from PyQt6.QtGui import QFont
-from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QLabel, QSpinBox, QComboBox
 
 from adopy.tasks.cra import TaskCRA
 
@@ -15,25 +13,6 @@ class ARTTSettings(settings.Settings):
         super().__init__(task)
 
     def elements(self):
-        # Make overarching layout
-        over_layout = QVBoxLayout()
-
-        # Make a label with instructions
-        self.header = QLabel('Enter the appropriate values:', self)
-
-        # setting font style and size
-        self.header.setFont(QFont('Helvetica', 30))
-
-        # center header
-        self.header.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # Add header to overarching layout
-
-        over_layout.addWidget(self.header)
-
-        # Trials input
-        self.trialsin = QSpinBox()
-        self.trialsin.setSpecialValueText('10')
 
         # probability input
         # self.probriskin = QLineEdit()
@@ -47,71 +26,39 @@ class ARTTSettings(settings.Settings):
 
         # Smallest reward input
         self.srewin = QSpinBox()
-        self.srewin.setSpecialValueText('5')
+        self.srewin.setRange(0, 1000000)
+        self.srewin.setValue(5)
 
         # Largest reward input
         self.lrewin = QSpinBox()
-        self.lrewin.setSpecialValueText('50')
+        self.lrewin.setRange(0, 1000000)
+        self.lrewin.setValue(50)
 
         # Dropdown box for gains, losses, or both
         self.design = QComboBox()
         self.design.addItems(['Gains only', 'Losses only', 'Gains and Losses'])
 
-        # checkbox for getting a random reward/loss
-        self.outcometoggle = QCheckBox('', self)
-        self.outcometoggle.stateChanged.connect(self.clickbox)
-
-        # Starting money input
-        self.smoneyin = QSpinBox()
-        self.smoneyin.setSpecialValueText('25')
-
         # Make form layout for all the settingsguis
-        layout = QFormLayout()
-
-        layout.addRow(QLabel('Subject ID:'), self.idform)
-        layout.addRow(QLabel('Session name/number (enter \'Practice\' to not have output):'), self.sessionin)
-        layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
-        layout.addRow(QLabel('Number of blocks:'), self.blocksin)
+        self.layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
+        self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         # layout.addRow(QLabel('Enter the probablities for risky trials:'), self.probriskin)
         # layout.addRow(QLabel('Enter the proportions covered for ambiguous trials:'), self.probambin)
-        layout.addRow(QLabel('Fixed reward/loss magnitude:'), self.srewin)
-        layout.addRow(QLabel('Largest reward/loss possible:'), self.lrewin)
-        layout.addRow(QLabel('What type of questions do you want?'), self.design)
-        layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
-        layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
-        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
-        layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
-        layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
-        layout.addRow(QLabel('Current output directory:'), self.wdlabel)
-        layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
-        layout.addRow(self.quitbutton, self.submit)
+        self.layout.addRow(QLabel('Fixed reward/loss magnitude:'), self.srewin)
+        self.layout.addRow(QLabel('Largest reward/loss possible:'), self.lrewin)
+        self.layout.addRow(QLabel('What type of questions do you want?'), self.design)
+        self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
+        self.layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
+        self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
+        self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        self.layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
+        self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
+        self.layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout
-        over_layout.addLayout(layout)
+        self.over_layout.addLayout(self.layout)
 
-        self.setLayout(over_layout)
-
-    def clickbox(self):
-
-        if self.buttontoggle.isChecked():
-            self.buttonboxstate = 'Yes'
-        else:
-            self.buttonboxstate = 'No'
-
-        if self.outcometoggle.isChecked():
-            self.outcome = 'Yes'
-        else:
-            self.outcome = 'No'
-
-        if self.eyetrackingtoggle.isChecked():
-            self.eyetracking = 'Yes'
-        else:
-            self.eyetracking = 'No'
-
-        if self.fmritoggle.isChecked():
-            self.fmri = 'Yes'
-        else:
-            self.fmri = 'No'
+        self.setLayout(self.over_layout)
 
     def submitsettings(self):
         """
@@ -167,86 +114,35 @@ class RASettings(settings.Settings):
         super().__init__(task)
 
     def elements(self):
-        # Make overarching layout
-        over_layout = QVBoxLayout()
-
-        # Make a label with instructions
-        self.header = QLabel('Enter the appropriate values:', self)
-
-        # setting font style and size
-        self.header.setFont(QFont('Helvetica', 30))
-
-        # center header
-        self.header.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # Add header to overarching layout
-
-        over_layout.addWidget(self.header)
-
-        # Trials input
-        self.trialsin = QSpinBox()
-        self.trialsin.setSpecialValueText('30')
 
         # Minimum input
         self.minin = QSpinBox()
-        self.minin.setSpecialValueText('1')
+        self.minin.setRange(0, 1000000)
+        self.minin.setValue(1)
 
         # Maximum input
         self.maxin = QSpinBox()
-        self.maxin.setSpecialValueText('30')
-
-        # checkbox for getting a random reward/loss
-        self.outcometoggle = QCheckBox('', self)
-        self.outcometoggle.stateChanged.connect(self.clickbox)
-
-        # Starting money input
-        self.smoneyin = QSpinBox()
-        self.smoneyin.setSpecialValueText('25')
+        self.maxin.setRange(0, 1000000)
+        self.maxin.setValue(30)
 
         # Make form layout for all the settingsguis
-        layout = QFormLayout()
-
-        layout.addRow(QLabel('Subject ID:'), self.idform)
-        layout.addRow(QLabel('Session name/number (enter \'Practice\' to not have output):'), self.sessionin)
-        layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
-        layout.addRow(QLabel('Number of blocks:'), self.blocksin)
-        layout.addRow(QLabel('Smallest possible gain:'), self.minin)
-        layout.addRow(QLabel('Largest possible gain:'), self.maxin)
-        layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
-        layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
-        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
-        layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
-        layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
-        layout.addRow(QLabel('Current output directory:'), self.wdlabel)
-        layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
-        layout.addRow(self.quitbutton, self.submit)
+        self.layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
+        self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
+        self.layout.addRow(QLabel('Smallest possible gain:'), self.minin)
+        self.layout.addRow(QLabel('Largest possible gain:'), self.maxin)
+        self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
+        self.layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
+        self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
+        self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        self.layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
+        self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
+        self.layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout
-        over_layout.addLayout(layout)
+        self.over_layout.addLayout(self.layout)
 
-        self.setLayout(over_layout)
-
-    def clickbox(self):
-
-        if self.buttontoggle.isChecked():
-            self.buttonboxstate = 'Yes'
-        else:
-            self.buttonboxstate = 'No'
-
-        if self.outcometoggle.isChecked():
-            self.outcome = 'Yes'
-        else:
-            self.outcome = 'No'
-
-        if self.eyetrackingtoggle.isChecked():
-            self.eyetracking = 'Yes'
-        else:
-            self.eyetracking = 'No'
-
-        if self.fmritoggle.isChecked():
-            self.fmri = 'Yes'
-        else:
-            self.fmri = 'No'
+        self.setLayout(self.over_layout)
 
     def submitsettings(self):
 
@@ -275,101 +171,41 @@ class FrameSettings(settings.Settings):
         super().__init__(task)
 
     def elements(self):
-        # Make overarching layout
-        over_layout = QVBoxLayout()
-
-        # Make a label with instructions
-        self.header = QLabel('Enter the appropriate values:', self)
-
-        # setting font style and size
-        self.header.setFont(QFont('Helvetica', 30))
-
-        # center header
-        self.header.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # Add header to overarching layout
-
-        over_layout.addWidget(self.header)
-
-        # Trials input
-        self.trialsin = QSpinBox()
-        self.trialsin.setSpecialValueText('30')
 
         # min EV input
         self.minin = QSpinBox()
-        self.minin.setSpecialValueText('1')
+        self.minin.setRange(0, 1000000)
+        self.minin.setValue(1)
 
         # max EV input
         self.maxin = QSpinBox()
-        self.maxin.setSpecialValueText('50')
+        self.maxin.setRange(0, 1000000)
+        self.maxin.setValue(50)
 
         # Dropdown box for gains, losses, or both
         self.design = QComboBox()
         self.design.addItems(['Gains only', 'Losses only', 'Gains and Losses'])
 
-        # FTT  input
-        self.ftttoggle = QCheckBox('', self)
-        self.ftttoggle.stateChanged.connect(self.clickbox)
-
-        # checkbox for getting a random reward/loss
-        self.outcometoggle = QCheckBox('', self)
-        self.outcometoggle.stateChanged.connect(self.clickbox)
-
-        # Starting money input
-        self.smoneyin = QSpinBox()
-        self.smoneyin.setSpecialValueText('25')
-
         # Make form layout for all the settingsguis
-        layout = QFormLayout()
-
-        layout.addRow(QLabel('Subject ID:'), self.idform)
-        layout.addRow(QLabel('Session name/number (enter \'Practice\' to not have output):'), self.sessionin)
-        layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
-        layout.addRow(QLabel('Number of blocks:'), self.blocksin)
-        layout.addRow(QLabel('Minimum expected value:'), self.minin)
-        layout.addRow(QLabel('Maximum expected value:'), self.maxin)
-        layout.addRow(QLabel('What type of questions do you want?'), self.design)
-        layout.addRow(QLabel('Do you want FTT truncations (i.e., Gist, Mixed, Verbatim)?'), self.ftttoggle)
-        layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
-        layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
-        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
-        layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
-        layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
-        layout.addRow(QLabel('Current output directory:'), self.wdlabel)
-        layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
-        layout.addRow(self.quitbutton, self.submit)
+        self.layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
+        self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
+        self.layout.addRow(QLabel('Minimum expected value:'), self.minin)
+        self.layout.addRow(QLabel('Maximum expected value:'), self.maxin)
+        self.layout.addRow(QLabel('What type of questions do you want?'), self.design)
+        self.layout.addRow(QLabel('Do you want FTT truncations (i.e., Gist, Mixed, Verbatim)?'), self.ftttoggle)
+        self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
+        self.layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
+        self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
+        self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        self.layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
+        self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
+        self.layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout
-        over_layout.addLayout(layout)
+        self.over_layout.addLayout(self.layout)
 
-        self.setLayout(over_layout)
-
-    def clickbox(self):
-
-        if self.buttontoggle.isChecked():
-            self.buttonboxstate = 'Yes'
-        else:
-            self.buttonboxstate = 'No'
-
-        if self.ftttoggle.isChecked():
-            self.ftt = 'Yes'
-        else:
-            self.ftt = 'No'
-
-        if self.outcometoggle.isChecked():
-            self.outcome = 'Yes'
-        else:
-            self.outcome = 'No'
-
-        if self.eyetrackingtoggle.isChecked():
-            self.eyetracking = 'Yes'
-        else:
-            self.eyetracking = 'No'
-
-        if self.fmritoggle.isChecked():
-            self.fmri = 'Yes'
-        else:
-            self.fmri = 'No'
+        self.setLayout(self.over_layout)
 
     def submitsettings(self):
 

@@ -1,6 +1,4 @@
-from PyQt6.QtWidgets import QLabel, QSpinBox, QFormLayout, QVBoxLayout, QCheckBox
-from PyQt6.QtGui import QFont
-from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QLabel, QSpinBox
 
 from settingsguis import settings
 
@@ -14,69 +12,37 @@ class NACTSettings(settings.Settings):
         super().__init__(task)
 
     def elements(self):
-        # Make overarching layout
-        over_layout = QVBoxLayout()
-
-        # Make a label with instructions
-        self.header = QLabel('Enter the appropriate values:', self)
-
-        # setting font style and size
-        self.header.setFont(QFont('Helvetica', 30))
-
-        # center header
-        self.header.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # Add header to overarching layout
-
-        over_layout.addWidget(self.header)
 
         # Low Value Trials input
         self.lowtrialsin = QSpinBox()
-        self.lowtrialsin.setSpecialValueText('120')
+        self.lowtrialsin.setRange(0, 1000)
+        self.lowtrialsin.setValue(120)
 
         # High Value Trials input
         self.hightrialsin = QSpinBox()
-        self.hightrialsin.setSpecialValueText('120')
+        self.hightrialsin.setRange(0, 1000)
+        self.hightrialsin.setValue(120)
 
-        # Starting money input
-        self.smoneyin = QSpinBox()
-        self.smoneyin.setSpecialValueText('25')
-
-        # Starting money input
+        # minimum possible ending money input
         self.minmoneyin = QSpinBox()
-        self.minmoneyin.setSpecialValueText('3')
+        self.minmoneyin.setRange(0, 1000000)
+        self.minmoneyin.setValue(3)
 
         # Make form layout for all the settingsguis
-        layout = QFormLayout()
-
-        layout.addRow(QLabel('Subject ID:'), self.idform)
-        layout.addRow(QLabel('Session name/number (enter \'Practice\' to not have output):'), self.sessionin)
-        layout.addRow(QLabel('Number of high value ($0.15) trials:'), self.hightrialsin)
-        layout.addRow(QLabel('Number of low value ($0.03) trials:'), self.lowtrialsin)
-        layout.addRow(QLabel('Participant starting money:'), self.smoneyin)
-        layout.addRow(QLabel('Minimum money a participant could have at the end:'), self.minmoneyin)
-        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
-        layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
-        layout.addRow(QLabel('Current output directory:'), self.wdlabel)
-        layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
-        layout.addRow(self.quitbutton, self.submit)
+        self.layout.addRow(QLabel('Number of high value ($0.15) trials:'), self.hightrialsin)
+        self.layout.addRow(QLabel('Number of low value ($0.03) trials:'), self.lowtrialsin)
+        self.layout.addRow(QLabel('Participant starting money:'), self.smoneyin)
+        self.layout.addRow(QLabel('Minimum money a participant could have at the end:'), self.minmoneyin)
+        self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
+        self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
+        self.layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout
-        over_layout.addLayout(layout)
+        self.over_layout.addLayout(self.layout)
 
-        self.setLayout(over_layout)
-
-    def clickBox(self):
-
-        if self.buttontoggle.isChecked():
-            self.buttonboxstate = 'Yes'
-        else:
-            self.buttonboxstate = 'No'
-
-        if self.eyetrackingtoggle.isChecked():
-            self.eyetracking = 'Yes'
-        else:
-            self.eyetracking = 'No'
+        self.setLayout(self.over_layout)
 
     def submitsettings(self):
 

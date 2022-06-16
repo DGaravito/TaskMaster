@@ -1,6 +1,4 @@
-from PyQt6.QtWidgets import QLabel, QSpinBox, QFormLayout, QVBoxLayout, QCheckBox, QComboBox
-from PyQt6.QtGui import QFont
-from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QLabel, QSpinBox, QComboBox
 
 from settingsguis import settings
 
@@ -13,67 +11,26 @@ class PrSettings(settings.Settings):
     def __init__(self, task):
         super().__init__(task)
 
-        # Default for whether to use STT trial
-        self.stt = 'No'
-
     def elements(self):
-        # Make overarching layout
-        over_layout = QVBoxLayout()
-
-        # Make a label with instructions
-        self.header = QLabel('Enter the appropriate values:', self)
-
-        # setting font style and size
-        self.header.setFont(QFont('Helvetica', 30))
-
-        # center header
-        self.header.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # Add header to overarching layout
-
-        over_layout.addWidget(self.header)
 
         # Pairs input
         self.pairsin = QSpinBox()
-        self.pairsin.setSpecialValueText('30')
-
-        # ST Trials input
-        self.trialsin = QSpinBox()
-        self.trialsin.setSpecialValueText('3')
-
-        # ST Trials input
-        self.stttoggle = QCheckBox(self)
-        self.stttoggle.stateChanged.connect(self.clickbox)
+        self.pairsin.setValue(30)
+        self.pairsin.setRange(10, 30)
 
         # Make form layout for all the settingsguis
-        layout = QFormLayout()
-
-        layout.addRow(QLabel('Subject ID:'), self.idform)
-        layout.addRow(QLabel('Session name/number (enter \'Practice\' to not have output):'), self.sessionin)
-        layout.addRow(QLabel('Number of word pairs (Max: 30):'), self.pairsin)
-        layout.addRow(QLabel('Number of study-test trials:'), self.trialsin)
-        layout.addRow(QLabel('Do you want an STT trial?'), self.stttoggle)
-        layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
-        layout.addRow(QLabel('Current output directory:'), self.wdlabel)
-        layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
-        layout.addRow(self.quitbutton, self.submit)
+        self.layout.addRow(QLabel('Number of word pairs (Max: 30):'), self.pairsin)
+        self.layout.addRow(QLabel('Number of study-test trials:'), self.trialsin)
+        self.layout.addRow(QLabel('Do you want an STT trial?'), self.stttoggle)
+        self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
+        self.layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout
-        over_layout.addLayout(layout)
+        self.over_layout.addLayout(self.layout)
 
-        self.setLayout(over_layout)
-
-    def clickbox(self):
-
-        if self.stttoggle.isChecked():
-            self.stt = 'Yes'
-        else:
-            self.stt = 'No'
-
-        if self.eyetrackingtoggle.isChecked():
-            self.eyetracking = 'Yes'
-        else:
-            self.eyetracking = 'No'
+        self.setLayout(self.over_layout)
 
     def submitsettings(self):
 
@@ -97,25 +54,6 @@ class NBackSettings(settings.Settings):
         super().__init__(task)
 
     def elements(self):
-        # Make overarching layout
-        over_layout = QVBoxLayout()
-
-        # Make a label with instructions
-        self.header = QLabel('Enter the appropriate values:', self)
-
-        # setting font style and size
-        self.header.setFont(QFont('Helvetica', 30))
-
-        # center header
-        self.header.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # Add header to overarching layout
-
-        over_layout.addWidget(self.header)
-
-        # Trials input
-        self.trialsin = QSpinBox()
-        self.trialsin.setSpecialValueText('30')
 
         # Dropdown box for gains, losses, or both
         self.design = QComboBox()
@@ -123,35 +61,19 @@ class NBackSettings(settings.Settings):
         self.design.currentIndexChanged.connect(self.taskchange)
 
         # Make form layout for all the settingsguis
-        layout = QFormLayout()
-
-        layout.addRow(QLabel('Subject ID:'), self.idform)
-        layout.addRow(QLabel('Session name/number (enter \'Practice\' to not have output):'), self.sessionin)
-        layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
-        layout.addRow(QLabel('Number of blocks:'), self.blocksin)
-        layout.addRow(QLabel('Type of n-Back:'), self.design)
-        layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
-        layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
-        layout.addRow(QLabel('Current output directory:'), self.wdlabel)
-        layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
-        layout.addRow(self.quitbutton, self.submit)
+        self.layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
+        self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
+        self.layout.addRow(QLabel('Type of n-Back:'), self.design)
+        self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
+        self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
+        self.layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout
-        over_layout.addLayout(layout)
+        self.over_layout.addLayout(self.layout)
 
-        self.setLayout(over_layout)
-
-    def clickbox(self):
-
-        if self.buttontoggle.isChecked():
-            self.buttonboxstate = 'Yes'
-        else:
-            self.buttonboxstate = 'No'
-
-        if self.eyetrackingtoggle.isChecked():
-            self.eyetracking = 'Yes'
-        else:
-            self.eyetracking = 'No'
+        self.setLayout(self.over_layout)
 
     def taskchange(self):
 
