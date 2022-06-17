@@ -365,5 +365,6 @@ class Settings(QWidget):
         the class variable (and associated QLabel) for the working directory to the directory you chose
         """
 
-        self.wd = str(QFileDialog.getExistingDirectory(self, 'Select Directory'))
+        folder = QFileDialog.getExistingDirectory(self, 'Select Directory')
+        self.wd = str(folder)
         self.wdlabel.setText(self.wd)
