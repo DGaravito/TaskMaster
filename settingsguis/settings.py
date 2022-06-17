@@ -361,7 +361,7 @@ class Settings(QWidget):
 
     def fileselect(self):
         """
-        This function creates a dialog window to select a directory that will be the output directoty and then sets
+        This function creates a dialog window to select a directory that will be the output directory and then sets
         the class variable (and associated QLabel) for the working directory to the directory you chose
         """
 
