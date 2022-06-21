@@ -11,8 +11,6 @@ class BeadsSettings(settings.Settings):
     def __init__(self, task):
         super().__init__(task)
 
-    def elements(self):
-
         self.layout.addRow(QLabel('Number of trials:'), self.trialsin)
         self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)

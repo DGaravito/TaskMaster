@@ -245,17 +245,8 @@ class Settings(QWidget):
         self.quitbutton.clicked.connect(QApplication.instance().quit)
         self.quitbutton.resize(self.quitbutton.sizeHint())
 
-        # Add in elements
-        self.elements()
-
         # Show all elements
         self.show()
-
-    def elements(self):
-        """
-        This is a placeholder function. All settings windows will have some unique settings stuff for the window.
-        This is intentionally left blank for that reason.
-        """
 
     def centerscreen(self):
         """

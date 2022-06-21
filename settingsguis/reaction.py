@@ -13,8 +13,6 @@ class SSSettings(settings.Settings):
     def __init__(self, task):
         super().__init__(task)
 
-    def elements(self):
-
         # Reaction time input
         self.maxrtin = QSpinBox()
         self.maxrtin.setMaximum(2000)
@@ -57,8 +55,6 @@ class EGNGSettings(settings.Settings):
     def __init__(self, task):
         super().__init__(task)
 
-    def elements(self):
-
         # Reaction time input
         self.maxrtin = QSpinBox()
         self.maxrtin.setMaximum(2000)
@@ -99,8 +95,6 @@ class GNGSettings(settings.Settings):
 
     def __init__(self, task):
         super().__init__(task)
-
-    def elements(self):
 
         # Reaction time input
         self.maxrtin = QSpinBox()

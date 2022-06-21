@@ -12,8 +12,6 @@ class DdSettings(settings.Settings):
     def __init__(self, task):
         super().__init__(task)
 
-    def elements(self):
-
         # Smaller Sooner Delay input
         self.imdin = QSpinBox()
         self.imdin.setRange(0, 10000)
@@ -84,8 +82,6 @@ class PdSettings(settings.Settings):
 
     def __init__(self, task):
         super().__init__(task)
-
-    def elements(self):
 
         # Minimum input
         self.rewmin = QSpinBox()
@@ -162,8 +158,6 @@ class CEDTSettings(settings.Settings):
 
     def __init__(self, task):
         super().__init__(task)
-
-    def elements(self):
 
         # reward max input
         self.maxrewin = QSpinBox()

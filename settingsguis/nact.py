@@ -11,8 +11,6 @@ class NACTSettings(settings.Settings):
     def __init__(self, task):
         super().__init__(task)
 
-    def elements(self):
-
         # Low Value Trials input
         self.lowtrialsin = QSpinBox()
         self.lowtrialsin.setRange(0, 1000)

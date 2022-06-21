@@ -12,8 +12,6 @@ class ARTTSettings(settings.Settings):
     def __init__(self, task):
         super().__init__(task)
 
-    def elements(self):
-
         # probability input
         # self.probriskin = QLineEdit()
         # self.probriskin.setText('.13, .25, .38, .5, .75')
@@ -113,8 +111,6 @@ class RASettings(settings.Settings):
     def __init__(self, task):
         super().__init__(task)
 
-    def elements(self):
-
         # Minimum input
         self.minin = QSpinBox()
         self.minin.setRange(0, 1000000)
@@ -169,8 +165,6 @@ class FrameSettings(settings.Settings):
 
     def __init__(self, task):
         super().__init__(task)
-
-    def elements(self):
 
         # min EV input
         self.minin = QSpinBox()

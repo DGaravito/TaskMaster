@@ -11,8 +11,6 @@ class PrSettings(settings.Settings):
     def __init__(self, task):
         super().__init__(task)
 
-    def elements(self):
-
         # Pairs input
         self.pairsin = QSpinBox()
         self.pairsin.setValue(30)
@@ -52,8 +50,6 @@ class NBackSettings(settings.Settings):
 
     def __init__(self, task):
         super().__init__(task)
-
-    def elements(self):
 
         # Dropdown box for gains, losses, or both
         self.design = QComboBox()

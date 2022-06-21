@@ -11,8 +11,6 @@ class PBTSettings(settings.Settings):
     def __init__(self, task):
         super().__init__(task)
 
-    def elements(self):
-
         # Make form layout for all the settingsguis
         self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         self.layout.addRow(QLabel('Number of trials per block (make sure it\'s divisible by 4):'), self.trialsin)
