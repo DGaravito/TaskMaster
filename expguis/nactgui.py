@@ -15,14 +15,6 @@ class NACTExp(gui.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
-        self.player = QMediaPlayer()
-        audio_output = QAudioOutput()
-        url = QUrl.fromLocalFile('assets/Beep.mp3')
-        self.player.setAudioOutput(audio_output)
-        audio_output.setVolume(50)
-        self.player.setSource(url)
-
-    def elements(self):
         # Instructions
         self.instructions.setText('Press ' + self.person.leftkey[0] + ' for |. Press ' + self.person.rightkey[0] +
                                   ' for -.')
@@ -64,7 +56,6 @@ class NACTExp(gui.Experiment):
         middletoplayout.addStretch(1)
 
         # Make middle bottom for pictures
-
         middlebottomlayout = QHBoxLayout()
 
         self.bottomleft = QLabel('')
@@ -82,8 +73,6 @@ class NACTExp(gui.Experiment):
         middlebottomlayout.addStretch(1)
 
         # Put everything in vertical layout
-
-        self.instquitlayout.addWidget(self.instructions)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(middletoplayout)
         self.instquitlayout.addStretch(1)
@@ -93,9 +82,13 @@ class NACTExp(gui.Experiment):
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitbutton)
 
-        # Set up layout
-
-        self.setLayout(self.instquitlayout)
+        # Try to have a beep
+        self.player = QMediaPlayer()
+        audio_output = QAudioOutput()
+        url = QUrl.fromLocalFile('assets/Beep.mp3')
+        self.player.setAudioOutput(audio_output)
+        audio_output.setVolume(50)
+        self.player.setSource(url)
 
     def generatenext(self):
 

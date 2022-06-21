@@ -14,12 +14,6 @@ class SSExp(gui.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
-        # Make timer to indicate when a signal should be sent (in signal trials)
-        self.signaltimer = QTimer()
-        self.signaltimer.timeout.connect(self.sendsignal)
-
-    def elements(self):
-
         # Make middle layout for pictures and text
         middlelayout = QHBoxLayout()
 
@@ -32,14 +26,14 @@ class SSExp(gui.Experiment):
                                   self.person.rightkey[0] + ' for right arrows.')
 
         # Put everything in vertical layout
-        self.instquitlayout.addWidget(self.instructions)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(middlelayout)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitbutton)
 
-        # set layout
-        self.setLayout(self.instquitlayout)
+        # Make timer to indicate when a signal should be sent (in signal trials)
+        self.signaltimer = QTimer()
+        self.signaltimer.timeout.connect(self.sendsignal)
 
     def generatenext(self):
 

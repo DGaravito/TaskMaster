@@ -364,7 +364,10 @@ class Settings(QWidget):
         This function creates a dialog window to select a directory that will be the output directory and then sets
         the class variable (and associated QLabel) for the working directory to the directory you chose
         """
+        foldergui = QFileDialog(None, caption='Select Directory')
+        foldergui.setOption(QFileDialog.Option.DontUseNativeDialog, False)
+        foldergui.setOption(QFileDialog.Option.ShowDirsOnly, True)
+        folder = foldergui.getExistingDirectory()
 
-        folder = QFileDialog.getExistingDirectory(self, 'Select Directory')
         self.wd = str(folder)
         self.wdlabel.setText(self.wd)

@@ -13,11 +13,6 @@ class PBTExp(gui.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
-        # Make a timer that controls how long an image is left on the screen
-        self.blankouttimer = QTimer()
-        self.blankouttimer.timeout.connect(self.blankout)
-
-    def elements(self):
         # Instructions
         self.instructions.setText('Press ' + self.person.leftkey[0] + ' for crosses. Press ' +
                                   self.person.rightkey[0] + ' for squares.')
@@ -30,14 +25,14 @@ class PBTExp(gui.Experiment):
         middlelayout.addStretch(1)
 
         # Put everything in vertical layout
-        self.instquitlayout.addWidget(self.instructions)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(middlelayout)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitbutton)
 
-        # Set up layout
-        self.setLayout(self.instquitlayout)
+        # Make a timer that controls how long an image is left on the screen
+        self.blankouttimer = QTimer()
+        self.blankouttimer.timeout.connect(self.blankout)
 
     def generatenext(self):
 

@@ -13,13 +13,6 @@ class PrExp(gui.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
-        self.structure = self.person.structure
-
-        # Make timer for new trial screen
-        self.newtrialtimer = QTimer()
-        self.newtrialtimer.timeout.connect(self.generatetrial)
-
-    def elements(self):
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
         self.left.setFont(QFont('Helvetica', 40))
@@ -41,16 +34,17 @@ class PrExp(gui.Experiment):
         explayout.addStretch(1)
 
         # Put everything in vertical layout
-
-        self.instquitlayout.addWidget(self.instructions)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(explayout)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitbutton)
 
-        # Set up layout
+        # Get the structure
+        self.structure = self.person.structure
 
-        self.setLayout(self.instquitlayout)
+        # Make timer for new trial screen
+        self.newtrialtimer = QTimer()
+        self.newtrialtimer.timeout.connect(self.generatetrial)
 
     def generatenext(self):
 
@@ -148,7 +142,6 @@ class NbExp(gui.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
-    def elements(self):
         # Instructions
         self.instructions.setText('Press ' + self.person.leftkey[0] + ' if the letter is a false alarm. Press ' +
                                   self.person.rightkey[0] + ' if the letter is a target')
@@ -157,16 +150,10 @@ class NbExp(gui.Experiment):
         self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Put everything in vertical layout
-
-        self.instquitlayout.addWidget(self.instructions)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.middle)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitbutton)
-
-        # Set up layout
-
-        self.setLayout(self.instquitlayout)
 
     def generatenext(self):
 

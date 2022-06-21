@@ -38,9 +38,6 @@ class Experiment(QWidget):
         # Prepare all the elements that most/all tasks have
         self.defaultelements()
 
-        # Prepare all the elements for the specific task
-        self.elements()
-
         # Attach keyboard keys to the keyaction function
         self.keyPressed.connect(self.keyaction)
 
@@ -95,6 +92,9 @@ class Experiment(QWidget):
         self.instructions.setFont(QFont('Helvetica', 30))
         self.instructions.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
+        # Add instructions to the layout
+        self.instquitlayout.addWidget(self.instructions)
+
         # add the middle, which will always have the same starting text
         self.middle = QLabel('Press \"G\" to start, \"I\" for instructions')
         self.middle.setFont(QFont('Helvetica', 40))
@@ -102,11 +102,8 @@ class Experiment(QWidget):
         # center middle
         self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-    def elements(self):
-        """
-        This is a function to create task-specific elements that, obviously, will completely change depending on
-        the specific task. So it's blank for a reason
-        """
+        # Set up layout
+        self.setLayout(self.instquitlayout)
 
     def iti(self):
         """

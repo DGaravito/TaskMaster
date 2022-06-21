@@ -118,6 +118,7 @@ class BeadsExp(gui.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
+        # create variables to represent the number of beads drawn and the (currently empty) list of beads drawn
         self.beadsdrawn = 0
         self.beadlist = ['',
                          '',
@@ -139,20 +140,6 @@ class BeadsExp(gui.Experiment):
                          '',
                          '',
                          '']
-
-        # Make timer for jitter screen
-        self.jittertimer = QTimer()
-        self.jittertimer.timeout.connect(self.newround)
-
-        # Make timer for jitter screen
-        self.starttimer = QTimer()
-        self.starttimer.timeout.connect(self.startround)
-
-        # Attach left and right to functions
-        self.left.mousePressEvent = self.choseleftjar
-        self.right.mousePressEvent = self.choserightjar
-
-    def elements(self):
 
         # Inventory button
         self.invbutton = QPushButton('Beads you\'ve drawn')
@@ -187,16 +174,22 @@ class BeadsExp(gui.Experiment):
         quitinvlayout.addWidget(self.invbutton)
 
         # Put everything in vertical layout
-
-        self.instquitlayout.addWidget(self.instructions)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(mainhlayout)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(quitinvlayout)
 
-        # Set up layout
+        # Make timer for jitter screen
+        self.jittertimer = QTimer()
+        self.jittertimer.timeout.connect(self.newround)
 
-        self.setLayout(self.instquitlayout)
+        # Make timer for jitter screen
+        self.starttimer = QTimer()
+        self.starttimer.timeout.connect(self.startround)
+
+        # Attach left and right to functions
+        self.left.mousePressEvent = self.choseleftjar
+        self.right.mousePressEvent = self.choserightjar
 
     def choseleftjar(self, event):
 
@@ -225,8 +218,6 @@ class BeadsExp(gui.Experiment):
 
     def jitter(self):
 
-        print('jitter')
-
         self.left.setPixmap(QPixmap())
         self.right.setPixmap(QPixmap())
         self.middle.setText('+')
@@ -234,8 +225,6 @@ class BeadsExp(gui.Experiment):
         self.jittertimer.start(1000)
 
     def newround(self):
-
-        print('round')
 
         self.jittertimer.stop()
         self.middle.setText(self.person.nextround(self.roundsdone))

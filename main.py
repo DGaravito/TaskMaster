@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QGridLayout
+from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QGridLayout, QVBoxLayout, QGroupBox
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
 
@@ -17,7 +17,7 @@ class SelectWindow(QWidget):
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
         # setting the geometry of window
-        self.setGeometry(0, 0, 400, 400)
+        self.setGeometry(0, 0, 500, 500)
 
         # setting the minimum window size
         self.setMinimumSize(400, 400)
@@ -107,28 +107,63 @@ class SelectWindow(QWidget):
         self.quitbutton.clicked.connect(QApplication.instance().quit)
         self.quitbutton.resize(self.quitbutton.sizeHint())
 
-        # Create layout for design options
-        layout = QGridLayout()
+        # Create a main layout and then separate grid layouts for the different categories of tasks
+        mainlayout = QVBoxLayout()
+        mainlayout.addWidget(self.header)
 
-        # Add all the buttons to that layout
-        layout.addWidget(self.ddbutton, 0, 0)
-        layout.addWidget(self.pdbutton, 0, 1)
-        layout.addWidget(self.cedtbutton, 0, 2)
-        layout.addWidget(self.arttbutton, 1, 0)
-        layout.addWidget(self.rabutton, 1, 1)
-        layout.addWidget(self.framebutton, 1, 2)
-        layout.addWidget(self.beadsbutton, 2, 0)
-        layout.addWidget(self.pbtbutton, 2, 1)
-        layout.addWidget(self.nactbutton, 2, 2)
-        layout.addWidget(self.ssbutton, 3, 0)
-        layout.addWidget(self.egngbutton, 3, 1)
-        layout.addWidget(self.gngbutton, 3, 2)
-        layout.addWidget(self.prbutton, 4, 0)
-        layout.addWidget(self.nbackbutton, 4, 1)
-        layout.addWidget(self.quitbutton, 5, 0, 1, 3)
+        risklayout = QGridLayout()
+        discountlayout = QGridLayout()
+        reactionlayout = QGridLayout()
+        memorylayout = QGridLayout()
+        misclayout = QGridLayout()
+
+        # Create boxes around the category layouts
+        riskbox = QGroupBox('Risk Taking')
+        riskbox.setLayout(risklayout)
+
+        discountbox = QGroupBox('Discounting')
+        discountbox.setLayout(discountlayout)
+
+        reactionbox = QGroupBox('Reaction')
+        reactionbox.setLayout(reactionlayout)
+
+        memorybox = QGroupBox('Memory')
+        memorybox.setLayout(memorylayout)
+
+        miscbox = QGroupBox('Misc')
+        miscbox.setLayout(misclayout)
+
+        # Add all the buttons to the appropriate layouts
+        discountlayout.addWidget(self.ddbutton, 0, 0)
+        discountlayout.addWidget(self.pdbutton, 0, 1)
+        discountlayout.addWidget(self.cedtbutton, 0, 2)
+
+        risklayout.addWidget(self.arttbutton, 0, 0)
+        risklayout.addWidget(self.rabutton, 0, 1)
+        risklayout.addWidget(self.framebutton, 0, 2)
+
+        reactionlayout.addWidget(self.pbtbutton, 0, 0)
+        reactionlayout.addWidget(self.nactbutton, 0, 1)
+        reactionlayout.addWidget(self.ssbutton, 0, 2)
+        reactionlayout.addWidget(self.egngbutton, 1, 0)
+        reactionlayout.addWidget(self.gngbutton, 1, 1)
+
+        memorylayout.addWidget(self.prbutton, 0, 0)
+        memorylayout.addWidget(self.nbackbutton, 0, 1)
+
+        misclayout.addWidget(self.beadsbutton, 0, 0)
+
+        # add the boxes and the quit button to the main layout
+        mainlayout.addWidget(riskbox)
+        mainlayout.addWidget(discountbox)
+        mainlayout.addWidget(reactionbox)
+        mainlayout.addWidget(memorybox)
+        mainlayout.addWidget(miscbox)
+
+        mainlayout.addWidget(self.quitbutton)
 
         # set the layout as the window's layout
-        self.setLayout(layout)
+        self.setLayout(mainlayout)
 
     def centerscreen(self):
         """

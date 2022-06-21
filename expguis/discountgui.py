@@ -14,7 +14,6 @@ class DDiscountExp(gui.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
-    def elements(self):
         # Instructions
         self.instructions.setText('Press ' + self.person.leftkey[0] + ' for the left option and ' +
                                   self.person.rightkey[0] + ' for the right option')
@@ -40,14 +39,10 @@ class DDiscountExp(gui.Experiment):
         explayout.addStretch(1)
 
         # Put everything in vertical layout
-        self.instquitlayout.addWidget(self.instructions)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(explayout)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitbutton)
-
-        # Set up layout
-        self.setLayout(self.instquitlayout)
 
     def iti(self):
 
@@ -175,8 +170,6 @@ class PDiscountExp(gui.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
-    def elements(self):
-
         # Instructions
         self.instructions.setText('Press ' + self.person.leftkey[0] + ' for the left option and ' +
                                   self.person.rightkey[0] + ' for the right option')
@@ -220,16 +213,12 @@ class PDiscountExp(gui.Experiment):
         expvislayout.addStretch(1)
 
         # Put everything in vertical layou
-        self.instquitlayout.addWidget(self.instructions)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(expverblayout)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(expvislayout)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitbutton)
-
-        # Set up layout
-        self.setLayout(self.instquitlayout)
 
     def iti(self):
 
@@ -376,14 +365,6 @@ class CEDiscountExp(gui.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
-        self.extradelay = [0, 2000, 4000]
-
-        # Make timer for second half of trial to appear on screen
-        self.secondhalftimer = QTimer()
-        self.secondhalftimer.timeout.connect(self.displaysecondhalf)
-
-    def elements(self):
-
         # Instructions
         self.instructions.setText('Press ' + self.person.leftkey[0] + ' for the left option and ' +
                                   self.person.rightkey[0] + ' for the right option')
@@ -409,14 +390,20 @@ class CEDiscountExp(gui.Experiment):
         explayout.addStretch(1)
 
         # Put everything in vertical layout
-        self.instquitlayout.addWidget(self.instructions)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(explayout)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitbutton)
 
-        # Set up layout
-        self.setLayout(self.instquitlayout)
+        if self.person.fmri == 'Yes':
+            self.extradelay = [0]
+
+        else:
+            self.extradelay = [0, 2000, 4000]
+
+        # Make timer for second half of trial to appear on screen
+        self.secondhalftimer = QTimer()
+        self.secondhalftimer.timeout.connect(self.displaysecondhalf)
 
     def iti(self):
 

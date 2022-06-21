@@ -14,7 +14,6 @@ class ARTTExp(gui.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
-    def elements(self):
         # Instructions
         self.instructions.setText('Press ' + self.person.leftkey[0] + ' for the left option and ' +
                                   self.person.rightkey[0] + ' for the right option')
@@ -56,16 +55,10 @@ class ARTTExp(gui.Experiment):
         explayout.addStretch(1)
 
         # Put everything in vertical layout
-
-        self.instquitlayout.addWidget(self.instructions)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(explayout)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitbutton)
-
-        # Set up layout
-
-        self.setLayout(self.instquitlayout)
 
     def iti(self):
 
@@ -235,8 +228,6 @@ class RAExp(gui.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
-    def elements(self):
-
         # Instructions
         self.instructions.setText('Press ' + self.person.leftkey[0] + ' for the left option and ' +
                                   self.person.rightkey[0] + ' for the right option')
@@ -272,16 +263,10 @@ class RAExp(gui.Experiment):
         mainhlayout.addStretch(1)
 
         # Put everything in vertical layout
-
-        self.instquitlayout.addWidget(self.instructions)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(mainhlayout)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitbutton)
-
-        # Set up layout
-
-        self.setLayout(self.instquitlayout)
 
     def iti(self):
 
@@ -419,8 +404,6 @@ class FrameExp(gui.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
-    def elements(self):
-
         # Instructions
         self.instructions.setText('Press ' + self.person.leftkey[0] + ' for the left option and ' +
                                   self.person.rightkey[0] + ' for the right option')
@@ -456,14 +439,10 @@ class FrameExp(gui.Experiment):
         mainhlayout.addStretch(1)
 
         # Put everything in vertical layout
-        self.instquitlayout.addWidget(self.instructions)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(mainhlayout)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitbutton)
-
-        # Set up layout
-        self.setLayout(self.instquitlayout)
 
     def iti(self):
 
