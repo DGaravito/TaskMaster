@@ -1,6 +1,6 @@
 import time
 
-from PyQt6.QtWidgets import QLabel, QHBoxLayout
+from PyQt6.QtWidgets import QHBoxLayout
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 
@@ -133,11 +133,11 @@ class PBTExp(gui.Experiment):
             self.inst += 1
 
             if self.inst == 6:
-                pixmap = QPixmap('../assets/PBT_DSC.BMP')
+                pixmap = QPixmap('assets/PBT_DSC.png')
                 self.middle.setPixmap(pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
 
             elif self.inst == 9:
-                pixmap = QPixmap('../assets/PBT_DCS.BMP')
+                pixmap = QPixmap('assets/PBT_DCS.png')
                 self.middle.setPixmap(pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
 
             else:

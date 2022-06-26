@@ -13,7 +13,7 @@ class PBTParticipant(participant.Participant):
         self.globallocal = random.choice(['Global', 'Local'])
 
         multnum = int(int(trials)/4)
-        picturenames = ['PBT_DCC.BMP', 'PBT_DCS.BMP', 'PBT_DSC.BMP', 'PBT_DSS.BMP']
+        picturenames = ['PBT_DCC.png', 'PBT_DCS.png', 'PBT_DSC.png', 'PBT_DSS.png']
         multiplier = [multnum, multnum, multnum, multnum]
         self.piclist = sum([[s] * n for s, n in zip(picturenames, multiplier)], [])
 
