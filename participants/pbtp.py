@@ -154,8 +154,9 @@ class PBTParticipant(participant.Participant):
 
                     case 4:
 
-                        inst = 'Ignore the small elements. Press \"M\" if the\nlarge figure is a SQUARE and \"C\" if' \
-                               ' the large figure\nis a CROSS.'
+                        inst = 'Ignore the small elements. Press \"' + self.rightkey[0] + \
+                               '\" if the\nlarge figure is a SQUARE and \"' + self.leftkey[0] + \
+                               '\" if the large figure\nis a CROSS.'
 
                     case 5:
 
@@ -163,7 +164,7 @@ class PBTParticipant(participant.Participant):
 
                     case 7:
 
-                        inst = 'There, the large figure was a SQUARE,\nso you would press \"M\".'
+                        inst = 'There, the large figure was a SQUARE,\nso you would press \"' + self.rightkey[0] + '\".'
 
                     case 8:
 
@@ -171,7 +172,7 @@ class PBTParticipant(participant.Participant):
 
                     case 10:
 
-                        inst = 'There, the large figure was a CROSS,\nso you would press \"C\".'
+                        inst = 'There, the large figure was a CROSS,\nso you would press \"' + self.leftkey[0] + '\".'
 
                     case _:
 
@@ -187,8 +188,9 @@ class PBTParticipant(participant.Participant):
 
                     case 4:
 
-                        inst = 'Ignore the small elements. Press \"M\" if the\nsmall figure is a SQUARE and \"C\" if' \
-                               ' the small figure\nis a CROSS.'
+                        inst = 'Ignore the small elements. Press \"' + self.rightkey[0] + \
+                               '\" if the\nsmall figure is a SQUARE and \"' + self.leftkey[0] + \
+                               '\" if the small figure\nis a CROSS.'
 
                     case 5:
 
@@ -196,7 +198,7 @@ class PBTParticipant(participant.Participant):
 
                     case 7:
 
-                        inst = 'There, the small figure was a CROSS,\nso you would press \"C\".'
+                        inst = 'There, the small figure was a CROSS,\nso you would press \"' + self.leftkey[0] + '\".'
 
                     case 8:
 
@@ -204,7 +206,7 @@ class PBTParticipant(participant.Participant):
 
                     case 10:
 
-                        inst = 'There, the small figure was a SQUARE,\nso you would press \"M\".'
+                        inst = 'There, the small figure was a SQUARE,\nso you would press \"' + self.rightkey[0] + '\".'
 
                     case _:
 

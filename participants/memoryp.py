@@ -342,8 +342,9 @@ class NbParticipant(participant.Participant):
 
             case 4:
 
-                inst = 'If a letter is a target,you will press \"M\"\nwhen it comes up. If it is a false alarm, you' \
-                       ' will press \"C\"\nwhen it comes up.'
+                inst = 'If a letter is a target,you will press \"' + self.rightkey[0] + \
+                       '\"\nwhen it comes up. If it is a false alarm, you will press \"' + self.leftkey[0] + \
+                       '\"\nwhen it comes up.'
 
             case 5:
 
@@ -391,23 +392,25 @@ class NbParticipant(participant.Participant):
 
                 if self.task == '1-back':
 
-                    inst = 'In this case, you would press \"C\" for the A,\nthen \"C\" for the first B, and then' \
-                           ' \"M\" for\nthe second B.'
+                    inst = 'In this case, you would press \"' + self.leftkey[0] + '\" for the A,\nthen \"' + \
+                           self.leftkey[0] + '\" for the first B, and then \"' + self.rightkey[0] + \
+                           '\" for\nthe second B.'
 
                 elif self.task == '2-back':
 
-                    inst = 'In this case, you would press \"C\" for the A,\nthen \"C\" for the first B, and then' \
-                           ' \"M\" for\nthe second A. If a B came next, it would also be\na target.'
+                    inst = 'In this case, you would press \"' + self.leftkey[0] + '\" for the A,\nthen \"' + \
+                           self.leftkey[0] + '\" for the first B, and then \"' + self.rightkey[0] + \
+                           '\" for\nthe second A. If a B came next, it would also be\na target.'
 
                 elif self.task == '3-back':
 
-                    inst = 'In this case, you would press \"C\" for the A,\nB and C, and then press \"M\" for the' \
-                           ' second A.'
+                    inst = 'In this case, you would press \"' + self.leftkey[0] + \
+                           '\" for the A,\nB and C, and then press \"' + self.rightkey[0] + '\" for the second A.'
 
                 else:
 
-                    inst = 'In this case, you would press \"C\" for the A,\nB, C, and D, and then press \"M\" for the' \
-                           ' second A.'
+                    inst = 'In this case, you would press \"' + self.leftkey[0] + \
+                           '\" for the A,\nB, C, and D, and then press \"' + self.rightkey[0] + '\" for the second A.'
 
             case 8:
 

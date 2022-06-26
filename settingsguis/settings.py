@@ -164,6 +164,10 @@ class Settings(QWidget):
         self.fmri = 'No'
         self.ftt = 'No'
         self.stt = 'No'
+        self.happy = 'No'
+        self.fear = 'No'
+        self.angry = 'No'
+        self.sad = 'No'
 
         # Default directory
         self.wd = 'No directory selected'
@@ -245,6 +249,23 @@ class Settings(QWidget):
         self.quitbutton.clicked.connect(QApplication.instance().quit)
         self.quitbutton.resize(self.quitbutton.sizeHint())
 
+        # Checkboxes for Emo Go/No-Go TODO Figure out a way to put these just in the task
+        # Happy checkbox
+        self.happytoggle = QCheckBox('Happy?')
+        self.happytoggle.stateChanged.connect(self.clickbox)
+
+        # Sad checkbox
+        self.sadtoggle = QCheckBox('Sad?')
+        self.sadtoggle.stateChanged.connect(self.clickbox)
+
+        # Anger checkbox
+        self.angertoggle = QCheckBox('Angry?')
+        self.angertoggle.stateChanged.connect(self.clickbox)
+
+        # Fear checkbox
+        self.feartoggle = QCheckBox('Fearful?')
+        self.feartoggle.stateChanged.connect(self.clickbox)
+
         # Show all elements
         self.show()
 
@@ -290,6 +311,26 @@ class Settings(QWidget):
             self.ftt = 'Yes'
         else:
             self.ftt = 'No'
+
+        if self.happytoggle.isChecked():
+            self.happy = 'Yes'
+        else:
+            self.happy = 'No'
+
+        if self.sadtoggle.isChecked():
+            self.sad = 'Yes'
+        else:
+            self.sad = 'No'
+
+        if self.angertoggle.isChecked():
+            self.angry = 'Yes'
+        else:
+            self.angry = 'No'
+
+        if self.feartoggle.isChecked():
+            self.fear = 'Yes'
+        else:
+            self.fear = 'No'
 
     def checksettings(self):
         """

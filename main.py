@@ -87,7 +87,7 @@ class SelectWindow(QWidget):
         self.ssbutton.clicked.connect(lambda: self.selection('SS'))
 
         # Emo Go-NoGo button
-        self.egngbutton = QPushButton('Emo Go/No-Go (WIP)')
+        self.egngbutton = QPushButton('Emo Go/No-Go')
         self.egngbutton.clicked.connect(lambda: self.selection('EGNG'))
 
         # Go-NoGo button
