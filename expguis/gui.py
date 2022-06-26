@@ -24,6 +24,7 @@ class Experiment(QWidget):
 
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        self.setStyleSheet('background-color: #C2CAD0;')
 
         # center window
         self.centerscreen()
