@@ -215,15 +215,15 @@ class NACTExp(gui.Experiment):
             if self.person.part == 1:
 
                 if self.inst == 4:
-                    pixmap = QPixmap('assets/NACT_Part1Ex1.bmp')
+                    pixmap = QPixmap('assets/NACT_Part1Ex1.png')
                     self.middle.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
 
                 elif self.inst == 5:
-                    pixmap = QPixmap('assets/NACT_Part1Ex2.bmp')
+                    pixmap = QPixmap('assets/NACT_Part1Ex2.png')
                     self.middle.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
 
                 elif self.inst == 12:
-                    pixmap = QPixmap('assets/NACT_FixEx.bmp')
+                    pixmap = QPixmap('assets/NACT_FixEx.png')
                     self.middle.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
 
                 else:
@@ -235,15 +235,15 @@ class NACTExp(gui.Experiment):
             else:
 
                 if self.inst == 5:
-                    pixmap = QPixmap('assets/NACT_Part2Ex1.bmp')
+                    pixmap = QPixmap('assets/NACT_Part2Ex1.png')
                     self.middle.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
 
                 elif self.inst == 6:
-                    pixmap = QPixmap('assets/NACT_Part2Ex2.bmp')
+                    pixmap = QPixmap('assets/NACT_Part2Ex2.png')
                     self.middle.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
 
                 elif self.inst == 8:
-                    pixmap = QPixmap('assets/NACT_FixEx.bmp')
+                    pixmap = QPixmap('assets/NACT_FixEx.png')
                     self.middle.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
 
                 else:

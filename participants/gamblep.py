@@ -125,15 +125,15 @@ class ARTTParticipant(participant.Participant):
 
             if bluered == 1:
 
-                picstring = 'ARTT_risk_' + str(100-round(self.design['p_var'] * 100)) + '.bmp'
+                picstring = 'ARTT_risk_' + str(100-round(self.design['p_var'] * 100)) + '.png'
 
             else:
 
-                picstring = 'ARTT_risk_' + str(round(self.design['p_var'] * 100)) + '.bmp'
+                picstring = 'ARTT_risk_' + str(round(self.design['p_var'] * 100)) + '.png'
 
         else:
 
-            picstring = 'ARTT_ambig_' + str(round(self.design['a_var'] * 100)) + '.bmp'
+            picstring = 'ARTT_ambig_' + str(round(self.design['a_var'] * 100)) + '.png'
 
         return [fixedstring, otherstring, picstring, bluered]
 

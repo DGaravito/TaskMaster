@@ -208,11 +208,11 @@ class ARTTExp(gui.Experiment):
             self.inst += 1
 
             if self.inst == 5:
-                pixmap = QPixmap('assets/ARTT_risk_25.bmp')
+                pixmap = QPixmap('assets/ARTT_risk_25.png')
                 self.middle.setPixmap(pixmap.scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
 
             elif self.inst == 11:
-                pixmap = QPixmap('assets/ARTT_ambig_50.bmp')
+                pixmap = QPixmap('assets/ARTT_ambig_50.png')
                 self.middle.setPixmap(pixmap.scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
 
             else:
