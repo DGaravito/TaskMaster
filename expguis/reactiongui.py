@@ -72,8 +72,6 @@ class SSExp(gui.Experiment):
 
             self.roundsdone += 1
 
-            self.middle.setPixmap(QPixmap())
-
             self.middle.setText(self.person.nextround(self.roundsdone))
 
             self.trialsdone = 0
@@ -168,6 +166,9 @@ class EGNGExp(gui.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
+        # Variable that determines what you see at the start
+        self.start = 0
+
         # Make middle layout for pictures and text
         middlelayout = QHBoxLayout()
 
@@ -176,18 +177,13 @@ class EGNGExp(gui.Experiment):
         middlelayout.addStretch(1)
 
         # Instructions
-        self.instructions.setText('Press ' + self.person.leftkey[0] + ' for left arrows. Press ' +
-                                  self.person.rightkey[0] + ' for right arrows.')
+        self.instructions.setText('Press ' + self.person.leftkey[0] + ' to respond to faces.')
 
         # Put everything in vertical layout
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(middlelayout)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitbutton)
-
-        # Make timer to indicate when a signal should be sent (in signal trials)
-        self.signaltimer = QTimer()
-        self.signaltimer.timeout.connect(self.sendsignal)
 
     def generatenext(self):
 
@@ -203,36 +199,24 @@ class EGNGExp(gui.Experiment):
 
             self.middle.setPixmap(pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
 
-            signalrand = random.randint(1, 2)
-
-            if signalrand == 1:
-
-                self.signal = 0
-
-            else:
-
-                self.signal = 1
-                self.signaltimer.start(self.person.get_timer())
-
             self.starttime = time.time()
 
-            self.timer.start(2500)
-            self.ititimer.start(3000)
+            self.timer.start(500)
+            self.ititimer.start(1500)
             self.responseenabled = 1
 
         else:
 
             self.ititimer.stop()
 
-            self.roundsdone += 1
+            prompt = self.person.nextround()
 
-            self.middle.setPixmap(QPixmap())
-
-            self.middle.setText(self.person.nextround(self.roundsdone))
+            self.middle.setText(prompt[0])
+            self.start = prompt[1]
 
             self.trialsdone = 0
 
-            if self.person.rounds == self.roundsdone:
+            if self.person.rounds == self.person.roundsdone:
 
                 self.person.output()
                 self.instructions.setText('Thank you!')
@@ -244,7 +228,6 @@ class EGNGExp(gui.Experiment):
     def timeout(self):
 
         self.timer.stop()
-        self.signaltimer.stop()
 
         self.responseenabled = 0
 
@@ -255,49 +238,25 @@ class EGNGExp(gui.Experiment):
 
         self.iti()
 
-    def sendsignal(self):
-
-        self.signaltimer.stop()
-
-        if self.picstring == 'SS_LeftArrow.jpg':
-            pathstring = 'assets/SS_LeftSignal.png'
-
-        else:
-            pathstring = 'assets/SS_RightSignal.png'
-
-        pixmap = QPixmap(pathstring)
-
-        self.middle.setPixmap(pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
-
     def keyaction(self, key):
 
         if (key in ['g', 'G']) & (self.betweenrounds == 1):
 
-            self.inst = 1
-            self.iti()
-            self.ititimer.start(500)
-            self.betweenrounds = 0
+            if self.start == 0:
+                self.middle.setText(self.person.nextround())
+                self.start += 1
 
-        if (key in self.person.rightkey) & (self.responseenabled == 1):
-
-            self.responseenabled = 0
-
-            self.timer.stop()
-            self.signaltimer.stop()
-            self.trialsdone += 1
-
-            endtime = time.time()
-            rt = endtime - self.starttime
-
-            self.person.updateoutput(self.trialsdone, self.picstring, self.starttime, rt, 2)
-            self.iti()
+            else:
+                self.inst = 1
+                self.iti()
+                self.ititimer.start(500)
+                self.betweenrounds = 0
 
         if (key in self.person.leftkey) & (self.responseenabled == 1):
 
             self.responseenabled = 0
 
             self.timer.stop()
-            self.signaltimer.stop()
             self.trialsdone += 1
 
             endtime = time.time()

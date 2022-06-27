@@ -218,6 +218,7 @@ class EGNGParticipant(participant.Participant):
         super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking)
 
         self.blocks = int(blocks)
+        self.blocksdone = 0
 
         self.structlist = []
 
@@ -252,20 +253,47 @@ class EGNGParticipant(participant.Participant):
 
         self.piclist = ['EGNG_Neutral_']
 
-        if block in ['Happy', 'Happy']:
+        if block == 'Happy':
             self.piclist.append('EGNG_Happy_')
+            neutralnum = int(self.get_trials()/4)
+            emonum = self.get_trials()-neutralnum
 
-        elif block in ['Sad', 'SadRev']:
+        if block == 'HappyRev':
+            self.piclist.append('EGNG_Happy_')
+            emonum = int(self.get_trials()/4)
+            neutralnum = self.get_trials()-emonum
+
+        elif block == 'Sad':
             self.piclist.append('EGNG_Sad_')
+            neutralnum = int(self.get_trials()/4)
+            emonum = self.get_trials()-neutralnum
 
-        elif block in ['Angry', 'AngryRev']:
+        elif block == 'SadRev':
+            self.piclist.append('EGNG_Sad_')
+            emonum = int(self.get_trials()/4)
+            neutralnum = self.get_trials()-emonum
+
+        elif block == 'Angry':
             self.piclist.append('EGNG_Angry_')
+            neutralnum = int(self.get_trials()/4)
+            emonum = self.get_trials()-neutralnum
+
+        elif block == 'AngryRev':
+            self.piclist.append('EGNG_Angry_')
+            emonum = int(self.get_trials()/4)
+            neutralnum = self.get_trials()-emonum
+
+        elif block == 'Fearful':
+            self.piclist.append('EGNG_Fearful_')
+            neutralnum = int(self.get_trials()/4)
+            emonum = self.get_trials()-neutralnum
 
         else:
             self.piclist.append('EGNG_Fearful_')
+            emonum = int(self.get_trials()/4)
+            neutralnum = self.get_trials()-emonum
 
-        multnum = int(self.get_trials()/2)
-        multiplier = [multnum, multnum]
+        multiplier = [neutralnum, emonum]
 
         self.piclist = sum([[s] * n for s, n in zip(self.piclist, multiplier)], [])
 
@@ -274,45 +302,49 @@ class EGNGParticipant(participant.Participant):
 
     def nextround(self):
 
-        self.blocktype = self.blocktypes.pop()
-        self.set_structure(self.blocktype)
+        num = 1
+        if len(self.blocktypes) > 0:
+            self.blocktype = self.blocktypes.pop()
+            self.set_structure(self.blocktype)
 
-        if self.blocktype in ['HappyRev', 'SadRev', 'AngryRev', 'FearfulRev']:
+            if self.blocktype in ['HappyRev', 'SadRev', 'AngryRev', 'FearfulRev']:
 
-            prompt = 'In this round, only respond to \"Neutral\" faces.\nPress \"G\" to start.'
+                prompt = 'In this round, only respond to \"Neutral\" faces.\nPress \"G\" to start.'
 
-        elif self.blocktype == 'Happy':
+            elif self.blocktype == 'Happy':
 
-            prompt = 'In this round, only respond to \"Happy\" faces.\nPress \"G\" to start.'
+                prompt = 'In this round, only respond to \"Happy\" faces.\nPress \"G\" to start.'
 
-        elif self.blocktype == 'Sad':
+            elif self.blocktype == 'Sad':
 
-            prompt = 'In this round, only respond to \"Sad\" faces.\nPress \"G\" to start.'
+                prompt = 'In this round, only respond to \"Sad\" faces.\nPress \"G\" to start.'
 
-        elif self.blocktype == 'Angry':
+            elif self.blocktype == 'Angry':
 
-            prompt = 'In this round, only respond to \"Angry\" faces.\nPress \"G\" to start.'
+                prompt = 'In this round, only respond to \"Angry\" faces.\nPress \"G\" to start.'
 
-        else:
+            else:
 
-            prompt = 'In this round, only respond to \"Fearful\" faces.\nPress \"G\" to start.'
-
-        return prompt
-
-    def nextset(self, blocks):
-
-        if blocks == self.blocks:
-
-            prompt = 'Thank you! This task is complete.'
+                prompt = 'In this round, only respond to \"Fearful\" faces.\nPress \"G\" to start.'
 
         else:
 
-            self.blocktypes = list(self.structlist)
-            random.shuffle(self.blocktypes)
+            self.blocksdone += 1
+            if self.blocksdone == self.blocks:
 
-            prompt = 'You will now repeat the task you just completed.'
+                prompt = 'Thank you! This task is complete.'
 
-        return prompt
+            else:
+
+                self.blocktypes = list(self.structlist)
+                random.shuffle(self.blocktypes)
+
+                prompt = 'You will now repeat the task you just completed.\nPress \"G\".'
+                num = 0
+
+        promptlist = [prompt, num]
+
+        return promptlist
 
     def get_trial_pic(self):
 
