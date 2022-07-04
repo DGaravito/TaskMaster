@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QSpinBox, QLineEdit, QVBoxLayout, QDialog, \
-    QCheckBox, QFileDialog, QFormLayout
+    QCheckBox, QFormLayout
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 
@@ -24,7 +24,11 @@ class WDErrorBox(QDialog):
         self.mainerror = QLabel('It looks like you entered an invalid directory!')
         self.mainerror.setStyleSheet('padding :5px')
 
-        self.instruction = QLabel('Use the settings window to select a directory to save your output to.')
+        text = 'If you\'re on Windows, make sure to include your drive name (i.e., C:).\n' \
+               'Mac example: ~/Users/DGaravito/Desktop\n' \
+               'Windows example: C:/users/dgara/Desktop'
+
+        self.instruction = QLabel(text)
         self.instruction.setStyleSheet('padding :5px')
 
         # Add stuff to overarching layout
@@ -123,6 +127,11 @@ class MathErrorBox(QDialog):
                                  '\n(# of low value trials X $0.15) + (# of low value trials X $0.03) <= ' \
                                  'starting money - minimum money that a participant can leave with.'
 
+            case 8:
+
+                followupstring = 'To easily balance the number of neutral vs. emotional faces, please make sure your' \
+                                 ' number of trials is divisible by 4.'
+
             case _:
 
                 followupstring = 'I don\'t know what you put, but the math doesn\'t work out'
@@ -170,7 +179,7 @@ class Settings(QWidget):
         self.sad = 'No'
 
         # Default directory
-        self.wd = 'No directory selected'
+        self.wd = QLineEdit('C:/users/dgara/Desktop')
 
         # Make overarching layout
         self.over_layout = QVBoxLayout()
@@ -234,11 +243,6 @@ class Settings(QWidget):
         # checkbox for getting a random outcome
         self.outcometoggle = QCheckBox()
         self.outcometoggle.stateChanged.connect(self.clickbox)
-
-        # WD input
-        self.wdset = QPushButton('Select Directory')
-        self.wdset.clicked.connect(self.fileselect)
-        self.wdlabel = QLabel(self.wd)
 
         # Submit button
         self.submit = QPushButton('Submit')
@@ -340,9 +344,9 @@ class Settings(QWidget):
         file, then it calls the function that submits the settings.
         """
 
-        if path.isdir(self.wd):
+        if path.isdir(self.wd.text()):
 
-            if path.isfile(self.wd + '/' + self.idform.text() + '_' + self.task + '_' + self.sessionin.text() +
+            if path.isfile(self.wd.text() + '/' + self.idform.text() + '_' + self.task + '_' + self.sessionin.text() +
                            '.xlsx'):
                 self.fileerrordialog()
 
@@ -390,16 +394,3 @@ class Settings(QWidget):
         """
 
         print('If you see this, panic')
-
-    def fileselect(self):
-        """
-        This function creates a dialog window to select a directory that will be the output directory and then sets
-        the class variable (and associated QLabel) for the working directory to the directory you chose
-        """
-        foldergui = QFileDialog(None, caption='Select Directory')
-        foldergui.setOption(QFileDialog.Option.DontUseNativeDialog, False)
-        foldergui.setOption(QFileDialog.Option.ShowDirsOnly, True)
-        folder = foldergui.getExistingDirectory()
-
-        self.wd = str(folder)
-        self.wdlabel.setText(self.wd)

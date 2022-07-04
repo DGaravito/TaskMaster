@@ -191,7 +191,9 @@ class EGNGExp(gui.Experiment):
 
             self.ititimer.stop()
 
-            self.picstring = self.person.get_trial_pic()
+            randopic = str(random.randint(1, 12))
+
+            self.picstring = self.person.get_trial_pic() + randopic + '.BMP'
 
             pathstring = 'assets/' + self.picstring
 
@@ -216,7 +218,7 @@ class EGNGExp(gui.Experiment):
 
             self.trialsdone = 0
 
-            if self.person.rounds == self.person.roundsdone:
+            if self.person.blocks == self.person.blocksdone:
 
                 self.person.output()
                 self.instructions.setText('Thank you!')
@@ -230,6 +232,7 @@ class EGNGExp(gui.Experiment):
         self.timer.stop()
 
         self.responseenabled = 0
+        self.trialsdone += 1
 
         endtime = time.time()
         rt = endtime - self.starttime
@@ -243,7 +246,8 @@ class EGNGExp(gui.Experiment):
         if (key in ['g', 'G']) & (self.betweenrounds == 1):
 
             if self.start == 0:
-                self.middle.setText(self.person.nextround())
+                text = self.person.nextround()
+                self.middle.setText(text[0])
                 self.start += 1
 
             else:

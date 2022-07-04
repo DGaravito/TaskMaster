@@ -253,45 +253,47 @@ class EGNGParticipant(participant.Participant):
 
         self.piclist = ['EGNG_Neutral_']
 
-        if block == 'Happy':
-            self.piclist.append('EGNG_Happy_')
-            neutralnum = int(self.get_trials()/4)
-            emonum = self.get_trials()-neutralnum
+        match block:
 
-        if block == 'HappyRev':
-            self.piclist.append('EGNG_Happy_')
-            emonum = int(self.get_trials()/4)
-            neutralnum = self.get_trials()-emonum
+            case 'Happy':
+                self.piclist.append('EGNG_Happy_')
+                neutralnum = int(self.get_trials()/4)
+                emonum = self.get_trials()-neutralnum
 
-        elif block == 'Sad':
-            self.piclist.append('EGNG_Sad_')
-            neutralnum = int(self.get_trials()/4)
-            emonum = self.get_trials()-neutralnum
+            case 'HappyRev':
+                self.piclist.append('EGNG_Happy_')
+                emonum = int(self.get_trials()/4)
+                neutralnum = self.get_trials()-emonum
 
-        elif block == 'SadRev':
-            self.piclist.append('EGNG_Sad_')
-            emonum = int(self.get_trials()/4)
-            neutralnum = self.get_trials()-emonum
+            case 'Sad':
+                self.piclist.append('EGNG_Sad_')
+                neutralnum = int(self.get_trials()/4)
+                emonum = self.get_trials()-neutralnum
 
-        elif block == 'Angry':
-            self.piclist.append('EGNG_Angry_')
-            neutralnum = int(self.get_trials()/4)
-            emonum = self.get_trials()-neutralnum
+            case 'SadRev':
+                self.piclist.append('EGNG_Sad_')
+                emonum = int(self.get_trials()/4)
+                neutralnum = self.get_trials()-emonum
 
-        elif block == 'AngryRev':
-            self.piclist.append('EGNG_Angry_')
-            emonum = int(self.get_trials()/4)
-            neutralnum = self.get_trials()-emonum
+            case 'Angry':
+                self.piclist.append('EGNG_Angry_')
+                neutralnum = int(self.get_trials()/4)
+                emonum = self.get_trials()-neutralnum
 
-        elif block == 'Fearful':
-            self.piclist.append('EGNG_Fearful_')
-            neutralnum = int(self.get_trials()/4)
-            emonum = self.get_trials()-neutralnum
+            case 'AngryRev':
+                self.piclist.append('EGNG_Angry_')
+                emonum = int(self.get_trials()/4)
+                neutralnum = self.get_trials()-emonum
 
-        else:
-            self.piclist.append('EGNG_Fearful_')
-            emonum = int(self.get_trials()/4)
-            neutralnum = self.get_trials()-emonum
+            case 'Fearful':
+                self.piclist.append('EGNG_Fearful_')
+                neutralnum = int(self.get_trials()/4)
+                emonum = self.get_trials()-neutralnum
+
+            case _:
+                self.piclist.append('EGNG_Fearful_')
+                emonum = int(self.get_trials()/4)
+                neutralnum = self.get_trials()-emonum
 
         multiplier = [neutralnum, emonum]
 
