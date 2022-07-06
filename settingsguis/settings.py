@@ -123,9 +123,9 @@ class MathErrorBox(QDialog):
             case 7:
 
                 followupstring = 'It seems that the number of high value and low trials you entered means that ' \
-                                 'the participant could end up with less money than the minimum allowed.' \
+                                 'the participants could end up with less money than the minimum allowed.' \
                                  '\n(# of low value trials X $0.15) + (# of low value trials X $0.03) <= ' \
-                                 'starting money - minimum money that a participant can leave with.'
+                                 'starting money - minimum money that a participants can leave with.'
 
             case 8:
 

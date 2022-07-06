@@ -92,7 +92,7 @@ class SelectWindow(QWidget):
 
         # Go-NoGo button
         self.gngbutton = QPushButton('Go/No-Go (WIP)')
-        self.gngbutton.clicked.connect(lambda: self.selection('GNG'))
+        # self.gngbutton.clicked.connect(lambda: self.selection('GNG'))
 
         # Paired Recall button
         self.prbutton = QPushButton('Paired Recall')
@@ -225,8 +225,8 @@ class SelectWindow(QWidget):
             case str('EGNG'):
                 self.w = settingsguis.reaction.EGNGSettings('EGNG')
 
-            case str('GNG'):
-                self.w = settingsguis.reaction.GNGSettings('GNG')
+            # case str('GNG'):
+            #     self.w = settingsguis.reaction.GNGSettings('GNG')
 
             case _:
                 self.w = QLabel('Panic')

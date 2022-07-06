@@ -2,8 +2,8 @@ from PyQt6.QtWidgets import QLabel
 
 from settingsguis import settings
 
-from participants import beadsp
-from expguis import beadsgui
+import participants
+import expguis
 
 
 class BeadsSettings(settings.Settings):
@@ -23,13 +23,13 @@ class BeadsSettings(settings.Settings):
 
     def submitsettings(self):
 
-        person = beadsp.BeadsParticipant(self.idform.text(),
+        person = participants.beadsp.BeadsParticipant(self.idform.text(),
                                          self.trialsin.text(),
                                          self.sessionin.text(),
-                                         self.wd,
+                                         self.wd.text(),
                                          'Beads Task',
                                          self.eyetracking)
 
-        self.exp = beadsgui.BeadsExp(person)
+        self.exp = expguis.beadsgui.BeadsExp(person)
         self.exp.show()
         self.hide()

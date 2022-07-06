@@ -2,8 +2,8 @@ from PyQt6.QtWidgets import QLabel, QSpinBox, QComboBox
 
 from settingsguis import settings
 
-from participants import memoryp
-from expguis import memorygui
+import participants
+import expguis
 
 
 class PrSettings(settings.Settings):
@@ -31,16 +31,16 @@ class PrSettings(settings.Settings):
 
     def submitsettings(self):
 
-        person = memoryp.PrParticipant(self.idform.text(),
-                                       self.pairsin.text(),
-                                       self.sessionin.text(),
-                                       self.wd,
-                                       'Pair Recall Memory',
-                                       self.trialsin.text(),
-                                       self.stt,
-                                       self.eyetracking)
+        person = participants.memoryp.PrParticipant(self.idform.text(),
+                                                    self.pairsin.text(),
+                                                    self.sessionin.text(),
+                                                    self.wd.text(),
+                                                    'Pair Recall Memory',
+                                                    self.trialsin.text(),
+                                                    self.stt,
+                                                    self.eyetracking)
 
-        self.exp = memorygui.PrExp(person)
+        self.exp = expguis.memorygui.PrExp(person)
         self.exp.show()
         self.hide()
 
@@ -75,15 +75,15 @@ class NBackSettings(settings.Settings):
 
     def submitsettings(self):
 
-        person = memoryp.NbParticipant(self.idform.text(),
-                                       self.trialsin.text(),
-                                       self.sessionin.text(),
-                                       self.wd,
-                                       self.design.currentText(),
-                                       self.blocksin.text(),
-                                       self.buttonboxstate,
-                                       self.eyetracking)
+        person = participants.memoryp.NbParticipant(self.idform.text(),
+                                                    self.trialsin.text(),
+                                                    self.sessionin.text(),
+                                                    self.wd.text(),
+                                                    self.design.currentText(),
+                                                    self.blocksin.text(),
+                                                    self.buttonboxstate,
+                                                    self.eyetracking)
 
-        self.exp = memorygui.NbExp(person)
+        self.exp = expguis.memorygui.NbExp(person)
         self.exp.show()
         self.hide()

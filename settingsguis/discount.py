@@ -3,8 +3,9 @@ from PyQt6.QtWidgets import QLabel, QSpinBox, QComboBox, QCheckBox
 from adopy.tasks.dd import TaskDD
 
 from settingsguis import settings
-from participants import discountp
-from expguis import discountgui
+
+import participants
+import expguis
 
 
 class DdSettings(settings.Settings):
@@ -57,22 +58,22 @@ class DdSettings(settings.Settings):
         self.setLayout(self.over_layout)
 
     def submitsettings(self):
-        person = discountp.DdParticipant(self.idform.text(),
-                                         self.trialsin.text(),
-                                         self.sessionin.text(),
-                                         self.wd,
-                                         TaskDD(),
-                                         self.imdin.text(),
-                                         self.sdin.text(),
-                                         self.ldin.text(),
-                                         self.srewin.text(),
-                                         self.lrewin.text(),
-                                         self.blocksin.text(),
-                                         self.buttonboxstate,
-                                         self.eyetracking,
-                                         self.fmri)
+        person = participants.discountp.DdParticipant(self.idform.text(),
+                                                      self.trialsin.text(),
+                                                      self.sessionin.text(),
+                                                      self.wd.text(),
+                                                      TaskDD(),
+                                                      self.imdin.text(),
+                                                      self.sdin.text(),
+                                                      self.ldin.text(),
+                                                      self.srewin.text(),
+                                                      self.lrewin.text(),
+                                                      self.blocksin.text(),
+                                                      self.buttonboxstate,
+                                                      self.eyetracking,
+                                                      self.fmri)
 
-        self.exp = discountgui.DDiscountExp(person)
+        self.exp = expguis.discountgui.DDiscountExp(person)
         self.exp.show()
         self.hide()
 
@@ -129,22 +130,22 @@ class PdSettings(settings.Settings):
                         ) == 0
                 ) & (self.design.currentText() in ['Gains and Losses'])
         ) | (self.design.currentText() in ['Gains only', 'Losses only']):
-            person = discountp.PdParticipant(self.idform.text(),
-                                             self.trialsin.text(),
-                                             self.sessionin.text(),
-                                             self.wd,
-                                             'Probability Discounting',
-                                             self.design.currentText(),
-                                             self.rewmin.text(),
-                                             self.rewmax.text(),
-                                             self.outcome,
-                                             self.smoneyin.text(),
-                                             self.blocksin.text(),
-                                             self.buttonboxstate,
-                                             self.eyetracking,
-                                             self.fmri)
+            person = participants.discountp.PdParticipant(self.idform.text(),
+                                                          self.trialsin.text(),
+                                                          self.sessionin.text(),
+                                                          self.wd.text(),
+                                                          'Probability Discounting',
+                                                          self.design.currentText(),
+                                                          self.rewmin.text(),
+                                                          self.rewmax.text(),
+                                                          self.outcome,
+                                                          self.smoneyin.text(),
+                                                          self.blocksin.text(),
+                                                          self.buttonboxstate,
+                                                          self.eyetracking,
+                                                          self.fmri)
 
-            self.exp = discountgui.PDiscountExp(person)
+            self.exp = expguis.discountgui.PDiscountExp(person)
             self.exp.show()
             self.hide()
 
@@ -194,21 +195,21 @@ class CEDTSettings(settings.Settings):
                 ((int(self.trialsin.text()) % 3 == 0) & (self.version.currentText() == 'Original'))
         ):
 
-            person = discountp.CEDParticipant(self.idform.text(),
-                                              self.trialsin.text(),
-                                              self.sessionin.text(),
-                                              self.wd,
-                                              'CogED Task',
-                                              self.maxrewin.text(),
-                                              self.outcome,
-                                              self.names.currentText(),
-                                              self.version.currentText(),
-                                              self.blocksin.text(),
-                                              self.buttonboxstate,
-                                              self.eyetracking,
-                                              self.fmri)
+            person = participants.discountp.CEDParticipant(self.idform.text(),
+                                                           self.trialsin.text(),
+                                                           self.sessionin.text(),
+                                                           self.wd.text(),
+                                                           'CogED Task',
+                                                           self.maxrewin.text(),
+                                                           self.outcome,
+                                                           self.names.currentText(),
+                                                           self.version.currentText(),
+                                                           self.blocksin.text(),
+                                                           self.buttonboxstate,
+                                                           self.eyetracking,
+                                                           self.fmri)
 
-            self.exp = discountgui.CEDiscountExp(person)
+            self.exp = expguis.discountgui.CEDiscountExp(person)
             self.exp.show()
             self.hide()
 

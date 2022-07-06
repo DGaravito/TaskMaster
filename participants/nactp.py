@@ -90,7 +90,7 @@ class NACTParticipant(participant.Participant):
 
         if self.part == 1:
             # In part one, we need everything to be circles, and the high or low value color will always be the
-            # stimuli that the participant focuses on
+            # stimuli that the participants focuses on
 
             # for those remaining distractor colors, turn them each into strings for a picture
             for color in colors:
@@ -175,7 +175,7 @@ class NACTParticipant(participant.Participant):
          in the iti
         """
 
-        # find out whether the participant was correct
+        # find out whether the participants was correct
         if self.signalnumber == 1:
 
             stimstring = 'Vertical'
@@ -220,7 +220,7 @@ class NACTParticipant(participant.Participant):
             # subtract how much yuou lost from the starting money
             self.startmoney -= feedback
 
-            # create a string to inform the participant
+            # create a string to inform the participants
             feedbackstring = 'You lost $' + str('{:.2f}'.format(feedback)) + '. You have $' + \
                              str('{:.2f}'.format(self.startmoney)) + ' left.'
 

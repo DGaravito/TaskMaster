@@ -3,8 +3,9 @@ from PyQt6.QtWidgets import QLabel, QSpinBox, QComboBox
 from adopy.tasks.cra import TaskCRA
 
 from settingsguis import settings
-from participants import gamblep
-from expguis import gamblegui
+
+import participants
+import expguis
 
 
 class ARTTSettings(settings.Settings):
@@ -61,8 +62,8 @@ class ARTTSettings(settings.Settings):
         """
         Checks to make sure the math works out for the submitted settings. If Gains and Losses is selected, then the
         number of trials should be divisible by 2. If only gains or losses is selected, then you can just be good to go.
-        If the math fails, through the respective math error. If the user is good to go, make an ARTT participant with
-        the user's settings and then replace the settings window with an ARTT window using the ARTT participant.
+        If the math fails, through the respective math error. If the user is good to go, make an ARTT participants with
+        the user's settings and then replace the settings window with an ARTT window using the ARTT participants.
         """
 
         # riskstring = self.probriskin.text()
@@ -80,24 +81,24 @@ class ARTTSettings(settings.Settings):
                         ) == 0
                 ) & (self.design.currentText() == 'Gains and Losses')
         ) | (self.design.currentText() in ['Gains only', 'Losses only']):
-            person = gamblep.ARTTParticipant(self.idform.text(),
-                                             self.trialsin.text(),
-                                             self.sessionin.text(),
-                                             self.wd,
-                                             TaskCRA(),
-                                             self.probabilities,
-                                             self.proportions,
-                                             self.srewin.text(),
-                                             self.lrewin.text(),
-                                             self.design.currentText(),
-                                             self.outcome,
-                                             self.smoneyin.text(),
-                                             self.blocksin.text(),
-                                             self.buttonboxstate,
-                                             self.eyetracking,
-                                             self.fmri)
+            person = participants.gamblep.ARTTParticipant(self.idform.text(),
+                                                          self.trialsin.text(),
+                                                          self.sessionin.text(),
+                                                          self.wd.text(),
+                                                          TaskCRA(),
+                                                          self.probabilities,
+                                                          self.proportions,
+                                                          self.srewin.text(),
+                                                          self.lrewin.text(),
+                                                          self.design.currentText(),
+                                                          self.outcome,
+                                                          self.smoneyin.text(),
+                                                          self.blocksin.text(),
+                                                          self.buttonboxstate,
+                                                          self.eyetracking,
+                                                          self.fmri)
 
-            self.exp = gamblegui.ARTTExp(person)
+            self.exp = expguis.gamblegui.ARTTExp(person)
             self.exp.show()
             self.hide()
 
@@ -140,21 +141,21 @@ class RASettings(settings.Settings):
 
     def submitsettings(self):
 
-        person = gamblep.RAParticipant(self.idform.text(),
-                                       self.trialsin.text(),
-                                       self.sessionin.text(),
-                                       self.wd,
-                                       'Risk Aversion',
-                                       self.minin.text(),
-                                       self.maxin.text(),
-                                       self.outcome,
-                                       self.smoneyin.text(),
-                                       self.blocksin.text(),
-                                       self.buttonboxstate,
-                                       self.eyetracking,
-                                       self.fmri)
+        person = participants.gamblep.RAParticipant(self.idform.text(),
+                                                    self.trialsin.text(),
+                                                    self.sessionin.text(),
+                                                    self.wd.text(),
+                                                    'Risk Aversion',
+                                                    self.minin.text(),
+                                                    self.maxin.text(),
+                                                    self.outcome,
+                                                    self.smoneyin.text(),
+                                                    self.blocksin.text(),
+                                                    self.buttonboxstate,
+                                                    self.eyetracking,
+                                                    self.fmri)
 
-        self.exp = gamblegui.RAExp(person)
+        self.exp = expguis.gamblegui.RAExp(person)
         self.exp.show()
         self.hide()
 
@@ -218,22 +219,22 @@ class FrameSettings(settings.Settings):
 
         else:
 
-            person = gamblep.FrameParticipant(self.idform.text(),
-                                              self.trialsin.text(),
-                                              self.sessionin.text(),
-                                              self.wd,
-                                              'Framing Task',
-                                              self.minin.text(),
-                                              self.maxin.text(),
-                                              self.design.currentText(),
-                                              self.ftt,
-                                              self.outcome,
-                                              self.smoneyin.text(),
-                                              self.blocksin.text(),
-                                              self.buttonboxstate,
-                                              self.eyetracking,
-                                              self.fmri)
+            person = participants.gamblep.FrameParticipant(self.idform.text(),
+                                                           self.trialsin.text(),
+                                                           self.sessionin.text(),
+                                                           self.wd.text(),
+                                                           'Framing Task',
+                                                           self.minin.text(),
+                                                           self.maxin.text(),
+                                                           self.design.currentText(),
+                                                           self.ftt,
+                                                           self.outcome,
+                                                           self.smoneyin.text(),
+                                                           self.blocksin.text(),
+                                                           self.buttonboxstate,
+                                                           self.eyetracking,
+                                                           self.fmri)
 
-            self.exp = gamblegui.FrameExp(person)
+            self.exp = expguis.gamblegui.FrameExp(person)
             self.exp.show()
             self.hide()

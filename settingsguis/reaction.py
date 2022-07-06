@@ -2,8 +2,8 @@ from PyQt6.QtWidgets import QLabel, QSpinBox, QGridLayout, QDialog, QVBoxLayout
 
 from settingsguis import settings
 
-from participants import reactionp
-from expguis import reactiongui
+import participants
+import expguis
 
 
 class SSSettings(settings.Settings):
@@ -32,17 +32,17 @@ class SSSettings(settings.Settings):
 
     def submitsettings(self):
 
-        person = reactionp.SSParticipant(self.idform.text(),
-                                         self.trialsin.text(),
-                                         self.sessionin.text(),
-                                         self.wd,
-                                         'Stop-Signal Task',
-                                         self.maxrtin.text(),
-                                         self.blocksin.text(),
-                                         self.buttonboxstate,
-                                         self.eyetracking)
+        person = participants.reactionp.SSParticipant(self.idform.text(),
+                                                      self.trialsin.text(),
+                                                      self.sessionin.text(),
+                                                      self.wd.text(),
+                                                      'Stop-Signal Task',
+                                                      self.maxrtin.text(),
+                                                      self.blocksin.text(),
+                                                      self.buttonboxstate,
+                                                      self.eyetracking)
 
-        self.exp = reactiongui.SSExp(person)
+        self.exp = expguis.reactiongui.SSExp(person)
         self.exp.show()
         self.hide()
 
@@ -109,20 +109,20 @@ class EGNGSettings(settings.Settings):
                 self.feartoggle.isChecked():
 
             if (int(self.trialsin.text()) % 4) == 0:
-                person = reactionp.EGNGParticipant(self.idform.text(),
-                                                   self.trialsin.text(),
-                                                   self.sessionin.text(),
-                                                   self.wd,
-                                                   'Emo Go/No-Go',
-                                                   self.blocksin.text(),
-                                                   self.happy,
-                                                   self.sad,
-                                                   self.angry,
-                                                   self.fear,
-                                                   self.buttonboxstate,
-                                                   self.eyetracking)
+                person = participants.reactionp.EGNGParticipant(self.idform.text(),
+                                                                self.trialsin.text(),
+                                                                self.sessionin.text(),
+                                                                self.wd.text(),
+                                                                'Emo Go/No-Go',
+                                                                self.blocksin.text(),
+                                                                self.happy,
+                                                                self.sad,
+                                                                self.angry,
+                                                                self.fear,
+                                                                self.buttonboxstate,
+                                                                self.eyetracking)
 
-                self.exp = reactiongui.EGNGExp(person)
+                self.exp = expguis.reactiongui.EGNGExp(person)
                 self.exp.show()
                 self.hide()
 
@@ -141,42 +141,42 @@ class EGNGSettings(settings.Settings):
 
         error.exec()
 
-
-class GNGSettings(settings.Settings):
-
-    def __init__(self, task):
-        super().__init__(task)
-
-        # Reaction time input
-        self.maxrtin = QSpinBox()
-        self.maxrtin.setMaximum(2000)
-        self.maxrtin.setValue(1500)
-
-        # Make form layout for all the settingsguis
-        self.layout.addRow(QLabel('Number of trials:'), self.trialsin)
-        self.layout.addRow(QLabel('Maximal reaction time (in milliseconds)?'), self.maxrtin)
-        self.layout.addRow(QLabel('Number of blocks?'), self.blocksin)
-        self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
-        self.layout.addRow(self.quitbutton, self.submit)
-
-        # Add form layout to overarching layout
-        self.over_layout.addLayout(self.layout)
-
-        self.setLayout(self.over_layout)
-
-    def submitsettings(self):
-
-        person = reactionp.GNGParticipant(self.idform.text(),
-                                          self.trialsin.text(),
-                                          self.sessionin.text(),
-                                          self.wd,
-                                          'Go/No-Go',
-                                          self.maxrtin.text(),
-                                          self.blocksin.text(),
-                                          self.buttonboxstate,
-                                          self.eyetracking,
-                                          self.fmri)
-
-        self.exp = reactiongui.GNGExp(person)
-        self.exp.show()
-        self.hide()
+#
+# class GNGSettings(settings.Settings):
+#
+#     def __init__(self, task):
+#         super().__init__(task)
+#
+#         # Reaction time input
+#         self.maxrtin = QSpinBox()
+#         self.maxrtin.setMaximum(2000)
+#         self.maxrtin.setValue(1500)
+#
+#         # Make form layout for all the settingsguis
+#         self.layout.addRow(QLabel('Number of trials:'), self.trialsin)
+#         self.layout.addRow(QLabel('Maximal reaction time (in milliseconds)?'), self.maxrtin)
+#         self.layout.addRow(QLabel('Number of blocks?'), self.blocksin)
+#         self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
+#         self.layout.addRow(self.quitbutton, self.submit)
+#
+#         # Add form layout to overarching layout
+#         self.over_layout.addLayout(self.layout)
+#
+#         self.setLayout(self.over_layout)
+#
+#     def submitsettings(self):
+#
+#         person = participants.reactionp.GNGParticipant(self.idform.text(),
+#                                                        self.trialsin.text(),
+#                                                        self.sessionin.text(),
+#                                                        self.wd.text(),
+#                                                        'Go/No-Go',
+#                                                        self.maxrtin.text(),
+#                                                        self.blocksin.text(),
+#                                                        self.buttonboxstate,
+#                                                        self.eyetracking,
+#                                                        self.fmri)
+#
+#         self.exp = expguis.reactiongui.GNGExp(person)
+#         self.exp.show()
+#         self.hide()

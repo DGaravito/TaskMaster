@@ -2,8 +2,8 @@ from PyQt6.QtWidgets import QLabel
 
 from settingsguis import settings
 
-from participants import pbtp
-from expguis import pbtgui
+import participants
+import expguis
 
 
 class PBTSettings(settings.Settings):
@@ -28,16 +28,16 @@ class PBTSettings(settings.Settings):
 
         if (int(self.trialsin.text()) % 4) == 0:
 
-            person = pbtp.PBTParticipant(self.idform.text(),
-                                         self.trialsin.text(),
-                                         self.sessionin.text(),
-                                         self.wd,
-                                         'Perceptual Bias Task',
-                                         self.blocksin.text(),
-                                         self.buttonboxstate,
-                                         self.eyetracking)
+            person = participants.pbtp.PBTParticipant(self.idform.text(),
+                                                      self.trialsin.text(),
+                                                      self.sessionin.text(),
+                                                      self.wd.text(),
+                                                      'Perceptual Bias Task',
+                                                      self.blocksin.text(),
+                                                      self.buttonboxstate,
+                                                      self.eyetracking)
 
-            self.exp = pbtgui.PBTExp(person)
+            self.exp = expguis.pbtgui.PBTExp(person)
             self.exp.show()
             self.hide()
 

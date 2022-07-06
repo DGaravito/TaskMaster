@@ -1,11 +1,7 @@
 from adopy.tasks.dd import *
 from adopy.tasks.cra import *
-from adopy import Engine
 
 import pandas as pd
-import numpy as np
-import random
-import string
 
 import os
 import xlsxwriter
@@ -150,11 +146,15 @@ class Participant(object):
                 case _:
                     taskstr = ''
 
+            print(self.outdir)
+
             # change to the output directory
             os.chdir(self.outdir)
 
             # Make the string to name the output file
             outputname = self.expid + '_' + taskstr + '_' + self.session + '.xlsx'
+
+            print(outputname)
 
             # Name an excel file and open it
             writer = pd.ExcelWriter(outputname, engine='xlsxwriter')

@@ -2,8 +2,8 @@ from PyQt6.QtWidgets import QLabel, QSpinBox
 
 from settingsguis import settings
 
-from participants import nactp
-from expguis import nactgui
+import participants
+import expguis
 
 
 class NACTSettings(settings.Settings):
@@ -30,7 +30,7 @@ class NACTSettings(settings.Settings):
         self.layout.addRow(QLabel('Number of high value ($0.15) trials:'), self.hightrialsin)
         self.layout.addRow(QLabel('Number of low value ($0.03) trials:'), self.lowtrialsin)
         self.layout.addRow(QLabel('Participant starting money:'), self.smoneyin)
-        self.layout.addRow(QLabel('Minimum money a participant could have at the end:'), self.minmoneyin)
+        self.layout.addRow(QLabel('Minimum money a participants could have at the end:'), self.minmoneyin)
         self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
@@ -48,17 +48,17 @@ class NACTSettings(settings.Settings):
 
         if ((.15*hightrials) + (.03 * lowtrials)) <= (float(self.smoneyin.text()) - float(self.minmoneyin.text())):
 
-            person = nactp.NACTParticipant(self.idform.text(),
-                                           self.sessionin.text(),
-                                           self.wd,
-                                           'Negative Attention Capture Task',
-                                           hightrials,
-                                           lowtrials,
-                                           self.smoneyin.text(),
-                                           self.buttonboxstate,
-                                           self.eyetracking)
+            person = participants.nactp.NACTParticipant(self.idform.text(),
+                                                        self.sessionin.text(),
+                                                        self.wd.text(),
+                                                        'Negative Attention Capture Task',
+                                                        hightrials,
+                                                        lowtrials,
+                                                        self.smoneyin.text(),
+                                                        self.buttonboxstate,
+                                                        self.eyetracking)
 
-            self.exp = nactgui.NACTExp(person)
+            self.exp = expguis.nactgui.NACTExp(person)
             self.exp.show()
             self.hide()
 

@@ -124,14 +124,14 @@ class Experiment(QWidget):
 
     def timeout(self):
         """
-        This is a default function that activates if a participant takes too long to respond. What happens because of
+        This is a default function that activates if a participants takes too long to respond. What happens because of
         that is, obviously, task specific, so it's blank for a reason
         """
 
     def responsereset(self):
         """
         This is a default function that activates if the task is run without the fmri mode on. It resets the trial
-        after a participant takes too long to respond. Again, this is very task specific, so it's blank for a reason
+        after a participants takes too long to respond. Again, this is very task specific, so it's blank for a reason
         """
 
     def keyaction(self, key):
