@@ -1,8 +1,11 @@
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QApplication, QLabel
-from PyQt6.QtCore import Qt, QDir, QTimer
-from PyQt6.QtGui import QFont
+from PyQt6.QtWidgets import *
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
 
 from pathlib import Path
+
+import time
+import random
 
 
 class Experiment(QWidget):
@@ -24,7 +27,7 @@ class Experiment(QWidget):
 
         # Window title
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-        self.setStyleSheet('background-color: #C2CAD0;')
+        self.setStyleSheet('background-color: #C2CAD0; color: black;')
 
         # center window
         self.centerscreen()
