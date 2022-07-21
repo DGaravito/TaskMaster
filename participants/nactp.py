@@ -1,4 +1,4 @@
-from participants import participant
+from Participants import participant
 
 import pandas as pd
 import random
@@ -8,26 +8,34 @@ class NACTParticipant(participant.Participant):
 
     def __init__(self, expid, session, outdir, task, hightrials, lowtrials, money, buttonbox, eyetracking):
 
+        # the total number of trials is equal to the sum of the low and high trials
         trials = lowtrials + hightrials
 
         super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking)
 
+        # either green or red is chosen as the high-value color
         self.highcolor = random.choice(['Green', 'Red'])
 
+        # if the high-value color is green, the low-value color is red
         if self.highcolor == 'Green':
 
             self.lowcolor = 'Red'
 
+        # if the high-value color is red, the low-value color is green
         else:
 
             self.lowcolor = 'Green'
 
+        # set the variable to indicate to start with the first part
         self.part = 1
+
+        # set the variable for how much starting money the participant has
         self.startmoney = float(money)
 
+        # call the set_design function with the number of low and high trials
         self.set_design(hightrials, lowtrials)
 
-        # Experiment settingsguis output dataframe
+        # Experiment settingsguis output dictionary
         dict_simulsettings = {
             'Starting money': [money],
             'Low value trials': [lowtrials],
@@ -36,32 +44,58 @@ class NACTParticipant(participant.Participant):
             'High value color': [self.highcolor]
         }
 
+        # send the task-specific dictionary to be added to the generic task settings
         self.set_settings(dict_simulsettings)
 
     def set_design(self, high, low):
+        """
+        takes in the number of high and low trials and creates a list of strings that represents which trials are high-
+        value and which are low-value. This is then randomized so that you get the final order
+        :param high: integer that is the number of high-value trials
+        :param low: integer that is the number of low-value trials
+        """
 
+        # list composed of the two strings: the high-value color and the low-value color
         trialtypes = [self.highcolor, self.lowcolor]
+
+        # list composed of the number of high-value trials and number of low-value trials
         multiplier = [high, low]
+
+        # the strings are multiplied so that you end up with a list of strings. The name of the low-value color appears
+        # however many low-value trials were requested, and vice versa
         self.piclist = sum([[s] * n for s, n in zip(trialtypes, multiplier)], [])
 
+        # copy this list to a new variable so that it can be copied again in the future
         self.picorder = list(self.piclist)
+
+        # randomize the order of things in the list
         random.shuffle(self.picorder)
 
     def nextround(self):
+        """
+        increments the part that the participant is on and sends the appropriate string back
+        :return:
+        """
 
+        # increment the part indicator
         self.part += 1
 
+        # if you have completed part 2, then thank the participant
         if self.part >= 3:
 
             prompt = 'Thank you! This task is complete.'
 
+        # otherwise...
         else:
 
+            # grab the list of pictures and then randomize the order
             self.picorder = list(self.piclist)
             random.shuffle(self.picorder)
 
+            # tell the participant to wait for instruction
             prompt = 'Please wait for the researcher to read you the instructions'
 
+        # return the prompt
         return prompt
 
     def get_trial_pic(self):
@@ -175,26 +209,29 @@ class NACTParticipant(participant.Participant):
          in the iti
         """
 
+        # participant is incorrect by default
+        correct = 0
+
         # find out whether the participants was correct
+        # if the stimulus included a vertical line...
         if self.signalnumber == 1:
 
+            # make the stimulus string 'Vertical'
             stimstring = 'Vertical'
 
+            # the participant was correct if they hit the left key
             if response == 0:
                 correct = 1
 
-            else:
-                correct = 0
-
+        # if the stimulus included a horizontal line...
         else:
 
+            # make the stimulus string 'Horizontal'
             stimstring = 'Horizontal'
 
+            # the participant was correct if they hit the right key
             if response == 1:
                 correct = 1
-
-            else:
-                correct = 0
 
         # if you're in the first part...
         if self.part == 1:
@@ -257,6 +294,7 @@ class NACTParticipant(participant.Participant):
         :return: a string containing the appropriate instructions that the expguis puts up
         """
 
+        # if the participant is on the first part, you have a different set of instructions compared to the second part
         if self.part == 1:
 
             match instint:

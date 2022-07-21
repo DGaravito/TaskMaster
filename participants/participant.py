@@ -146,15 +146,11 @@ class Participant(object):
                 case _:
                     taskstr = ''
 
-            print(self.outdir)
-
             # change to the output directory
             os.chdir(self.outdir)
 
             # Make the string to name the output file
             outputname = self.expid + '_' + taskstr + '_' + self.session + '.xlsx'
-
-            print(outputname)
 
             # Name an excel file and open it
             writer = pd.ExcelWriter(outputname, engine='xlsxwriter')

@@ -1,4 +1,4 @@
-from participants import participant
+from Participants import participant
 
 import pandas as pd
 import random
@@ -9,6 +9,7 @@ class BeadsParticipant(participant.Participant):
     def __init__(self, expid, rounds, session, outdir, task, eyetracking):
         super().__init__(expid, rounds, session, outdir, task, eyetracking)
 
+        # set up the jars as lists of beads, one with 80 red and one with 90 blue
         self.blue_jar = ['BeadsTask_BlueBead',
                          'BeadsTask_BlueBead',
                          'BeadsTask_BlueBead',
@@ -22,33 +23,55 @@ class BeadsParticipant(participant.Participant):
                         'BeadsTask_RedBead']
 
     def nextround(self, completedround):
+        """
+        takes an int that represents the round that was completed and returns the approriate text. Also, it randomly
+        selects a jar to draw from for each round
+        :param completedround:
+        :return: either a blank string if there are still rounds to be completed or a thank you string
+        """
 
+        # if the number of completed rounds is the same as the number that was requested, set the prompt to the thank
+        # you string
         if completedround == self.get_trials():
 
             prompt = 'Thank you! This task is complete.'
 
+        # if there are still rounds to be completed...
         else:
 
+            # randomly select one or two to represent either jar
             jarint = random.randint(1, 2)
 
+            # if you got 1...
             if jarint == 1:
 
+                # you will draw from the blue jar
                 self.jarname = 'Blue'
                 self.jar = self.blue_jar
 
+            # if you got 2...
             else:
 
+                # you will draw from the red jar
                 self.jarname = 'Red'
                 self.jar = self.red_jar
 
+            # set the prompt to the empty string
             prompt = ''
 
+        # return the prompt
         return prompt
 
     def get_bead(self):
+        """
+        simple getter function to randomly draw a bead from the jar and return it
+        :return: a string for the bead drawn
+        """
 
+        # randomly choose a picture string for a bead from the jar
         self.pic = random.choice(self.jar)
 
+        # return the picture string
         return self.pic
 
     def updateoutput(self, currentround, beadspicked, response=0, pick='None', conf=0):
@@ -62,14 +85,19 @@ class BeadsParticipant(participant.Participant):
         :return: updates the performance dataframe in the superclass
         """
 
+        # set correct to 0 as default
         correct = 0
 
+        # if the particpant chose a jar...
         if response == 1:
 
+            # and the jar they picked was the same as the jar that the program was drawing from
             if pick == self.jarname:
 
+                # then the participant is marked as correct
                 correct = 1
 
+        # set up a dictionary with this trial's info
         df_simultrial = {
             'round': [currentround],
             'beads': [beadspicked],
@@ -80,8 +108,10 @@ class BeadsParticipant(participant.Participant):
             'correct': [correct]
         }
 
+        # turn the dictionary into a dataframe
         df_simultrial = pd.DataFrame(data=df_simultrial)
 
+        # add the dataframe to the main one
         self.set_performance(df_simultrial)
 
     def get_instructions(self, instint):

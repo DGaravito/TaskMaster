@@ -1,4 +1,4 @@
-from participants import participant
+from Participants import participant
 
 import pandas as pd
 import random
@@ -10,11 +10,18 @@ class PrParticipant(participant.Participant):
     def __init__(self, expid, trials, session, outdir, task, design, stt, eyetracking):
         super().__init__(expid, trials, session, outdir, task, eyetracking)
 
+        # if the user requested an STT design
         if stt == 'Yes':
+
+            # add STT to a string that is made of "ST" multiplied by how many blocks the user requested (minus one so
+            # the STT doesn't add an extra block
             structstr = 'STT' + ('ST' * (int(design) - 1))
             self.structure = list(structstr)
 
+        # if no STT is requested
         else:
+
+            # make the structure string out of of "ST" multiplied by how many blocks the user requested
             structstr = 'ST' * int(design)
             self.structure = list(structstr)
 
@@ -23,12 +30,20 @@ class PrParticipant(participant.Participant):
             'Design': [structstr]
         }
 
+        # attach the task-specific settings to the task general settings
         self.set_settings(dict_simulsettings)
 
+        # call the set pairs function to create the list of word pairs for all the blocks
         self.set_pairs(int(trials))
 
     def set_pairs(self, trials):
+        """
+        Takes the original dictionary of word pairs and then truncates it depending on how many word pairs the user
+        requested
+        :param trials: an integer representing how many word pairs the user wants
+        """
 
+        # make a dictionary of the original word pairs
         originalpairs = {
             'Pony': ['Cranberry'],
             'Minister': ['Liquor'],
@@ -61,47 +76,78 @@ class PrParticipant(participant.Participant):
             'Rain': ['Gorilla']
         }
 
-        if len(originalpairs) - trials != 0:
+        # if the original number of word pairs is greater than the number of pairs requested
+        if len(originalpairs) > trials:
 
+            # measure the difference between the two and then delete any extras
             for n in range(len(originalpairs) - trials):
 
                 del originalpairs[next(iter(originalpairs))]
 
+        # copy the revised word dictionary for the experiment
         self.expwordpairs = dict(originalpairs)
 
+        # copy the dictionary again to make a dictionary for the trial to go through
         self.trialwordpairs = dict(self.expwordpairs)
 
+        # call the function to make the list a dataframe and save it
         self.updateoutput()
 
     def starttrial(self):
+        """
+        copy the word pairs for the experiment and then tell the participant to start the trial
+        :return: string of instructions for the participant
+        """
 
+        # copy the dictionary of word pairs
         self.trialwordpairs = dict(self.expwordpairs)
 
+        # set the prompt
         prompt = 'Please let the researcher know you are ready'
 
+        # return the prompt
         return prompt
 
-    def get_design_text(self, test=0):
+    def get_design_text(self, test):
+        """
+        A function that gets a wordpair for the trial, returns the info, and then eliminates it from the total
+        dictionary
+        :param test: a binary value, 0 if it's a study block and 1 if it's a test block
+        :return: three strings (left, middle (empty), and right (which is empty in test blocks))
+        """
 
+        # if this is a study trial
         if test == 0:
 
+            # randomly choose a pair from the wordpair dictionary, make it a list, and then set it to the sides of the
+            # trial
             leftstring, rightstring = random.choice(list(self.trialwordpairs.items()))
 
+            # the right string will be the first part of the list that it was set to
             rightstring = rightstring[0]
 
+        # if this is a test trial
         else:
 
+            # set the left string to a list made of a random key from the dictionary
             leftstring = random.choice(list(self.trialwordpairs))
 
+            # make the right side a blank string
             rightstring = ''
 
+        # delete the key and value from the block's dictionary
         del self.trialwordpairs[leftstring]
 
+        # make the middle an empty string
         middlestring = ''
 
         return [leftstring, rightstring, middlestring]
 
     def updateoutput(self):
+        """
+        this function just makes a dataframe of the word pairs and updates the corresponding existing dataframe
+        :return:
+        """
 
         df_simultrial = pd.DataFrame(data=self.expwordpairs)
 
@@ -197,56 +243,82 @@ class NbParticipant(participant.Participant):
     def __init__(self, expid, trials, session, outdir, task, rounds, buttonbox, eyetracking):
         super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking)
 
+        # extract the number of blocks from user input
+        self.rounds = int(rounds)
+
+        # reset the list of total letters shown with strings of non-letters so that we don't accidentally make a
+        # target at the start
+        self.backlist = ['1', '1', '1', '1']
+
+        # set the number of correct and percent correct to 0 at the start
         self.roundperformance = 0.0
         self.roundsumcorrect = 0
-        self.rounds = int(rounds)
-        self.backlist = ['1', '1', '1', '1']
 
         # Experiment settingsguis output dataframe
         dict_simulsettings = {
             'Rounds': [rounds]
         }
 
+        # attach the task-specific settings to the task general settings
         self.set_settings(dict_simulsettings)
 
     def nextround(self, roundsdone):
 
+        # calculate how well the participant did by dividing total score by total trials
         self.roundperformance = self.roundsumcorrect/self.get_trials()
 
+        # if all requested blocks are completed and the participant got 50% correct or better on the last block...
         if (roundsdone == self.rounds) & (self.roundperformance >= 0.5):
 
+            # thank them and send their performance stats
             prompt2 = 'Thank you! This task is complete.'
             prompt1 = 'You got ' + str('{:.1f}'.format(self.roundperformance)) + '% correct.'
 
+        # if there are still blocks to go or the participant did worse than 50% on the last block
         else:
 
+            # reset the list of total letters shown with strings of non-letters so that we don't accidentally make a
+            # target at the start
             self.backlist = ['1', '1', '1', '1']
 
+            # if the participant did 50% or better on the last block, return their stats
             if self.roundperformance >= 0.5:
                 prompt1 = 'You got ' + str('{:.1f}'.format((self.roundperformance*100))) + '% correct.'
 
+            # if the participant did worse than 50% on the last block, return their stats and let them know
             else:
                 prompt1 = 'You got ' + str('{:.1f}'.format(self.roundperformance)) + '% correct. Please try harder.'
 
+            # tell the participant to wait for the next round
             prompt2 = 'Please let the researcher know you are ready'
 
+        # put the prompts into a list
         prompts = [prompt1, prompt2]
 
-        self.roundperformance = 0.0
+        # reset number of correct to 0
         self.roundsumcorrect = 0
 
+        # return the prompts
         return prompts
 
     def get_trial_text(self):
+        """
+        Randomly picks a letter, adds it to the list of all letters shown, and then returns it
+        :return: One character string of an uppercase letter
+        """
 
+        # randomly pick a letter
         while True:
             newletter = random.choice(string.ascii_uppercase)
 
-            if newletter not in ['a', 'e', 'i', 'o', 't', 'u', 'v', 'w', 'x', 'y', 'z']:
+            # Use fewer letters and only those that won't be confused with other letters
+            if newletter not in ['A', 'E', 'I', 'O', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']:
                 break
 
+        # add the new letter to the list of all shown letters
         self.backlist.append(newletter)
 
+        # return the new letter
         return newletter
 
     def updateoutput(self, trial, onset, time, response=3):
@@ -260,50 +332,57 @@ class NbParticipant(participant.Participant):
         :return: updates the performance dataframe in the superclass
         """
 
+        # participant is incorrect by default
+        correct = 0
+
+        # if the task was a 1-back
         if self.task == '1-back':
 
+            # the partipant called the letter a target and the last item  is not the same as the one before
             if response == 1 & (self.backlist[-1] == self.backlist[-2]):
                 correct = 1
 
+            # the partipant called the letter a false alarm and the last item  is not the same as the one before
             elif response == 0 & (self.backlist[-1] != self.backlist[-2]):
                 correct = 1
 
-            else:
-                correct = 0
-
+        # if the task was a 2-back
         elif self.task == '2-back':
 
+            # the partipant called the letter a target and the last item is the same as the one 2 before
             if response == 1 & (self.backlist[-1] == self.backlist[-3]):
                 correct = 1
 
+            # the partipant called the letter a false alarm and the last item is not the same as the one 2 before
             elif response == 0 & (self.backlist[-1] != self.backlist[-3]):
                 correct = 1
 
-            else:
-                correct = 0
-
+        # if the task was a 3-back
         elif self.task == '3-back':
 
+            # the partipant called the letter a target and the last item is the same as the one 3 before
             if response == 1 & (self.backlist[-1] == self.backlist[-4]):
                 correct = 1
 
+            # the partipant called the letter a false alarm and the last item is not the same as the one 3 before
             elif response == 0 & (self.backlist[-1] != self.backlist[-4]):
                 correct = 1
 
-            else:
-                correct = 0
-
+        # if the task was a 4-back
         else:
 
+            # the partipant called the letter a target and the last item is the same as the one 4 before
             if response == 1 & (self.backlist[-1] == self.backlist[-5]):
                 correct = 1
 
+            # the partipant called the letter a false alarm and the last item is not the same as the one 4 before
             elif response == 0 & (self.backlist[-1] != self.backlist[-5]):
                 correct = 1
 
-            else:
-                correct = 0
+        # add the score (0 or 1) to the participant's score for the round
+        self.roundsumcorrect += correct
 
+        # make a dictionary of trial info
         df_simultrial = {
             'trial': [trial],
             'letter': [self.backlist[-1]],
@@ -313,10 +392,8 @@ class NbParticipant(participant.Participant):
             'correct': [correct]
         }
 
-        self.roundsumcorrect += correct
-
+        # turn that dictionary into a dataframe and use set_performance to add it to the overall dataframe
         df_simultrial = pd.DataFrame(data=df_simultrial)
-
         self.set_performance(df_simultrial)
 
     def get_instructions(self, instint):
@@ -348,6 +425,7 @@ class NbParticipant(participant.Participant):
 
             case 5:
 
+                # depending on the the specific task, this instruction will be changes
                 if self.task == '1-back':
 
                     inst = 'In this task, a letter is a target if\nit is the same as the letter immediately' \
@@ -370,6 +448,7 @@ class NbParticipant(participant.Participant):
 
             case 6:
 
+                # depending on the the specific task, this instruction will be changes
                 if self.task == '1-back':
 
                     inst = 'For example, if you saw A, then B, then\nanother B, the second B would be a target.'
@@ -390,6 +469,7 @@ class NbParticipant(participant.Participant):
 
             case 7:
 
+                # depending on the the specific task, this instruction will be changes
                 if self.task == '1-back':
 
                     inst = 'In this case, you would press \"' + self.leftkey[0] + '\" for the A,\nthen \"' + \

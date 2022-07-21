@@ -1,4 +1,4 @@
-from participants import participant
+from Participants import participant
 
 import pandas as pd
 import random
@@ -9,11 +9,15 @@ class SSParticipant(participant.Participant):
     def __init__(self, expid, trials, session, outdir, task, maxrt, blocks, buttonbox, eyetracking):
         super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking)
 
+        # set the defaults based on user input
         self.blocks = int(blocks)
-        self.timer = 250
         self.globallocal = random.choice(['Global', 'Local'])
         self.maxrt = int(maxrt)
 
+        # make the starting timer 250 milliseconds
+        self.timer = 250
+
+        # set the structure
         self.set_structure()
 
         # Experiment settingsguis output dataframe
@@ -22,78 +26,128 @@ class SSParticipant(participant.Participant):
             'Max reaction time': [maxrt]
         }
 
+        # attach the task-specific settings to the task general settings
         self.set_settings(dict_simulsettings)
 
     def set_structure(self):
-        multnum = int((self.get_trials() / 2) * self.blocks)
-        picturenames = ['SS_LeftArrow.png', 'SS_RightArrow.png']
+        """
+        Sets up the main picture list and copies and shuffles that for the first block's order
+        """
+
+        # divide the number of trials by 2 because there are 2 types of trials
+        multnum = int(self.get_trials() / 2)
+
+        # list composed of 2 integers which are one half of the total trials
         multiplier = [multnum, multnum]
+
+        # list composed of 2 strings for the 2 types of trials
+        picturenames = ['SS_LeftArrow.png', 'SS_RightArrow.png']
+
+        # the strings are multiplied so that you end up with a list of strings. Each string appears half of the time
         self.piclist = sum([[s] * n for s, n in zip(picturenames, multiplier)], [])
 
+        # copy the original picture list to get a new order for the block
         self.picorder = list(self.piclist)
+
+        # shuffle the new order
         random.shuffle(self.picorder)
 
     def nextround(self, blocks):
+        """
+        Called to get the text prompt for the next block
+        :param blocks: an integer for the block that was just completed
+        :return:
+        """
 
+        # if all of the blocks have been completed, thank the participant
         if blocks == self.blocks:
 
             prompt = 'Thank you! This task is complete.'
 
+        # if there are still blocks to be completed...
         else:
 
+            # copy the original picture list to get a new order for the block
             self.picorder = list(self.piclist)
+
+            # shuffle the new order
             random.shuffle(self.picorder)
 
-            prompt = 'Please wait for the researcher to read you the instructions'
+            # tell the participant to wait for instructions
+            prompt = 'Please wait for the researcher to read you the instructions.'
 
+        # return the prompt
         return prompt
 
     def get_trial_pic(self):
+        """
+        Pop a picture name from the overall order
+        :return: the picture that was popped
+        """
 
         pic = self.picorder.pop()
 
         return pic
 
     def set_timer(self, signal, correct):
+        """
+        adjusts the timer for when the signal occurs depending on the performance of the participant on signal trials
+        :param signal: binary, with 1 indicating that it was a signal trial
+        :param correct: binary, with 1 indicating that the participant was correct or not
+        :return:
+        """
 
+        # if the last trial was a signal trial
         if signal == 1:
 
+            # if the participant correctly did not respond, then make the timer go off later
             if correct == 1:
 
                 self.timer += 50
 
+            # if the participant responded when they shouldn't have, then make the timer go off earlier
             else:
 
                 self.timer -= 50
 
-        else:
+        # randomly choose and integer for whether the signal timer will be additionally incremented or decremented (or
+        # stay the same)
+        choose = random.randint(1, 3)
 
-            choose = random.randint(1, 3)
-            incdec = random.randint(1, 9)
+        # randomly choose an integer between 1 and 9 (inclusive) to make an adjustment
+        incdec = random.randint(1, 9)
 
-            if choose == 1:
+        # if the first random integer was 1, then add the second random integer to the timer, making it later
+        if choose == 1:
 
-                self.timer += incdec
+            self.timer += incdec
 
-            elif choose == 2:
+        # if the first random integer was 2, then subtract the second random integer from the timer, making it earlier
+        elif choose == 2:
 
-                self.timer -= incdec
+            self.timer -= incdec
 
+        # if the timer is ever less than 10 milliseconds, set it back to 10
         if self.timer < 10:
 
             self.timer = 10
 
+        # if the timer is ever greater than the user-determined max, then set it back to that
         elif self.timer > self.maxrt:
 
             self.timer = self.maxrt
 
     def get_timer(self):
+        """
+        get the timer value and return it
+        :return: int value for the timer
+        """
 
         time = self.timer
 
         return time
 
-    def updateoutput(self, trial, pic, onset, time, signal=0, response=0):
+    def updateoutput(self, trial, pic, onset, time, signal, response=3):
         """
         evaluates whether the person responded correctly and records the stats
         :param trial: the number of the trial that was just completed
@@ -106,34 +160,37 @@ class SSParticipant(participant.Participant):
         :return: updates the performance dataframe in the superclass
         """
 
+        # default is that the participant is not correct
+        correct = 0
+
+        # if this was a signal trial..
         if signal == 1:
 
-            if response == 0:
+            # if the participant did not respond, they are correct
+            if response == 3:
                 correct = 1
 
-            else:
-                correct = 0
-
+        # if this was not a signal trial
         else:
 
+            # if there was a left arrow
             if pic == ['SS_LeftArrow.png']:
 
+                # if the participant said it was left, they are correct
+                if response == 0:
+                    correct = 1
+
+            # if there was a right arrow...
+            else:
+
+                # if the participant said it was right, they are correct
                 if response == 1:
                     correct = 1
 
-                else:
-                    correct = 0
-
-            else:
-
-                if response == 2:
-                    correct = 1
-
-                else:
-                    correct = 0
-
+        # strip the extra stuff off of the picture string
         picstripped = pic.removeprefix('SS_').removesuffix('Arrow.png')
 
+        # make a dictionary of trial info
         df_simultrial = {
             'trial': [trial],
             'signal': [signal],
@@ -145,9 +202,11 @@ class SSParticipant(participant.Participant):
             'correct': [correct]
         }
 
+        # turn that dictionary into a dataframe and use set_performance to add it to the overall dataframe
         df_simultrial = pd.DataFrame(data=df_simultrial)
-
         self.set_performance(df_simultrial)
+
+        # call the set_timer function to adjust the signal timer based on the participant's performance
         self.set_timer(signal, correct)
 
     def get_instructions(self, instint):
@@ -217,11 +276,15 @@ class EGNGParticipant(participant.Participant):
                  eyetracking):
         super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking)
 
+        # set how many blocks are needed and set the blocks done to 0
         self.blocks = int(blocks)
         self.blocksdone = 0
 
+        # make an empty list for the blocks
         self.structlist = []
 
+        # each of the following if statements checks to see if the user checks any of these emotions. If so, it adds the
+        # emotion and the reverse round to the block structure
         if happy == 'Yes':
             self.structlist.append('Happy')
             self.structlist.append('HappyRev')
@@ -238,7 +301,10 @@ class EGNGParticipant(participant.Participant):
             self.structlist.append('Fearful')
             self.structlist.append('FearfulRev')
 
+        # copy the original list to get an order for the task
         self.blocktypes = list(self.structlist)
+
+        # shuffle the order
         random.shuffle(self.blocktypes)
 
         # Experiment settingsguis output dataframe
@@ -247,17 +313,33 @@ class EGNGParticipant(participant.Participant):
             'Faces': [self.structlist]
         }
 
+        # attach the task-specific settings to the task general settings
         self.set_settings(dict_simulsettings)
 
     def set_structure(self, block):
+        """
+        Takes in a string to describe the block about to occur and then sets up a list of strings
+        :param block: a string for the block type that is about to occur
+        :return:
+        """
 
+        # there will always be neutral pictures in the blocks
         self.piclist = ['EGNG_Neutral_']
 
+        # find out which block is occuring...
         match block:
 
+            # when you find the block type...
             case 'Happy':
+
+                # add those types of pictures to the list of pictures...
                 self.piclist.append('EGNG_Happy_')
+
+                # for emotion blocks, set the neutral number to a fourth of the trials; reverse, do the opposite
                 neutralnum = int(self.get_trials()/4)
+
+                # whatever set of trials were divided by 4, subtract them from the total trials and that is the other
+                # set of trials
                 emonum = self.get_trials()-neutralnum
 
             case 'HappyRev':
@@ -295,60 +377,101 @@ class EGNGParticipant(participant.Participant):
                 emonum = int(self.get_trials()/4)
                 neutralnum = self.get_trials()-emonum
 
+        # set a list of integers for the number of trials that the neutral pictures and emotional pictures will get
         multiplier = [neutralnum, emonum]
 
+        # the strings are multiplied so that you end up with a list of strings. Depending on the type of block, one type
+        # of pictures will appear 3/4 of the time; the other, 1/4 of the time
         self.piclist = sum([[s] * n for s, n in zip(self.piclist, multiplier)], [])
 
+        # copy the original picture list to get a new order for the block
         self.picorder = list(self.piclist)
+
+        # shuffle the new order
         random.shuffle(self.picorder)
 
     def nextround(self):
+        """
+        Each block is composed of emotional and reversed rounds of trials. This function checks to see if all of those
+        rounds have been completed. If not, prompt the user that they will be doing a new round and to focus on a face.
+        If so, check to see if all the blocks have been completed. If so, tell the participant that we'll be starting
+        again. If not, then thank the partipant
+        :return: list: string for participant instructiuon; integer to tell the gui whether there are still trials to do
+        """
 
+        # default is there are still trials to go
         num = 1
+
+        # if there are still rounds to go in this block...
         if len(self.blocktypes) > 0:
+
+            # pop the next round
             self.blocktype = self.blocktypes.pop()
+
+            # set the structure for that round
             self.set_structure(self.blocktype)
 
+            # if the round is a reverse round, then tell the participant to respond only to neutral faces
             if self.blocktype in ['HappyRev', 'SadRev', 'AngryRev', 'FearfulRev']:
 
                 prompt = 'In this round, only respond to \"Neutral\" faces.\nPress \"G\" to start.'
 
+            # if the round is a happy round, then tell the participant to respond only to happy faces
             elif self.blocktype == 'Happy':
 
                 prompt = 'In this round, only respond to \"Happy\" faces.\nPress \"G\" to start.'
 
+            # if the round is a sad round, then tell the participant to respond only to sad faces
             elif self.blocktype == 'Sad':
 
                 prompt = 'In this round, only respond to \"Sad\" faces.\nPress \"G\" to start.'
 
+            # if the round is a angry round, then tell the participant to respond only to angry faces
             elif self.blocktype == 'Angry':
 
                 prompt = 'In this round, only respond to \"Angry\" faces.\nPress \"G\" to start.'
 
+            # if the round is a fearful round, then tell the participant to respond only to fearful faces
             else:
 
                 prompt = 'In this round, only respond to \"Fearful\" faces.\nPress \"G\" to start.'
 
+        # if all rounds in this block are done...
         else:
 
+            # increment the block counter
             self.blocksdone += 1
+
+            # if all blocks requested have been completed, thank the participant
             if self.blocksdone == self.blocks:
 
                 prompt = 'Thank you! This task is complete.'
 
+            # if there are still more blocks to go...
             else:
 
+                # copy the list of rounds to a new list of rounds and then shuffle it
                 self.blocktypes = list(self.structlist)
                 random.shuffle(self.blocktypes)
 
+                # tell the participant that another block is starting
                 prompt = 'You will now repeat the task you just completed.\nPress \"G\".'
+
+                # set the binary value to 0 so the participant sees the instructions and has to press G once to move to
+                # the start screen and once to start the trial
                 num = 0
 
+        # make a list composed of the prompt string and the binary value
         promptlist = [prompt, num]
 
+        # return the list
         return promptlist
 
     def get_trial_pic(self):
+        """
+        Pop a picture name from the overall order
+        :return: the picture that was popped
+        """
 
         pic = self.picorder.pop()
 
@@ -366,98 +489,98 @@ class EGNGParticipant(participant.Participant):
         the participants doesn't answer in time.
         """
 
+        # default is that the participant is not correct
+        correct = 0
+
+        # if the round was a reverse round...
         if self.blocktype in ['HappyRev', 'SadRev', 'AngryRev', 'FearfulRev']:
 
+            # if the picture was a neutral one...
             if 'EGNG_Neutral_' in pic:
 
+                # if the participant did respond, they are correct
                 if response == 1:
                     correct = 1
 
-                else:
-                    correct = 0
-
+            # if the picture was an emotional one..
             else:
 
+                # if the participant did not respond, they are correct
                 if response == 0:
                     correct = 1
 
-                else:
-                    correct = 0
-
+        # if the round was a Happy round...
         elif self.blocktype == 'Happy':
 
+            # if the picture was a Happy one...
             if 'EGNG_Happy_' in pic:
 
+                # if the participant did respond, they are correct
                 if response == 1:
                     correct = 1
 
-                else:
-                    correct = 0
-
+            # if the picture was a neutral one...
             else:
 
+                # if the participant did not respond, they are correct
                 if response == 0:
                     correct = 1
 
-                else:
-                    correct = 0
-
+        # if the round was a Sad round...
         elif self.blocktype == 'Sad':
 
+            # if the picture was a Sad one...
             if 'EGNG_Sad_' in pic:
 
+                # if the participant did respond, they are correct
                 if response == 1:
                     correct = 1
 
-                else:
-                    correct = 0
-
+            # if the picture was a neutral one...
             else:
 
+                # if the participant did not respond, they are correct
                 if response == 0:
                     correct = 1
 
-                else:
-                    correct = 0
-
+        # if the round was an Angry round...
         elif self.blocktype == 'Angry':
 
+            # if the picture was an Angry one...
             if 'EGNG_Angry_' in pic:
 
+                # if the participant did respond, they are correct
                 if response == 1:
                     correct = 1
 
-                else:
-                    correct = 0
-
+            # if the picture was a neutral one...
             else:
 
+                # if the participant did not respond, they are correct
                 if response == 0:
                     correct = 1
 
-                else:
-                    correct = 0
-
+        # if the round was a Fearful round...
         else:
 
+            # if the picture was a Fearful one...
             if pic == 'EGNG_Fearful_':
 
+                # if the participant did respond, they are correct
                 if response == 1:
                     correct = 1
 
-                else:
-                    correct = 0
-
+            # if the picture was a neutral one...
             else:
 
+                # if the participant did not respond, they are correct
                 if response == 0:
                     correct = 1
 
-                else:
-                    correct = 0
-
+        # strip the extra junk off of the picture string
         picstripped = pic.removeprefix('EGNG_')
 
+        # make a dictionary of trial info
         df_simultrial = {
             'trial': [trial],
             'block type': [self.blocktype],
@@ -468,8 +591,8 @@ class EGNGParticipant(participant.Participant):
             'correct': [correct]
         }
 
+        # turn that dictionary into a dataframe and use set_performance to add it to the overall dataframe
         df_simultrial = pd.DataFrame(data=df_simultrial)
-
         self.set_performance(df_simultrial)
 
     def get_instructions(self, instint):
