@@ -8,7 +8,6 @@ if __name__ == '__main__':
     try:
 
         main()
-        raise OSError('Emulated exception to be traced back to log file')
 
     except Exception:
 
