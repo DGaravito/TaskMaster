@@ -53,7 +53,7 @@ class SSExp(gui.Experiment):
 
             # Get the string that contains the name of the trial picture
             self.picstring = self.person.get_trial_pic()
-            pathstring = 'assets/' + self.picstring
+            pathstring = 'Assets/' + self.picstring
 
             # Make a pixmap of the picture and then set the middle to that pixmap
             pixmap = QPixmap(pathstring)
@@ -139,10 +139,10 @@ class SSExp(gui.Experiment):
 
         # use the correct signal picture, depending on the arrow picture
         if self.picstring == 'SS_LeftArrow.png':
-            pathstring = 'assets/SS_LeftSignal.png'
+            pathstring = 'Assets/SS_LeftSignal.png'
 
         else:
-            pathstring = 'assets/SS_RightSignal.png'
+            pathstring = 'Assets/SS_RightSignal.png'
 
         # set the picture to the pixmap
         pixmap = QPixmap(pathstring)
@@ -277,7 +277,7 @@ class EGNGExp(gui.Experiment):
             self.picstring = self.person.get_trial_pic() + randopic + '.png'
 
             # add the path to the picture string
-            pathstring = 'assets/' + self.picstring
+            pathstring = 'Assets/' + self.picstring
 
             # Make a pixmap of the picture and then set the middle to that pixmap
             pixmap = QPixmap(pathstring)

@@ -1,12 +1,12 @@
 """
-build script for TaskMaster, used with py2app and hopefully to fix pyinstaller.
+Build script for TaskMaster.
 """
 import glob
 from setuptools import setup
 import sys
 
 mainscript = 'main.py'
-data = [('assets', glob.glob('assets/*.*'))]
+data = [('Assets', glob.glob('Assets/*.*'))]
 
 if sys.platform == 'darwin':
 

@@ -83,7 +83,7 @@ class ARTTExp(gui.Experiment):
 
             # set the left and right side using the trial text
             self.left.setText(info[0])
-            pixmap = 'assets/' + info[2]
+            pixmap = 'Assets/' + info[2]
             self.rightpic.setPixmap(QPixmap(pixmap))
 
             if info[3] == 1:
@@ -226,7 +226,7 @@ class ARTTExp(gui.Experiment):
         self.left.setText(info[0])
 
         # get the picture for the right
-        pixmap = 'assets/' + info[2]
+        pixmap = 'Assets/' + info[2]
         self.rightpic.setPixmap(QPixmap(pixmap))
 
         # set the right text depending on if the trial is a risk or an ambiguous one
@@ -312,13 +312,13 @@ class ARTTExp(gui.Experiment):
             # if the instruction index is five, then load the relevant picture
             if self.inst == 5:
 
-                pixmap = QPixmap('assets/ARTT_risk_25.png')
+                pixmap = QPixmap('Assets/ARTT_risk_25.png')
                 self.middle.setPixmap(pixmap.scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
 
             # if the instruction index is eleven, then load the relevant picture
             elif self.inst == 11:
 
-                pixmap = QPixmap('assets/ARTT_ambig_50.png')
+                pixmap = QPixmap('Assets/ARTT_ambig_50.png')
                 self.middle.setPixmap(pixmap.scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
 
             else:

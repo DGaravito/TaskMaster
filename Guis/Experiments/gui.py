@@ -32,9 +32,9 @@ class Experiment(QWidget):
         # full screen
         self.showMaximized()
 
-        # Add the assets folder for pictures
+        # Add the Assets folder for pictures
         toassets = str(Path('../../..').resolve())
-        QDir.addSearchPath('assets', toassets)
+        QDir.addSearchPath('Assets', toassets)
 
         # Prepare all the elements that most/all tasks have
         self.defaultelements()

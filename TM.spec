@@ -17,7 +17,7 @@ addedfiles = [('assets/', 'assets'),
 
 a = Analysis(
     ['cli.py'],
-    pathex=['C:/Users/dgara/PycharmProjects/QT_Experiment/venv/Lib/site-packages'],
+    pathex=['C:/Users/dgara/PycharmProjects/TaskMaster/venv/Lib/site-packages'],
     binaries=[],
     datas=addedfiles,
     hiddenimports=['numpy', 'scipy', 'pandas', 'xlsxwriter', 'pkg_resources', 'jinja2'],
@@ -42,7 +42,7 @@ exe = EXE(
     name='TaskMaster',
     debug=True,
     bootloader_ignore_signals=False,
-    icon='C:/Users/dgara/PycharmProjects/QT_Experiment/TM.ico',
+    icon='C:/Users/dgara/PycharmProjects/TaskMaster/TM.ico',
     strip=False,
     upx=True,
     upx_exclude=[],

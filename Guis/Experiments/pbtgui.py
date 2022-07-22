@@ -52,7 +52,7 @@ class PBTExp(gui.Experiment):
 
             # Get the string that contains the name of the trial picture
             self.picstring = self.person.get_trial_pic()
-            pathstring = 'assets/' + self.picstring
+            pathstring = 'Assets/' + self.picstring
 
             # Make a pixmap of the picture and then set the middle to that pixmap
             pixmap = QPixmap(pathstring)
@@ -191,12 +191,12 @@ class PBTExp(gui.Experiment):
 
             # if this is the sixth instruction...
             if self.inst == 6:
-                pixmap = QPixmap('assets/PBT_DSC.png')
+                pixmap = QPixmap('Assets/PBT_DSC.png')
                 self.middle.setPixmap(pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
 
             # if this is the ninth instruction...
             elif self.inst == 9:
-                pixmap = QPixmap('assets/PBT_DCS.png')
+                pixmap = QPixmap('Assets/PBT_DCS.png')
                 self.middle.setPixmap(pixmap.scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
 
             # if this is an instruction other than sixth or ninth...

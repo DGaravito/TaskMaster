@@ -107,7 +107,7 @@ class NACTExp(gui.Experiment):
             # add the appropriate elements to the picture strings and add the revised strings to the pixmap list
             for pic in self.picstrings:
 
-                pathstring = 'assets/' + pic + '.png'
+                pathstring = 'Assets/' + pic + '.png'
                 self.pixmaps.append(QPixmap(pathstring))
 
             # arrange the pixmaps around the screen
@@ -258,17 +258,17 @@ class NACTExp(gui.Experiment):
 
                 # if this is the fourth instruction...
                 if self.inst == 4:
-                    pixmap = QPixmap('assets/NACT_Part1Ex1.png')
+                    pixmap = QPixmap('Assets/NACT_Part1Ex1.png')
                     self.middle.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
 
                 # if this is the fifth instruction...
                 elif self.inst == 5:
-                    pixmap = QPixmap('assets/NACT_Part1Ex2.png')
+                    pixmap = QPixmap('Assets/NACT_Part1Ex2.png')
                     self.middle.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
 
                 # if this is the twelth instruction...
                 elif self.inst == 12:
-                    pixmap = QPixmap('assets/NACT_FixEx.png')
+                    pixmap = QPixmap('Assets/NACT_FixEx.png')
                     self.middle.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
 
                 # if this is an instruction other than those above...
@@ -288,17 +288,17 @@ class NACTExp(gui.Experiment):
 
                 # if this is the fifth instruction...
                 if self.inst == 5:
-                    pixmap = QPixmap('assets/NACT_Part2Ex1.png')
+                    pixmap = QPixmap('Assets/NACT_Part2Ex1.png')
                     self.middle.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
 
                 # if this is the sixth instruction...
                 elif self.inst == 6:
-                    pixmap = QPixmap('assets/NACT_Part2Ex2.png')
+                    pixmap = QPixmap('Assets/NACT_Part2Ex2.png')
                     self.middle.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
 
                 # if this is the eighth instruction...
                 elif self.inst == 8:
-                    pixmap = QPixmap('assets/NACT_FixEx.png')
+                    pixmap = QPixmap('Assets/NACT_FixEx.png')
                     self.middle.setPixmap(pixmap.scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
 
                 # if this is an instruction other than those above...

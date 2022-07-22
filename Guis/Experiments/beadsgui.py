@@ -87,9 +87,9 @@ class BeadsInventory(QDialog):
 
         pixmaplist = []
 
-        # add the assets folder
+        # add the Assets folder
         toassets = str(Path('../../..').resolve())
-        QDir.addSearchPath('assets', toassets)
+        QDir.addSearchPath('Assets', toassets)
 
         # go through the beadlist and make a list of pixmaps from each bead (or empty string) in the list
         for index, bead in enumerate(beadlist):
@@ -277,8 +277,8 @@ class BeadsExp(gui.Experiment):
         self.middle.setText('')
 
         # put the jars into pixmaps
-        leftpixmap = QPixmap('../../assets/BeadsTask_RedJar.png')
-        rightpixmap = QPixmap('../../assets/BeadsTask_BlueJar.png')
+        leftpixmap = QPixmap('../../Assets/BeadsTask_RedJar.png')
+        rightpixmap = QPixmap('../../Assets/BeadsTask_BlueJar.png')
 
         # set the left and right to the pixmaps
         self.left.setPixmap(leftpixmap.scaledToWidth(300, Qt.TransformationMode.SmoothTransformation))
@@ -315,7 +315,7 @@ class BeadsExp(gui.Experiment):
         """
 
         # get the new bead
-        newbead = 'assets/' + self.person.get_bead() + '.png'
+        newbead = 'Assets/' + self.person.get_bead() + '.png'
 
         # add the bead to the list
         self.beadlist[self.beadsdrawn] = newbead
