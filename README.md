@@ -22,7 +22,7 @@ Pull requests are also welcome! For major changes, please open an issue first to
 ## Credits
 
 This project was created by me, David Garavito. I was supported in this project by Dr. James Bjork. For more information
-about my research, check out my [website](https://choosealicense.com/licenses/agpl-3.0/).
+about my research, check out my [website](https://dgaravito.github.io/).
 
 ## Citation
 
