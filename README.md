@@ -1,6 +1,21 @@
 # Welcome to TaskMaster!
 
-TaskMaster is a Python-based program for running common experimental tasks. 
+TaskMaster is a Python-based program for running common experimental tasks. TaskMaster is built only using Python, 
+specifically using Numpy, Pandas, PyQt6, SciPy, and XlsxWriter. Currently, Taskmaster includes 13 tasks:
+
+-Ambiguous Risk Taking Task (featuring ADOPy)
+-Risk Aversion Task
+-Risky-Choice Framing Task
+-Delay Discounting Task (featuring ADOPy)
+-Probability Discounting Task
+-Cognitive Effort Discounting Task
+-Perceptual Bias Task
+-Negative Attentional Capture Task
+-Stop Signal Task
+-Emotional Go/No-Go Task
+-Paired Recall Memory Test
+-n-Back Task (1, 2, 3, and 4)
+-Beads Task
 
 ## Installation
 
