@@ -83,8 +83,9 @@ class Experiment(QWidget):
         # Quit button
         self.quitbutton = QPushButton('Quit')
         self.quitbutton.clicked.connect(QApplication.instance().quit)
-        self.quitbutton.setFixedWidth(40)
-        self.quitbutton.setFixedHeight(20)
+        self.quitbutton.setFixedWidth(90)
+        self.quitbutton.setFixedHeight(40)
+        self.quitbutton.setFont(QFont('Helvetica', 25))
 
         # Instructions - default is blank, of course
         self.instructions = QLabel('')
@@ -98,7 +99,7 @@ class Experiment(QWidget):
 
         # add the middle, which will always have the same starting text
         self.middle = QLabel('Press \"G\" to start, \"I\" for instructions')
-        self.middle.setFont(QFont('Helvetica', 40))
+        self.middle.setFont(QFont('Helvetica', 45))
 
         # center middle
         self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)

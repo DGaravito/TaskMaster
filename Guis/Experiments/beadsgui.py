@@ -138,6 +138,9 @@ class BeadsExp(gui.Experiment):
         # Inventory button
         self.invbutton = QPushButton('Beads you\'ve drawn')
         self.invbutton.clicked.connect(self.openinventory)
+        self.invbutton.setFixedWidth(310)
+        self.invbutton.setFixedHeight(40)
+        self.invbutton.setFont(QFont('Helvetica', 25))
 
         # Instructions
         self.instructions.setText('Press \"M\" to draw a bead and \"C\" to choose a jar')

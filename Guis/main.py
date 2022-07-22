@@ -17,7 +17,7 @@ class SelectWindow(QWidget):
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
         # setting the geometry of window
-        self.setGeometry(0, 0, 500, 500)
+        self.setGeometry(0, 0, 600, 750)
 
         # setting the minimum window size
         self.setMinimumSize(400, 400)
@@ -37,7 +37,7 @@ class SelectWindow(QWidget):
         self.header = QLabel('Please select the appropriate task:', self)
 
         # setting font style and size
-        self.header.setFont(QFont('Helvetica', 15))
+        self.header.setFont(QFont('Helvetica', 20))
 
         # resizing and moving
         self.header.resize(400, 25)
@@ -48,62 +48,91 @@ class SelectWindow(QWidget):
 
         # DD button
         self.ddbutton = QPushButton('DD (feat. ADOPy)')
+        self.ddbutton.setFixedHeight(50)
+        self.ddbutton.setFont(QFont('Helvetica', 15))
         self.ddbutton.clicked.connect(lambda: self.selection('DD'))
 
         # PD button
         self.pdbutton = QPushButton('Probability Discounting')
+        self.pdbutton.setFixedHeight(50)
+        self.pdbutton.setFont(QFont('Helvetica', 15))
         self.pdbutton.clicked.connect(lambda: self.selection('PD'))
 
         # CEDT button
         self.cedtbutton = QPushButton('CEDT')
+        self.cedtbutton.setFixedHeight(50)
+        self.cedtbutton.setFont(QFont('Helvetica', 15))
         self.cedtbutton.clicked.connect(lambda: self.selection('CEDT'))
 
         # ARTT button
         self.arttbutton = QPushButton('ARTT (feat. ADOPy)')
+        self.arttbutton.setFixedHeight(50)
+        self.arttbutton.setFont(QFont('Helvetica', 15))
         self.arttbutton.clicked.connect(lambda: self.selection('ARTT'))
 
         # Risk Aversion button
         self.rabutton = QPushButton('Risk Aversion')
+        self.rabutton.setFixedHeight(50)
+        self.rabutton.setFont(QFont('Helvetica', 15))
         self.rabutton.clicked.connect(lambda: self.selection('RA'))
 
         # Framing button
         self.framebutton = QPushButton('Framing Task')
+        self.framebutton.setFixedHeight(50)
+        self.framebutton.setFont(QFont('Helvetica', 15))
         self.framebutton.clicked.connect(lambda: self.selection('Framing'))
 
         # Beads Task button
         self.beadsbutton = QPushButton('Beads')
+        self.beadsbutton.setFixedHeight(50)
+        self.beadsbutton.setFont(QFont('Helvetica', 15))
         self.beadsbutton.clicked.connect(lambda: self.selection('Beads'))
 
         # PBT button
         self.pbtbutton = QPushButton('PBT')
+        self.pbtbutton.setFixedHeight(50)
+        self.pbtbutton.setFont(QFont('Helvetica', 15))
         self.pbtbutton.clicked.connect(lambda: self.selection('PBT'))
 
         # Negative Attentional Capture button
         self.nactbutton = QPushButton('NACT')
+        self.nactbutton.setFixedHeight(50)
+        self.nactbutton.setFont(QFont('Helvetica', 15))
         self.nactbutton.clicked.connect(lambda: self.selection('NACT'))
 
         # Stop Signal button
         self.ssbutton = QPushButton('Stop Signal')
+        self.ssbutton.setFixedHeight(50)
+        self.ssbutton.setFont(QFont('Helvetica', 15))
         self.ssbutton.clicked.connect(lambda: self.selection('SS'))
 
         # Emo Go-NoGo button
         self.egngbutton = QPushButton('Emo Go/No-Go')
+        self.egngbutton.setFixedHeight(50)
+        self.egngbutton.setFont(QFont('Helvetica', 15))
         self.egngbutton.clicked.connect(lambda: self.selection('EGNG'))
 
         # Go-NoGo button
         self.gngbutton = QPushButton('Go/No-Go (WIP)')
+        self.gngbutton.setFixedHeight(50)
+        self.gngbutton.setFont(QFont('Helvetica', 15))
         # self.gngbutton.clicked.connect(lambda: self.selection('GNG'))
 
         # Paired Recall button
         self.prbutton = QPushButton('Paired Recall')
+        self.prbutton.setFixedHeight(50)
+        self.prbutton.setFont(QFont('Helvetica', 15))
         self.prbutton.clicked.connect(lambda: self.selection('PR'))
 
-        # n Back button
+        # n-Back button
         self.nbackbutton = QPushButton('n-Back')
+        self.nbackbutton.setFixedHeight(50)
+        self.nbackbutton.setFont(QFont('Helvetica', 15))
         self.nbackbutton.clicked.connect(lambda: self.selection('NB'))
 
         # Quit button
         self.quitbutton = QPushButton('Quit')
+        self.quitbutton.setFont(QFont('Helvetica', 15))
         self.quitbutton.clicked.connect(QApplication.instance().quit)
         self.quitbutton.resize(self.quitbutton.sizeHint())
 
@@ -119,18 +148,23 @@ class SelectWindow(QWidget):
 
         # Create boxes around the category layouts
         riskbox = QGroupBox('Risk Taking')
+        riskbox.setFont(QFont('Helvetica', 12))
         riskbox.setLayout(risklayout)
 
         discountbox = QGroupBox('Discounting')
+        discountbox.setFont(QFont('Helvetica', 12))
         discountbox.setLayout(discountlayout)
 
         reactionbox = QGroupBox('Reaction')
+        reactionbox.setFont(QFont('Helvetica', 12))
         reactionbox.setLayout(reactionlayout)
 
         memorybox = QGroupBox('Memory')
+        memorybox.setFont(QFont('Helvetica', 12))
         memorybox.setLayout(memorylayout)
 
         miscbox = QGroupBox('Misc')
+        miscbox.setFont(QFont('Helvetica', 12))
         miscbox.setLayout(misclayout)
 
         # Add all the buttons to the appropriate layouts
