@@ -19,7 +19,7 @@ if sys.platform == 'darwin':
 
     setup(
         name='TaskMaster',
-        version='1.0',
+        version='1.0.0',
         description='A python-based application that can run common psych research tasks on any system using PyQt.',
         author='David Michael Nolta Garavito',
         author_email='d.garavito2@gmail.com',
