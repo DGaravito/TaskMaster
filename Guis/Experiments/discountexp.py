@@ -1,14 +1,14 @@
 import random
 import time
 
-from PyQt6.QtWidgets import QLabel, QVBoxLayout, QHBoxLayout
-from PyQt6.QtGui import QFont, QPixmap
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtWidgets import QLabel, QHBoxLayout, QProgressBar
+from PyQt6.QtGui import QFont
+from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 
-from Guis.Experiments import gui
+from Guis.Experiments import experiment
 
 
-class ARTTExp(gui.Experiment):
+class DDiscountExp(experiment.Experiment):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):
@@ -18,30 +18,14 @@ class ARTTExp(gui.Experiment):
         self.instructions.setText('Press ' + self.person.leftkey[0] + ' for the left option and ' +
                                   self.person.rightkey[0] + ' for the right option')
 
-        # Set up Left option
+        # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
         self.left.setFont(QFont('Helvetica', 40))
         self.left.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        # Set up right option
-        self.righttoptext = QLabel('')
-        self.righttoptext.setFont(QFont('Helvetica', 40))
-        self.righttoptext.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.rightpic = QLabel()
-        self.rightpic.setPixmap(QPixmap())
-        self.rightpic.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.rightbottomtext = QLabel('')
-        self.rightbottomtext.setFont(QFont('Helvetica', 40))
-        self.rightbottomtext.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # Put right option stuff in a vertical layout
-        rightlayout = QVBoxLayout()
-
-        rightlayout.addWidget(self.righttoptext)
-        rightlayout.addWidget(self.rightpic)
-        rightlayout.addWidget(self.rightbottomtext)
+        self.right = QLabel('')
+        self.right.setFont(QFont('Helvetica', 40))
+        self.right.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Put Left and Right options in horizontal layout
         explayout = QHBoxLayout()
@@ -51,7 +35,7 @@ class ARTTExp(gui.Experiment):
         explayout.addStretch(1)
         explayout.addWidget(self.middle)
         explayout.addStretch(1)
-        explayout.addLayout(rightlayout)
+        explayout.addWidget(self.right)
         explayout.addStretch(1)
 
         # Put everything in vertical layout
@@ -70,8 +54,7 @@ class ARTTExp(gui.Experiment):
         self.ititimer.stop()
 
         # reset the borders in case there was one
-        self.righttoptext.setStyleSheet('border: 0px;')
-        self.rightbottomtext.setStyleSheet('border: 0px;')
+        self.right.setStyleSheet('border: 0px;')
         self.left.setStyleSheet('border: 0px;')
 
         # if-then statement to determine whether the amount of trials completed is less than the number of trials the
@@ -79,20 +62,11 @@ class ARTTExp(gui.Experiment):
         if self.trialsdone < self.person.get_trials():
 
             # get trial text
-            info = self.person.get_design_text()
+            strings = self.person.get_design_text()
 
             # set the left and right side using the trial text
-            self.left.setText(info[0])
-            pixmap = 'Assets/' + info[2]
-            self.rightpic.setPixmap(QPixmap(pixmap))
-
-            if info[3] == 1:
-                self.righttoptext.setText(info[1])
-                self.rightbottomtext.setText('0')
-
-            else:
-                self.rightbottomtext.setText(info[1])
-                self.righttoptext.setText('0')
+            self.left.setText(strings[0])
+            self.right.setText(strings[1])
 
             # set the middle to or
             self.middle.setText('OR')
@@ -115,8 +89,7 @@ class ARTTExp(gui.Experiment):
 
             # blank out the sides
             self.left.setText('')
-            self.righttoptext.setText('')
-            self.righttoptext.setText('')
+            self.right.setText('')
 
             # increase the number of rounds done and reset the number of trials done to 0
             self.roundsdone += 1
@@ -152,9 +125,7 @@ class ARTTExp(gui.Experiment):
 
         # blank out the sides
         self.left.setText('')
-        self.rightpic.setPixmap(QPixmap())
-        self.righttoptext.setText('')
-        self.rightbottomtext.setText('')
+        self.right.setText('')
 
         # if state is 1, that means the participant timed out and the experiment is in fmri mode, so change iti to the
         # warning
@@ -188,9 +159,7 @@ class ARTTExp(gui.Experiment):
 
         # blank out the sides
         self.left.setText('')
-        self.rightpic.setPixmap(QPixmap())
-        self.righttoptext.setText('')
-        self.rightbottomtext.setText('')
+        self.right.setText('')
 
         # set the middle to a warning
         self.middle.setText('Please try to be quicker')
@@ -219,24 +188,12 @@ class ARTTExp(gui.Experiment):
         # stop the reset timer
         self.trialresettimer.stop()
 
-        # get the trial text
-        info = self.person.get_design_text()
+        # get the trial info
+        strings = self.person.get_design_text()
 
-        # set the left using the trial text
-        self.left.setText(info[0])
-
-        # get the picture for the right
-        pixmap = 'Assets/' + info[2]
-        self.rightpic.setPixmap(QPixmap(pixmap))
-
-        # set the right text depending on if the trial is a risk or an ambiguous one
-        if info[3] == 1:
-            self.righttoptext.setText(info[1])
-            self.rightbottomtext.setText('0')
-
-        else:
-            self.rightbottomtext.setText(info[1])
-            self.righttoptext.setText('0')
+        # set the left and right using that info
+        self.left.setText(strings[0])
+        self.right.setText(strings[1])
 
         # set the middle text to or
         self.middle.setText('OR')
@@ -283,8 +240,7 @@ class ARTTExp(gui.Experiment):
             if key in self.person.rightkey:
 
                 # put a border around the middle to indicate a user input was received
-                self.righttoptext.setStyleSheet('border: 3px solid blue;')
-                self.rightbottomtext.setStyleSheet('border: 3px solid blue;')
+                self.right.setStyleSheet('border: 3px solid blue;')
 
                 # set response to 1
                 response = 1
@@ -309,30 +265,17 @@ class ARTTExp(gui.Experiment):
             # increase the index for the instructions
             self.inst += 1
 
-            # if the instruction index is five, then load the relevant picture
+            # get the associated text
+            self.middle.setText(self.person.get_instructions(self.inst))
+
+            # if the index reaches five...
             if self.inst == 5:
-
-                pixmap = QPixmap('Assets/ARTT_risk_25.png')
-                self.middle.setPixmap(pixmap.scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
-
-            # if the instruction index is eleven, then load the relevant picture
-            elif self.inst == 11:
-
-                pixmap = QPixmap('Assets/ARTT_ambig_50.png')
-                self.middle.setPixmap(pixmap.scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
-
-            else:
-                # get the associated text
-                self.middle.setText(self.person.get_instructions(self.inst))
-
-            # if the index reaches fifteen...
-            if self.inst == 15:
 
                 # reset to zero so the instructions can be viewed again
                 self.inst = 0
 
 
-class RAExp(gui.Experiment):
+class PDiscountExp(experiment.Experiment):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):
@@ -347,34 +290,44 @@ class RAExp(gui.Experiment):
         self.left.setFont(QFont('Helvetica', 40))
         self.left.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.rightgain = QLabel('')
-        self.rightgain.setFont(QFont('Helvetica', 40))
-        self.rightgain.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.right = QLabel('')
+        self.right.setFont(QFont('Helvetica', 40))
+        self.right.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.rightloss = QLabel('')
-        self.rightloss.setFont(QFont('Helvetica', 40))
-        self.rightloss.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        # Put Left and Right words for options in horizontal layout
+        expverblayout = QHBoxLayout()
+
+        expverblayout.addStretch(1)
+        expverblayout.addWidget(self.left)
+        expverblayout.addStretch(1)
+        expverblayout.addWidget(self.middle)
+        expverblayout.addStretch(1)
+        expverblayout.addWidget(self.right)
+        expverblayout.addStretch(1)
+
+        # creating vertical progress bar to represent options
+        self.leftbar = QProgressBar(self)
+        self.leftbar.setOrientation(Qt.Orientation.Vertical)
+
+        self.rightbar = QProgressBar(self)
+        self.rightbar.setOrientation(Qt.Orientation.Vertical)
 
         # Put Left and Right visual options in horizontal layout
-        gamblelayout = QVBoxLayout()
+        expvislayout = QHBoxLayout()
 
-        gamblelayout.addWidget(self.rightgain)
-        gamblelayout.addWidget(self.rightloss)
+        expvislayout.addStretch(1)
+        expvislayout.addWidget(self.leftbar)
+        expvislayout.addStretch(1)
+        expvislayout.addWidget(QLabel(''))
+        expvislayout.addStretch(1)
+        expvislayout.addWidget(self.rightbar)
+        expvislayout.addStretch(1)
 
-        # Put Left and Right words for options in horizontal layout
-        mainhlayout = QHBoxLayout()
-
-        mainhlayout.addStretch(1)
-        mainhlayout.addWidget(self.left)
-        mainhlayout.addStretch(1)
-        mainhlayout.addWidget(self.middle)
-        mainhlayout.addStretch(1)
-        mainhlayout.addLayout(gamblelayout)
-        mainhlayout.addStretch(1)
-
-        # Put everything in vertical layout
+        # Put everything in vertical layou
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addLayout(mainhlayout)
+        self.instquitlayout.addLayout(expverblayout)
+        self.instquitlayout.addStretch(1)
+        self.instquitlayout.addLayout(expvislayout)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitbutton)
 
@@ -388,8 +341,7 @@ class RAExp(gui.Experiment):
         self.ititimer.stop()
 
         # reset the borders in case there was one
-        self.rightgain.setStyleSheet('border: 0px;')
-        self.rightloss.setStyleSheet('border: 0px;')
+        self.right.setStyleSheet('border: 0px;')
         self.left.setStyleSheet('border: 0px;')
 
         # if-then statement to determine whether the amount of trials completed is less than the number of trials the
@@ -399,10 +351,12 @@ class RAExp(gui.Experiment):
             # get trial text
             info = self.person.get_design_text()
 
-            # set the left and right side using the trial text
-            self.left.setText('Getting $0')
-            self.rightgain.setText(info[0])
-            self.rightloss.setText(info[1])
+            # set the left and right side using the trial info
+            self.left.setText(info[0])
+            self.leftbar.setValue(100)
+
+            self.right.setText(info[1])
+            self.rightbar.setValue(info[2])
 
             # set the middle to or
             self.middle.setText('OR')
@@ -425,8 +379,7 @@ class RAExp(gui.Experiment):
 
             # blank out the sides
             self.left.setText('')
-            self.rightgain.setText('')
-            self.rightloss.setText('')
+            self.right.setText('')
 
             # increase the number of rounds done and reset the number of trials done to 0
             self.roundsdone += 1
@@ -462,8 +415,9 @@ class RAExp(gui.Experiment):
 
         # blank out the sides
         self.left.setText('')
-        self.rightgain.setText('')
-        self.rightloss.setText('')
+        self.leftbar.setValue(0)
+        self.right.setText('')
+        self.rightbar.setValue(0)
 
         # if state is 1, that means the participant timed out and the experiment is in fmri mode, so change iti to the
         # warning
@@ -476,9 +430,6 @@ class RAExp(gui.Experiment):
 
             self.middle.setText('+')
 
-        # update the design text
-        self.person.set_design_text()
-
         # if you are not in fmri mode and you have at least completed one trial, then start the timer for the next round
         if (self.person.fmri == 'No') & (self.trialsdone > 0):
 
@@ -488,6 +439,9 @@ class RAExp(gui.Experiment):
         if self.trialsdone == 0:
 
             self.ititimer.start(1000)
+
+        # set the next design text
+        self.person.set_design_text()
 
     def timeout(self):
         """
@@ -500,8 +454,9 @@ class RAExp(gui.Experiment):
 
         # blank out the sides
         self.left.setText('')
-        self.rightgain.setText('')
-        self.rightloss.setText('')
+        self.leftbar.setValue(0)
+        self.right.setText('')
+        self.rightbar.setValue(0)
 
         # set the middle to a warning
         self.middle.setText('Please try to be quicker')
@@ -530,13 +485,15 @@ class RAExp(gui.Experiment):
         # stop the reset timer
         self.trialresettimer.stop()
 
-        # get the trial text
+        # get the trial info
         info = self.person.get_design_text()
 
-        # set the left and right using the trial text
-        self.left.setText('0')
-        self.rightgain.setText(info[0])
-        self.rightloss.setText(info[1])
+        # set the left and right using that info
+        self.left.setText(info[0])
+        self.leftbar.setValue(100)
+
+        self.right.setText(info[1])
+        self.rightbar.setValue(info[2])
 
         # set the middle text to or
         self.middle.setText('OR')
@@ -583,8 +540,7 @@ class RAExp(gui.Experiment):
             if key in self.person.rightkey:
 
                 # put a border around the middle to indicate a user input was received
-                self.rightgain.setStyleSheet('border: 3px solid blue;')
-                self.rightloss.setStyleSheet('border: 3px solid blue;')
+                self.right.setStyleSheet('border: 3px solid blue;')
 
                 # set response to 1
                 response = 1
@@ -619,7 +575,7 @@ class RAExp(gui.Experiment):
                 self.inst = 0
 
 
-class FrameExp(gui.Experiment):
+class CEDiscountExp(experiment.Experiment):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):
@@ -634,36 +590,36 @@ class FrameExp(gui.Experiment):
         self.left.setFont(QFont('Helvetica', 40))
         self.left.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.righttop = QLabel('')
-        self.righttop.setFont(QFont('Helvetica', 40))
-        self.righttop.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.right = QLabel('')
+        self.right.setFont(QFont('Helvetica', 40))
+        self.right.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.rightbottom = QLabel('')
-        self.rightbottom.setFont(QFont('Helvetica', 40))
-        self.rightbottom.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        # Put Left and Right options in horizontal layout
+        explayout = QHBoxLayout()
 
-        # Put gamble parts in vertical layout
-        gamblelayout = QVBoxLayout()
-
-        gamblelayout.addWidget(self.righttop)
-        gamblelayout.addWidget(self.rightbottom)
-
-        # Put Left and Right words for options in horizontal layout
-        mainhlayout = QHBoxLayout()
-
-        mainhlayout.addStretch(1)
-        mainhlayout.addWidget(self.left)
-        mainhlayout.addStretch(1)
-        mainhlayout.addWidget(self.middle)
-        mainhlayout.addStretch(1)
-        mainhlayout.addLayout(gamblelayout)
-        mainhlayout.addStretch(1)
+        explayout.addStretch(1)
+        explayout.addWidget(self.left)
+        explayout.addStretch(1)
+        explayout.addWidget(self.middle)
+        explayout.addStretch(1)
+        explayout.addWidget(self.right)
+        explayout.addStretch(1)
 
         # Put everything in vertical layout
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addLayout(mainhlayout)
+        self.instquitlayout.addLayout(explayout)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitbutton)
+
+        if self.person.fmri == 'Yes':
+            self.extradelay = [0]
+
+        else:
+            self.extradelay = [0, 1000, 2000, 3000]
+
+        # Make timer for second half of trial to appear on screen
+        self.secondhalftimer = QTimer()
+        self.secondhalftimer.timeout.connect(self.displaysecondhalf)
 
     def generatenext(self):
         """
@@ -675,32 +631,40 @@ class FrameExp(gui.Experiment):
         self.ititimer.stop()
 
         # reset the borders in case there was one
-        self.righttop.setStyleSheet('border: 0px;')
-        self.rightbottom.setStyleSheet('border: 0px;')
+        self.right.setStyleSheet('border: 0px;')
         self.left.setStyleSheet('border: 0px;')
 
         # if-then statement to determine whether the amount of trials completed is less than the number of trials the
         # user wants
         if self.trialsdone < self.person.get_trials():
 
-            # get the trial text
-            info = self.person.get_design_text()
+            # get trial text
+            strings = self.person.get_design_text()
 
-            # set the sides to the trial text
-            self.left.setText(info[0])
-            self.righttop.setText(info[1])
-            self.rightbottom.setText(info[2])
+            # pick a random either 1 or 2 to see which side appears first
+            self.sideint = random.randint(1, 2)
 
-            # set middle to or
-            self.middle.setText('OR')
+            # if it's a one, left appears first
+            if self.sideint == 1:
+                self.left.setText(strings[0])
+                self.right.setText('')
 
-            # get the time that the trial starts
+            # if it's a two, right appears first
+            else:
+                self.right.setText(strings[1])
+                self.right.setText('')
+
+            # set the middle to blank
+            self.middle.setText('')
+
+            # log the trial onset time
             self.starttime = time.time() - self.overallstart
 
-            # start the response timer
-            self.timer.start(5000)
+            # get extra delay to add to the 1 second between seeing the first half and seeing the second
+            extra = random.choice(self.extradelay)
+            self.secondhalftimer.start(1000 + extra)
 
-            # allow participant input
+            # enable participant responses
             self.responseenabled = 1
 
             # if fmri mode, then set the new trial timer now
@@ -712,8 +676,7 @@ class FrameExp(gui.Experiment):
 
             # blank out the sides
             self.left.setText('')
-            self.righttop.setText('')
-            self.rightbottom.setText('')
+            self.right.setText('')
 
             # increase the number of rounds done and reset the number of trials done to 0
             self.roundsdone += 1
@@ -749,29 +712,60 @@ class FrameExp(gui.Experiment):
 
         # blank out the sides
         self.left.setText('')
-        self.righttop.setText('')
-        self.rightbottom.setText('')
+        self.right.setText('')
 
         # if state is 1, that means the participant timed out and the experiment is in fmri mode, so change iti to the
         # warning
         if state == 1:
+
             self.middle.setText('Please try to be quicker')
 
         # if the experiment is not in fmri mode or the participant did not time out, then leave this as a cross
         else:
+
             self.middle.setText('+')
+
+        # if you are not in fmri mode and you have at least completed one trial, then start the timer for the next round
+        if (self.person.fmri == 'No') & (self.trialsdone > 0):
+
+            self.ititimer.start(1000)
 
         # if this function is called before the first trial is set up, then set up a timer for the first trial
         if self.trialsdone == 0:
 
             self.ititimer.start(1000)
 
-        # update the design text
-        self.person.set_design_text()
+    def displaysecondhalf(self):
+        """
+        This function is called to display the second half of the trial
+        """
 
-        # if you are not in fmri mode and you have at least completed one trial, then start the timer for the next round
-        if (self.person.fmri == 'No') & (self.trialsdone > 0):
-            self.ititimer.start(1000)
+        # stop the timer
+        self.secondhalftimer.stop()
+
+        # get the design text
+        strings = self.person.get_design_text()
+
+        # if left appeared first, display right
+        if self.sideint == 1:
+            self.right.setText(strings[1])
+
+        # if right appeared first, display left
+        else:
+            self.left.setText(strings[0])
+
+        # set the middle to or
+        self.middle.setText('OR')
+
+        # get the onset of the trial
+        self.full = time.time() - self.overallstart
+
+        # start the trial timer
+        self.timer.start(5000)
+
+        # if you're in fmri mode, then start the timer to the next trial
+        if self.person.fmri == 'Yes':
+            self.ititimer.start(5500)
 
     def timeout(self):
         """
@@ -782,16 +776,19 @@ class FrameExp(gui.Experiment):
         # stop the timer
         self.timer.stop()
 
-        # set text
+        # blank out the sides
         self.left.setText('')
-        self.righttop.setText('')
-        self.rightbottom.setText('')
+        self.right.setText('')
+
+        # set the middle to a warning
+        self.middle.setText('Please try to be quicker')
 
         # send the trial data to the participant class
         self.person.updateoutput(self.trialsdone, self.starttime, 9999)
 
-        # if you're not in fmri mode, then start the reset timer
+        # if you're not in fmri mode, then warn and start the reset timer
         if self.person.fmri == 'No':
+
             self.middle.setText('Please try to be quicker')
             self.trialresettimer.start(1000)
 
@@ -807,21 +804,20 @@ class FrameExp(gui.Experiment):
         if you're not in fmri mode, then this function resets the trial so that the participant can complete it
         """
 
-        # stop the timer
+        # stop the reset timer
         self.trialresettimer.stop()
 
-        # set the trial text
-        info = self.person.get_design_text()
+        # get the trial text
+        strings = self.person.get_design_text()
 
-        # set the text to the sides
-        self.left.setText(info[0])
-        self.righttop.setText(info[1])
-        self.rightbottom.setText(info[2])
+        # set the left and right using that text
+        self.left.setText(strings[0])
+        self.right.setText(strings[1])
 
-        # set the middle text
+        # set the middle text to or
         self.middle.setText('OR')
 
-        # start the response timer
+        # start the timer again
         self.timer.start(5000)
 
     def keyaction(self, key):
@@ -839,6 +835,7 @@ class FrameExp(gui.Experiment):
             # if this is the first trial of the first round, set the global start time to make the onset time make more
             # sense
             if (self.trialsdone == 0) & (self.roundsdone == 0):
+
                 self.overallstart = time.time()
 
             # set the window to the iti screen
@@ -856,14 +853,13 @@ class FrameExp(gui.Experiment):
 
             # use time.time and the start time variable to compute rt
             endtime = time.time() - self.overallstart
-            rt = endtime - self.starttime
+            rt = endtime - self.full
 
             # if the key was the right key...
             if key in self.person.rightkey:
 
                 # put a border around the middle to indicate a user input was received
-                self.righttop.setStyleSheet('border: 3px solid blue;')
-                self.rightbottom.setStyleSheet('border: 3px solid blue;')
+                self.right.setStyleSheet('border: 3px solid blue;')
 
                 # set response to 1
                 response = 1
@@ -878,7 +874,7 @@ class FrameExp(gui.Experiment):
                 response = 0
 
             # send the trial data to the participant class
-            self.person.updateoutput(self.trialsdone, self.starttime, rt, response)
+            self.person.updateoutput(self.trialsdone, self.starttime, self.full, rt, response)
 
             self.iti()
 
@@ -891,8 +887,8 @@ class FrameExp(gui.Experiment):
             # get the associated text
             self.middle.setText(self.person.get_instructions(self.inst))
 
-            # if the index reaches five...
-            if self.inst == 5:
+            # if the index reaches six...
+            if self.inst == 6:
 
                 # reset to zero so the instructions can be viewed again
                 self.inst = 0

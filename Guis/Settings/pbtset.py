@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QLabel
 from Participants import pbtp
 
 from Guis.Settings import settings
-from Guis.Experiments import pbtgui
+from Guis.Experiments import pbtexp
 
 
 class PBTSettings(settings.Settings):
@@ -15,7 +15,7 @@ class PBTSettings(settings.Settings):
         self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         self.layout.addRow(QLabel('Number of trials per block (make sure it\'s divisible by 4):'), self.trialsin)
         self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
-        self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
         self.layout.addRow(self.quitbutton, self.submit)
 
@@ -37,7 +37,7 @@ class PBTSettings(settings.Settings):
                                          self.buttonboxstate,
                                          self.eyetracking)
 
-            self.exp = pbtgui.PBTExp(person)
+            self.exp = pbtexp.PBTExp(person)
             self.exp.show()
             self.hide()
 

@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QDial
 from PyQt6.QtGui import QFont, QPixmap
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QDir
 
-from Guis.Experiments import gui
+from Guis.Experiments import experiment
 
 
 class BeadsConfidence(QDialog):
@@ -106,7 +106,7 @@ class BeadsInventory(QDialog):
         self.setLayout(layout)
 
 
-class BeadsExp(gui.Experiment):
+class BeadsExp(experiment.Experiment):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):

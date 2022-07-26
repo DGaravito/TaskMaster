@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QGridLay
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
 
-from Guis.Settings import discount, memory, reaction, beads, pbt, nact, gamble
+from Guis.Settings import discountset, memoryset, reactionset, beadsset, pbtset, nactset, gambleset
 
 
 class SelectWindow(QWidget):
@@ -221,46 +221,46 @@ class SelectWindow(QWidget):
         match choice:
 
             case str('DD'):
-                self.w = discount.DdSettings('DD')
+                self.w = discountset.DdSettings('DD')
 
             case str('PD'):
-                self.w = discount.PdSettings('PD')
+                self.w = discountset.PdSettings('PD')
 
             case str('CEDT'):
-                self.w = discount.CEDTSettings('CEDT')
+                self.w = discountset.CEDTSettings('CEDT')
 
             case str('ARTT'):
-                self.w = gamble.ARTTSettings('ARTT')
+                self.w = gambleset.ARTTSettings('ARTT')
 
             case str('RA'):
-                self.w = gamble.RASettings('RA')
+                self.w = gambleset.RASettings('RA')
 
             case str('Framing'):
-                self.w = gamble.FrameSettings('Framing')
+                self.w = gambleset.FrameSettings('Framing')
 
             case str('Beads'):
-                self.w = beads.BeadsSettings('Beads')
+                self.w = beadsset.BeadsSettings('Beads')
 
             case str('PBT'):
-                self.w = pbt.PBTSettings('PBT')
+                self.w = pbtset.PBTSettings('PBT')
 
             case str('NACT'):
-                self.w = nact.NACTSettings('NACT')
+                self.w = nactset.NACTSettings('NACT')
 
             case str('SS'):
-                self.w = reaction.SSSettings('SS')
+                self.w = reactionset.SSSettings('SS')
 
             case str('PR'):
-                self.w = memory.PrSettings('PR')
+                self.w = memoryset.PrSettings('PR')
 
             case str('NB'):
-                self.w = memory.NBackSettings('1-back')
+                self.w = memoryset.NBackSettings('1-back')
 
             case str('EGNG'):
-                self.w = reaction.EGNGSettings('EGNG')
+                self.w = reactionset.EGNGSettings('EGNG')
 
             case str('GNG'):
-                self.w = reaction.GNGSettings('GNG')
+                self.w = reactionset.GNGSettings('GNG')
 
             case _:
                 self.w = QLabel('Panic')

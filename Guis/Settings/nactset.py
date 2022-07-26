@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QLabel, QSpinBox
 from Participants import nactp
 
 from Guis.Settings import settings
-from Guis.Experiments import nactgui
+from Guis.Experiments import nactexp
 
 
 class NACTSettings(settings.Settings):
@@ -32,7 +32,7 @@ class NACTSettings(settings.Settings):
         self.layout.addRow(QLabel('Participant starting money:'), self.smoneyin)
         self.layout.addRow(QLabel('Minimum money a participants could have at the end:'), self.minmoneyin)
         self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
-        self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
         self.layout.addRow(self.quitbutton, self.submit)
 
@@ -58,7 +58,7 @@ class NACTSettings(settings.Settings):
                                            self.buttonboxstate,
                                            self.eyetracking)
 
-            self.exp = nactgui.NACTExp(person)
+            self.exp = nactexp.NACTExp(person)
             self.exp.show()
             self.hide()
 

@@ -5,10 +5,10 @@ from PyQt6.QtWidgets import QHBoxLayout
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 
-from Guis.Experiments import gui
+from Guis.Experiments import experiment
 
 
-class SSExp(gui.Experiment):
+class SSExp(experiment.Experiment):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):
@@ -229,7 +229,7 @@ class SSExp(gui.Experiment):
                 self.inst = 0
 
 
-class EGNGExp(gui.Experiment):
+class EGNGExp(experiment.Experiment):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):

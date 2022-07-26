@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QLabel
 from Participants import beadsp
 
 from Guis.Settings import settings
-from Guis.Experiments import beadsgui
+from Guis.Experiments import beadsexp
 
 
 class BeadsSettings(settings.Settings):
@@ -12,7 +12,7 @@ class BeadsSettings(settings.Settings):
         super().__init__(task)
 
         self.layout.addRow(QLabel('Number of trials:'), self.trialsin)
-        self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
         self.layout.addRow(self.quitbutton, self.submit)
 
@@ -30,6 +30,6 @@ class BeadsSettings(settings.Settings):
                                          'Beads Task',
                                          self.eyetracking)
 
-        self.exp = beadsgui.BeadsExp(person)
+        self.exp = beadsexp.BeadsExp(person)
         self.exp.show()
         self.hide()

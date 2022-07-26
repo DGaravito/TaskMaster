@@ -5,10 +5,10 @@ from PyQt6.QtWidgets import QLabel, QHBoxLayout
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt, pyqtSignal
 
-from Guis.Experiments import gui
+from Guis.Experiments import experiment
 
 
-class NACTExp(gui.Experiment):
+class NACTExp(experiment.Experiment):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):

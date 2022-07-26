@@ -225,8 +225,8 @@ class Settings(QWidget):
         self.buttontoggle.stateChanged.connect(self.clickbox)
 
         # Eyetracking checkbox
-        self.eyetrackingtoggle = QCheckBox()
-        self.eyetrackingtoggle.stateChanged.connect(self.clickbox)
+        # self.eyetrackingtoggle = QCheckBox()
+        # self.eyetrackingtoggle.stateChanged.connect(self.clickbox)
 
         # fMRI checkbox
         self.fmritoggle = QCheckBox()

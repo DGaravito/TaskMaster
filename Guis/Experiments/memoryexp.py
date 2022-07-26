@@ -4,10 +4,10 @@ from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 
 import time
 
-from Guis.Experiments import gui
+from Guis.Experiments import experiment
 
 
-class PrExp(gui.Experiment):
+class PrExp(experiment.Experiment):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):
@@ -148,7 +148,7 @@ class PrExp(gui.Experiment):
                 self.inst = 0
 
 
-class NbExp(gui.Experiment):
+class NbExp(experiment.Experiment):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):

@@ -5,7 +5,7 @@ from adopy.tasks.cra import TaskCRA
 from Participants import gamblep
 
 from Guis.Settings import settings
-from Guis.Experiments import gamblegui
+from Guis.Experiments import gambleexp
 
 
 class ARTTSettings(settings.Settings):
@@ -48,7 +48,7 @@ class ARTTSettings(settings.Settings):
         self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         self.layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
         self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
-        self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
         self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
         self.layout.addRow(self.quitbutton, self.submit)
@@ -98,7 +98,7 @@ class ARTTSettings(settings.Settings):
                                              self.eyetracking,
                                              self.fmri)
 
-            self.exp = gamblegui.ARTTExp(person)
+            self.exp = gambleexp.ARTTExp(person)
             self.exp.show()
             self.hide()
 
@@ -129,7 +129,7 @@ class RASettings(settings.Settings):
         self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         self.layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
         self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
-        self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
         self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
         self.layout.addRow(self.quitbutton, self.submit)
@@ -155,7 +155,7 @@ class RASettings(settings.Settings):
                                        self.eyetracking,
                                        self.fmri)
 
-        self.exp = gamblegui.RAExp(person)
+        self.exp = gambleexp.RAExp(person)
         self.exp.show()
         self.hide()
 
@@ -189,7 +189,7 @@ class FrameSettings(settings.Settings):
         self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         self.layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
         self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
-        self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
         self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
         self.layout.addRow(self.quitbutton, self.submit)
@@ -235,6 +235,6 @@ class FrameSettings(settings.Settings):
                                               self.eyetracking,
                                               self.fmri)
 
-            self.exp = gamblegui.FrameExp(person)
+            self.exp = gambleexp.FrameExp(person)
             self.exp.show()
             self.hide()

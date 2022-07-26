@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QLabel, QSpinBox, QComboBox
 from Participants import memoryp
 
 from Guis.Settings import settings
-from Guis.Experiments import memorygui
+from Guis.Experiments import memoryexp
 
 
 class PrSettings(settings.Settings):
@@ -20,7 +20,7 @@ class PrSettings(settings.Settings):
         self.layout.addRow(QLabel('Number of word pairs (Max: 30):'), self.pairsin)
         self.layout.addRow(QLabel('Number of study-test trials:'), self.trialsin)
         self.layout.addRow(QLabel('Do you want an STT trial?'), self.stttoggle)
-        self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
         self.layout.addRow(self.quitbutton, self.submit)
 
@@ -40,7 +40,7 @@ class PrSettings(settings.Settings):
                                        self.stt,
                                        self.eyetracking)
 
-        self.exp = memorygui.PrExp(person)
+        self.exp = memoryexp.PrExp(person)
         self.exp.show()
         self.hide()
 
@@ -60,7 +60,7 @@ class NBackSettings(settings.Settings):
         self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         self.layout.addRow(QLabel('Type of n-Back:'), self.design)
         self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
-        self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
         self.layout.addRow(self.quitbutton, self.submit)
 
@@ -84,6 +84,6 @@ class NBackSettings(settings.Settings):
                                        self.buttonboxstate,
                                        self.eyetracking)
 
-        self.exp = memorygui.NbExp(person)
+        self.exp = memoryexp.NbExp(person)
         self.exp.show()
         self.hide()

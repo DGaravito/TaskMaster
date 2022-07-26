@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QLabel, QSpinBox, QGridLayout, QDialog, QVBoxLayout
 from Participants import reactionp
 
 from Guis.Settings import settings
-from Guis.Experiments import reactiongui
+from Guis.Experiments import reactionexp
 
 
 class SSSettings(settings.Settings):
@@ -21,7 +21,7 @@ class SSSettings(settings.Settings):
         self.layout.addRow(QLabel('Maximum delay for signal (in milliseconds; max is 2000):'), self.maxrtin)
         self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
-        self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
         self.layout.addRow(self.quitbutton, self.submit)
 
@@ -42,7 +42,7 @@ class SSSettings(settings.Settings):
                                          self.buttonboxstate,
                                          self.eyetracking)
 
-        self.exp = reactiongui.SSExp(person)
+        self.exp = reactionexp.SSExp(person)
         self.exp.show()
         self.hide()
 
@@ -95,6 +95,7 @@ class EGNGSettings(settings.Settings):
         self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         self.layout.addRow(QLabel('Which faces would you like to include?'), facelayout)
         self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
+        # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
         self.layout.addRow(self.quitbutton, self.submit)
 
@@ -122,7 +123,7 @@ class EGNGSettings(settings.Settings):
                                                    self.buttonboxstate,
                                                    self.eyetracking)
 
-                self.exp = reactiongui.EGNGExp(person)
+                self.exp = reactionexp.EGNGExp(person)
                 self.exp.show()
                 self.hide()
 
@@ -179,6 +180,6 @@ class GNGSettings(settings.Settings):
 #                                                        self.eyetracking,
 #                                                        self.fmri)
 #
-#         self.exp = expguis.reactiongui.GNGExp(person)
+#         self.exp = expguis.reactionexp.GNGExp(person)
 #         self.exp.show()
 #         self.hide()
