@@ -3,13 +3,13 @@ import sys
 
 block_cipher = None
 
-hooks = ['Guis/Settings/beads.py', 'Participants/beadsp.py', 'Guis/Experiments/beadsgui.py',
-        'Guis/Settings/discount.py', 'Participants/discountp.py', 'Guis/Experiments/discountgui.py',
-        'Guis/Settings/gamble.py', 'Participants/gamblep.py', 'Guis/Experiments/gamblegui.py',
-        'Guis/Settings/memory.py', 'Participants/memoryp.py', 'Guis/Experiments/memorygui.py', 'Guis/Settings/nact.py',
-        'Participants/nactp.py', 'Guis/Experiments/nactgui.py', 'Guis/Settings/pbt.py', 'Participants/pbtp.py',
-        'Guis/Experiments/pbtgui.py', 'Guis/Settings/reaction.py', 'Participants/reactionp.py',
-        'Guis/Experiments/reactiongui.py' ]
+hooks = ['Guis/Settings/beadsset.py', 'Participants/beadsp.py', 'Guis/Experiments/beadsexp.py',
+        'Guis/Settings/discountset.py', 'Participants/discountp.py', 'Guis/Experiments/discountexp.py',
+        'Guis/Settings/gambleset.py', 'Participants/gamblep.py', 'Guis/Experiments/gambleexp.py',
+        'Guis/Settings/memoryset.py', 'Participants/memoryp.py', 'Guis/Experiments/memoryexp.py',
+        'Guis/Settings/nactset.py', 'Participants/nactp.py', 'Guis/Experiments/nactexp.py', 'Guis/Settings/pbtset.py',
+        'Participants/pbtp.py', 'Guis/Experiments/pbtexp.py', 'Guis/Settings/reactionset.py',
+        'Participants/reactionp.py', 'Guis/Experiments/reactionexp.py' ]
 
 addedfiles = [('assets/', 'assets'),
              ('TM.icns', '.'),
@@ -30,6 +30,7 @@ a = Analysis(
     cipher=block_cipher,
     noarchive=False,
 )
+
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
 exe = EXE(
@@ -40,7 +41,7 @@ exe = EXE(
     a.datas,
     [],
     name='TaskMaster',
-    debug=True,
+    debug=False,
     bootloader_ignore_signals=False,
     icon='C:/Users/dgara/PycharmProjects/TaskMaster/TM.ico',
     strip=False,
