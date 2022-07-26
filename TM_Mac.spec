@@ -36,24 +36,19 @@ pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 exe = EXE(
     pyz,
     a.scripts,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
     [],
     name='TaskMaster',
     debug=False,
-    bootloader_ignore_signals=False,
     icon='/Users/DGaravito/PycharmProjects/TaskMaster/TM.icns',
+    exclude_binaries=True,
+    bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    upx_exclude=[],
-    runtime_tmpdir=None,
     console=False,
     disable_windowed_traceback=False,
-    argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
-    entitlements_file=None,
+    entitlements_file=None
 )
 
 coll = COLLECT(exe,
@@ -66,7 +61,7 @@ coll = COLLECT(exe,
                name='TaskMaster')
 
 app = BUNDLE(coll,
-             version='1.0.0',
-             name='TaskMaster.app',
-             icon='/Users/DGaravito/PycharmProjects/TaskMaster/TM.icns',
-             bundle_identifier=None)
+            name='TaskMaster.app',
+            icon='/Users/DGaravito/PycharmProjects/TaskMaster/TM.icns',
+            bundle_identifier=None,
+            version='1.0.0')

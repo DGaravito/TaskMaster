@@ -5,15 +5,15 @@ import glob
 from setuptools import setup
 import sys
 
-mainscript = 'main.py'
-data = [('Assets', glob.glob('Assets/*.*'))]
+mainscript = 'cli.py'
+data = [('Assets', glob.glob('Assets/*'))]
 
 if sys.platform == 'darwin':
 
     OPTIONS = {
         'argv_emulation': True,
         'site_packages': True,
-        'iconfile': 'TM.ico',
+        'iconfile': 'TM.icns',
         'packages': []
     }
 
@@ -25,6 +25,7 @@ if sys.platform == 'darwin':
         author_email='d.garavito2@gmail.com',
         setup_requires=['py2app', 'PyQt6', 'numpy', 'scipy', 'pandas', 'xlsxwriter', 'adopy'],
         app=[mainscript],
+        data_files=data,
         options={'py2app': OPTIONS}
     )
 
