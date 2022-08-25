@@ -300,11 +300,11 @@ class Settings(QWidget):
             self.outcome = 'Yes'
         else:
             self.outcome = 'No'
-
-        if self.eyetrackingtoggle.isChecked():
-            self.eyetracking = 'Yes'
-        else:
-            self.eyetracking = 'No'
+        #
+        # if self.eyetrackingtoggle.isChecked():
+        #     self.eyetracking = 'Yes'
+        # else:
+        #     self.eyetracking = 'No'
 
         if self.fmritoggle.isChecked():
             self.fmri = 'Yes'

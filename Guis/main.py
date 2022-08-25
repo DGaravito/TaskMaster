@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QGridLay
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
 
-from Guis.Settings import discountset, memoryset, reactionset, beadsset, pbtset, nactset, gambleset
+from Guis.Settings import discountset, memoryset, reactionset, beadsset, pbtset, nactset, gambleset, stroopset, dwellset
 
 
 class SelectWindow(QWidget):
@@ -88,6 +88,18 @@ class SelectWindow(QWidget):
         self.beadsbutton.setFont(QFont('Helvetica', 15))
         self.beadsbutton.clicked.connect(lambda: self.selection('Beads'))
 
+        # Dwell Task button
+        self.dwellbutton = QPushButton('Dwell')
+        self.dwellbutton.setFixedHeight(50)
+        self.dwellbutton.setFont(QFont('Helvetica', 15))
+        self.dwellbutton.clicked.connect(lambda: self.selection('Dwell'))
+
+        # Stroop Task button
+        self.stroopbutton = QPushButton('Stroop')
+        self.stroopbutton.setFixedHeight(50)
+        self.stroopbutton.setFont(QFont('Helvetica', 15))
+        self.stroopbutton.clicked.connect(lambda: self.selection('Stroop'))
+
         # PBT button
         self.pbtbutton = QPushButton('PBT')
         self.pbtbutton.setFixedHeight(50)
@@ -113,16 +125,22 @@ class SelectWindow(QWidget):
         self.egngbutton.clicked.connect(lambda: self.selection('EGNG'))
 
         # Go-NoGo button
-        self.gngbutton = QPushButton('Go/No-Go (WIP)')
+        self.gngbutton = QPushButton('Go/No-Go')
         self.gngbutton.setFixedHeight(50)
         self.gngbutton.setFont(QFont('Helvetica', 15))
-        # self.gngbutton.clicked.connect(lambda: self.selection('GNG'))
+        self.gngbutton.clicked.connect(lambda: self.selection('GNG'))
 
         # Paired Recall button
         self.prbutton = QPushButton('Paired Recall')
         self.prbutton.setFixedHeight(50)
         self.prbutton.setFont(QFont('Helvetica', 15))
         self.prbutton.clicked.connect(lambda: self.selection('PR'))
+
+        # Digit Span button
+        self.digitspanbutton = QPushButton('Digit Span')
+        self.digitspanbutton.setFixedHeight(50)
+        self.digitspanbutton.setFont(QFont('Helvetica', 15))
+        self.digitspanbutton.clicked.connect(lambda: self.selection('DS'))
 
         # n-Back button
         self.nbackbutton = QPushButton('n-Back')
@@ -184,8 +202,11 @@ class SelectWindow(QWidget):
 
         memorylayout.addWidget(self.prbutton, 0, 0)
         memorylayout.addWidget(self.nbackbutton, 0, 1)
+        memorylayout.addWidget(self.digitspanbutton, 0, 2)
 
         misclayout.addWidget(self.beadsbutton, 0, 0)
+        misclayout.addWidget(self.dwellbutton, 0, 1)
+        misclayout.addWidget(self.stroopbutton, 0, 2)
 
         # add the boxes and the quit button to the main layout
         mainlayout.addWidget(riskbox)
@@ -241,6 +262,12 @@ class SelectWindow(QWidget):
             case str('Beads'):
                 self.w = beadsset.BeadsSettings('Beads')
 
+            case str('Dwell'):
+                self.w = dwellset.DwellSettings('Dwell')
+
+            case str('Stroop'):
+                self.w = stroopset.StroopSettings('Stroop')
+
             case str('PBT'):
                 self.w = pbtset.PBTSettings('PBT')
 
@@ -252,6 +279,9 @@ class SelectWindow(QWidget):
 
             case str('PR'):
                 self.w = memoryset.PrSettings('PR')
+
+            case str('DS'):
+                self.w = memoryset.DSSettings('DS')
 
             case str('NB'):
                 self.w = memoryset.NBackSettings('1-back')
