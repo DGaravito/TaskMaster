@@ -394,7 +394,7 @@ class ARTTParticipant(participant.Participant):
 
             case 3:
 
-                inst = 'In this task, you will see images that show gambles.'
+                inst = 'In this task, you will make decisions between\nguarantees and gambles.'
 
             case 4:
 
@@ -417,7 +417,7 @@ class ARTTParticipant(participant.Participant):
 
             case 9:
 
-                inst = 'In some gambles, part of the gamble will be hidden,\nso you will have less information about' \
+                inst = 'For some decisions, part of the gamble will be hidden,\nso you will have less information about' \
                        'the number of\nred and blue chips in the bag.'
 
             case 10:
