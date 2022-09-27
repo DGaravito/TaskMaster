@@ -105,7 +105,7 @@ class NACTParticipant(participant.Participant):
         """
 
         # have a list of all possible colors (not including the high and low value colors)
-        colors = ['White', 'Purple', 'Yellow', 'Orange', 'Teal', 'Blue']
+        colors = ['Black', 'Purple', 'Yellow', 'Orange', 'Teal', 'Blue']
 
         # shuffle the list of colors
         random.shuffle(colors)
