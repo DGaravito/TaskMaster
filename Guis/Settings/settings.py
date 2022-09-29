@@ -177,6 +177,7 @@ class Settings(QWidget):
         self.fear = 'No'
         self.angry = 'No'
         self.sad = 'No'
+        self.adopystate = 'No'
 
         # Default directory
         self.wd = QLineEdit('C:/users/dgara/Desktop')
@@ -219,6 +220,10 @@ class Settings(QWidget):
         self.smoneyin = QSpinBox()
         self.smoneyin.setValue(25)
         self.smoneyin.setRange(0, 10000)
+
+        # ADOPy checkbox
+        self.adopytoggle = QCheckBox()
+        self.adopytoggle.stateChanged.connect(self.clickbox)
 
         # Button checkbox
         self.buttontoggle = QCheckBox()
@@ -310,6 +315,11 @@ class Settings(QWidget):
             self.fmri = 'Yes'
         else:
             self.fmri = 'No'
+
+        if self.adopytoggle.isChecked():
+            self.adopystate = 'Yes'
+        else:
+            self.adopystate = 'No'
 
         if self.ftttoggle.isChecked():
             self.ftt = 'Yes'

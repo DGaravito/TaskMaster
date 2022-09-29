@@ -46,6 +46,7 @@ class DdSettings(settings.Settings):
         self.layout.addRow(QLabel('Longest delay in delayed option (weeks):'), self.ldin)
         self.layout.addRow(QLabel('Smallest reward in immediate option:'), self.srewin)
         self.layout.addRow(QLabel('Biggest reward in delayed option:'), self.lrewin)
+        self.layout.addRow(QLabel('Do you want to use ADOPy?'), self.adopytoggle)
         self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
@@ -69,6 +70,7 @@ class DdSettings(settings.Settings):
                                          self.srewin.text(),
                                          self.lrewin.text(),
                                          self.blocksin.text(),
+                                         self.adopystate,
                                          self.buttonboxstate,
                                          # self.eyetracking,
                                          self.fmri)

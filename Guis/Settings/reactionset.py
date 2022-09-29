@@ -167,19 +167,17 @@ class GNGSettings(settings.Settings):
 
     def submitsettings(self):
 
-        print('not implemented yet')
+        person = reactionp.GNGParticipant(self.idform.text(),
+                                                       self.trialsin.text(),
+                                                       self.sessionin.text(),
+                                                       self.wd.text(),
+                                                       'Go/No-Go',
+                                                       self.maxrtin.text(),
+                                                       self.blocksin.text(),
+                                                       self.buttonboxstate,
+                                                       self.eyetracking,
+                                                       self.fmri)
 
-#         person = participants.reactionp.GNGParticipant(self.idform.text(),
-#                                                        self.trialsin.text(),
-#                                                        self.sessionin.text(),
-#                                                        self.wd.text(),
-#                                                        'Go/No-Go',
-#                                                        self.maxrtin.text(),
-#                                                        self.blocksin.text(),
-#                                                        self.buttonboxstate,
-#                                                        self.eyetracking,
-#                                                        self.fmri)
-#
-#         self.exp = expguis.reactionexp.GNGExp(person)
-#         self.exp.show()
-#         self.hide()
+        self.exp = reactionexp.GNGExp(person)
+        self.exp.show()
+        self.hide()

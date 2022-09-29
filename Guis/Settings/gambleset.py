@@ -45,6 +45,7 @@ class ARTTSettings(settings.Settings):
         self.layout.addRow(QLabel('Fixed reward/loss magnitude:'), self.srewin)
         self.layout.addRow(QLabel('Largest reward/loss possible:'), self.lrewin)
         self.layout.addRow(QLabel('What type of questions do you want?'), self.design)
+        self.layout.addRow(QLabel('Do you want to use ADOPy?'), self.adopytoggle)
         self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         self.layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
         self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
@@ -94,6 +95,7 @@ class ARTTSettings(settings.Settings):
                                              self.outcome,
                                              self.smoneyin.text(),
                                              self.blocksin.text(),
+                                             self.adopystate,
                                              self.buttonboxstate,
                                              self.eyetracking,
                                              self.fmri)
