@@ -61,10 +61,10 @@ class StroopParticipant(participant.Participant):
         self.set_pairs(self.get_trials())
 
         # pop the block type for this block
-        block = self.blocklist.pop()
+        self.block = self.blocklist.pop()
 
         # return the block type
-        return block
+        return self.block
 
     def get_design_text(self):
         """
@@ -88,7 +88,7 @@ class StroopParticipant(participant.Participant):
         df_simultrial = {
             'trial': [trial],
             'word': [word],
-            'cond': [self.blocktype],
+            'cond': [self.block],
             'onset': [onset]
         }
 

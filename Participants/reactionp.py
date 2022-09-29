@@ -396,7 +396,7 @@ class EGNGParticipant(participant.Participant):
         rounds have been completed. If not, prompt the user that they will be doing a new round and to focus on a face.
         If so, check to see if all the blocks have been completed. If so, tell the participant that we'll be starting
         again. If not, then thank the partipant
-        :return: list: string for participant instructiuon; integer to tell the gui whether there are still trials to do
+        :return: list: string for participant instruction; integer to tell the gui whether there are still trials to do
         """
 
         # default is there are still trials to go
@@ -633,8 +633,7 @@ class EGNGParticipant(participant.Participant):
 
 class GNGParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, session, outdir, task, blocks, happy, sad, angry, fear, buttonbox,
-                 eyetracking):
+    def __init__(self, expid, trials, session, outdir, task, maxrt, blocks, buttonbox, eyetracking):
         super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking)
 
         # set how many blocks are needed and set the blocks done to 0
@@ -642,25 +641,7 @@ class GNGParticipant(participant.Participant):
         self.blocksdone = 0
 
         # make an empty list for the blocks
-        self.structlist = []
-
-        # each of the following if statements checks to see if the user checks any of these emotions. If so, it adds the
-        # emotion and the reverse round to the block structure
-        if happy == 'Yes':
-            self.structlist.append('Happy')
-            self.structlist.append('HappyRev')
-
-        if sad == 'Yes':
-            self.structlist.append('Sad')
-            self.structlist.append('SadRev')
-
-        if angry == 'Yes':
-            self.structlist.append('Angry')
-            self.structlist.append('AngryRev')
-
-        if fear == 'Yes':
-            self.structlist.append('Fearful')
-            self.structlist.append('FearfulRev')
+        self.structlist = ['A', 'Z']
 
         # copy the original list to get an order for the task
         self.blocktypes = list(self.structlist)
@@ -671,7 +652,7 @@ class GNGParticipant(participant.Participant):
         # Experiment settingsguis output dataframe
         dict_simulsettings = {
             'Blocks': [blocks],
-            'Faces': [self.structlist]
+            'Signals': [self.structlist]
         }
 
         # attach the task-specific settings to the task general settings
@@ -684,80 +665,47 @@ class GNGParticipant(participant.Participant):
         :return:
         """
 
-        # there will always be neutral pictures in the blocks
-        self.piclist = ['EGNG_Neutral_']
+        # list the type of trials
+        self.siglist = ['A', 'Z']
 
         # find out which block is occuring...
         match block:
 
             # when you find the block type...
-            case 'Happy':
+            case 'A':
 
-                # add those types of pictures to the list of pictures...
-                self.piclist.append('EGNG_Happy_')
-
-                # for emotion blocks, set the neutral number to a fourth of the trials; reverse, do the opposite
-                neutralnum = int(self.get_trials()/4)
+                # for A blocks, set the neutral number to a fourth of the trials; reverse, do the opposite
+                A_num = int(self.get_trials()/4)
 
                 # whatever set of trials were divided by 4, subtract them from the total trials and that is the other
                 # set of trials
-                emonum = self.get_trials()-neutralnum
-
-            case 'HappyRev':
-                self.piclist.append('EGNG_Happy_')
-                emonum = int(self.get_trials()/4)
-                neutralnum = self.get_trials()-emonum
-
-            case 'Sad':
-                self.piclist.append('EGNG_Sad_')
-                neutralnum = int(self.get_trials()/4)
-                emonum = self.get_trials()-neutralnum
-
-            case 'SadRev':
-                self.piclist.append('EGNG_Sad_')
-                emonum = int(self.get_trials()/4)
-                neutralnum = self.get_trials()-emonum
-
-            case 'Angry':
-                self.piclist.append('EGNG_Angry_')
-                neutralnum = int(self.get_trials()/4)
-                emonum = self.get_trials()-neutralnum
-
-            case 'AngryRev':
-                self.piclist.append('EGNG_Angry_')
-                emonum = int(self.get_trials()/4)
-                neutralnum = self.get_trials()-emonum
-
-            case 'Fearful':
-                self.piclist.append('EGNG_Fearful_')
-                neutralnum = int(self.get_trials()/4)
-                emonum = self.get_trials()-neutralnum
+                Z_num = self.get_trials()-A_num
 
             case _:
-                self.piclist.append('EGNG_Fearful_')
-                emonum = int(self.get_trials()/4)
-                neutralnum = self.get_trials()-emonum
+
+                Z_num = int(self.get_trials()/4)
+                A_num = self.get_trials()-Z_num
 
         # set a list of integers for the number of trials that the neutral pictures and emotional pictures will get
-        multiplier = [neutralnum, emonum]
+        multiplier = [A_num, Z_num]
 
         # the strings are multiplied so that you end up with a list of strings. Depending on the type of block, one type
-        # of pictures will appear 3/4 of the time; the other, 1/4 of the time
-        self.piclist = sum([[s] * n for s, n in zip(self.piclist, multiplier)], [])
+        # of signal will appear 3/4 of the time; the other, 1/4 of the time
+        self.siglist = sum([[s] * n for s, n in zip(self.siglist, multiplier)], [])
 
-        # copy the original picture list to get a new order for the block
-        self.picorder = list(self.piclist)
+        # copy the original signal list to get a new order for the block
+        self.sigorder = list(self.siglist)
 
         # shuffle the new order
-        random.shuffle(self.picorder)
+        random.shuffle(self.sigorder)
 
     def nextround(self):
         """
-        Each block is composed of emotional and reversed rounds of trials. This function checks to see if all of those
-        rounds have been completed. If not, prompt the user that they will be doing a new round and to focus on a face.
-        If so, check to see if all the blocks have been completed. If so, tell the participant that we'll be starting
-        again. If not, then thank the partipant
-        :return: list: string for participant instructiuon; integer to tell the gui whether there are still trials to do
+        Each block is composed of A and Z rounds of trials. This function checks to see if all rounds have been
+        completed. If not, prompt the user that they will be doing a new round and what to focus on. If so, check to
+        see if all the blocks have been completed. If so, tell the participant that we'll be starting again. If not,
+        then thank the partipant.
+        :return: list: string for participant instruction; integer to tell the gui whether there are still trials to do
         """
 
         # default is there are still trials to go
@@ -772,30 +720,15 @@ class GNGParticipant(participant.Participant):
             # set the structure for that round
             self.set_structure(self.blocktype)
 
-            # if the round is a reverse round, then tell the participant to respond only to neutral faces
-            if self.blocktype in ['HappyRev', 'SadRev', 'AngryRev', 'FearfulRev']:
+            # if the round is an A round, then tell the participant to respond only to A's
+            if self.blocktype == 'A':
 
-                prompt = 'In this round, only respond to \"Neutral\" faces.\nPress \"G\" to start.'
+                prompt = 'In this round, only respond to \"A\" signals.\nPress \"G\" to start.'
 
-            # if the round is a happy round, then tell the participant to respond only to happy faces
-            elif self.blocktype == 'Happy':
-
-                prompt = 'In this round, only respond to \"Happy\" faces.\nPress \"G\" to start.'
-
-            # if the round is a sad round, then tell the participant to respond only to sad faces
-            elif self.blocktype == 'Sad':
-
-                prompt = 'In this round, only respond to \"Sad\" faces.\nPress \"G\" to start.'
-
-            # if the round is a angry round, then tell the participant to respond only to angry faces
-            elif self.blocktype == 'Angry':
-
-                prompt = 'In this round, only respond to \"Angry\" faces.\nPress \"G\" to start.'
-
-            # if the round is a fearful round, then tell the participant to respond only to fearful faces
+            # if the round is a Z round, then tell the participant to respond only to Z's
             else:
 
-                prompt = 'In this round, only respond to \"Fearful\" faces.\nPress \"G\" to start.'
+                prompt = 'In this round, only respond to \"Z\" signals.\nPress \"G\" to start.'
 
         # if all rounds in this block are done...
         else:
@@ -834,16 +767,16 @@ class GNGParticipant(participant.Participant):
         :return: the picture that was popped
         """
 
-        pic = self.picorder.pop()
+        sig = self.sigorder.pop()
 
-        return pic
+        return sig
 
-    def updateoutput(self, trial, pic, onset, time, response=0):
+    def updateoutput(self, trial, sig, onset, time, response=0):
         """
         evaluates whether the person responded correctly, records the stats, and updates the performance dataframe
         in the superclass
         :param trial: the number of the trial that was just completed
-        :param pic: string with the picture name in it, so we can see if the participants gave the correct answer
+        :param sig: string with the signal  in it, so we can see if the participants gave the correct answer
         :param onset: onset time for the trial
         :param time: participants's reaction time
         :param response: integer with either 0 or 1 depending on if the person chose left or right. Default is 3 in case
@@ -853,99 +786,45 @@ class GNGParticipant(participant.Participant):
         # default is that the participant is not correct
         correct = 0
 
-        # if the round was a reverse round...
-        if self.blocktype in ['HappyRev', 'SadRev', 'AngryRev', 'FearfulRev']:
+        # if the round was an A round...
+        if self.blocktype == 'A':
 
-            # if the picture was a neutral one...
-            if 'EGNG_Neutral_' in pic:
+            # if the signal was A...
+            if sig == 'A':
 
                 # if the participant did respond, they are correct
                 if response == 1:
                     correct = 1
 
-            # if the picture was an emotional one..
+            # if the signal was Z..
             else:
 
                 # if the participant did not respond, they are correct
                 if response == 0:
                     correct = 1
 
-        # if the round was a Happy round...
-        elif self.blocktype == 'Happy':
-
-            # if the picture was a Happy one...
-            if 'EGNG_Happy_' in pic:
-
-                # if the participant did respond, they are correct
-                if response == 1:
-                    correct = 1
-
-            # if the picture was a neutral one...
-            else:
-
-                # if the participant did not respond, they are correct
-                if response == 0:
-                    correct = 1
-
-        # if the round was a Sad round...
-        elif self.blocktype == 'Sad':
-
-            # if the picture was a Sad one...
-            if 'EGNG_Sad_' in pic:
-
-                # if the participant did respond, they are correct
-                if response == 1:
-                    correct = 1
-
-            # if the picture was a neutral one...
-            else:
-
-                # if the participant did not respond, they are correct
-                if response == 0:
-                    correct = 1
-
-        # if the round was an Angry round...
-        elif self.blocktype == 'Angry':
-
-            # if the picture was an Angry one...
-            if 'EGNG_Angry_' in pic:
-
-                # if the participant did respond, they are correct
-                if response == 1:
-                    correct = 1
-
-            # if the picture was a neutral one...
-            else:
-
-                # if the participant did not respond, they are correct
-                if response == 0:
-                    correct = 1
-
-        # if the round was a Fearful round...
+        # if the round was a Z round...
         else:
 
-            # if the picture was a Fearful one...
-            if pic == 'EGNG_Fearful_':
+            # if the signal was Z...
+            if sig == 'Z':
 
                 # if the participant did respond, they are correct
                 if response == 1:
                     correct = 1
 
-            # if the picture was a neutral one...
+            # if the signal was A...
             else:
 
                 # if the participant did not respond, they are correct
                 if response == 0:
                     correct = 1
-
-        # strip the extra junk off of the picture string
-        picstripped = pic.removeprefix('EGNG_')
 
         # make a dictionary of trial info
         df_simultrial = {
             'trial': [trial],
             'block type': [self.blocktype],
-            'picture': [picstripped],
+            'signal': [sig],
             'onset': [onset],
             'response': [response],
             'reaction time': [time],
@@ -967,19 +846,19 @@ class GNGParticipant(participant.Participant):
 
             case 1:
 
-                inst = 'In this task, you will respond to faces that\nappear on the screen.'
+                inst = 'In this task, you will respond to letters that\nappear on the screen.'
 
             case 2:
 
-                inst = 'Each round, you will only respond to one type\nof face.'
+                inst = 'Each round, you will only respond to one type\nof letter.'
 
             case 3:
 
-                inst = '\"' + self.leftkey[0] + '\" when you see that\ntype of face.'
+                inst = '\"' + self.leftkey[0] + '\" when you see that\ntype of letter.'
 
             case 4:
 
-                inst = 'Other types of faces may appear, but only respond\nto the type you are told to respond to.'
+                inst = 'Other types of letters may appear, but only respond\nto the type you are told to respond to.'
 
             case 5:
 

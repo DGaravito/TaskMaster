@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import QHBoxLayout
 from PyQt6.QtCore import QTimer, pyqtSignal
 
 import random
+import time
 
 from Guis.Experiments import experiment
 
@@ -11,6 +12,9 @@ class StroopExp(experiment.Experiment):
 
     def __init__(self, person):
         super().__init__(person)
+
+        # indicate that no blocks have been completed yet
+        self.blocksdone = 0
 
         # Put Left and Right options in horizontal layout
         explayout = QHBoxLayout()
@@ -112,11 +116,18 @@ class StroopExp(experiment.Experiment):
             # set the text to the screen
             self.middle.setText(trialword)
 
+            # mark the onset timer
+            onset = time.time() - self.overallstart
+
             # increment the trial counter
             self.trialsdone += 1
 
-            # set the timer
-            self.ititimer.start(5000)
+            # store the trial info for sending later
+            self.trialinfo = [self.trialsdone, trialword, onset]
+
+            # set the timer until the iti and until the next round
+            self.timer.start(4000)
+            self.ititimer.start(6000)
 
         else:
 
@@ -157,6 +168,14 @@ class StroopExp(experiment.Experiment):
         # stop user input
         self.betweenrounds = 1
 
+    def timeout(self):
+        """
+        After the stimuli is shown for a while and the first timer goes out, blank the screen out and send the trial
+        data to the participant class
+        """
+
+        self.person.updateoutput(self.trialinfo[0], self.trialinfo[1], self.trialinfo[2])
+
     def keyaction(self, key):
         """
         Reads the keys that are pressed and does the corresponding actions
@@ -175,6 +194,11 @@ class StroopExp(experiment.Experiment):
 
             # set instructions to a blank string
             self.instructions.setText('')
+
+            # if this is the first trial of the first round, set the global start time to make the onset time make more
+            # sense
+            if (self.trialsdone == 0) & (self.roundsdone == 0):
+                self.overallstart = time.time()
 
         if (key in ['i', 'I']) & (self.betweenrounds == 1):
 

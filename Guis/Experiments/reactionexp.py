@@ -426,6 +426,9 @@ class GNGExp(experiment.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
+        # indicate that no blocks have been completed yet
+        self.blocksdone = 0
+
         # Variable that determines what you see at the start
         self.start = 0
 
@@ -437,7 +440,7 @@ class GNGExp(experiment.Experiment):
         middlelayout.addStretch(1)
 
         # Instructions
-        self.instructions.setText('Press ' + self.person.leftkey[0] + ' to respond to faces.')
+        self.instructions.setText('Press ' + self.person.leftkey[0] + ' to respond to signals.')
 
         # Put everything in vertical layout
         self.instquitlayout.addStretch(1)
@@ -461,18 +464,11 @@ class GNGExp(experiment.Experiment):
         # user wants
         if self.trialsdone < self.person.get_trials():
 
-            # get a random number for one of the pictures
-            randopic = str(random.randint(1, 12))
+            # Get the string of the signal
+            self.signal = self.person.get_trial_string()
 
-            # Get the string that contains the name of the trial picture
-            self.picstring = self.person.get_trial_pic() + randopic + '.png'
-
-            # add the path to the picture string
-            pathstring = 'Assets/' + self.picstring
-
-            # Make a pixmap of the picture and then set the middle to that pixmap
-            pixmap = QPixmap(pathstring)
-            self.middle.setPixmap(pixmap.scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
+            # Set the middle to that signal
+            self.middle.setText(self.signal)
 
             # get the onset time for the trial, which will also be used to compute reaction time
             self.starttime = time.time() - self.overallstart
@@ -528,7 +524,7 @@ class GNGExp(experiment.Experiment):
         self.trialsdone += 1
 
         # send the trial info to the participant class
-        self.person.updateoutput(self.trialsdone, self.picstring, self.starttime, 9999)
+        self.person.updateoutput(self.trialsdone, self.signal, self.starttime, 9999)
 
         # set the screen to the iti window
         self.iti()
@@ -590,7 +586,7 @@ class GNGExp(experiment.Experiment):
             rt = endtime - self.starttime
 
             # send the trial info to the participant class so it can be added to the dataframe
-            self.person.updateoutput(self.trialsdone, self.picstring, self.starttime, rt, 1)
+            self.person.updateoutput(self.trialsdone, self.signal, self.starttime, rt, 1)
 
             # set the window to the iti screen
             self.iti()

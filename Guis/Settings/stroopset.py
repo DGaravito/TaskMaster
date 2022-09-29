@@ -13,7 +13,7 @@ class StroopSettings(settings.Settings):
 
         # Make form layout for all the settingsguis
         self.layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
-        self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
+        self.layout.addRow(QLabel('How many pairs of Consistent and Inconsistent blocks do you want?:'), self.blocksin)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
         self.layout.addRow(self.quitbutton, self.submit)

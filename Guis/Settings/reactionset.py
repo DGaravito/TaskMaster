@@ -31,7 +31,6 @@ class SSSettings(settings.Settings):
         self.setLayout(self.over_layout)
 
     def submitsettings(self):
-
         person = reactionp.SSParticipant(self.idform.text(),
                                          self.trialsin.text(),
                                          self.sessionin.text(),
@@ -166,17 +165,15 @@ class GNGSettings(settings.Settings):
         self.setLayout(self.over_layout)
 
     def submitsettings(self):
-
         person = reactionp.GNGParticipant(self.idform.text(),
-                                                       self.trialsin.text(),
-                                                       self.sessionin.text(),
-                                                       self.wd.text(),
-                                                       'Go/No-Go',
-                                                       self.maxrtin.text(),
-                                                       self.blocksin.text(),
-                                                       self.buttonboxstate,
-                                                       self.eyetracking,
-                                                       self.fmri)
+                                          self.trialsin.text(),
+                                          self.sessionin.text(),
+                                          self.wd.text(),
+                                          'Go/No-Go',
+                                          self.maxrtin.text(),
+                                          self.blocksin.text(),
+                                          self.buttonboxstate,
+                                          self.eyetracking)
 
         self.exp = reactionexp.GNGExp(person)
         self.exp.show()
