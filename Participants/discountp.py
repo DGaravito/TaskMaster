@@ -11,31 +11,50 @@ import random
 class DdParticipant(participant.Participant):
 
     def __init__(self, expid, trials, session, outdir, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew,
-                 rounds, buttonbox, eyetracking, fmri):
+                 rounds, adopy, buttonbox, eyetracking, fmri):
         super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
+
+        # make a variable for ADOPy status
+        self.adopy = adopy
 
         # set how many blocks there are
         self.rounds = int(rounds)
 
-        # call the function to create the adopy engine
-        self.engine = self.create_dd_engine(self.task, float(ss_del), float(ll_shortdel), float(ll_longdel),
-                                            float(ss_smallrew), float(ll_rew))
+        # if you want ADOPy, then create the engine
+        if adopy == 'Yes':
 
-        # Compute an optimal design for the first trial
-        self.design = self.engine.get_design('optimal')
+            # call the function to create the adopy engine
+            self.engine = self.create_dd_engine(self.task, float(ss_del), float(ll_shortdel), float(ll_longdel),
+                                                float(ss_smallrew), float(ll_rew))
+
+            # Compute an optimal design for the first trial
+            self.design = self.engine.get_design('optimal')
+
+        # if not...
+        else:
+
+            # make the list for the stimuli
+            self.taskstimuli = []
+
+            # create the stimuli for the task
+            self.createstim(float(ss_del), float(ll_shortdel), float(ll_longdel), float(ss_smallrew), float(ll_rew))
+
+        # make a list for the specific trial info
+        self.trialinfo = []
 
         # Experiment settingsguis output dataframe
-        dict_simulsettings = {'Immediate Option Delay': [ss_del],
-                              'Shortest Delay (weeks)': [ll_shortdel],
-                              'Longest Delay (weeks)': [ll_longdel],
-                              'Smallest Smaller Sooner Reward': [ss_smallrew],
-                              'Largest Smaller Sooner Reward': [(float(ll_rew) - float(ss_smallrew))],
-                              'Larger Later Reward': [ll_rew],
-                              'Blocks': [rounds]
-                              }
+        dict_tasksettings = {'Immediate Option Delay': [ss_del],
+                             'Shortest Delay (weeks)': [ll_shortdel],
+                             'Longest Delay (weeks)': [ll_longdel],
+                             'Smallest Smaller Sooner Reward': [ss_smallrew],
+                             'Largest Smaller Sooner Reward': [(float(ll_rew) - float(ss_smallrew))],
+                             'Larger Later Reward': [ll_rew],
+                             'Blocks': [rounds],
+                             'ADOPy?': [adopy]
+                             }
 
         # attach the task-specific settings to the task general settings
-        self.set_settings(dict_simulsettings)
+        self.set_settings(dict_tasksettings)
 
     def create_dd_engine(self, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew):
         """
@@ -56,11 +75,10 @@ class DdParticipant(participant.Participant):
         timerange = [ll_shortdel]
 
         # if there are more than two trials per block...
-        if (self.get_trials()-2) > 0:
+        if (self.get_trials() - 2) > 0:
 
             # then for however many additional trials per block there are...
-            for trial in range(self.get_trials()-2):
-
+            for trial in range(self.get_trials() - 2):
                 # add a random float between the shortest and longest delay for the delayed option to the list of delays
                 timerange.append(random.uniform(ll_shortdel, ll_longdel))
 
@@ -102,6 +120,54 @@ class DdParticipant(participant.Participant):
         # return the engine
         return engine
 
+    def createstim(self, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew):
+        """
+        creates list of stimuli for the delay discounting task, first creating the list of amounts for the sooner
+        option, then the delay for the sooner option
+        :param ss_del: float for the delay for the sooner option
+        :param ll_shortdel: float for the shortest delay for the delayed option
+        :param ll_longdel: float for the longest delay for the delayed option
+        :param ss_smallrew: float for the smallest reward for the sooner option
+        :param ll_rew: float for the largest reward for the delayed option
+        """
+
+        # make a list to have the different reward amounts for the sooner option
+        amountrange = [ss_smallrew]
+
+        # if there are more than two trials per block...
+        if (self.get_trials() - 2) > 0:
+
+            # then for however many additional trials per block there are...
+            for trial in range(self.get_trials() - 2):
+                # add a random float between the smallest and largest amount for the sooner option to the amount list
+                amountrange.append(random.uniform(ss_smallrew, ll_rew))
+
+        # add the list of sooner rewards to the stimuli list
+        self.taskstimuli.append(amountrange)
+
+        # add the delay for sooner rewards to the stimuli list
+        self.taskstimuli.append(ss_del)
+
+        # add the delay for later rewards to the stimuli list
+        self.taskstimuli.append(ll_rew)
+
+        # make a list to have the different delays for the delayed option
+        timerange = [ll_shortdel]
+
+        # if there are more than two trials per block...
+        if (self.get_trials() - 2) > 0:
+
+            # then for however many additional trials per block there are...
+            for trial in range(self.get_trials() - 2):
+                # add a random float between the shortest and longest delay for the delayed option to the list of delays
+                timerange.append(random.uniform(ll_shortdel, ll_longdel))
+
+        # now add the longest delay to the list of delay
+        timerange.append(ll_longdel)
+
+        # add the list of sooner rewards to the stimuli list
+        self.taskstimuli.append(timerange)
+
     def get_timestring(self, startingweeks):
         """
         takes the float that the model kicks out for the delays and converts it to an understandable string
@@ -119,7 +185,7 @@ class DdParticipant(participant.Participant):
         if days >= 365.2422:
 
             # get the number of years, rounded down to the closest integer
-            years = int(days/365.2422)
+            years = int(days / 365.2422)
 
             # add the number of years and " years" to the string
             timestring = timestring + str(years) + ' years'
@@ -141,7 +207,7 @@ class DdParticipant(participant.Participant):
         if days >= 30.437:
 
             # get the number of months, rounded down to the closest integer
-            months = int(days/30.437)
+            months = int(days / 30.437)
 
             # add the number of months and " months" to the string
             timestring = timestring + str(months) + ' months'
@@ -163,7 +229,7 @@ class DdParticipant(participant.Participant):
         if days >= 7:
 
             # get the number of weeks, rounded down to the closest integer
-            weeks = int(days/7)
+            weeks = int(days / 7)
 
             # add the number of weeks and " weeks" to the string
             timestring = timestring + str(weeks) + ' weeks'
@@ -183,7 +249,6 @@ class DdParticipant(participant.Participant):
 
         # if there are any more full days left, then add them to the string
         if int(days) > 0:
-
             timestring = timestring + str(int(days)) + ' days.'
 
         # return the string
@@ -195,21 +260,40 @@ class DdParticipant(participant.Participant):
         :return: a list of two strings, one for the left option, and one for the right option
         """
 
+        # makes sure the trial info list is empty
+        self.trialinfo = []
+
         # pick a random integer so that we randomize the sides that the strings are on
         side = random.randint(1, 2)
 
+        # if you're using ADOPy, then pull trial info from the ADOPy design
+        if self.adopy == 'Yes':
+
+            self.trialinfo.append(float(self.design['r_ss']))
+            self.trialinfo.append(float(self.design['t_ss']))
+            self.trialinfo.append(float(self.design['r_ll']))
+            self.trialinfo.append(float(self.design['t_ll']))
+
+        # otherwise, pull trial info from the info list
+        else:
+
+            self.trialinfo.append(random.choice(self.taskstimuli[0]))
+            self.trialinfo.append(self.taskstimuli[1])
+            self.trialinfo.append(self.taskstimuli[2])
+            self.trialinfo.append(random.choice(self.taskstimuli[3]))
+
         # if the user wanted the immediate option to occur now, as opposed to also at a delay, use now  in the string
-        if int(self.design['t_ss']) == 0:
-            shortstring = 'Getting $' + str('{:.2f}'.format(self.design['r_ss'])) + '\nnow'
+        if int(self.trialinfo[0]) == 0:
+            shortstring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nnow'
 
         # otherwise, use the get_timestring function to have a string
         else:
-            shortstring = 'Getting $' + str('{:.2f}'.format(self.design['r_ll'])) + '\nafter '\
-                         + self.get_timestring(float(self.design['t_ss']))
+            shortstring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nafter ' \
+                          + self.get_timestring(self.trialinfo[1])
 
         # for the right string
-        delaystring = 'Getting $' + str('{:.2f}'.format(self.design['r_ll'])) + '\nafter '\
-                      + self.get_timestring(float(self.design['t_ll']))
+        delaystring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[2])) + '\nafter ' \
+                      + self.get_timestring(self.trialinfo[3])
 
         # if the side integer is 1, then put the delay string on the right
         if side == 1:
@@ -226,15 +310,17 @@ class DdParticipant(participant.Participant):
 
     def engineupdate(self, response):
         """
-        updates the adopy engine with the participant's response and then sets up the new design
+        updates the adopy engine (if used) with the participant's response and then sets up the new design
         :param response: 0 or 1 depending on if the participant took the immediate or delayed option
         """
 
-        # Update engine with the response and current design
-        self.engine.update(self.design, response)
+        # if you are using ADOPy, do this
+        if self.adopy == 'Yes':
+            # Update engine with the response and current design
+            self.engine.update(self.design, response)
 
-        # Generate new optimal design based on previous design and response
-        self.design = self.engine.get_design('optimal')
+            # Generate new optimal design based on previous design and response
+            self.design = self.engine.get_design('optimal')
 
     def nextround(self, blocks):
         """
@@ -267,23 +353,25 @@ class DdParticipant(participant.Participant):
         """
 
         # make a dictionary of trial info
-        df_simultrial = {
+        df_trial = {
             'trial': [trial],
             'onset': [onset],
-            'SSAmount': [float(self.design['r_ss'])],
-            'LLAmount': [float(self.design['r_ll'])],
-            'LLDelay': [float(self.design['t_ll'])],
+            'SSAmount': [self.trialinfo[0]],
+            'LLAmount': [self.trialinfo[2]],
+            'LLDelay': [self.trialinfo[3]],
             'response': [response],
-            'reaction time': [time],
-            'mean_k': [self.engine.post_mean[0]],
-            'mean_tau': [self.engine.post_mean[1]],
-            'sd_k': [self.engine.post_sd[0]],
-            'sd_tau': [self.engine.post_sd[1]]
+            'reaction time': [time]
         }
 
+        if self.adopy == 'Yes':
+            df_trial['mean_k'] = [self.engine.post_mean[0]]
+            df_trial['mean_tau'] = [self.engine.post_mean[1]]
+            df_trial['sd_k'] = [self.engine.post_sd[0]]
+            df_trial['sd_tau'] = [self.engine.post_sd[1]]
+
         # turn that dictionary into a dataframe and use set_performance to add it to the overall dataframe
-        df_simultrial = pd.DataFrame(data=df_simultrial)
-        self.set_performance(df_simultrial)
+        df_trial = pd.DataFrame(data=df_trial)
+        self.set_performance(df_trial)
 
     def get_instructions(self, instint):
         """
@@ -339,14 +427,14 @@ class PdParticipant(participant.Participant):
         self.create_design()
 
         # Experiment settingsguis output dataframe
-        dict_simulsettings = {'Design': [design],
-                              'Minimum Reward': [minimum],
-                              'Maximum Reward': [maximum],
-                              'Blocks': [rounds]
-                              }
+        dict_tasksettings = {'Design': [design],
+                             'Minimum Reward': [minimum],
+                             'Maximum Reward': [maximum],
+                             'Blocks': [rounds]
+                             }
 
         # attach the task-specific settings to the task general settings
-        self.set_settings(dict_simulsettings)
+        self.set_settings(dict_tasksettings)
 
     def create_design(self):
         """
@@ -357,7 +445,6 @@ class PdParticipant(participant.Participant):
 
         # only if the user wanted gains and losses
         if self.design == 'Gains and Losses':
-
             # divide the number of trials by 2 because there are 2 types of trials
             multnum = int(self.get_trials() / 2)
 
@@ -381,7 +468,7 @@ class PdParticipant(participant.Participant):
 
         # generate random floats between the ranges for rewards and probabilities
         self.trialdesign = [
-            random.uniform(self.minimum, self.maximum-.5),
+            random.uniform(self.minimum, self.maximum - .5),
             random.uniform(.01, .99)
         ]
 
@@ -489,7 +576,7 @@ class PdParticipant(participant.Participant):
         """
 
         # make a dictionary of trial info
-        df_simultrial = {
+        df_trial = {
             'trial': [trial],
             'cond': [self.state],
             'SureAmount': [str('{:.2f}'.format(self.trialdesign[0]))],
@@ -501,8 +588,8 @@ class PdParticipant(participant.Participant):
         }
 
         # turn that dictionary into a dataframe and use set_performance to add it to the overall dataframe
-        df_simultrial = pd.DataFrame(data=df_simultrial)
-        self.set_performance(df_simultrial)
+        df_trial = pd.DataFrame(data=df_trial)
+        self.set_performance(df_trial)
 
         # only do the following if the user wanted a random reward/loss at the end
         if (self.outcomeopt == 'Yes') & (response != 'None'):
@@ -634,7 +721,7 @@ class CEDParticipant(participant.Participant):
         self.outcomeopt = outcome
 
         # make the modifier for rewards be equal to the max reward divided by 4
-        self.modifier = float(maxrew)/4
+        self.modifier = float(maxrew) / 4
 
         # make an empty list for choices that the participant made in case the user wanted a random one output
         self.outcomelist = []
@@ -676,13 +763,13 @@ class CEDParticipant(participant.Participant):
         self.threefourtrials = 0
 
         # Experiment settingsguis output dataframe
-        dict_simulsettings = {
+        dict_tasksettings = {
             'Maximum Reward': [maxrew],
             'Version': [version]
         }
 
         # attach the task-specific settings to the task general settings
-        self.set_settings(dict_simulsettings)
+        self.set_settings(dict_tasksettings)
 
         # call the set structure function to set up what order things are presented in
         self.set_structure()
@@ -1022,7 +1109,7 @@ class CEDParticipant(participant.Participant):
         """
 
         # make a dictionary of trial info
-        df_simultrial = {
+        df_trial = {
             'trial': [trial],
             'left task': [self.lefttask],
             'left value': [self.leftmoney],
@@ -1035,8 +1122,8 @@ class CEDParticipant(participant.Participant):
         }
 
         # turn that dictionary into a dataframe and use set_performance to add it to the overall dataframe
-        df_simultrial = pd.DataFrame(data=df_simultrial)
-        self.set_performance(df_simultrial)
+        df_trial = pd.DataFrame(data=df_trial)
+        self.set_performance(df_trial)
 
         # only do the following if the user wanted a random reward/loss at the end and the participant responded
         if (self.outcomeopt == 'Yes') & (response != 3):

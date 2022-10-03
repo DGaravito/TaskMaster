@@ -47,7 +47,7 @@ class SelectWindow(QWidget):
         self.header.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # DD button
-        self.ddbutton = QPushButton('DD (feat. ADOPy)')
+        self.ddbutton = QPushButton('Delay Discounting')
         self.ddbutton.setFixedHeight(50)
         self.ddbutton.setFont(QFont('Helvetica', 15))
         self.ddbutton.clicked.connect(lambda: self.selection('DD'))
@@ -65,7 +65,7 @@ class SelectWindow(QWidget):
         self.cedtbutton.clicked.connect(lambda: self.selection('CEDT'))
 
         # ARTT button
-        self.arttbutton = QPushButton('ARTT (feat. ADOPy)')
+        self.arttbutton = QPushButton('ARTT')
         self.arttbutton.setFixedHeight(50)
         self.arttbutton.setFont(QFont('Helvetica', 15))
         self.arttbutton.clicked.connect(lambda: self.selection('ARTT'))

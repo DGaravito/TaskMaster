@@ -21,13 +21,13 @@ class SSParticipant(participant.Participant):
         self.set_structure()
 
         # Experiment settingsguis output dataframe
-        dict_simulsettings = {
+        dict_tasksettings = {
             'Blocks': [blocks],
             'Max reaction time': [maxrt]
         }
 
         # attach the task-specific settings to the task general settings
-        self.set_settings(dict_simulsettings)
+        self.set_settings(dict_tasksettings)
 
     def set_structure(self):
         """
@@ -191,7 +191,7 @@ class SSParticipant(participant.Participant):
         picstripped = pic.removeprefix('SS_').removesuffix('Arrow.png')
 
         # make a dictionary of trial info
-        df_simultrial = {
+        df_trial = {
             'trial': [trial],
             'signal': [signal],
             'signal timer': [self.timer],
@@ -203,8 +203,8 @@ class SSParticipant(participant.Participant):
         }
 
         # turn that dictionary into a dataframe and use set_performance to add it to the overall dataframe
-        df_simultrial = pd.DataFrame(data=df_simultrial)
-        self.set_performance(df_simultrial)
+        df_trial = pd.DataFrame(data=df_trial)
+        self.set_performance(df_trial)
 
         # call the set_timer function to adjust the signal timer based on the participant's performance
         self.set_timer(signal, correct)
@@ -308,13 +308,13 @@ class EGNGParticipant(participant.Participant):
         random.shuffle(self.blocktypes)
 
         # Experiment settingsguis output dataframe
-        dict_simulsettings = {
+        dict_tasksettings = {
             'Blocks': [blocks],
             'Faces': [self.structlist]
         }
 
         # attach the task-specific settings to the task general settings
-        self.set_settings(dict_simulsettings)
+        self.set_settings(dict_tasksettings)
 
     def set_structure(self, block):
         """
@@ -581,7 +581,7 @@ class EGNGParticipant(participant.Participant):
         picstripped = pic.removeprefix('EGNG_')
 
         # make a dictionary of trial info
-        df_simultrial = {
+        df_trial = {
             'trial': [trial],
             'block type': [self.blocktype],
             'picture': [picstripped],
@@ -592,8 +592,8 @@ class EGNGParticipant(participant.Participant):
         }
 
         # turn that dictionary into a dataframe and use set_performance to add it to the overall dataframe
-        df_simultrial = pd.DataFrame(data=df_simultrial)
-        self.set_performance(df_simultrial)
+        df_trial = pd.DataFrame(data=df_trial)
+        self.set_performance(df_trial)
 
     def get_instructions(self, instint):
         """
@@ -650,13 +650,13 @@ class GNGParticipant(participant.Participant):
         random.shuffle(self.blocktypes)
 
         # Experiment settingsguis output dataframe
-        dict_simulsettings = {
+        dict_tasksettings = {
             'Blocks': [blocks],
             'Signals': [self.structlist]
         }
 
         # attach the task-specific settings to the task general settings
-        self.set_settings(dict_simulsettings)
+        self.set_settings(dict_tasksettings)
 
     def set_structure(self, block):
         """
@@ -821,7 +821,7 @@ class GNGParticipant(participant.Participant):
                     correct = 1
 
         # make a dictionary of trial info
-        df_simultrial = {
+        df_trial = {
             'trial': [trial],
             'block type': [self.blocktype],
             'signal': [sig],
@@ -832,8 +832,8 @@ class GNGParticipant(participant.Participant):
         }
 
         # turn that dictionary into a dataframe and use set_performance to add it to the overall dataframe
-        df_simultrial = pd.DataFrame(data=df_simultrial)
-        self.set_performance(df_simultrial)
+        df_trial = pd.DataFrame(data=df_trial)
+        self.set_performance(df_trial)
 
     def get_instructions(self, instint):
         """

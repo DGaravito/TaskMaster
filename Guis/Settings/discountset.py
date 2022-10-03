@@ -72,7 +72,7 @@ class DdSettings(settings.Settings):
                                          self.blocksin.text(),
                                          self.adopystate,
                                          self.buttonboxstate,
-                                         # self.eyetracking,
+                                         self.eyetracking,
                                          self.fmri)
 
         self.exp = discountexp.DDiscountExp(person)

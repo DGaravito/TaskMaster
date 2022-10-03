@@ -85,16 +85,16 @@ class StroopParticipant(participant.Participant):
         """
 
         # make dictionary of trial data
-        df_simultrial = {
+        df_trial = {
             'trial': [trial],
             'word': [word],
             'cond': [self.block],
             'onset': [onset]
         }
 
-        df_simultrial = pd.DataFrame(data=self.expwordpairs)
+        df_trial = pd.DataFrame(data=df_trial)
 
-        self.set_performance(df_simultrial)
+        self.set_performance(df_trial)
 
     def get_instructions(self, instint):
         """

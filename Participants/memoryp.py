@@ -10,6 +10,9 @@ class PrParticipant(participant.Participant):
     def __init__(self, expid, trials, session, outdir, task, design, stt, eyetracking):
         super().__init__(expid, trials, session, outdir, task, eyetracking)
 
+        # create a list for the eventual trial info
+        self.trialinfo = []
+
         # if the user requested an STT design
         if stt == 'Yes':
 
@@ -26,12 +29,12 @@ class PrParticipant(participant.Participant):
             self.structure = list(structstr)
 
         # Experiment settingsguis output dataframe
-        dict_simulsettings = {
+        dict_tasksettings = {
             'Design': [structstr]
         }
 
         # attach the task-specific settings to the task general settings
-        self.set_settings(dict_simulsettings)
+        self.set_settings(dict_tasksettings)
 
         # call the set pairs function to create the list of word pairs for all the blocks
         self.set_pairs(int(trials))
@@ -116,6 +119,9 @@ class PrParticipant(participant.Participant):
         :return: three strings (left, middle (empty), and right (which is empty in test blocks))
         """
 
+        # blank out the list for the trial info
+        self.trialinfo = []
+
         # if this is a study trial
         if test == 0:
 
@@ -141,7 +147,10 @@ class PrParticipant(participant.Participant):
         # make the middle an empty string
         middlestring = ''
 
-        return [leftstring, rightstring, middlestring]
+        # add the strings to the trial info
+        self.trialinfo = [leftstring, rightstring, middlestring]
+
+        return self.trialinfo
 
     def updateoutput(self):
         """
@@ -255,12 +264,12 @@ class NbParticipant(participant.Participant):
         self.roundsumcorrect = 0
 
         # Experiment settingsguis output dataframe
-        dict_simulsettings = {
+        dict_tasksettings = {
             'Rounds': [rounds]
         }
 
         # attach the task-specific settings to the task general settings
-        self.set_settings(dict_simulsettings)
+        self.set_settings(dict_tasksettings)
 
     def nextround(self, roundsdone):
 
@@ -383,7 +392,7 @@ class NbParticipant(participant.Participant):
         self.roundsumcorrect += correct
 
         # make a dictionary of trial info
-        df_simultrial = {
+        df_trial = {
             'trial': [trial],
             'letter': [self.backlist[-1]],
             'onset': [onset],
@@ -393,8 +402,8 @@ class NbParticipant(participant.Participant):
         }
 
         # turn that dictionary into a dataframe and use set_performance to add it to the overall dataframe
-        df_simultrial = pd.DataFrame(data=df_simultrial)
-        self.set_performance(df_simultrial)
+        df_trial = pd.DataFrame(data=df_trial)
+        self.set_performance(df_trial)
 
     def get_instructions(self, instint):
         """

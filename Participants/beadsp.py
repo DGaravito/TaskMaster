@@ -98,7 +98,7 @@ class BeadsParticipant(participant.Participant):
                 correct = 1
 
         # set up a dictionary with this trial's info
-        df_simultrial = {
+        df_trial = {
             'round': [currentround],
             'beads': [beadspicked],
             'last bead': [self.pic],
@@ -109,10 +109,10 @@ class BeadsParticipant(participant.Participant):
         }
 
         # turn the dictionary into a dataframe
-        df_simultrial = pd.DataFrame(data=df_simultrial)
+        df_trial = pd.DataFrame(data=df_trial)
 
         # add the dataframe to the main one
-        self.set_performance(df_simultrial)
+        self.set_performance(df_trial)
 
     def get_instructions(self, instint):
         """

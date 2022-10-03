@@ -19,13 +19,13 @@ class PBTParticipant(participant.Participant):
         self.set_design(trials)
 
         # Experiment settingsguis output dataframe
-        dict_simulsettings = {
+        dict_tasksettings = {
             'Rounds': [rounds],
             'Starting Block': [self.globallocal]
         }
 
         # send the task-specific dictionary to be added to the generic task settings
-        self.set_settings(dict_simulsettings)
+        self.set_settings(dict_tasksettings)
 
     def set_design(self, trials):
         """
@@ -153,7 +153,7 @@ class PBTParticipant(participant.Participant):
                     correct = 1
 
         # make a dictionary of trial info
-        df_simultrial = {
+        df_trial = {
             'trial': [trial],
             'block': [self.globallocal],
             'picture': [pic],
@@ -164,8 +164,8 @@ class PBTParticipant(participant.Participant):
         }
 
         # set the dictionary to a dataframe and use set_performance to attach it to previous trial dataframes
-        df_simultrial = pd.DataFrame(data=df_simultrial)
-        self.set_performance(df_simultrial)
+        df_trial = pd.DataFrame(data=df_trial)
+        self.set_performance(df_trial)
 
     def get_instructions(self, block_type, instint):
         """

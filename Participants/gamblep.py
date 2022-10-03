@@ -11,7 +11,7 @@ import random
 class ARTTParticipant(participant.Participant):
 
     def __init__(self, expid, trials, session, outdir, task, risklist, amblist, rewmin, rewmax, structure, outcome,
-                 money, rounds, buttonbox, eyetracking, fmri):
+                 money, rounds, adopy, buttonbox, eyetracking, fmri):
         super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
 
         # set variables from the user input
@@ -19,32 +19,36 @@ class ARTTParticipant(participant.Participant):
         self.startmoney = float(money)
         self.outcomeopt = outcome
         self.structure = structure
+        self.adopy = adopy
 
         # make an empty list to collect the participant's choices if requested
         self.outcomelist = []
 
         # call the create structure function
-        self.create_structure()
+        self.create_structure(adopy)
 
-        # call the create_artt_engine function to create the adopy engine
-        self.engine = self.create_artt_engine(self.task, risklist, amblist, rewmin, rewmax)
+        # if you want ADOPy, then create the engine
+        if adopy == 'Yes':
+            # call the create_artt_engine function to create the adopy engine
+            self.engine = self.create_artt_engine(self.task, risklist, amblist, rewmin, rewmax)
 
-        # Compute an optimal design for the first trial
-        self.design = self.engine.get_design('optimal')
+            # Compute an optimal design for the first trial
+            self.design = self.engine.get_design('optimal')
 
         # Experiment settingsguis output dataframe
-        dict_simulsettings = {'Risky Probabilities': [risklist],
-                              'Ambiguous Probabilities': [amblist],
-                              'Fixed Reward': [rewmin],
-                              'Largest Reward': [rewmax],
-                              'Design': [structure],
-                              'Blocks': [rounds]
-                              }
+        dict_tasksettings = {'Risky Probabilities': [risklist],
+                             'Ambiguous Probabilities': [amblist],
+                             'Fixed Reward': [rewmin],
+                             'Largest Reward': [rewmax],
+                             'ADOPy?': [adopy],
+                             'Design': [structure],
+                             'Blocks': [rounds]
+                             }
 
         # attach the task-specific settings to the generic settings
-        self.set_settings(dict_simulsettings)
+        self.set_settings(dict_tasksettings)
 
-    def create_structure(self):
+    def create_structure(self, adopy):
         """
         If you want both gains and losses, then it creates a random order for gain and loss questions
         :return: Does not return a value, instead creates the class dictionaries and then calls set design text to make
@@ -53,7 +57,6 @@ class ARTTParticipant(participant.Participant):
 
         # if you have gains and losts
         if self.structure == 'Gains and Losses':
-
             # make a multiplier number from the total number of trials (trials per block times blocks) divided by two so
             # that there will be an equal number of gains and losses
             multnum = int((self.get_trials() / 2) * self.rounds)
@@ -181,7 +184,7 @@ class ARTTParticipant(participant.Participant):
             # if red is the reward color, then choose that picture
             if bluered == 1:
 
-                picstring = 'ARTT_risk_' + str(100-round(self.design['p_var'] * 100)) + '.png'
+                picstring = 'ARTT_risk_' + str(100 - round(self.design['p_var'] * 100)) + '.png'
 
             # if blue is the reward color, then choose that picture
             else:
@@ -240,7 +243,7 @@ class ARTTParticipant(participant.Participant):
         """
 
         # make dictionary of trial data
-        df_simultrial = {
+        df_trial = {
             'trial': [trial],
             'cond': [self.state],
             'Proportion Ambiguous': float(self.design['a_var']),
@@ -259,8 +262,8 @@ class ARTTParticipant(participant.Participant):
         }
 
         # turn dictionary into dataframe and then attach to the rest of the trial info via set_performance
-        df_simultrial = pd.DataFrame(data=df_simultrial)
-        self.set_performance(df_simultrial)
+        df_trial = pd.DataFrame(data=df_trial)
+        self.set_performance(df_trial)
 
         # only do the following if the user wanted a random reward/loss at the end
         if (self.outcomeopt == 'Yes') & (response != 3):
@@ -417,8 +420,8 @@ class ARTTParticipant(participant.Participant):
 
             case 9:
 
-                inst = 'For some decisions, part of the gamble will be hidden,\nso you will have less information about' \
-                       'the number of\nred and blue chips in the bag.'
+                inst = 'For some decisions, part of the gamble will be hidden,\nso you will have less information ' \
+                       'about the number of\nred and blue chips in the bag.'
 
             case 10:
 
@@ -458,13 +461,13 @@ class RAParticipant(participant.Participant):
         self.create_stim(minimum, maximum)
 
         # Experiment settingsguis output dataframe
-        dict_simulsettings = {'Minimum Reward': [minimum],
-                              'Maximum Reward': [maximum],
-                              'Blocks': [rounds]
-                              }
+        dict_tasksettings = {'Minimum Reward': [minimum],
+                             'Maximum Reward': [maximum],
+                             'Blocks': [rounds]
+                             }
 
         # attach the task-specific settings to the task general settings
-        self.set_settings(dict_simulsettings)
+        self.set_settings(dict_tasksettings)
 
     def create_stim(self, minimum, maximum):
         """
@@ -542,7 +545,7 @@ class RAParticipant(participant.Participant):
         """
 
         # make a dictionary of trial info
-        df_simultrial = {
+        df_trial = {
             'trial': [trial],
             'gain': [str('{:.2f}'.format(self.gainint))],
             'loss': [str('{:.2f}'.format(self.lossfloat))],
@@ -553,8 +556,8 @@ class RAParticipant(participant.Participant):
         }
 
         # turns the dictionary into a dataframe and then attaches it to the other trial info via set_performance
-        df_simultrial = pd.DataFrame(data=df_simultrial)
-        self.set_performance(df_simultrial)
+        df_trial = pd.DataFrame(data=df_trial)
+        self.set_performance(df_trial)
 
         # only do the following if the user wanted a random reward/loss at the end
         if (self.outcomeopt == 'Yes') & (response != 3):
@@ -650,14 +653,14 @@ class FrameParticipant(participant.Participant):
         self.set_order()
 
         # Experiment settingsguis output dataframe
-        dict_simulsettings = {'Design': [design],
-                              'FTT': [ftt],
-                              'Minimum Reward': [minimum],
-                              'Maximum Reward': [maximum]
-                              }
+        dict_tasksettings = {'Design': [design],
+                             'FTT': [ftt],
+                             'Minimum Reward': [minimum],
+                             'Maximum Reward': [maximum]
+                             }
 
         # attach the task-specific settings to the task general settings
-        self.set_settings(dict_simulsettings)
+        self.set_settings(dict_tasksettings)
 
     def set_order(self):
         """
@@ -748,7 +751,7 @@ class FrameParticipant(participant.Participant):
 
         # make the sure amount equal in expected value to the gamble by multiplying the gamble reward by the gamble
         # probability
-        sureamount = gambleamount*gambleprob
+        sureamount = gambleamount * gambleprob
 
         # set the trials design as a list
         self.trialdesign = [sureamount, gambleprob, gambleamount]
@@ -774,7 +777,7 @@ class FrameParticipant(participant.Participant):
                     leftstring = 'Lose $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                     # Set up the right string for positive gamble outcome
-                    righttopstring = 'A ' + str(round(100*self.trialdesign[1])) + '% chance to lose nothing'
+                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to lose nothing'
 
                     rightbottomstring = ''
 
@@ -786,7 +789,7 @@ class FrameParticipant(participant.Participant):
                     righttopstring = ''
 
                     # Set up the right string for negative gamble outcome
-                    rightbottomstring = 'A ' + str(round(100*(1-self.trialdesign[1]))) + '% chance to win nothing'
+                    rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to win nothing'
 
                 # if it's a mixed and loss trial
                 case ['Mixed', 'Loss']:
@@ -794,10 +797,10 @@ class FrameParticipant(participant.Participant):
                     leftstring = 'Lose $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                     # Set up the right string for positive gamble outcome
-                    righttopstring = 'A ' + str(round(100*self.trialdesign[1])) + '% chance to lose nothing'
+                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to lose nothing'
 
                     # Set up the right string for negative gamble outcome
-                    rightbottomstring = 'A ' + str(round(100*(1-self.trialdesign[1]))) + '% chance to lose $' + \
+                    rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to lose $' + \
                                         str('{:.2f}'.format(self.trialdesign[2]))
 
                 # if it's a mixed and gain trial
@@ -806,11 +809,11 @@ class FrameParticipant(participant.Participant):
                     leftstring = 'Win $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                     # Set up the right string for positive gamble outcome
-                    righttopstring = 'A ' + str(round(100*self.trialdesign[1])) + '% chance to win $' + \
+                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to win $' + \
                                      str('{:.2f}'.format(self.trialdesign[2]))
 
                     # Set up the right string for negative gamble outcome
-                    rightbottomstring = 'A ' + str(round(100*(1-self.trialdesign[1]))) + '% chance to win nothing'
+                    rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to win nothing'
 
                 # if it's a verbatim and loss trial
                 case ['Verbatim', 'Loss']:
@@ -820,7 +823,7 @@ class FrameParticipant(participant.Participant):
                     righttopstring = ''
 
                     # Set up the right string for negative gamble outcome
-                    rightbottomstring = 'A ' + str(round(100*(1-self.trialdesign[1]))) + '% chance to lose $' + \
+                    rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to lose $' + \
                                         str('{:.2f}'.format(self.trialdesign[2]))
 
                 # if it's a verbatim and gain trial
@@ -829,7 +832,7 @@ class FrameParticipant(participant.Participant):
                     leftstring = 'Win $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                     # Set up the right string for positive gamble outcome
-                    righttopstring = 'A ' + str(round(100*self.trialdesign[1])) + '% chance to win $' + \
+                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to win $' + \
                                      str('{:.2f}'.format(self.trialdesign[2]))
 
                     rightbottomstring = ''
@@ -851,7 +854,7 @@ class FrameParticipant(participant.Participant):
                 leftstring = 'Lose $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                 # Set up the right string for positive gamble outcome
-                righttopstring = 'A ' + str(round(100*self.trialdesign[1])) + '% chance to lose nothing'
+                righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to lose nothing'
 
                 rightbottomstring = ''
 
@@ -876,7 +879,7 @@ class FrameParticipant(participant.Participant):
                 righttopstring = ''
 
                 # Set up the right string for negative gamble outcome
-                rightbottomstring = 'A ' + str(100*(1-self.trialdesign[1])) + '% chance to lose ' + \
+                rightbottomstring = 'A ' + str(100 * (1 - self.trialdesign[1])) + '% chance to lose ' + \
                                     str('{:.2f}'.format(self.trialdesign[2]))
 
         # if you use ftt truncations but only gains
@@ -891,7 +894,7 @@ class FrameParticipant(participant.Participant):
                 righttopstring = ''
 
                 # Set up the right string for negative gamble outcome
-                rightbottomstring = 'A ' + str(round(100*(1-self.trialdesign[1]))) + '% chance to win nothing'
+                rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to win nothing'
 
             # if it's a mixed trial
             elif self.state == 'Mixed':
@@ -912,7 +915,7 @@ class FrameParticipant(participant.Participant):
                 leftstring = 'Win $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                 # Set up the right string for positive gamble outcome
-                righttopstring = 'A ' + str(round(100*self.trialdesign[1])) + '% chance to win $' + \
+                righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to win $' + \
                                  str('{:.2f}'.format(self.trialdesign[2]))
 
                 rightbottomstring = ''
@@ -926,11 +929,11 @@ class FrameParticipant(participant.Participant):
                 leftstring = 'Win $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                 # Set up the right string for positive gamble outcome
-                righttopstring = 'A ' + str(round(100*self.trialdesign[1])) + '% chance to win $' + \
+                righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to win $' + \
                                  str('{:.2f}'.format(self.trialdesign[2]))
 
                 # Set up the right string for negative gamble outcome
-                rightbottomstring = 'A ' + str(round(100*(1-self.trialdesign[1]))) + '% chance to win nothing'
+                rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to win nothing'
 
             # if it's a loss trial
             else:
@@ -938,10 +941,10 @@ class FrameParticipant(participant.Participant):
                 leftstring = 'Lose $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                 # Set up the right string for positive gamble outcome
-                righttopstring = 'A ' + str(round(100*self.trialdesign[1])) + '% chance to lose nothing'
+                righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to lose nothing'
 
                 # Set up the right string for negative gamble outcome
-                rightbottomstring = 'A ' + str(round(100*(1-self.trialdesign[1]))) + '% chance to lose $' + \
+                rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to lose $' + \
                                     str('{:.2f}'.format(self.trialdesign[2]))
 
         # Return the values to the expguis
@@ -979,7 +982,7 @@ class FrameParticipant(participant.Participant):
         """
 
         # make a dictionary of trial info
-        df_simultrial = {
+        df_trial = {
             'trial': [trial],
             'cond': [str(self.state)],
             'SureAmount': [str('{:.2f}'.format(self.trialdesign[0]))],
@@ -991,8 +994,8 @@ class FrameParticipant(participant.Participant):
         }
 
         # turn that dictionary into a dataframe and use set_performance to add it to the overall dataframe
-        df_simultrial = pd.DataFrame(data=df_simultrial)
-        self.set_performance(df_simultrial)
+        df_trial = pd.DataFrame(data=df_trial)
+        self.set_performance(df_trial)
 
         # only do the following if the user wanted a random reward/loss at the end
         if (self.outcomeopt == 'Yes') & (response != 'None'):

@@ -36,7 +36,7 @@ class NACTParticipant(participant.Participant):
         self.set_design(hightrials, lowtrials)
 
         # Experiment settingsguis output dictionary
-        dict_simulsettings = {
+        dict_tasksettings = {
             'Starting money': [money],
             'Low value trials': [lowtrials],
             'Low value color': [self.lowcolor],
@@ -45,7 +45,7 @@ class NACTParticipant(participant.Participant):
         }
 
         # send the task-specific dictionary to be added to the generic task settings
-        self.set_settings(dict_simulsettings)
+        self.set_settings(dict_tasksettings)
 
     def set_design(self, high, low):
         """
@@ -266,7 +266,7 @@ class NACTParticipant(participant.Participant):
             feedbackstring = '+'
 
         # create a dictionary of the trial info so that you can update the overall performance dataframe
-        df_simultrial = {
+        df_trial = {
             'trial': [trial],
             'onset time': [onset],
             'part': [self.part],
@@ -279,10 +279,10 @@ class NACTParticipant(participant.Participant):
         }
 
         # turn the dictionary into a dataframe
-        df_simultrial = pd.DataFrame(data=df_simultrial)
+        df_trial = pd.DataFrame(data=df_trial)
 
         # update the overall performance dataframe
-        self.set_performance(df_simultrial)
+        self.set_performance(df_trial)
 
         # return the string for the iti
         return feedbackstring
