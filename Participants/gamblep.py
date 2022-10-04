@@ -25,15 +25,31 @@ class ARTTParticipant(participant.Participant):
         self.outcomelist = []
 
         # call the create structure function
-        self.create_structure(adopy)
+        self.create_structure()
+
+        # store the user input
+        self.userinput = [risklist, amblist, float(rewmin), float(rewmax)]
 
         # if you want ADOPy, then create the engine
         if adopy == 'Yes':
             # call the create_artt_engine function to create the adopy engine
-            self.engine = self.create_artt_engine(self.task, risklist, amblist, rewmin, rewmax)
+            self.engine = self.create_artt_engine(self.task, self.userinput[0], self.userinput[1], self.userinput[2],
+                                                  self.userinput[3])
 
             # Compute an optimal design for the first trial
             self.design = self.engine.get_design('optimal')
+
+        # if not...
+        else:
+
+            # make the list for the stimuli
+            self.taskstimuli = []
+
+            # create the stimuli for the task
+            self.createstim(self.userinput[0], self.userinput[1], self.userinput[2], self.userinput[3])
+
+        # make a list for the specific trial info
+        self.trialinfo = []
 
         # Experiment settingsguis output dataframe
         dict_tasksettings = {'Risky Probabilities': [risklist],
@@ -48,7 +64,7 @@ class ARTTParticipant(participant.Participant):
         # attach the task-specific settings to the generic settings
         self.set_settings(dict_tasksettings)
 
-    def create_structure(self, adopy):
+    def create_structure(self):
         """
         If you want both gains and losses, then it creates a random order for gain and loss questions
         :return: Does not return a value, instead creates the class dictionaries and then calls set design text to make
@@ -80,8 +96,8 @@ class ARTTParticipant(participant.Participant):
         :param task: the ADOPy CRA engine object
         :param risklist: a list of probabilities for the risk trials
         :param amblist: a list of proportions for the ambiguous trials
-        :param rewmin: string for the minimum reward
-        :param rewmax: string for the maximum reward
+        :param rewmin: float for the minimum reward
+        :param rewmax: float for the maximum reward
         :return: ADOPy engine object
         """
 
@@ -130,6 +146,56 @@ class ARTTParticipant(participant.Participant):
         # return the engine
         return engine
 
+    def createstim(self, risklist, amblist, rewmin, rewmax):
+        """
+        creates list of stimuli for the ARTT task
+        :param risklist: a list of probabilities for the risk trials
+        :param amblist: a list of proportions for the ambiguous trials
+        :param rewmin: float for the minimum reward
+        :param rewmax: float for the maximum reward
+        """
+
+        # make a list for the variable reward
+        r_var = []
+
+        # if there are more than two trials per block...
+        if (self.get_trials() - 2) > 0:
+
+            # then for however many additional trials per block there are...
+            for trial in range(self.get_trials()):
+
+                # add a random float between the smallest and largest amount for the sooner option to the amount list
+                r_var.append(random.uniform(rewmin + .5, rewmax))
+
+        # the fixed reward will always be the minimum
+        r_fix = rewmin
+
+        # make a list of lists of the rewards
+        rewards = list([
+            [rv, rf] for rv in r_var for rf in r_fix
+        ])
+
+        # shuffle the list
+        random.shuffle(rewards)
+
+        # add reward stuff to list of trial info
+        self.taskstimuli.append(rewards)
+
+        # make a list of lists for the probabilities for risky trials (prob, no ambiguity)
+        pa_risky = list([[pr, 0] for pr in risklist])
+
+        # make a list of lists for the proportions for ambiguous trials (50% prob, ambiguity)
+        pa_ambig = list([[0.5, am] for am in amblist])
+
+        # arrange the probabilities and proportions
+        pr_am = pa_risky + pa_ambig
+
+        # shuffle the list
+        random.shuffle(pr_am)
+
+        # add risk and probability to list of trial info
+        self.taskstimuli.append(pr_am)
+
     def get_design_text(self):
         """
         Get the text for the trial depending on the next trial type in the order and return the appropriate strings and
@@ -137,8 +203,30 @@ class ARTTParticipant(participant.Participant):
         :return: a list with the two text strings, the string for the picture, and the
         """
 
+        # makes sure the trial info list is empty
+        self.trialinfo = []
+
         # randomly pick an integer to determine whether blue or red is the reward color
         bluered = random.randint(1, 2)
+
+        # if you're using ADOPy, then pull trial info from the ADOPy design
+        if self.adopy == 'Yes':
+
+            self.trialinfo.append(float(self.design['r_fix']))
+            self.trialinfo.append(float(self.design['r_var']))
+            self.trialinfo.append(float(self.design['p_var']))
+            self.trialinfo.append(float(self.design['a_var']))
+
+        # otherwise, pull trial info from the info list
+        else:
+
+            awards = self.taskstimuli[0].pop()
+            pram = random.choice(self.taskstimuli[1])
+
+            self.trialinfo.append(awards[1])
+            self.trialinfo.append(awards[0])
+            self.trialinfo.append(pram[0])
+            self.trialinfo.append(pram[1])
 
         # if the user wanted gains and losses
         if self.structure == 'Gains and Losses':
@@ -149,14 +237,14 @@ class ARTTParticipant(participant.Participant):
             # if the next trial type is gain, then set the strings in a gain frame
             if self.state == 'Gain':
 
-                fixedstring = 'Win $' + str('{:.2f}'.format(self.design['r_fix'])) + ' for sure'
-                otherstring = 'Win $' + str('{:.2f}'.format(self.design['r_var']))
+                fixedstring = 'Win $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
+                otherstring = 'Win $' + str('{:.2f}'.format(self.trialinfo[1]))
 
             # if the next trial type is loss, then set the strings in a loss frame
             else:
 
-                fixedstring = 'Lose $' + str('{:.2f}'.format(self.design['r_fix'])) + ' for sure'
-                otherstring = 'Lose $' + str('{:.2f}'.format(self.design['r_var']))
+                fixedstring = 'Lose $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
+                otherstring = 'Lose $' + str('{:.2f}'.format(self.trialinfo[1]))
 
         # if the user wanted gains only...
         elif self.structure == 'Gains only':
@@ -165,8 +253,8 @@ class ARTTParticipant(participant.Participant):
             self.state = 'Gain'
 
             # set the strings in a gain frame
-            fixedstring = 'Win $' + str('{:.2f}'.format(self.design['r_fix'])) + ' for sure'
-            otherstring = 'Win $' + str('{:.2f}'.format(self.design['r_var']))
+            fixedstring = 'Win $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
+            otherstring = 'Win $' + str('{:.2f}'.format(self.trialinfo[1]))
 
         # if the user wanted losses only...
         else:
@@ -175,26 +263,26 @@ class ARTTParticipant(participant.Participant):
             self.state = 'Loss'
 
             # set the strings in a loss frame
-            fixedstring = 'Lose $' + str('{:.2f}'.format(self.design['r_fix'])) + ' for sure'
-            otherstring = 'Lose $' + str('{:.2f}'.format(self.design['r_var']))
+            fixedstring = 'Lose $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
+            otherstring = 'Lose $' + str('{:.2f}'.format(self.trialinfo[1]))
 
         # if there is no ambiguity (i.e., it's a risk trial)
-        if self.design['a_var'] == 0:
+        if self.trialinfo[3] == 0:
 
             # if red is the reward color, then choose that picture
             if bluered == 1:
 
-                picstring = 'ARTT_risk_' + str(100 - round(self.design['p_var'] * 100)) + '.png'
+                picstring = 'ARTT_risk_' + str(100 - round(self.trialinfo[2] * 100)) + '.png'
 
             # if blue is the reward color, then choose that picture
             else:
 
-                picstring = 'ARTT_risk_' + str(round(self.design['p_var'] * 100)) + '.png'
+                picstring = 'ARTT_risk_' + str(round(self.trialinfo[2] * 100)) + '.png'
 
         # if there is ambiguity, the grab an ambiguous picture
         else:
 
-            picstring = 'ARTT_ambig_' + str(round(self.design['a_var'] * 100)) + '.png'
+            picstring = 'ARTT_ambig_' + str(round(self.trialinfo[3] * 100)) + '.png'
 
         # return the strings and the bluered integer
         return [fixedstring, otherstring, picstring, bluered]
@@ -216,6 +304,15 @@ class ARTTParticipant(participant.Participant):
 
             prompt = 'Please wait for the next round.'
 
+            # if you don't use ADOPy, task stuff should be created again
+            if self.adopy == 'No':
+
+                # make the list for the stimuli
+                self.taskstimuli = []
+
+                # create the stimuli for the task
+                self.createstim(self.userinput[0], self.userinput[1], self.userinput[2], self.userinput[3])
+
         # return prompt
         return prompt
 
@@ -225,11 +322,14 @@ class ARTTParticipant(participant.Participant):
         :param response: 1 or 0 based on if the participant chose the risk/ambiguous trial or not
         """
 
-        # Update engine with the response and current design
-        self.engine.update(self.design, response)
+        # if you are using ADOPy, do this
+        if self.adopy == 'Yes':
 
-        # Generate new optimal design based on previous design and response
-        self.design = self.engine.get_design('optimal')
+            # Update engine with the response and current design
+            self.engine.update(self.design, response)
+
+            # Generate new optimal design based on previous design and response
+            self.design = self.engine.get_design('optimal')
 
     def updateoutput(self, trial, onset, time, response=3):
         """

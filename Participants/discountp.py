@@ -20,12 +20,15 @@ class DdParticipant(participant.Participant):
         # set how many blocks there are
         self.rounds = int(rounds)
 
+        # store the user input
+        self.userinput = [float(ss_del), float(ll_shortdel), float(ll_longdel), float(ss_smallrew), float(ll_rew)]
+
         # if you want ADOPy, then create the engine
         if adopy == 'Yes':
 
             # call the function to create the adopy engine
-            self.engine = self.create_dd_engine(self.task, float(ss_del), float(ll_shortdel), float(ll_longdel),
-                                                float(ss_smallrew), float(ll_rew))
+            self.engine = self.create_dd_engine(self.task, self.userinput[0], self.userinput[1], self.userinput[2],
+                                                self.userinput[3], self.userinput[4])
 
             # Compute an optimal design for the first trial
             self.design = self.engine.get_design('optimal')
@@ -37,7 +40,8 @@ class DdParticipant(participant.Participant):
             self.taskstimuli = []
 
             # create the stimuli for the task
-            self.createstim(float(ss_del), float(ll_shortdel), float(ll_longdel), float(ss_smallrew), float(ll_rew))
+            self.createstim(self.userinput[0], self.userinput[1], self.userinput[2], self.userinput[3],
+                            self.userinput[4])
 
         # make a list for the specific trial info
         self.trialinfo = []
@@ -132,15 +136,25 @@ class DdParticipant(participant.Participant):
         """
 
         # make a list to have the different reward amounts for the sooner option
-        amountrange = [ss_smallrew]
+        amountrange = []
 
         # if there are more than two trials per block...
         if (self.get_trials() - 2) > 0:
 
             # then for however many additional trials per block there are...
-            for trial in range(self.get_trials() - 2):
+            for trial in range(self.get_trials()):
+
                 # add a random float between the smallest and largest amount for the sooner option to the amount list
-                amountrange.append(random.uniform(ss_smallrew, ll_rew))
+                amountrange.append(random.uniform(ss_smallrew, ll_rew - .5))
+
+        # otherwise, just put the min and max (minus $.5) in the list
+        else:
+
+            amountrange.append(ss_smallrew)
+            amountrange.append(ll_rew - .5)
+
+        # randomize the list items
+        random.shuffle(amountrange)
 
         # add the list of sooner rewards to the stimuli list
         self.taskstimuli.append(amountrange)
@@ -148,7 +162,7 @@ class DdParticipant(participant.Participant):
         # add the delay for sooner rewards to the stimuli list
         self.taskstimuli.append(ss_del)
 
-        # add the delay for later rewards to the stimuli list
+        # add the amount for later rewards to the stimuli list
         self.taskstimuli.append(ll_rew)
 
         # make a list to have the different delays for the delayed option
@@ -164,6 +178,9 @@ class DdParticipant(participant.Participant):
 
         # now add the longest delay to the list of delay
         timerange.append(ll_longdel)
+
+        # randomize the list items
+        random.shuffle(timerange)
 
         # add the list of sooner rewards to the stimuli list
         self.taskstimuli.append(timerange)
@@ -277,10 +294,10 @@ class DdParticipant(participant.Participant):
         # otherwise, pull trial info from the info list
         else:
 
-            self.trialinfo.append(random.choice(self.taskstimuli[0]))
+            self.trialinfo.append(self.taskstimuli[0].pop())
             self.trialinfo.append(self.taskstimuli[1])
             self.trialinfo.append(self.taskstimuli[2])
-            self.trialinfo.append(random.choice(self.taskstimuli[3]))
+            self.trialinfo.append(self.taskstimuli[3].pop())
 
         # if the user wanted the immediate option to occur now, as opposed to also at a delay, use now  in the string
         if int(self.trialinfo[0]) == 0:
@@ -316,6 +333,7 @@ class DdParticipant(participant.Participant):
 
         # if you are using ADOPy, do this
         if self.adopy == 'Yes':
+
             # Update engine with the response and current design
             self.engine.update(self.design, response)
 
@@ -338,6 +356,16 @@ class DdParticipant(participant.Participant):
         else:
 
             prompt = 'Please wait for the next round.'
+
+            # if you don't use ADOPy, task stuff should be created again
+            if self.adopy == 'No':
+
+                # make the list for the stimuli
+                self.taskstimuli = []
+
+                # create the stimuli for the task
+                self.createstim(self.userinput[0], self.userinput[1], self.userinput[2], self.userinput[3],
+                                self.userinput[4])
 
         # return the prompt
         return prompt
