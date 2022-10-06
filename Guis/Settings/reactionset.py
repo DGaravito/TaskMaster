@@ -154,7 +154,6 @@ class GNGSettings(settings.Settings):
 
         # Make form layout for all the settingsguis
         self.layout.addRow(QLabel('Number of trials:'), self.trialsin)
-        self.layout.addRow(QLabel('Maximal reaction time (in milliseconds)?'), self.maxrtin)
         self.layout.addRow(QLabel('Number of blocks?'), self.blocksin)
         self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
         self.layout.addRow(self.quitbutton, self.submit)
@@ -170,7 +169,6 @@ class GNGSettings(settings.Settings):
                                           self.sessionin.text(),
                                           self.wd.text(),
                                           'Go/No-Go',
-                                          self.maxrtin.text(),
                                           self.blocksin.text(),
                                           self.buttonboxstate,
                                           self.eyetracking)

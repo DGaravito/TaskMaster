@@ -633,7 +633,7 @@ class EGNGParticipant(participant.Participant):
 
 class GNGParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, session, outdir, task, maxrt, blocks, buttonbox, eyetracking):
+    def __init__(self, expid, trials, session, outdir, task, blocks, buttonbox, eyetracking):
         super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking)
 
         # set how many blocks are needed and set the blocks done to 0
@@ -675,19 +675,19 @@ class GNGParticipant(participant.Participant):
             case 'A':
 
                 # for A blocks, set the neutral number to a fourth of the trials; reverse, do the opposite
-                A_num = int(self.get_trials()/4)
+                a_num = int(self.get_trials()/4)
 
                 # whatever set of trials were divided by 4, subtract them from the total trials and that is the other
                 # set of trials
-                Z_num = self.get_trials()-A_num
+                z_num = self.get_trials()-a_num
 
             case _:
 
-                Z_num = int(self.get_trials()/4)
-                A_num = self.get_trials()-Z_num
+                z_num = int(self.get_trials()/4)
+                a_num = self.get_trials()-z_num
 
         # set a list of integers for the number of trials that the neutral pictures and emotional pictures will get
-        multiplier = [A_num, Z_num]
+        multiplier = [a_num, z_num]
 
         # the strings are multiplied so that you end up with a list of strings. Depending on the type of block, one type
         # of signal will appear 3/4 of the time; the other, 1/4 of the time
