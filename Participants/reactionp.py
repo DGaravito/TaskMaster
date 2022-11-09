@@ -669,22 +669,19 @@ class GNGParticipant(participant.Participant):
         self.siglist = ['A', 'Z']
 
         # find out which block is occuring...
-        match block:
+        if block == 'A':
 
-            # when you find the block type...
-            case 'A':
+            # for A blocks, set the neutral number to a fourth of the trials; reverse, do the opposite
+            a_num = int(self.get_trials()/4)
 
-                # for A blocks, set the neutral number to a fourth of the trials; reverse, do the opposite
-                a_num = int(self.get_trials()/4)
+            # whatever set of trials were divided by 4, subtract them from the total trials and that is the other
+            # set of trials
+            z_num = self.get_trials()-a_num
 
-                # whatever set of trials were divided by 4, subtract them from the total trials and that is the other
-                # set of trials
-                z_num = self.get_trials()-a_num
+        else:
 
-            case _:
-
-                z_num = int(self.get_trials()/4)
-                a_num = self.get_trials()-z_num
+            z_num = int(self.get_trials()/4)
+            a_num = self.get_trials()-z_num
 
         # set a list of integers for the number of trials that the neutral pictures and emotional pictures will get
         multiplier = [a_num, z_num]
