@@ -51,7 +51,8 @@ class ARTTSettings(settings.Settings):
         self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
-        self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
+        self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         self.layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout
@@ -133,7 +134,8 @@ class RASettings(settings.Settings):
         self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
-        self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
+        self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         self.layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout
@@ -193,7 +195,8 @@ class FrameSettings(settings.Settings):
         self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
-        self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
+        self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         self.layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout

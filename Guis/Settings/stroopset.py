@@ -15,7 +15,8 @@ class StroopSettings(settings.Settings):
         self.layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
         self.layout.addRow(QLabel('How many pairs of Consistent and Inconsistent blocks do you want?:'), self.blocksin)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
-        self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
+        self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         self.layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout

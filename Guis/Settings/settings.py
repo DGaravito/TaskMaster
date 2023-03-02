@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QSpinBox, QLineEdit, QVBoxLayout, QDialog, \
-    QCheckBox, QFormLayout
+    QCheckBox, QFormLayout, QFileDialog
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 
@@ -180,7 +180,7 @@ class Settings(QWidget):
         self.adopystate = 'No'
 
         # Default directory
-        self.wd = QLineEdit('C:/users/dgara/Desktop')
+        self.wd = ''
 
         # Make overarching layout
         self.over_layout = QVBoxLayout()
@@ -248,6 +248,11 @@ class Settings(QWidget):
         # checkbox for getting a random outcome
         self.outcometoggle = QCheckBox()
         self.outcometoggle.stateChanged.connect(self.clickbox)
+
+        # WD input
+        self.wdset = QPushButton('Select Directory')
+        self.wdset.clicked.connect(self.fileselect)
+        self.wdlabel = QLabel(self.wd)
 
         # Submit button
         self.submit = QPushButton('Submit')
@@ -354,9 +359,9 @@ class Settings(QWidget):
         file, then it calls the function that submits the settings.
         """
 
-        if path.isdir(self.wd.text()):
+        if path.isdir(self.wd):
 
-            if path.isfile(self.wd.text() + '/' + self.idform.text() + '_' + self.task + '_' + self.sessionin.text() +
+            if path.isfile(self.wd + '/' + self.idform.text() + '_' + self.task + '_' + self.sessionin.text() +
                            '.xlsx'):
                 self.fileerrordialog()
 
@@ -365,6 +370,16 @@ class Settings(QWidget):
 
         else:
             self.wderrordialog()
+
+    def fileselect(self):
+        """
+        This function creates a dialog window to select a directory that will be the output directoty and then sets
+        the class variable (and associated QLabel) for the working directory to the directory you chose
+        """
+
+        folder = QFileDialog.getExistingDirectory(self, 'Select Directory')
+        self.wd = str(folder)
+        self.wdlabel.setText(self.wd)
 
     def wderrordialog(self):
         """

@@ -22,7 +22,8 @@ class SSSettings(settings.Settings):
         self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
-        self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
+        self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         self.layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout
@@ -95,7 +96,8 @@ class EGNGSettings(settings.Settings):
         self.layout.addRow(QLabel('Which faces would you like to include?'), facelayout)
         self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
-        self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
+        self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         self.layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout
@@ -156,7 +158,8 @@ class GNGSettings(settings.Settings):
         self.layout.addRow(QLabel('Number of trials:'), self.trialsin)
         self.layout.addRow(QLabel('Maximal reaction time (in milliseconds)?'), self.maxrtin)
         self.layout.addRow(QLabel('Number of blocks?'), self.blocksin)
-        self.layout.addRow(QLabel('Enter the output directory:'), self.wd)
+        self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
+        self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         self.layout.addRow(self.quitbutton, self.submit)
 
         # Add form layout to overarching layout
