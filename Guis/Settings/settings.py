@@ -222,8 +222,8 @@ class Settings(QWidget):
         self.smoneyin.setRange(0, 10000)
 
         # ADOPy checkbox
-        self.adopytoggle = QCheckBox()
-        self.adopytoggle.stateChanged.connect(self.clickbox)
+        # self.adopytoggle = QCheckBox()
+        # self.adopytoggle.stateChanged.connect(self.clickbox)
 
         # Button checkbox
         self.buttontoggle = QCheckBox()
@@ -321,10 +321,10 @@ class Settings(QWidget):
         else:
             self.fmri = 'No'
 
-        if self.adopytoggle.isChecked():
-            self.adopystate = 'Yes'
-        else:
-            self.adopystate = 'No'
+        # if self.adopytoggle.isChecked():
+        #     self.adopystate = 'Yes'
+        # else:
+        #     self.adopystate = 'No'
 
         if self.ftttoggle.isChecked():
             self.ftt = 'Yes'

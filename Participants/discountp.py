@@ -23,25 +23,25 @@ class DdParticipant(participant.Participant):
         # store the user input
         self.userinput = [float(ss_del), float(ll_shortdel), float(ll_longdel), float(ss_smallrew), float(ll_rew)]
 
-        # if you want ADOPy, then create the engine
-        if adopy == 'Yes':
+        # # if you want ADOPy, then create the engine
+        # if adopy == 'Yes':
+        #
+        #     # call the function to create the adopy engine
+        #     self.engine = self.create_dd_engine(self.task, self.userinput[0], self.userinput[1], self.userinput[2],
+        #                                         self.userinput[3], self.userinput[4])
+        #
+        #     # Compute an optimal design for the first trial
+        #     self.design = self.engine.get_design('optimal')
+        #
+        # # if not...
+        # else:
 
-            # call the function to create the adopy engine
-            self.engine = self.create_dd_engine(self.task, self.userinput[0], self.userinput[1], self.userinput[2],
-                                                self.userinput[3], self.userinput[4])
+        # make the list for the stimuli
+        self.taskstimuli = []
 
-            # Compute an optimal design for the first trial
-            self.design = self.engine.get_design('optimal')
-
-        # if not...
-        else:
-
-            # make the list for the stimuli
-            self.taskstimuli = []
-
-            # create the stimuli for the task
-            self.createstim(self.userinput[0], self.userinput[1], self.userinput[2], self.userinput[3],
-                            self.userinput[4])
+        # create the stimuli for the task
+        self.createstim(self.userinput[0], self.userinput[1], self.userinput[2], self.userinput[3],
+                        self.userinput[4])
 
         # make a list for the specific trial info
         self.trialinfo = []

@@ -23,7 +23,7 @@ if sys.platform == 'darwin':
         description='A python-based application that can run common psych research tasks on any system using PyQt.',
         author='David Michael Nolta Garavito',
         author_email='d.garavito2@gmail.com',
-        setup_requires=['py2app', 'PyQt6', 'numpy', 'scipy', 'pandas', 'xlsxwriter', 'adopy'],
+        setup_requires=['py2app', 'PyQt6', 'numpy', 'scipy', 'pandas', 'xlsxwriter'],
         app=[mainscript],
         data_files=data,
         options={'py2app': OPTIONS}
@@ -37,6 +37,6 @@ if sys.platform == 'win32':
         description='A python-based application that can run common psych research tasks on any system using PyQt.',
         author='David Michael Nolta Garavito',
         author_email='d.garavito2@gmail.com',
-        setup_requires=['PyQt6', 'numpy', 'scipy', 'pandas', 'xlsxwriter', 'adopy'],
+        setup_requires=['PyQt6', 'numpy', 'scipy', 'pandas', 'xlsxwriter'],
         app=[mainscript]
     )

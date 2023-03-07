@@ -1,5 +1,5 @@
-from adopy.tasks.dd import *
-from adopy.tasks.cra import *
+# from adopy.tasks.dd import *
+# from adopy.tasks.cra import *
 
 import pandas as pd
 
@@ -92,7 +92,7 @@ class Participant(object):
             # Look at what is in self.task and create an appropriate string to represent the task in the output file
             match self.task:
 
-                case TaskDD():
+                case 'Delay Discounting':
                     taskstr = 'DD'
 
                 case 'Probability Discounting':
@@ -101,7 +101,7 @@ class Participant(object):
                 case 'CogED Task':
                     taskstr = 'CEDT'
 
-                case TaskCRA():
+                case 'ARTT':
                     taskstr = 'ARTT'
 
                 case 'Risk Aversion':

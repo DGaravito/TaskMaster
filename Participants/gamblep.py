@@ -1,7 +1,7 @@
 from Participants import participant
 
-from adopy.tasks.cra import *
-from adopy import Engine
+# from adopy.tasks.cra import *
+# from adopy import Engine
 
 import numpy as np
 import pandas as pd
@@ -31,22 +31,22 @@ class ARTTParticipant(participant.Participant):
         self.userinput = [risklist, amblist, float(rewmin), float(rewmax)]
 
         # if you want ADOPy, then create the engine
-        if adopy == 'Yes':
-            # call the create_artt_engine function to create the adopy engine
-            self.engine = self.create_artt_engine(self.task, self.userinput[0], self.userinput[1], self.userinput[2],
-                                                  self.userinput[3])
+        # if adopy == 'Yes':
+        #     # call the create_artt_engine function to create the adopy engine
+        #     self.engine = self.create_artt_engine(self.task, self.userinput[0], self.userinput[1], self.userinput[2],
+        #                                           self.userinput[3])
+        #
+        #     # Compute an optimal design for the first trial
+        #     self.design = self.engine.get_design('optimal')
+        #
+        # # if not...
+        # else:
 
-            # Compute an optimal design for the first trial
-            self.design = self.engine.get_design('optimal')
+        # make the list for the stimuli
+        self.taskstimuli = []
 
-        # if not...
-        else:
-
-            # make the list for the stimuli
-            self.taskstimuli = []
-
-            # create the stimuli for the task
-            self.createstim(self.userinput[0], self.userinput[1], self.userinput[2], self.userinput[3])
+        # create the stimuli for the task
+        self.createstim(self.userinput[0], self.userinput[1], self.userinput[2], self.userinput[3])
 
         # make a list for the specific trial info
         self.trialinfo = []
@@ -90,61 +90,61 @@ class ARTTParticipant(participant.Participant):
             # shuffle the list so you have a random order
             random.shuffle(self.order)
 
-    def create_artt_engine(self, task, risklist, amblist, rewmin, rewmax):
-        """
-        uses the user input to create the ADOPy engine for the ARTT task
-        :param task: the ADOPy CRA engine object
-        :param risklist: a list of probabilities for the risk trials
-        :param amblist: a list of proportions for the ambiguous trials
-        :param rewmin: float for the minimum reward
-        :param rewmax: float for the maximum reward
-        :return: ADOPy engine object
-        """
-
-        # we only use the linear model right now
-        model = ModelLinear()
-
-        # the variable reward will range from the minimum (plus $.50) to the maximum, in increments of $.50.
-        r_var = np.arange(float(rewmin) + .5, int(rewmax), .5)
-
-        # the fixed reward will always be the minimum
-        r_fix = rewmin
-
-        # make an array of lists of the rewards
-        rewards = np.array([
-            [rv, rf] for rv in r_var for rf in r_fix
-        ])
-
-        # make a array of lists for the probabilities for risky trials (prob, no ambiguity)
-        pa_risky = np.array([[pr, 0] for pr in risklist])
-
-        # make a array of lists for the proportions for ambiguous trials (50% prob, ambiguity)
-        pa_ambig = np.array([[0.5, am] for am in amblist])
-
-        # arrange the probabilities and proportions
-        pr_am = np.vstack([pa_risky, pa_ambig])
-
-        # set up a dictionary for the design for the engine
-        grid_design = {('p_var', 'a_var'): pr_am,
-                       ('r_var', 'r_fix'): rewards}
-
-        # set up a dictionary for the model parameters
-        grid_param = {
-            'alpha': np.linspace(0, 3, 11)[1:],
-            'beta': np.linspace(-3, 3, 11),
-            'gamma': np.linspace(0, 5, 11)[1:]
-        }
-
-        # set up a dictionary for the possible participant response
-        grid_response = {
-            'choice': [0, 1]
-        }
-
-        # Set up engine
-        engine = Engine(task, model, grid_design, grid_param, grid_response)
-
-        # return the engine
-        return engine
+    # def create_artt_engine(self, task, risklist, amblist, rewmin, rewmax):
+    #     """
+    #     uses the user input to create the ADOPy engine for the ARTT task
+    #     :param task: the ADOPy CRA engine object
+    #     :param risklist: a list of probabilities for the risk trials
+    #     :param amblist: a list of proportions for the ambiguous trials
+    #     :param rewmin: float for the minimum reward
+    #     :param rewmax: float for the maximum reward
+    #     :return: ADOPy engine object
+    #     """
+    #
+    #     # we only use the linear model right now
+    #     model = ModelLinear()
+    #
+    #     # the variable reward will range from the minimum (plus $.50) to the maximum, in increments of $.50.
+    #     r_var = np.arange(float(rewmin) + .5, int(rewmax), .5)
+    #
+    #     # the fixed reward will always be the minimum
+    #     r_fix = rewmin
+    #
+    #     # make an array of lists of the rewards
+    #     rewards = np.array([
+    #         [rv, rf] for rv in r_var for rf in r_fix
+    #     ])
+    #
+    #     # make a array of lists for the probabilities for risky trials (prob, no ambiguity)
+    #     pa_risky = np.array([[pr, 0] for pr in risklist])
+    #
+    #     # make a array of lists for the proportions for ambiguous trials (50% prob, ambiguity)
+    #     pa_ambig = np.array([[0.5, am] for am in amblist])
+    #
+    #     # arrange the probabilities and proportions
+    #     pr_am = np.vstack([pa_risky, pa_ambig])
+    #
+    #     # set up a dictionary for the design for the engine
+    #     grid_design = {('p_var', 'a_var'): pr_am,
+    #                    ('r_var', 'r_fix'): rewards}
+    #
+    #     # set up a dictionary for the model parameters
+    #     grid_param = {
+    #         'alpha': np.linspace(0, 3, 11)[1:],
+    #         'beta': np.linspace(-3, 3, 11),
+    #         'gamma': np.linspace(0, 5, 11)[1:]
+    #     }
+    #
+    #     # set up a dictionary for the possible participant response
+    #     grid_response = {
+    #         'choice': [0, 1]
+    #     }
+    #
+    #     # Set up engine
+    #     engine = Engine(task, model, grid_design, grid_param, grid_response)
+    #
+    #     # return the engine
+    #     return engine
 
     def createstim(self, risklist, amblist, rewmin, rewmax):
         """

@@ -3,10 +3,10 @@
 TaskMaster is a Python-based program for running common experimental tasks. TaskMaster is built only using Python, 
 specifically using Numpy, Pandas, PyQt6, SciPy, and XlsxWriter. Currently, Taskmaster includes 15 tasks:
 
-- Ambiguous Risk Taking Task (featuring optional [ADOPy](https://docs.adopy.org/en/stable/))
+- Ambiguous Risk Taking Task
 - Risk Aversion Task
 - Risky-Choice Framing Task
-- Delay Discounting Task (featuring optional [ADOPy](https://docs.adopy.org/en/stable/))
+- Delay Discounting Task
 - Probability Discounting Task
 - Cognitive Effort Discounting Task
 - Perceptual Bias Task
@@ -25,6 +25,10 @@ If you want a task designed, please let me know! Here are the next ones I will b
 
 - Digit Span Task
 - Dwell Task
+
+We used to feature [ADOPy](https://docs.adopy.org/en/stable/) in several tasks. However, we no longer can incorporate it
+because lack of maintenance has led to deprecated code. In the future, I may try to add my own code that performs 
+ADOPy's intended purpose.
 
 ## Installation
 
