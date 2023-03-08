@@ -210,23 +210,23 @@ class ARTTParticipant(participant.Participant):
         bluered = random.randint(1, 2)
 
         # if you're using ADOPy, then pull trial info from the ADOPy design
-        if self.adopy == 'Yes':
+        # if self.adopy == 'Yes':
+        #
+        #     self.trialinfo.append(float(self.design['r_fix']))
+        #     self.trialinfo.append(float(self.design['r_var']))
+        #     self.trialinfo.append(float(self.design['p_var']))
+        #     self.trialinfo.append(float(self.design['a_var']))
+        #
+        # # otherwise, pull trial info from the info list
+        # else:
 
-            self.trialinfo.append(float(self.design['r_fix']))
-            self.trialinfo.append(float(self.design['r_var']))
-            self.trialinfo.append(float(self.design['p_var']))
-            self.trialinfo.append(float(self.design['a_var']))
+        awards = self.taskstimuli[0].pop()
+        pram = random.choice(self.taskstimuli[1])
 
-        # otherwise, pull trial info from the info list
-        else:
-
-            awards = self.taskstimuli[0].pop()
-            pram = random.choice(self.taskstimuli[1])
-
-            self.trialinfo.append(awards[1])
-            self.trialinfo.append(awards[0])
-            self.trialinfo.append(pram[0])
-            self.trialinfo.append(pram[1])
+        self.trialinfo.append(awards[1])
+        self.trialinfo.append(awards[0])
+        self.trialinfo.append(pram[0])
+        self.trialinfo.append(pram[1])
 
         # if the user wanted gains and losses
         if self.structure == 'Gains and Losses':
@@ -316,20 +316,20 @@ class ARTTParticipant(participant.Participant):
         # return prompt
         return prompt
 
-    def engineupdate(self, response):
-        """
-        Updates the engine with the response from the participant
-        :param response: 1 or 0 based on if the participant chose the risk/ambiguous trial or not
-        """
-
-        # if you are using ADOPy, do this
-        if self.adopy == 'Yes':
-
-            # Update engine with the response and current design
-            self.engine.update(self.design, response)
-
-            # Generate new optimal design based on previous design and response
-            self.design = self.engine.get_design('optimal')
+    # def engineupdate(self, response):
+    #     """
+    #     Updates the engine with the response from the participant
+    #     :param response: 1 or 0 based on if the participant chose the risk/ambiguous trial or not
+    #     """
+    #
+    #     # if you are using ADOPy, do this
+    #     if self.adopy == 'Yes':
+    #
+    #         # Update engine with the response and current design
+    #         self.engine.update(self.design, response)
+    #
+    #         # Generate new optimal design based on previous design and response
+    #         self.design = self.engine.get_design('optimal')
 
     def updateoutput(self, trial, onset, time, response=3):
         """
@@ -342,24 +342,45 @@ class ARTTParticipant(participant.Participant):
         :return: updates the performance dataframe in the superclass
         """
 
+        # if self.adopy == 'Yes':
+        #
+        #     pAmbiguous = float(self.design['a_var'])
+        #     pRisky = float(self.design['p_var'])
+        #     fAmount = float(self.design['r_fix'])
+        #     vAmount = float(self.design['r_var'])
+        #
+        # else:
+
+        pAmbiguous = self.trialinfo[3]
+        pRisky = self.trialinfo[2]
+        fAmount = self.trialinfo[0]
+        vAmount = self.trialinfo[1]
+
         # make dictionary of trial data
         df_trial = {
             'trial': [trial],
             'cond': [self.state],
-            'Proportion Ambiguous': float(self.design['a_var']),
-            'Proportion Risky': [float(self.design['p_var'])],
-            'Fixed Reward': [self.design['r_fix']],
-            'Variable Reward': [self.design['r_var']],
+            'Proportion Ambiguous': [pAmbiguous],
+            'Proportion Risky': [pRisky],
+            'Fixed Amount': [fAmount],
+            'Variable Amount': [vAmount],
             'onset': [onset],
             'response': [response],
-            'reaction time': [time],
-            'mean_alpha': [self.engine.post_mean[0]],
-            'mean_beta': [self.engine.post_mean[1]],
-            'mean_gamma': [self.engine.post_mean[2]],
-            'sd_alpha': [self.engine.post_sd[0]],
-            'sd_beta': [self.engine.post_sd[1]],
-            'sd_gamma': [self.engine.post_sd[2]]
+            'reaction time': [time]
         }
+
+        # if self.adopy == 'Yes':
+        #
+        #     df_trialadopy = {
+        #         'mean_alpha': [self.engine.post_mean[0]],
+        #         'mean_beta': [self.engine.post_mean[1]],
+        #         'mean_gamma': [self.engine.post_mean[2]],
+        #         'sd_alpha': [self.engine.post_sd[0]],
+        #         'sd_beta': [self.engine.post_sd[1]],
+        #         'sd_gamma': [self.engine.post_sd[2]]
+        #     }
+        #
+        #     df_trial = {**df_trial, **df_trialadopy}
 
         # turn dictionary into dataframe and then attach to the rest of the trial info via set_performance
         df_trial = pd.DataFrame(data=df_trial)
@@ -372,46 +393,27 @@ class ARTTParticipant(participant.Participant):
             # If they chose the sure thing...
             if response == 0:
 
-                # then add the fixed value to the list
-                self.outcomelist.append(float(self.design['r_fix']))
-
-            # if not...
-            else:
-
-                # actually generate a random probability to see if they win the gamble
-                actualprob = random.uniform(0.0, 1.0)
-
-                # if they win, add the reward
-                if actualprob > float(self.design['p_var']):
-                    self.outcomelist.append(float(self.design['r_var']))
-
-                # if they don't, add 0
-                else:
-                    self.outcomelist.append(0.0)
-
-            if response == 0:
-
                 # if they only have gains...
-                if self.design == 'Gains only':
+                if self.structure == 'Gains only':
 
                     # then add the fixed gain to the list
-                    self.outcomelist.append('$' + str('{:.2f}'.format(float(self.design['r_fix']))))
+                    self.outcomelist.append('$' + str('{:.2f}'.format(fAmount)))
 
                 # if they only have losses...
-                elif self.design == 'Losses only':
+                elif self.structure == 'Losses only':
 
                     # then add the fixed loss to the list
-                    self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.design['r_fix']))))
+                    self.outcomelist.append('-$' + str('{:.2f}'.format(fAmount)))
 
                 # if they have gains and losses...
                 else:
 
                     # Then look at the state to see if it was a gain or loss
                     if self.state == "Gain":
-                        self.outcomelist.append('$' + str('{:.2f}'.format(float(self.design['r_fix']))))
+                        self.outcomelist.append('$' + str('{:.2f}'.format(fAmount)))
 
                     else:
-                        self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.design['r_fix']))))
+                        self.outcomelist.append('-$' + str('{:.2f}'.format(fAmount)))
 
             # if they chose the gamble...
             else:
@@ -420,22 +422,22 @@ class ARTTParticipant(participant.Participant):
                 actualprob = random.uniform(0.0, 1.0)
 
                 # if they only have gains...
-                if self.design == 'Gains only':
+                if self.structure == 'Gains only':
 
                     # if they win, add the reward
-                    if actualprob > float(self.design['p_var']):
-                        self.outcomelist.append('$' + str('{:.2f}'.format(float(self.design['r_var']))))
+                    if actualprob > pRisky:
+                        self.outcomelist.append('$' + str('{:.2f}'.format(vAmount)))
 
                     # if not, add 0
                     else:
                         self.outcomelist.append(self.outcomelist.append('$0.00'))
 
                 # if they only have losses...
-                elif self.design == 'Losses only':
+                elif self.structure == 'Losses only':
 
                     # if they lose, add the loss
-                    if actualprob < float(self.design['p_var']):
-                        self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.design['r_var']))))
+                    if actualprob < pRisky:
+                        self.outcomelist.append('-$' + str('{:.2f}'.format(vAmount)))
 
                     # if not, add 0
                     else:
@@ -448,8 +450,8 @@ class ARTTParticipant(participant.Participant):
                     if self.state[1] == "Gain":
 
                         # if they win, add the reward
-                        if actualprob > float(self.design['p_var']):
-                            self.outcomelist.append('$' + str('{:.2f}'.format(float(self.design['r_var']))))
+                        if actualprob > pRisky:
+                            self.outcomelist.append('$' + str('{:.2f}'.format(vAmount)))
 
                         # if not, add 0
                         else:
@@ -458,8 +460,8 @@ class ARTTParticipant(participant.Participant):
                     else:
 
                         # if they lose, add the loss
-                        if actualprob < float(self.design['p_var']):
-                            self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.design['r_var']))))
+                        if actualprob < pRisky:
+                            self.outcomelist.append('-$' + str('{:.2f}'.format(vAmount)))
 
                         # if not, add 0
                         else:

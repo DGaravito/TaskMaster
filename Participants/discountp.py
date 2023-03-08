@@ -1,9 +1,9 @@
 from Participants import participant
 
-from adopy.tasks.dd import *
-from adopy import Engine
+# from adopy.tasks.dd import *
+# from adopy import Engine
 
-import numpy as np
+# import numpy as np
 import pandas as pd
 import random
 
@@ -60,69 +60,69 @@ class DdParticipant(participant.Participant):
         # attach the task-specific settings to the task general settings
         self.set_settings(dict_tasksettings)
 
-    def create_dd_engine(self, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew):
-        """
-        creates the ADOPy engine for the delay discounting task
-        :param task: for the adopy dd task
-        :param ss_del: float for the delay for the sooner option
-        :param ll_shortdel: float for the shortest delay for the delayed option
-        :param ll_longdel: float for the longest delay for the delayed option
-        :param ss_smallrew: float for the smallest reward for the sooner option
-        :param ll_rew: float for the largest reward for the delayed option
-        :return: adopy engine object
-        """
-
-        # use the hyperbolic discounting model
-        model = ModelHyp()
-
-        # make a list to have the different delays for the delayed option
-        timerange = [ll_shortdel]
-
-        # if there are more than two trials per block...
-        if (self.get_trials() - 2) > 0:
-
-            # then for however many additional trials per block there are...
-            for trial in range(self.get_trials() - 2):
-                # add a random float between the shortest and longest delay for the delayed option to the list of delays
-                timerange.append(random.uniform(ll_shortdel, ll_longdel))
-
-        # now add the longest delay to the list of delay
-        timerange.append(ll_longdel)
-
-        # make a design dictionary for ADOPy
-        grid_design = {
-            # e.g., for now, put [0]
-            't_ss': [ss_del],
-
-            # e.g., [1 week, 2 weeks, ..., longdelay] in weeks
-            't_ll': timerange,
-
-            # [smallreward, smallreward + $1, ..., bigreward]
-            'r_ss': np.arange(ss_smallrew, ll_rew, .5),
-
-            # [bigreward]
-            'r_ll': [ll_rew]
-        }
-
-        # make a dictionary for the ADOPy model parameters
-        grid_param = {
-            # 50 points on [10^-5, ..., 1] in a log scale
-            'k': np.logspace(-5, 0, 50, base=10),
-
-            # 10 points on (0, 5] in a linear scale
-            'tau': np.linspace(0, 5, 11)[1:]
-        }
-
-        # make a dictionary for the possible responses
-        grid_response = {
-            'choice': [0, 1]
-        }
-
-        # Set up engine
-        engine = Engine(task, model, grid_design, grid_param, grid_response)
-
-        # return the engine
-        return engine
+    # def create_dd_engine(self, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew):
+    #     """
+    #     creates the ADOPy engine for the delay discounting task
+    #     :param task: for the adopy dd task
+    #     :param ss_del: float for the delay for the sooner option
+    #     :param ll_shortdel: float for the shortest delay for the delayed option
+    #     :param ll_longdel: float for the longest delay for the delayed option
+    #     :param ss_smallrew: float for the smallest reward for the sooner option
+    #     :param ll_rew: float for the largest reward for the delayed option
+    #     :return: adopy engine object
+    #     """
+    #
+    #     # use the hyperbolic discounting model
+    #     model = ModelHyp()
+    #
+    #     # make a list to have the different delays for the delayed option
+    #     timerange = [ll_shortdel]
+    #
+    #     # if there are more than two trials per block...
+    #     if (self.get_trials() - 2) > 0:
+    #
+    #         # then for however many additional trials per block there are...
+    #         for trial in range(self.get_trials() - 2):
+    #             # add a random float between shortest and longest delay for the delayed option to the list of delays
+    #             timerange.append(random.uniform(ll_shortdel, ll_longdel))
+    #
+    #     # now add the longest delay to the list of delay
+    #     timerange.append(ll_longdel)
+    #
+    #     # make a design dictionary for ADOPy
+    #     grid_design = {
+    #         # e.g., for now, put [0]
+    #         't_ss': [ss_del],
+    #
+    #         # e.g., [1 week, 2 weeks, ..., longdelay] in weeks
+    #         't_ll': timerange,
+    #
+    #         # [smallreward, smallreward + $1, ..., bigreward]
+    #         'r_ss': np.arange(ss_smallrew, ll_rew, .5),
+    #
+    #         # [bigreward]
+    #         'r_ll': [ll_rew]
+    #     }
+    #
+    #     # make a dictionary for the ADOPy model parameters
+    #     grid_param = {
+    #         # 50 points on [10^-5, ..., 1] in a log scale
+    #         'k': np.logspace(-5, 0, 50, base=10),
+    #
+    #         # 10 points on (0, 5] in a linear scale
+    #         'tau': np.linspace(0, 5, 11)[1:]
+    #     }
+    #
+    #     # make a dictionary for the possible responses
+    #     grid_response = {
+    #         'choice': [0, 1]
+    #     }
+    #
+    #     # Set up engine
+    #     engine = Engine(task, model, grid_design, grid_param, grid_response)
+    #
+    #     # return the engine
+    #     return engine
 
     def createstim(self, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew):
         """
@@ -283,21 +283,21 @@ class DdParticipant(participant.Participant):
         # pick a random integer so that we randomize the sides that the strings are on
         side = random.randint(1, 2)
 
-        # if you're using ADOPy, then pull trial info from the ADOPy design
-        if self.adopy == 'Yes':
+        # # if you're using ADOPy, then pull trial info from the ADOPy design
+        # if self.adopy == 'Yes':
+        #
+        #     self.trialinfo.append(float(self.design['r_ss']))
+        #     self.trialinfo.append(float(self.design['t_ss']))
+        #     self.trialinfo.append(float(self.design['r_ll']))
+        #     self.trialinfo.append(float(self.design['t_ll']))
+        #
+        # # otherwise, pull trial info from the info list
+        # else:
 
-            self.trialinfo.append(float(self.design['r_ss']))
-            self.trialinfo.append(float(self.design['t_ss']))
-            self.trialinfo.append(float(self.design['r_ll']))
-            self.trialinfo.append(float(self.design['t_ll']))
-
-        # otherwise, pull trial info from the info list
-        else:
-
-            self.trialinfo.append(self.taskstimuli[0].pop())
-            self.trialinfo.append(self.taskstimuli[1])
-            self.trialinfo.append(self.taskstimuli[2])
-            self.trialinfo.append(self.taskstimuli[3].pop())
+        self.trialinfo.append(self.taskstimuli[0].pop())
+        self.trialinfo.append(self.taskstimuli[1])
+        self.trialinfo.append(self.taskstimuli[2])
+        self.trialinfo.append(self.taskstimuli[3].pop())
 
         # if the user wanted the immediate option to occur now, as opposed to also at a delay, use now  in the string
         if int(self.trialinfo[0]) == 0:
@@ -325,20 +325,20 @@ class DdParticipant(participant.Participant):
         # return the strings as a list
         return options
 
-    def engineupdate(self, response):
-        """
-        updates the adopy engine (if used) with the participant's response and then sets up the new design
-        :param response: 0 or 1 depending on if the participant took the immediate or delayed option
-        """
-
-        # if you are using ADOPy, do this
-        if self.adopy == 'Yes':
-
-            # Update engine with the response and current design
-            self.engine.update(self.design, response)
-
-            # Generate new optimal design based on previous design and response
-            self.design = self.engine.get_design('optimal')
+    # def engineupdate(self, response):
+    #     """
+    #     updates the adopy engine (if used) with the participant's response and then sets up the new design
+    #     :param response: 0 or 1 depending on if the participant took the immediate or delayed option
+    #     """
+    #
+    #     # if you are using ADOPy, do this
+    #     if self.adopy == 'Yes':
+    #
+    #         # Update engine with the response and current design
+    #         self.engine.update(self.design, response)
+    #
+    #         # Generate new optimal design based on previous design and response
+    #         self.design = self.engine.get_design('optimal')
 
     def nextround(self, blocks):
         """
@@ -391,11 +391,11 @@ class DdParticipant(participant.Participant):
             'reaction time': [time]
         }
 
-        if self.adopy == 'Yes':
-            df_trial['mean_k'] = [self.engine.post_mean[0]]
-            df_trial['mean_tau'] = [self.engine.post_mean[1]]
-            df_trial['sd_k'] = [self.engine.post_sd[0]]
-            df_trial['sd_tau'] = [self.engine.post_sd[1]]
+        # if self.adopy == 'Yes':
+        #     df_trial['mean_k'] = [self.engine.post_mean[0]]
+        #     df_trial['mean_tau'] = [self.engine.post_mean[1]]
+        #     df_trial['sd_k'] = [self.engine.post_sd[0]]
+        #     df_trial['sd_tau'] = [self.engine.post_sd[1]]
 
         # turn that dictionary into a dataframe and use set_performance to add it to the overall dataframe
         df_trial = pd.DataFrame(data=df_trial)
