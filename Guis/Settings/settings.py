@@ -171,6 +171,7 @@ class Settings(QWidget):
         self.outcome = 'No'
         self.eyetracking = 'No'
         self.fmri = 'No'
+        self.feedback = 'No'
         self.ftt = 'No'
         self.stt = 'No'
         self.happy = 'No'
@@ -249,6 +250,10 @@ class Settings(QWidget):
         self.outcometoggle = QCheckBox()
         self.outcometoggle.stateChanged.connect(self.clickbox)
 
+        # checkbox for getting a random outcome
+        self.feedtoggle = QCheckBox()
+        self.feedtoggle.stateChanged.connect(self.clickbox)
+
         # WD input
         self.wdset = QPushButton('Select Directory')
         self.wdset.clicked.connect(self.fileselect)
@@ -301,51 +306,67 @@ class Settings(QWidget):
         box.
         """
 
+        # button box
         if self.buttontoggle.isChecked():
             self.buttonboxstate = 'Yes'
         else:
             self.buttonboxstate = 'No'
 
+        # outcome for decision tasks
         if self.outcometoggle.isChecked():
             self.outcome = 'Yes'
         else:
             self.outcome = 'No'
-        #
+
+        # feedback for digit span
+        if self.feedtoggle.isChecked():
+            self.feedback = 'Yes'
+        else:
+            self.feedback = 'No'
+
+        # eyetracking
         # if self.eyetrackingtoggle.isChecked():
         #     self.eyetracking = 'Yes'
         # else:
         #     self.eyetracking = 'No'
 
+        # fmri timing option
         if self.fmritoggle.isChecked():
             self.fmri = 'Yes'
         else:
             self.fmri = 'No'
 
+        # ADOPy
         # if self.adopytoggle.isChecked():
         #     self.adopystate = 'Yes'
         # else:
         #     self.adopystate = 'No'
 
+        # FTT for framing
         if self.ftttoggle.isChecked():
             self.ftt = 'Yes'
         else:
             self.ftt = 'No'
 
+        # happy for emo go/no-go
         if self.happytoggle.isChecked():
             self.happy = 'Yes'
         else:
             self.happy = 'No'
 
+        # sad for emo go/no-go
         if self.sadtoggle.isChecked():
             self.sad = 'Yes'
         else:
             self.sad = 'No'
 
+        # angry for emo go/no-go
         if self.angertoggle.isChecked():
             self.angry = 'Yes'
         else:
             self.angry = 'No'
 
+        # fearful for emo go/no-go
         if self.feartoggle.isChecked():
             self.fear = 'Yes'
         else:

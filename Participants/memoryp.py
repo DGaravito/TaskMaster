@@ -249,8 +249,11 @@ class PrParticipant(participant.Participant):
 
 class NbParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, session, outdir, task, rounds, buttonbox, eyetracking):
+    def __init__(self, expid, trials, session, outdir, task, feedback, rounds, buttonbox, eyetracking):
         super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking)
+
+        # set whether the user wants participant feedback
+        self.feedback = feedback
 
         # extract the number of blocks from user input
         self.rounds = int(rounds)
@@ -265,7 +268,8 @@ class NbParticipant(participant.Participant):
 
         # Experiment settingsguis output dataframe
         dict_tasksettings = {
-            'Rounds': [rounds]
+            'Rounds': [rounds],
+            'Feedback': [feedback]
         }
 
         # attach the task-specific settings to the task general settings
@@ -279,9 +283,16 @@ class NbParticipant(participant.Participant):
         # if all requested blocks are completed and the participant got 50% correct or better on the last block...
         if (roundsdone == self.rounds) & (self.roundperformance >= 0.5):
 
-            # thank them and send their performance stats
+            # thank them and send their performance stats if the user wanted feedback
             prompt2 = 'Thank you! This task is complete.'
-            prompt1 = 'You got ' + str('{:.1f}'.format(self.roundperformance)) + '% correct.'
+
+            if self.feedback == 'Yes':
+
+                prompt1 = 'You got ' + str('{:.1f}'.format(self.roundperformance)) + '% correct.'
+
+            else:
+
+                prompt1 = ''
 
         # if there are still blocks to go or the participant did worse than 50% on the last block
         else:
@@ -290,13 +301,27 @@ class NbParticipant(participant.Participant):
             # target at the start
             self.backlist = ['1', '1', '1', '1']
 
-            # if the participant did 50% or better on the last block, return their stats
+            # if the participant did 50% or better on the last block, return their stats (if the user wanted that)
             if self.roundperformance >= 0.5:
-                prompt1 = 'You got ' + str('{:.1f}'.format((self.roundperformance*100))) + '% correct.'
+
+                if self.feedback == 'Yes':
+
+                    prompt1 = 'You got ' + str('{:.1f}'.format((self.roundperformance * 100))) + '% correct.'
+
+                else:
+
+                    prompt1 = ''
 
             # if the participant did worse than 50% on the last block, return their stats and let them know
             else:
-                prompt1 = 'You got ' + str('{:.1f}'.format(self.roundperformance)) + '% correct. Please try harder.'
+
+                if self.feedback == 'Yes':
+
+                    prompt1 = 'You got ' + str('{:.1f}'.format(self.roundperformance)) + '% correct.'
+
+                else:
+
+                    prompt1 = 'Please try harder.'
 
             # tell the participant to wait for the next round
             prompt2 = 'Please let the researcher know you are ready'
@@ -348,44 +373,44 @@ class NbParticipant(participant.Participant):
         if self.task == '1-back':
 
             # the partipant called the letter a target and the last item  is not the same as the one before
-            if response == 1 & (self.backlist[-1] == self.backlist[-2]):
+            if (response == 1) & (self.backlist[-1] == self.backlist[-2]):
                 correct = 1
 
             # the partipant called the letter a false alarm and the last item  is not the same as the one before
-            elif response == 0 & (self.backlist[-1] != self.backlist[-2]):
+            elif (response == 0) & (self.backlist[-1] != self.backlist[-2]):
                 correct = 1
 
         # if the task was a 2-back
         elif self.task == '2-back':
 
             # the partipant called the letter a target and the last item is the same as the one 2 before
-            if response == 1 & (self.backlist[-1] == self.backlist[-3]):
+            if (response == 1) & (self.backlist[-1] == self.backlist[-3]):
                 correct = 1
 
             # the partipant called the letter a false alarm and the last item is not the same as the one 2 before
-            elif response == 0 & (self.backlist[-1] != self.backlist[-3]):
+            elif (response == 0) & (self.backlist[-1] != self.backlist[-3]):
                 correct = 1
 
         # if the task was a 3-back
         elif self.task == '3-back':
 
             # the partipant called the letter a target and the last item is the same as the one 3 before
-            if response == 1 & (self.backlist[-1] == self.backlist[-4]):
+            if (response == 1) & (self.backlist[-1] == self.backlist[-4]):
                 correct = 1
 
             # the partipant called the letter a false alarm and the last item is not the same as the one 3 before
-            elif response == 0 & (self.backlist[-1] != self.backlist[-4]):
+            elif (response == 0) & (self.backlist[-1] != self.backlist[-4]):
                 correct = 1
 
         # if the task was a 4-back
         else:
 
             # the partipant called the letter a target and the last item is the same as the one 4 before
-            if response == 1 & (self.backlist[-1] == self.backlist[-5]):
+            if (response == 1) & (self.backlist[-1] == self.backlist[-5]):
                 correct = 1
 
             # the partipant called the letter a false alarm and the last item is not the same as the one 4 before
-            elif response == 0 & (self.backlist[-1] != self.backlist[-5]):
+            elif (response == 0) & (self.backlist[-1] != self.backlist[-5]):
                 correct = 1
 
         # add the score (0 or 1) to the participant's score for the round
@@ -424,7 +449,7 @@ class NbParticipant(participant.Participant):
 
             case 3:
 
-                inst = 'Your job is to decide whetehr each letter that\ncomes up is a \"target\" or a \"false alarm\".'
+                inst = 'Your job is to decide whether each letter that\ncomes up is a \"target\" or a \"false alarm\".'
 
             case 4:
 
@@ -513,6 +538,250 @@ class NbParticipant(participant.Participant):
             case 10:
 
                 inst = 'You will get feedback on your performance after\neach block of the task.'
+
+            case _:
+
+                inst = 'Please let the experimenter know when you are ready.'
+
+        return inst
+
+
+class DsParticipant(participant.Participant):
+
+    def __init__(self, expid, trials, session, outdir, task, order, diff, feedback, tlimit, rounds, eyetracking):
+        super().__init__(expid, trials, session, outdir, task, eyetracking)
+
+        # extract settings
+        self.order = order
+        self.diff = diff
+        self.feedback = feedback
+        self.timelimit = int(tlimit)
+
+        # extract the number of blocks from user input
+        self.rounds = int(rounds)
+
+        # make a starting list
+        self.set_list()
+
+        # set the number of correct and percent correct to 0 at the start
+        self.roundperformance = 0.0
+        self.roundsumcorrect = 0
+
+        # Experiment settingsguis output dataframe
+        dict_tasksettings = {
+            'Tests': [rounds],
+            'Order for Participant Input': [order],
+            'Starting Difficulty': [trials],
+            'Difficulty Change': [diff],
+            'Feedback': [feedback],
+            'Time Limit for Typing': [tlimit]
+        }
+
+        # attach the task-specific settings to the task general settings
+        self.set_settings(dict_tasksettings)
+
+    def nextround(self, roundsdone):
+
+        # if all requested tests are completed, provide feedback (if requested) and thank the participant
+        if roundsdone == self.rounds:
+
+            if self.feedback == 'Yes':
+
+                prompt = 'You got ' + str('{:.1f}'.format(self.roundperformance)) + '% correct.\nThis task is complete.'
+
+            else:
+
+                prompt = 'This task is complete.'
+
+        # if there are still tests to go
+        else:
+
+            # if the user wanted increasing difficulty, add 1 to the number of numbers for the next test
+            if self.diff == 'Increasing':
+
+                self.trials += 1
+
+            # if requested, return participant stats
+            if self.feedback == 'Yes':
+
+                prompt = 'You got ' + str('{:.1f}'.format((self.roundperformance * 100))) + '% correct.\nPlease wait ' \
+                                                                                            'for the next test.'
+
+            else:
+
+                prompt = 'Please wait for the next test.'
+
+            # make a new list of numbers
+            self.set_list()
+
+        # reset number of correct to 0
+        self.roundsumcorrect = 0
+
+        # return the prompts
+        return prompt
+
+    def get_trial_text(self, trial):
+        """
+        Picks the appropriate number from the number list and returns it
+        :param trial: last trial that was completed
+        :return: an int from the number list
+        """
+
+        displaynumber = self.numberlist[trial]
+
+        # return the new letter
+        return displaynumber
+
+    def set_list(self):
+        """
+        Makes a list of numbers for the test
+        """
+
+        # empty list
+        self.numberlist = []
+
+        # for the number of numbers requested, add a random one to the list
+        for number in range(self.trials):
+            # randomly pick a letter
+            newnumber = random.randint(0, 9)
+
+            # add the new letter to the list of all shown letters
+            self.numberlist.append(newnumber)
+
+    def updateoutput(self, onset, time, response):
+        """
+        evaluates whether the person got the n-back correct based on their response
+        :param onset: onset time for the trial
+        :param time: participants's reaction time
+        :param response: integer with either 0 or 1 depending on if the person thought the letter was a false-alarm
+        or a target. Default is 3 in case the participants doesn't answer in time.
+        :return: None: updates the performance dataframe in the superclass
+        """
+
+        # only do the following if there was a response by the participant
+        if response != '':
+
+            # turn the response string into a list of integers
+            responseints = [eval(i) for i in response]
+
+            # for the number of numbers in the test...
+            for number in range(self.get_trials()):
+
+                # if the order is forwards...
+                if self.order == 'Forwards':
+
+                    # and the number from the list matches the one in the same position in the response
+                    if self.numberlist[number] == responseints[number]:
+
+                        # add a point
+                        self.roundsumcorrect += 1
+
+                # if the order is backwards...
+                else:
+
+                    # reverse the response list by copying by value and then using the reverse function
+                    responseintsrev = list(responseints)
+                    responseintsrev.reverse()
+
+                    # check the same, but with the reversed response
+                    if self.numberlist[number] == responseintsrev[number]:
+
+                        # add a point
+                        self.roundsumcorrect += 1
+
+        # calculate how well the participant did by dividing total score by total trials
+        self.roundperformance = self.roundsumcorrect / self.get_trials()
+
+        # make a dictionary of trial info
+        df_trial = {
+            'difficulty': [self.get_trials()],
+            'list': [self.numberlist],
+            'response': [response],
+            'reaction time': [time],
+            'correct_raw': [self.roundsumcorrect],
+            'correct_perc': [self.roundperformance]
+        }
+
+        # turn that dictionary into a dataframe and use set_performance to add it to the overall dataframe
+        df_trial = pd.DataFrame(data=df_trial)
+        self.set_performance(df_trial)
+
+    def get_instructions(self, instint):
+        """
+        Takes in an int and returns the appropriate instructions string
+        :param instint: an int that is supplied and incremented by the expguis
+        :return: a string containing the appropriate instructions that the expguis puts up
+        """
+
+        match instint:
+
+            case 1:
+
+                inst = 'You will see a series of numbers come up on\nthe screen.'
+
+            case 2:
+
+                inst = 'Each letter will be followed by a plus sign,\nwhich is just a placeholder that you can ignore.'
+
+            case 3:
+
+                inst = 'Your job is to remember the numbers that\ncome up and then type them when asked.'
+
+            case 4:
+
+                # depending on the the specific settings, this instruction will be changes
+                if self.order == 'Forwards':
+
+                    inst = 'When asked, type the numbers back in exactly\nthe SAME order that you saw them.'
+
+                else:
+
+                    inst = 'When asked, type the numbers back in exactly\nthe OPPOSITE order that you saw them.'
+
+            case 5:
+
+                inst = 'For example, if you were shown 9, then 5, then\n3, then 8...'
+
+            case 6:
+
+                # depending on the the specific settings, this instruction will be changes
+                if self.task == 'Forwards':
+
+                    inst = 'You would type 9538 (the SAME numbers in the\nSAME order) when asked.'
+
+                else:
+
+                    inst = 'You would type 8359 (the SAME numbers in the\nOPPOSITE order) when asked.'
+
+            case 7:
+
+                inst = 'You will only have ' + str('{:.2f}'.format(self.timelimit/1000)) + ' seconds to enter the ' \
+                                                                                           'numbers when asked, so ' \
+                                                                                           'keep that in mind.'
+
+            case 8:
+
+                # depending on the the specific settings, this instruction will be changes
+                if self.diff == 'Static':
+
+                    inst = 'Each test will only include ' + str(self.get_trials()) + ' numbers.'
+
+                else:
+
+                    inst = 'The next test will include ' + str(self.get_trials()) + ' numbers.\nEach test will ' \
+                                                                                    'increase in difficulty by adding' \
+                                                                                    ' an additional number.'
+
+            case 9:
+
+                # depending on the the specific settings, this instruction will be changes
+                if self.feedback == 'Yes':
+
+                    inst = 'You will get feedback on your performance after\neach test.'
+
+                else:
+
+                    inst = 'You will not get feedback on your performance,\nso make sure to do your best.'
 
             case _:
 

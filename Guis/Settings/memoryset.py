@@ -60,6 +60,7 @@ class NBackSettings(settings.Settings):
         self.layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
         self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         self.layout.addRow(QLabel('Type of n-Back:'), self.design)
+        self.layout.addRow(QLabel('Do you want feedback on participant performance?'), self.feedtoggle)
         self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
@@ -82,6 +83,7 @@ class NBackSettings(settings.Settings):
                                        self.sessionin.text(),
                                        self.wd.text(),
                                        self.design.currentText(),
+                                       self.feedback,
                                        self.blocksin.text(),
                                        self.buttonboxstate,
                                        self.eyetracking)
@@ -96,16 +98,26 @@ class DSSettings(settings.Settings):
     def __init__(self, task):
         super().__init__(task)
 
-        # Dropdown box for gains, losses, or both
-        self.design = QComboBox()
-        self.design.addItems(['1-back', '2-back', '3-back', '4-back'])
-        self.design.currentIndexChanged.connect(self.taskchange)
+        # Dropdown box for forwards/backwards testing
+        self.testorder = QComboBox()
+        self.testorder.addItems(['Forwards', 'Backwards'])
+
+        # Dropdown box for increasing/static difficulty
+        self.testdiff = QComboBox()
+        self.testdiff.addItems(['Static', 'Increasing'])
+
+        # Number entry for time limit to enter numbers
+        self.timelimit = QSpinBox()
+        self.timelimit.setValue(5000)
+        self.timelimit.setRange(1000, 100000)
 
         # Make form layout for all the settingsguis
-        self.layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
-        self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
-        self.layout.addRow(QLabel('Type of n-Back:'), self.design)
-        self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
+        self.layout.addRow(QLabel('Number of numbers per test:'), self.trialsin)
+        self.layout.addRow(QLabel('Should difficulty increase (by one) with each test or stay static?'), self.testdiff)
+        self.layout.addRow(QLabel('Should participants enter numbers forwards or backwards?'), self.testorder)
+        self.layout.addRow(QLabel('Do you want feedback on participant performance?'), self.feedtoggle)
+        self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.timelimit)
+        self.layout.addRow(QLabel('Number of tests:'), self.blocksin)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
@@ -116,19 +128,18 @@ class DSSettings(settings.Settings):
 
         self.setLayout(self.over_layout)
 
-    def taskchange(self):
-
-        self.task = self.design.currentText()
-
     def submitsettings(self):
 
-        person = memoryp.NbParticipant(self.idform.text(),
+        person = memoryp.DsParticipant(self.idform.text(),
                                        self.trialsin.text(),
                                        self.sessionin.text(),
                                        self.wd.text(),
-                                       self.design.currentText(),
+                                       'Digit Span',
+                                       self.testorder.currentText(),
+                                       self.testdiff.currentText(),
+                                       self.feedback,
+                                       self.timelimit.text(),
                                        self.blocksin.text(),
-                                       self.buttonboxstate,
                                        self.eyetracking)
 
         self.exp = memoryexp.NbExp(person)
