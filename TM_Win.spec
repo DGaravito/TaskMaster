@@ -5,11 +5,13 @@ block_cipher = None
 
 hooks = ['Guis/Settings/beadsset.py', 'Participants/beadsp.py', 'Guis/Experiments/beadsexp.py',
         'Guis/Settings/discountset.py', 'Participants/discountp.py', 'Guis/Experiments/discountexp.py',
+        'Guis/Settings/dwellset.py', 'Participants/dwellp.py', 'Guis/Experiments/dwellexp.py',
         'Guis/Settings/gambleset.py', 'Participants/gamblep.py', 'Guis/Experiments/gambleexp.py',
         'Guis/Settings/memoryset.py', 'Participants/memoryp.py', 'Guis/Experiments/memoryexp.py',
         'Guis/Settings/nactset.py', 'Participants/nactp.py', 'Guis/Experiments/nactexp.py', 'Guis/Settings/pbtset.py',
         'Participants/pbtp.py', 'Guis/Experiments/pbtexp.py', 'Guis/Settings/reactionset.py',
-        'Participants/reactionp.py', 'Guis/Experiments/reactionexp.py' ]
+        'Participants/reactionp.py', 'Guis/Experiments/reactionexp.py', 'Guis/Settings/stroopset.py',
+        'Participants/stroopp.py', 'Guis/Experiments/stroopexp.py']
 
 addedfiles = [('assets/', 'assets'),
              ('TM.icns', '.'),
