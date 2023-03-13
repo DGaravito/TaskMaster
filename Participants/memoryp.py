@@ -604,12 +604,13 @@ class DsParticipant(participant.Participant):
             # if requested, return participant stats
             if self.feedback == 'Yes':
 
-                prompt = 'You got ' + str('{:.1f}'.format((self.roundperformance * 100))) + '% correct.\nPlease wait ' \
+                prompt = 'You got ' + str('{:.1f}'.format((self.roundperformance * 100))) + '% correct.\nPress \'G\' ' \
                                                                                             'for the next test.'
 
+            # otherwise, instruct the participant to start the next trial
             else:
 
-                prompt = 'Please wait for the next test.'
+                prompt = 'Press \'G\' wait for the next test.'
 
             # make a new list of numbers
             self.set_list()
@@ -627,6 +628,7 @@ class DsParticipant(participant.Participant):
         :return: an int from the number list
         """
 
+        # pick the number that corresponds to the correct trial
         displaynumber = self.numberlist[trial]
 
         # return the new letter

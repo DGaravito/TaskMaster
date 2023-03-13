@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QLabel, QHBoxLayout
+from PyQt6.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QLineEdit, QGridLayout, QPushButton
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 
@@ -325,12 +325,70 @@ class DsExp(experiment.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
-        # Instructions
-        self.instructions.setText('Press ' + self.person.leftkey[0] + ' if the letter is a false alarm. Press ' +
-                                  self.person.rightkey[0] + ' if the letter is a target')
+        # Instructions, depending on the user settings
+        if self.person.order == 'Forwards':
+            instruction = 'Wait for ' + self.person.get_trials() + ' numbers to be displayed. Then enter them in the' \
+                                                                   ' REVERSE order.'
+
+        else:
+            instruction = 'Wait for ' + self.person.get_trials() + ' numbers to be displayed. Then enter them in the' \
+                                                                   ' REVERSE order.'
+
+        self.instructions.setText(instruction)
 
         # center middle
         self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # make the keypad with display
+        self.middle = QVBoxLayout()
+
+        self.display = QLineEdit()
+        self.middle.addWidget(self.display)
+
+        # make the buttons for the keypad
+        self.button1 = QPushButton()
+        self.button2 = QPushButton()
+        self.button3 = QPushButton()
+        self.button4 = QPushButton()
+        self.button5 = QPushButton()
+        self.button6 = QPushButton()
+        self.button7 = QPushButton()
+        self.button8 = QPushButton()
+        self.button9 = QPushButton()
+        self.buttondel = QPushButton()
+        self.button0 = QPushButton()
+        self.buttonsub = QPushButton()
+
+        # connect the buttons
+        self.button1.clicked.connect(self.clicked_button1)
+        self.button2.clicked.connect(self.clicked_button2)
+        self.button3.clicked.connect(self.clicked_button3)
+        self.button4.clicked.connect(self.clicked_button4)
+        self.button5.clicked.connect(self.clicked_button5)
+        self.button6.clicked.connect(self.clicked_button6)
+        self.button7.clicked.connect(self.clicked_button7)
+        self.button8.clicked.connect(self.clicked_button8)
+        self.button9.clicked.connect(self.clicked_button9)
+        self.buttondel.clicked.connect(self.clicked_buttondel)
+        self.button0.clicked.connect(self.clicked_button0)
+        self.buttonsub.clicked.connect(self.clicked_buttonsub)
+
+        # arrange the buttons
+        keypad = QGridLayout()
+        self.middle.addWidget(keypad)
+
+        keypad.addWidget(self.button1, 0, 0, 1, 1)
+        keypad.addWidget(self.button2, 0, 1, 1, 1)
+        keypad.addWidget(self.button3, 0, 2, 1, 1)
+        keypad.addWidget(self.button4, 1, 0, 1, 1)
+        keypad.addWidget(self.button5, 1, 1, 1, 1)
+        keypad.addWidget(self.button6, 1, 2, 1, 1)
+        keypad.addWidget(self.button7, 2, 0, 1, 1)
+        keypad.addWidget(self.button8, 2, 1, 1, 1)
+        keypad.addWidget(self.button9, 2, 2, 1, 1)
+        keypad.addWidget(self.buttondel, 3, 0, 1, 1)
+        keypad.addWidget(self.button0, 3, 1, 1, 1)
+        keypad.addWidget(self.buttonsub, 3, 2, 1, 1)
 
         # Put everything in vertical layout
         self.instquitlayout.addStretch(1)
@@ -347,52 +405,26 @@ class DsExp(experiment.Experiment):
         # stop the timer
         self.ititimer.stop()
 
-        # reset the border around the middle if there was something different
-        self.middle.setStyleSheet('border: 0px;')
+        # clear the display screen
+        self.display.setText('')
 
         # if-then statement to determine whether the amount of trials completed is less than the number of trials the
         # user wants
         if self.trialsdone < self.person.get_trials():
 
             # get the next letter
-            self.middle.setText(self.person.get_trial_text())
-
-            # get the start time
-            self.starttime = time.time() - self.overallstart
-
-            # start trial timers and allow the user to respond
-            self.timer.start(3000)
-            self.ititimer.start(3500)
-            self.responseenabled = 1
+            self.display.setText(self.person.get_trial_text(self.trialsdone))
+            self.ititimer.start(2000)
 
         # if the trials requested have been completed
         else:
 
-            # increase the number of rounds done and reset the number of trials done to 0
-            self.roundsdone += 1
-            self.trialsdone = 0
+            # get the start time
+            self.starttime = time.time() - self.overallstart
 
-            # get the approrpiate text depending on if all the rounds are done or more need to be run
-            text = self.person.nextround(self.roundsdone)
-
-            # set the instructions and middle to that appropriate text
-            self.instructions.setText(text[0])
-            self.middle.setText(text[1])
-
-            # if the person did badly that round, make them do an additional
-            if self.person.roundperformance < 70:
-
-                self.roundsdone -= 1
-
-            # if all the rounds are completed, then output the data
-            if self.person.rounds == self.roundsdone:
-
-                self.person.output()
-
-            # if more rounds need to be done, then indicate that it is between rounds
-            else:
-
-                self.betweenrounds = 1
+            # start test timer and allow the user to respond
+            self.timer.start(self.person.timelimit)
+            self.responseenabled = 1
 
     def timeout(self):
         """
@@ -406,14 +438,11 @@ class DsExp(experiment.Experiment):
         # turn off the ability for the participant to respond
         self.responseenabled = 0
 
-        # indicate that a trial has been completed
-        self.trialsdone += 1
-
         # send the trial info to the participant class
-        self.person.updateoutput(self.trialsdone, self.starttime, 9999)
+        self.person.updateoutput(self.starttime, 9999, '')
 
-        # set the screen to the iti window
-        self.iti()
+        # clear the display screen with a warning
+        self.display.setText('Too slow!')
 
     def keyaction(self, key):
         """
@@ -427,64 +456,150 @@ class DsExp(experiment.Experiment):
             # indicate that the participant is no longer between rounds so g and i keys won't mess things up
             self.betweenrounds = 0
 
-            # generate the next trial
-            self.generatenext()
+            # reset the border around the display if there was something different
+            self.display.setStyleSheet('border: 0px;')
 
-            # set the instructions for the task
-            self.instructions.setText('Press ' + self.person.leftkey[0] + ' if the letter is a false alarm. Press ' +
-                                      self.person.rightkey[0] + ' if the letter is a target')
+            # don't allow input yet
+            self.responseenabled = 0
+
+            # generate the next trial after 2 seconds
+            self.ititimer.start(2000)
 
             # if this is the first trial of the first round, set the global start time to make the onset time make more
             # sense
             if (self.trialsdone == 0) & (self.roundsdone == 0):
                 self.overallstart = time.time()
 
-        # if the participant presses the left or right keys and is allowed to respond
-        if ((key in self.person.rightkey) | (key in self.person.leftkey)) & (self.responseenabled == 1):
+    def clicked_button1(self):
 
-            # put a border around the middle to indicate a user input was received
-            self.middle.setStyleSheet('border: 3px solid blue;')
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
 
-            # no longer allow the participant to respond
+            self.display.setText(self.display.text() + '1')
+
+    def clicked_button2(self):
+
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
+
+            self.display.setText(self.display.text() + '2')
+
+    def clicked_button3(self):
+
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
+
+            self.display.setText(self.display.text() + '3')
+
+    def clicked_button4(self):
+
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
+
+            self.display.setText(self.display.text() + '4')
+
+    def clicked_button5(self):
+
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
+
+            self.display.setText(self.display.text() + '5')
+
+    def clicked_button6(self):
+
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
+
+            self.display.setText(self.display.text() + '6')
+
+    def clicked_button7(self):
+
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
+
+            self.display.setText(self.display.text() + '7')
+
+    def clicked_button8(self):
+
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
+
+            self.display.setText(self.display.text() + '8')
+
+    def clicked_button9(self):
+
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
+
+            self.display.setText(self.display.text() + '9')
+
+    def clicked_buttondel(self):
+
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
+
+            # copy the text of the current display
+            orig = self.display.text()
+
+            # get the length of the current text
+            length = len(self.display.text())
+
+            # if there is any text
+            if length:
+
+                # make new text by trimming the original text by one
+                new = orig[:length - 1]
+
+                # set the display to the new text
+                self.display.setText(new)
+
+    def clicked_button0(self):
+
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
+
+            self.display.setText(self.display.text() + '0')
+
+    def clicked_buttonsub(self):
+
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
+
+            # get the start time
+            self.endtime = time.time() - self.overallstart
+
+            # put a border around the display to indicate a user input was received
+            self.display.setStyleSheet('border: 3px solid blue;')
+
+            # clear the display screen
+            self.display.setText('')
+
+            # indicate that the participant is no longer between rounds so g and i keys won't mess things up
+            self.betweenrounds = 0
+
+            # don't allow input anymore
             self.responseenabled = 0
 
-            # stop the timer and increment the number of trials done
-            self.timer.stop()
-            self.trialsdone += 1
+            # send the trial info to the participant class
+            self.person.updateoutput(self.starttime, self.endtime, self.display.text())
 
-            # use time.time and the start time variable to compute rt
-            endtime = time.time() - self.overallstart
-            rt = endtime - self.starttime
+            # increase the number of rounds done and reset the number of trials done to 0
+            self.roundsdone += 1
+            self.trialsdone = 0
 
-            # if the key was the right key...
-            if key in self.person.rightkey:
+            # get the approrpiate text depending on if feedback is desired
+            self.display.setText(self.person.nextround(self.roundsdone))
 
-                # set response to 1
-                response = 1
+            # if all the rounds are completed, then output the data
+            if self.person.rounds == self.roundsdone:
 
-            # if the key was the left key...
+                # reset the border around the display if there was something different
+                self.display.setStyleSheet('border: 0px;')
+
+                # Output data
+                self.person.output()
+
+            # if more rounds need to be done, then indicate that it is between rounds
             else:
 
-                # set response to 0
-                response = 0
-
-            # send the trial info to the participant class so it can be added to the dataframe
-            self.person.updateoutput(self.trialsdone, self.starttime, rt, response)
-
-            # set the window to the iti screen
-            self.iti()
-
-        # if someone presses the i key and the participant is between rounds...
-        if (key in ['i', 'I']) & (self.betweenrounds == 1):
-
-            # increase the index for the instructions
-            self.inst += 1
-
-            # get the associated instruction text
-            self.middle.setText(self.person.get_instructions(self.inst))
-
-            # if the index reaches twelve...
-            if self.inst == 12:
-
-                # reset to zero so the instructions can be viewed again
-                self.inst = 0
+                self.betweenrounds = 1
