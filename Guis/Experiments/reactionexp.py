@@ -270,14 +270,38 @@ class EGNGExp(experiment.Experiment):
         # user wants
         if self.trialsdone < self.person.get_trials():
 
-            # get a random number for one of the pictures
-            randopic = str(random.randint(1, 12))
-
             # Get the string that contains the name of the trial picture
-            self.picstring = self.person.get_trial_pic() + randopic + '.png'
+            self.picstringprefix = self.person.get_trial_pic()
+
+            if self.picstringprefix.startswith('Happy'):
+
+                # get a random number for one of the pictures
+                randopic = str(random.randrange(self.person.happylength))
+
+            elif self.picstringprefix.startswith('Sad'):
+
+                # get a random number for one of the pictures
+                randopic = str(random.randrange(self.person.sadlength))
+
+            elif self.picstringprefix.startswith('Angry'):
+
+                # get a random number for one of the pictures
+                randopic = str(random.randrange(self.person.angrylength))
+
+            elif self.picstringprefix.startswith('Fearful'):
+
+                # get a random number for one of the pictures
+                randopic = str(random.randrange(self.person.fearlength))
+
+            else:
+
+                # get a random number for one of the pictures
+                randopic = str(random.randrange(self.person.neulength))
+
+            self.picstring = self.picstringprefix + randopic + '.png'
 
             # add the path to the picture string
-            pathstring = 'Assets/' + self.picstring
+            pathstring = self.person.picturedir + self.picstring
 
             # Make a pixmap of the picture and then set the middle to that pixmap
             pixmap = QPixmap(pathstring)

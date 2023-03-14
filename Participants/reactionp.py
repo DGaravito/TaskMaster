@@ -272,9 +272,20 @@ class SSParticipant(participant.Participant):
 
 class EGNGParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, session, outdir, task, blocks, happy, sad, angry, fear, buttonbox,
+    def __init__(self, expid, trials, session, outdir, task, blocks, happy, happylen, sad, sadlen, angry, angrylen,
+                 fear, fearlen, neulen, picd, buttonbox,
                  eyetracking):
         super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking)
+
+        # make length variables for the picture lists
+        self.happylength = happylen
+        self.sadlength = sadlen
+        self.angrylength = angrylen
+        self.fearlength = fearlen
+        self.neulength = neulen
+
+        # make the picture directory a class variable
+        self.picturedir = picd
 
         # set how many blocks are needed and set the blocks done to 0
         self.blocks = int(blocks)
@@ -310,7 +321,12 @@ class EGNGParticipant(participant.Participant):
         # Experiment settingsguis output dataframe
         dict_tasksettings = {
             'Blocks': [blocks],
-            'Faces': [self.structlist]
+            'Faces': [self.structlist],
+            '# of Happy Faces': [happylen],
+            '# of Sad Faces': [sadlen],
+            '# of Angry Faces': [angrylen],
+            '# of Fearful Faces': [fearlen],
+            '# of Neutral Faces': [neulen]
         }
 
         # attach the task-specific settings to the task general settings
@@ -324,7 +340,7 @@ class EGNGParticipant(participant.Participant):
         """
 
         # there will always be neutral pictures in the blocks
-        self.piclist = ['EGNG_Neutral_']
+        self.piclist = ['Neutral_']
 
         # find out which block is occuring...
         match block:
@@ -333,7 +349,7 @@ class EGNGParticipant(participant.Participant):
             case 'Happy':
 
                 # add those types of pictures to the list of pictures...
-                self.piclist.append('EGNG_Happy_')
+                self.piclist.append('Happy_')
 
                 # for emotion blocks, set the neutral number to a fourth of the trials; reverse, do the opposite
                 neutralnum = int(self.get_trials()/4)
@@ -343,37 +359,37 @@ class EGNGParticipant(participant.Participant):
                 emonum = self.get_trials()-neutralnum
 
             case 'HappyRev':
-                self.piclist.append('EGNG_Happy_')
+                self.piclist.append('Happy_')
                 emonum = int(self.get_trials()/4)
                 neutralnum = self.get_trials()-emonum
 
             case 'Sad':
-                self.piclist.append('EGNG_Sad_')
+                self.piclist.append('Sad_')
                 neutralnum = int(self.get_trials()/4)
                 emonum = self.get_trials()-neutralnum
 
             case 'SadRev':
-                self.piclist.append('EGNG_Sad_')
+                self.piclist.append('Sad_')
                 emonum = int(self.get_trials()/4)
                 neutralnum = self.get_trials()-emonum
 
             case 'Angry':
-                self.piclist.append('EGNG_Angry_')
+                self.piclist.append('Angry_')
                 neutralnum = int(self.get_trials()/4)
                 emonum = self.get_trials()-neutralnum
 
             case 'AngryRev':
-                self.piclist.append('EGNG_Angry_')
+                self.piclist.append('Angry_')
                 emonum = int(self.get_trials()/4)
                 neutralnum = self.get_trials()-emonum
 
             case 'Fearful':
-                self.piclist.append('EGNG_Fearful_')
+                self.piclist.append('Fearful_')
                 neutralnum = int(self.get_trials()/4)
                 emonum = self.get_trials()-neutralnum
 
             case _:
-                self.piclist.append('EGNG_Fearful_')
+                self.piclist.append('Fearful_')
                 emonum = int(self.get_trials()/4)
                 neutralnum = self.get_trials()-emonum
 
@@ -496,7 +512,7 @@ class EGNGParticipant(participant.Participant):
         if self.blocktype in ['HappyRev', 'SadRev', 'AngryRev', 'FearfulRev']:
 
             # if the picture was a neutral one...
-            if 'EGNG_Neutral_' in pic:
+            if 'Neutral_' in pic:
 
                 # if the participant did respond, they are correct
                 if response == 1:
@@ -513,7 +529,7 @@ class EGNGParticipant(participant.Participant):
         elif self.blocktype == 'Happy':
 
             # if the picture was a Happy one...
-            if 'EGNG_Happy_' in pic:
+            if 'Happy_' in pic:
 
                 # if the participant did respond, they are correct
                 if response == 1:
@@ -530,7 +546,7 @@ class EGNGParticipant(participant.Participant):
         elif self.blocktype == 'Sad':
 
             # if the picture was a Sad one...
-            if 'EGNG_Sad_' in pic:
+            if 'Sad_' in pic:
 
                 # if the participant did respond, they are correct
                 if response == 1:
@@ -547,7 +563,7 @@ class EGNGParticipant(participant.Participant):
         elif self.blocktype == 'Angry':
 
             # if the picture was an Angry one...
-            if 'EGNG_Angry_' in pic:
+            if 'Angry_' in pic:
 
                 # if the participant did respond, they are correct
                 if response == 1:
@@ -564,7 +580,7 @@ class EGNGParticipant(participant.Participant):
         else:
 
             # if the picture was a Fearful one...
-            if pic == 'EGNG_Fearful_':
+            if pic == 'Fearful_':
 
                 # if the participant did respond, they are correct
                 if response == 1:
@@ -577,14 +593,11 @@ class EGNGParticipant(participant.Participant):
                 if response == 0:
                     correct = 1
 
-        # strip the extra junk off of the picture string
-        picstripped = pic.removeprefix('EGNG_')
-
         # make a dictionary of trial info
         df_trial = {
             'trial': [trial],
             'block type': [self.blocktype],
-            'picture': [picstripped],
+            'picture': [pic],
             'onset': [onset],
             'response': [response],
             'reaction time': [time],

@@ -1,4 +1,7 @@
-from PyQt6.QtWidgets import QLabel, QSpinBox, QGridLayout, QDialog, QVBoxLayout
+from PyQt6.QtWidgets import QLabel, QSpinBox, QGridLayout, QDialog, QVBoxLayout, QPushButton, QFileDialog
+
+from os import path
+import glob
 
 from Participants import reactionp
 
@@ -47,36 +50,6 @@ class SSSettings(settings.Settings):
         self.hide()
 
 
-class EGNGSelectErrorBox(QDialog):
-    """
-    This is a popup window that may come up after the Emo Go/NoGo window checks to see if the user select any of the
-    emotional faces. If not, it tells the user to do so.
-    """
-
-    def __init__(self):
-        super().__init__()
-
-        self.setWindowTitle('Error')
-
-        # Make  layout
-        dialayout = QVBoxLayout()
-
-        # Make labels for text
-        self.mainerror = QLabel('It looks like you didn\'t select an emotional face!')
-        self.mainerror.setStyleSheet('padding :5px')
-
-        text = 'Please select at least one of happy, sad, angry, or fearful.'
-
-        self.instruction = QLabel(text)
-        self.instruction.setStyleSheet('padding :5px')
-
-        # Add stuff to overarching layout
-        dialayout.addWidget(self.mainerror),
-        dialayout.addWidget(self.instruction)
-
-        self.setLayout(dialayout)
-
-
 class EGNGSettings(settings.Settings):
 
     def __init__(self, task):
@@ -96,6 +69,8 @@ class EGNGSettings(settings.Settings):
         self.layout.addRow(QLabel('Which faces would you like to include?'), facelayout)
         self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        self.layout.addRow(QLabel('Current picture directory:'), self.picdlabel)
+        self.layout.addRow(QLabel('Click to select where your pictures are:'), self.picdset)
         self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         self.layout.addRow(self.quitbutton, self.submit)
@@ -107,41 +82,81 @@ class EGNGSettings(settings.Settings):
 
     def submitsettings(self):
 
-        if self.happytoggle.isChecked() | self.sadtoggle.isChecked() | self.angertoggle.isChecked() | \
-                self.feartoggle.isChecked():
+        # check to make sure at least one emotion is toggled on
+        if self.happy == 'Yes' or self.sad == 'Yes' or self.fear == 'Yes' or self.angry == 'Yes':
 
-            if (int(self.trialsin.text()) % 4) == 0:
-                person = reactionp.EGNGParticipant(self.idform.text(),
-                                                   self.trialsin.text(),
-                                                   self.sessionin.text(),
-                                                   self.wd.text(),
-                                                   'Emo Go/No-Go',
-                                                   self.blocksin.text(),
-                                                   self.happy,
-                                                   self.sad,
-                                                   self.angry,
-                                                   self.fear,
-                                                   self.buttonboxstate,
-                                                   self.eyetracking)
+            # check if the picture directory is valid
+            if path.isdir(self.picd):
 
-                self.exp = reactionexp.EGNGExp(person)
-                self.exp.show()
-                self.hide()
+                # check to make sure there are PNGs in the picture directory
+                if glob.glob(self.picd + '/*.png'):
+
+                    # get the strings for all of the files in the picture directory
+                    fileprefixes = glob.glob(self.picd + '/*.png')
+
+                    # for each of those file strings
+                    for file in fileprefixes:
+
+                        # trim the path off of the strings
+                        old = self.picd + '/'
+                        file.replace(old, '')
+
+                        # Make lists of individual emotions for later
+                        happystr = [picstr for picstr in fileprefixes if picstr.startswith('Happy')]
+                        sadstr = [picstr for picstr in fileprefixes if picstr.startswith('Sad')]
+                        angrystr = [picstr for picstr in fileprefixes if picstr.startswith('Angry')]
+                        fearstr = [picstr for picstr in fileprefixes if picstr.startswith('Fearful')]
+                        neustr = [picstr for picstr in fileprefixes if picstr.startswith('Neutral')]
+
+                    # check to make sure that if the user toggled on an emotion, there is at least one picture with
+                    # that emotion and at least one neutral picture
+                    if (
+                            (self.happy == 'No' or len(happystr) > 0) &
+                            (self.sad == 'No' or len(sadstr) > 0) &
+                            (self.angry == 'No' or len(angrystr) > 0) &
+                            (self.fear == 'No' or len(fearstr) > 0) &
+                            (len(neustr) > 0)
+                    ):
+
+                        # check to make sure the trials are divisible by 4
+                        if (int(self.trialsin.text()) % 4) == 0:
+                            person = reactionp.EGNGParticipant(self.idform.text(),
+                                                               self.trialsin.text(),
+                                                               self.sessionin.text(),
+                                                               self.wd.text(),
+                                                               'Emo Go/No-Go',
+                                                               self.blocksin.text(),
+                                                               self.happy,
+                                                               len(happystr),
+                                                               self.sad,
+                                                               len(sadstr),
+                                                               self.angry,
+                                                               len(angrystr),
+                                                               self.fear,
+                                                               len(fearstr),
+                                                               len(neustr),
+                                                               self.picd,
+                                                               self.buttonboxstate,
+                                                               self.eyetracking)
+
+                            self.exp = reactionexp.EGNGExp(person)
+                            self.exp.show()
+                            self.hide()
+
+                        else:
+                            self.matherrordialog(8)
+
+                    else:
+                        self.picdirselect()
+
+                else:
+                    self.picdirselect()
 
             else:
-                self.matherrordialog(8)
+                self.picdirerrordialog()
 
         else:
             self.selecterror()
-
-    def selecterror(self):
-        """
-        This function activates if there is the output directory submitted is not valid
-        """
-
-        error = EGNGSelectErrorBox()
-
-        error.exec()
 
 
 class GNGSettings(settings.Settings):

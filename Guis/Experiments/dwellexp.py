@@ -7,6 +7,7 @@ from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 
 from Guis.Experiments import experiment
 
+
 class EGNGExp(experiment.Experiment):
     keyPressed = pyqtSignal(str)
 

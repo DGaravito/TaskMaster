@@ -6,10 +6,49 @@ from PyQt6.QtGui import QFont
 from os import path
 
 
-class WDErrorBox(QDialog):
+class DirErrorBox(QDialog):
     """
-    This is a popup window that may come up after the settingsguis window checks to see if the directory that the user
-    put in is actually a directory. If not, this popup lets the user know that they goofed.
+    This is a popup window that may come up after the settings window checks to see if the directory that the user
+    selected is a valid directory. If not, this popup lets the user know that they goofed.
+    """
+
+    def __init__(self, dirtype):
+        super().__init__()
+
+        self.setWindowTitle('Error')
+
+        # Make  layout
+        dialayout = QVBoxLayout()
+
+        # Make labels for text, changing the main error depending on if the working directory or picture directory (for
+        # EGNG/Dwell was the problem
+        if dirtype == 'WD':
+            maintext = 'It looks like you entered an invalid working directory!'
+
+        else:
+            maintext = 'It looks like you entered an invalid picture directory!'
+
+        self.mainerror = QLabel(maintext)
+        self.mainerror.setStyleSheet('padding :5px')
+
+        insttext = 'Make sure you can access the folder normally, and make sure that any network or wired connection' \
+                   ' is secure.'
+
+        self.instruction = QLabel(insttext)
+        self.instruction.setStyleSheet('padding :5px')
+
+        # Add stuff to overarching layout
+        dialayout.addWidget(self.mainerror),
+        dialayout.addWidget(self.instruction)
+
+        self.setLayout(dialayout)
+
+
+class FormatErrorBox(QDialog):
+    """
+    This is a popup window that may come up after the EGNG/Dwell settings window if there are no properly-formatted
+    pictures found in the picture directory. This may be due to no pictures having the proper prefix (e.g., 'Angry_')
+    or due to no pictures being in the PNG format
     """
 
     def __init__(self):
@@ -21,12 +60,12 @@ class WDErrorBox(QDialog):
         dialayout = QVBoxLayout()
 
         # Make labels for text
-        self.mainerror = QLabel('It looks like you entered an invalid directory!')
+        self.mainerror = QLabel('I could not find any compatible pictures in your picture directory!')
         self.mainerror.setStyleSheet('padding :5px')
 
-        text = 'If you\'re on Windows, make sure to include your drive name (i.e., C:).\n' \
-               'Mac example: ~/Users/DGaravito/Desktop\n' \
-               'Windows example: C:/users/dgara/Desktop'
+        text = 'First, make sure all pictures are in the PNG format.\nSecond, make sure all of the pictures have the' \
+               'proper naming structure.\nFor example, if I had 10 pictures of angry faces, they would be named' \
+               '\"Angry_1.png\", \"Angry_2.png\",...\"Angry_10.png\".'
 
         self.instruction = QLabel(text)
         self.instruction.setStyleSheet('padding :5px')
@@ -59,6 +98,36 @@ class FileErrorBox(QDialog):
 
         self.instruction = QLabel('Either delete the old file, pick a new directory, or change your ID, session name' +
                                   ', or task.')
+        self.instruction.setStyleSheet('padding :5px')
+
+        # Add stuff to overarching layout
+        dialayout.addWidget(self.mainerror),
+        dialayout.addWidget(self.instruction)
+
+        self.setLayout(dialayout)
+
+
+class SelectErrorBox(QDialog):
+    """
+    This is a popup window that may come up after the Emo Go/NoGo window checks to see if the user select any of the
+    emotional faces. If not, it tells the user to do so.
+    """
+
+    def __init__(self):
+        super().__init__()
+
+        self.setWindowTitle('Error')
+
+        # Make  layout
+        dialayout = QVBoxLayout()
+
+        # Make labels for text
+        self.mainerror = QLabel('It looks like you didn\'t select an emotional face!')
+        self.mainerror.setStyleSheet('padding :5px')
+
+        text = 'Please select at least one of happy, sad, angry, or fearful.'
+
+        self.instruction = QLabel(text)
         self.instruction.setStyleSheet('padding :5px')
 
         # Add stuff to overarching layout
@@ -182,6 +251,14 @@ class Settings(QWidget):
 
         # Default directory
         self.wd = ''
+
+        # Default picture directory
+        self.picd = ''
+
+        # picture directory input
+        self.picdset = QPushButton('Select Picture Directory')
+        self.picdset.clicked.connect(self.picdirselect)
+        self.picdlabel = QLabel(self.picd)
 
         # Make overarching layout
         self.over_layout = QVBoxLayout()
@@ -402,12 +479,21 @@ class Settings(QWidget):
         self.wd = str(folder)
         self.wdlabel.setText(self.wd)
 
-    def wderrordialog(self):
+    def picdirselect(self):
         """
-        This function activates if there is the output directory submitted is not valid
+        This function creates a dialog window to select a directory that has the pictures needed for the EGNG task
         """
 
-        error = WDErrorBox()
+        folder = QFileDialog.getExistingDirectory(self, 'Select Picture Directory')
+        self.picd = str(folder)
+        self.picdlabel.setText(self.picdlabel)
+
+    def wderrordialog(self):
+        """
+        This function activates if the output directory submitted is not valid
+        """
+
+        error = DirErrorBox('WD')
 
         error.exec()
 
@@ -418,6 +504,33 @@ class Settings(QWidget):
         """
 
         error = FileErrorBox()
+
+        error.exec()
+
+    def selecterror(self):
+        """
+        This function activates if no face type was selected
+        """
+
+        error = SelectErrorBox()
+
+        error.exec()
+
+    def picdirerrordialog(self):
+        """
+        This function activates if the picture directory submitted for EGNG/Dwell is not valid
+        """
+
+        error = DirErrorBox('Pic')
+
+        error.exec()
+
+    def formaterrordialog(self):
+        """
+        This function activates if there is a problem finding usable, properly-formatted pictures in the above directory
+        """
+
+        error = FormatErrorBox()
 
         error.exec()
 

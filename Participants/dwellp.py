@@ -3,6 +3,7 @@ from Participants import participant
 import pandas as pd
 import random
 
+
 class EGNGParticipant(participant.Participant):
 
     def __init__(self, expid, trials, session, outdir, task, blocks, happy, sad, angry, fear, buttonbox,
