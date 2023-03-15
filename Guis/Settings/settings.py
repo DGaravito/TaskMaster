@@ -486,7 +486,7 @@ class Settings(QWidget):
 
         folder = QFileDialog.getExistingDirectory(self, 'Select Picture Directory')
         self.picd = str(folder)
-        self.picdlabel.setText(self.picdlabel)
+        self.picdlabel.setText(self.picd)
 
     def wderrordialog(self):
         """

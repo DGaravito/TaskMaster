@@ -51,7 +51,7 @@ class NACTSettings(settings.Settings):
 
             person = nactp.NACTParticipant(self.idform.text(),
                                            self.sessionin.text(),
-                                           self.wd.text(),
+                                           self.wd,
                                            'Negative Attention Capture Task',
                                            hightrials,
                                            lowtrials,

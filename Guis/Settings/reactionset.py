@@ -38,7 +38,7 @@ class SSSettings(settings.Settings):
         person = reactionp.SSParticipant(self.idform.text(),
                                          self.trialsin.text(),
                                          self.sessionin.text(),
-                                         self.wd.text(),
+                                         self.wd,
                                          'Stop-Signal Task',
                                          self.maxrtin.text(),
                                          self.blocksin.text(),
@@ -88,25 +88,24 @@ class EGNGSettings(settings.Settings):
             # check if the picture directory is valid
             if path.isdir(self.picd):
 
+                # if so, add an ending / to make things easier later
+                picpathstring = self.picd + '/'
+
                 # check to make sure there are PNGs in the picture directory
-                if glob.glob(self.picd + '/*.png'):
+                if glob.glob(picpathstring + '*.png'):
 
                     # get the strings for all of the files in the picture directory
-                    fileprefixes = glob.glob(self.picd + '/*.png')
+                    fullfilelist = glob.glob(picpathstring + '*.png')
 
-                    # for each of those file strings
-                    for file in fileprefixes:
+                    # for each of those file strings, trim the path off of the strings to make the trimmed list
+                    trimmedlist = [sub.replace(picpathstring, '') for sub in fullfilelist]
 
-                        # trim the path off of the strings
-                        old = self.picd + '/'
-                        file.replace(old, '')
-
-                        # Make lists of individual emotions for later
-                        happystr = [picstr for picstr in fileprefixes if picstr.startswith('Happy')]
-                        sadstr = [picstr for picstr in fileprefixes if picstr.startswith('Sad')]
-                        angrystr = [picstr for picstr in fileprefixes if picstr.startswith('Angry')]
-                        fearstr = [picstr for picstr in fileprefixes if picstr.startswith('Fearful')]
-                        neustr = [picstr for picstr in fileprefixes if picstr.startswith('Neutral')]
+                    # Make lists of individual emotions for later
+                    happystr = [picstr for picstr in trimmedlist if picstr.startswith('Happy')]
+                    sadstr = [picstr for picstr in trimmedlist if picstr.startswith('Sad')]
+                    angrystr = [picstr for picstr in trimmedlist if picstr.startswith('Angry')]
+                    fearstr = [picstr for picstr in trimmedlist if picstr.startswith('Fearful')]
+                    neustr = [picstr for picstr in trimmedlist if picstr.startswith('Neutral')]
 
                     # check to make sure that if the user toggled on an emotion, there is at least one picture with
                     # that emotion and at least one neutral picture
@@ -123,7 +122,7 @@ class EGNGSettings(settings.Settings):
                             person = reactionp.EGNGParticipant(self.idform.text(),
                                                                self.trialsin.text(),
                                                                self.sessionin.text(),
-                                                               self.wd.text(),
+                                                               self.wd,
                                                                'Emo Go/No-Go',
                                                                self.blocksin.text(),
                                                                self.happy,
@@ -147,10 +146,10 @@ class EGNGSettings(settings.Settings):
                             self.matherrordialog(8)
 
                     else:
-                        self.picdirselect()
+                        self.formaterrordialog()
 
                 else:
-                    self.picdirselect()
+                    self.formaterrordialog()
 
             else:
                 self.picdirerrordialog()
@@ -185,7 +184,7 @@ class GNGSettings(settings.Settings):
         person = reactionp.GNGParticipant(self.idform.text(),
                                           self.trialsin.text(),
                                           self.sessionin.text(),
-                                          self.wd.text(),
+                                          self.wd,
                                           'Go/No-Go',
                                           self.blocksin.text(),
                                           self.buttonboxstate,

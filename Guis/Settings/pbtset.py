@@ -32,7 +32,7 @@ class PBTSettings(settings.Settings):
             person = pbtp.PBTParticipant(self.idform.text(),
                                          self.trialsin.text(),
                                          self.sessionin.text(),
-                                         self.wd.text(),
+                                         self.wd,
                                          'Perceptual Bias Task',
                                          self.blocksin.text(),
                                          self.buttonboxstate,

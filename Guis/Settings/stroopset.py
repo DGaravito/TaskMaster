@@ -28,7 +28,7 @@ class StroopSettings(settings.Settings):
         person = stroopp.StroopParticipant(self.idform.text(),
                                            self.trialsin.text(),
                                            self.sessionin.text(),
-                                           self.wd.text(),
+                                           self.wd,
                                            self.blocksin.text(),
                                            self.eyetracking)
 

@@ -27,7 +27,7 @@ class BeadsSettings(settings.Settings):
         person = beadsp.BeadsParticipant(self.idform.text(),
                                          self.trialsin.text(),
                                          self.sessionin.text(),
-                                         self.wd.text(),
+                                         self.wd,
                                          'Beads Task',
                                          self.eyetracking)
 
