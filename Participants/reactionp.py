@@ -1,7 +1,7 @@
-from Participants import participant
-
 import pandas as pd
 import random
+
+from Participants import participant
 
 
 class SSParticipant(participant.Participant):

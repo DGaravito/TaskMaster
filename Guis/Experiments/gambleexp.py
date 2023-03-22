@@ -1,9 +1,9 @@
-import random
-import time
-
 from PyQt6.QtWidgets import QLabel, QVBoxLayout, QHBoxLayout
 from PyQt6.QtGui import QFont, QPixmap
 from PyQt6.QtCore import Qt, pyqtSignal
+
+import random
+import time
 
 from Guis.Experiments import experiment
 

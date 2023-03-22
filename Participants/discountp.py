@@ -1,11 +1,10 @@
-from Participants import participant
-
 # from adopy.tasks.dd import *
 # from adopy import Engine
-
 # import numpy as np
 import pandas as pd
 import random
+
+from Participants import participant
 
 
 class DdParticipant(participant.Participant):

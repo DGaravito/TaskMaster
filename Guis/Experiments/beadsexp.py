@@ -1,8 +1,8 @@
-from pathlib import Path
-
 from PyQt6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QDialog, QGridLayout, QSlider
 from PyQt6.QtGui import QFont, QPixmap
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QDir
+
+from pathlib import Path
 
 from Guis.Experiments import experiment
 

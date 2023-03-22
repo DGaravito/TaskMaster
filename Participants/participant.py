@@ -2,7 +2,6 @@
 # from adopy.tasks.cra import *
 
 import pandas as pd
-
 import os
 import xlsxwriter
 

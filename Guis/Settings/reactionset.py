@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QLabel, QSpinBox, QGridLayout, QDialog, QVBoxLayout, QPushButton, QFileDialog
+from PyQt6.QtWidgets import QLabel, QSpinBox, QGridLayout
 
 from os import path
 import glob

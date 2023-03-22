@@ -1,9 +1,9 @@
-import random
-import time
-
 from PyQt6.QtWidgets import QHBoxLayout
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal
+from PyQt6.QtCore import Qt, pyqtSignal
+
+import random
+import time
 
 from Guis.Experiments import experiment
 
@@ -47,7 +47,7 @@ class DwellExp(experiment.Experiment):
         if self.trialsdone < self.person.get_trials():
 
             # Get the string that contains the name of the trial picture
-            self.picstringprefix = self.person.get_trial_pic()
+            self.picstringprefix = self.person.get_matrix()
 
             # if the picture string starts with Happy, grab a random happy picture
             if self.picstringprefix.startswith('Happy'):

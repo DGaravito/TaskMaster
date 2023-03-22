@@ -1,8 +1,8 @@
-from Participants import participant
-
 import pandas as pd
 import random
 import string
+
+from Participants import participant
 
 
 class PrParticipant(participant.Participant):

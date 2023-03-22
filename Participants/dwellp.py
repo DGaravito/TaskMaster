@@ -1,8 +1,8 @@
-from Participants import participant
-
 import pandas as pd
 import random
 import glob
+
+from Participants import participant
 
 
 class DwellParticipant(participant.Participant):

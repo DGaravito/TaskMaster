@@ -1,11 +1,11 @@
-from Participants import participant
-
 # from adopy.tasks.cra import *
 # from adopy import Engine
 
 import numpy as np
 import pandas as pd
 import random
+
+from Participants import participant
 
 
 class ARTTParticipant(participant.Participant):
