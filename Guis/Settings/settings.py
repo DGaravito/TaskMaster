@@ -257,6 +257,10 @@ class Settings(QWidget):
         self.sad = 'No'
         self.neg = 'No'
 
+        # balancing for Dwell task
+        self.sexbalancing = 'No'
+        self.racebalancing = 'No'
+
         # Default directory
         self.wd = ''
 
@@ -374,6 +378,14 @@ class Settings(QWidget):
         self.negtoggle = QCheckBox('Negative (vs neutral) non-faces?')
         self.negtoggle.stateChanged.connect(self.clickbox)
 
+        # Sex balancing checkbox
+        self.sexbalancetoggle = QCheckBox('')
+        self.sexbalancetoggle.stateChanged.connect(self.clickbox)
+
+        # race balancing checkbox
+        self.racebalancetoggle = QCheckBox('')
+        self.racebalancetoggle.stateChanged.connect(self.clickbox)
+
         # Show all elements
         self.show()
 
@@ -466,6 +478,18 @@ class Settings(QWidget):
             self.neg = 'Yes'
         else:
             self.neg = 'No'
+
+        # sex balancing for Dwell
+        if self.sexbalancetoggle.isChecked():
+            self.sexbalancing = 'Yes'
+        else:
+            self.sexbalancing = 'No'
+
+        # race balancing for Dwell
+        if self.racebalancetoggle.isChecked():
+            self.racebalancing = 'Yes'
+        else:
+            self.racebalancing = 'No'
 
     def checksettings(self):
         """

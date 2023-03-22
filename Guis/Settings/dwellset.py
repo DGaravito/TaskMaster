@@ -58,6 +58,8 @@ class DwellSettings(settings.Settings):
         self.layout.addRow(QLabel('Number of trials per matrix type (see below) per block:'), self.trialsin)
         self.layout.addRow(QLabel('Which matrices would you like to include?'), matrixlayout)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        self.layout.addRow(QLabel('Do you want to balance matrix pictures by sex?'), self.sexbalancetoggle)
+        self.layout.addRow(QLabel('Do you want to balance matrix pictures by race?'), self.racebalancetoggle)
         self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         self.layout.addRow(self.quitbutton, self.submit)
@@ -135,6 +137,8 @@ class DwellSettings(settings.Settings):
                                                              self.neg,
                                                              len(nfnegstr),
                                                              len(nfneustr),
+                                                             self.sexbalancing,
+                                                             self.racebalancing,
                                                              self.picd,
                                                              self.buttonboxstate,
                                                              self.eyetracking)
