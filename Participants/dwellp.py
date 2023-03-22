@@ -8,9 +8,12 @@ import glob
 class DwellParticipant(participant.Participant):
 
     def __init__(self, expid, trials, session, outdir, task, blocks, happy, happylen, sad, sadlen, angry, angrylen,
-                 fear, fearlen, neulen, neg, neglen, neunflen, picd, buttonbox,
-                 eyetracking):
+                 fear, fearlen, neulen, neg, neglen, neunflen, sex, race, picd, buttonbox, eyetracking):
         super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking)
+
+        # copy if sex/race balancing was requested
+        self.sexbalancing = sex
+        self.racebalancing = race
 
         # make length variables for the picture lists
         self.happylength = happylen
@@ -162,85 +165,410 @@ class DwellParticipant(participant.Participant):
         center = []
         self.matrix = []
 
-        # get the strings for all of the emotional pictures in the picture directory
-        emofilelist = glob.glob(self.picturedir + self.piclist[0] + '*.png')
-
-        # get the strings for all of the neutral pictures in the picture directory
-        neutralfilelist = glob.glob(self.picturedir + self.piclist[1] + '*.png')
+        # make lists for the next set of for loops
+        stimtype = ['emotional', 'neutral']
+        picsex = ['male', 'female']
+        picrace = ['white', 'nonwhite']
 
         for emoneu in stimtype:
 
-            for gender in stimgender:
+            if (self.sexbalancing == 'Yes') & (self.racebalancing == 'Yes') & (self.piclist[0] != 'NFNegative_'):
 
-                for pic in range(3):
+                # get the strings for all of the white male emotional pictures in the picture directory
+                emowmfilelist = glob.glob(self.picturedir + self.piclist[0] + 'M_' + 'W_' + '*.png')
 
-                    if (emoneu == 'emotional') & (gender == 'male'):
+                # get the strings for all of the white male neutral pictures in the picture directory
+                neutralwmfilelist = glob.glob(self.picturedir + self.piclist[1] + 'M_' + 'W_' + '*.png')
 
-                        face = maleemo.pop()
+                # get the strings for all of the white female emotional pictures in the picture directory
+                emowffilelist = glob.glob(self.picturedir + self.piclist[0] + 'F_' + 'W_' + '*.png')
 
-                        maleneu = [x for x in maleneu if face[0:3] != x[0:3]]
+                # get the strings for all of the white female neutral pictures in the picture directory
+                neutralwffilelist = glob.glob(self.picturedir + self.piclist[1] + 'F_' + 'W_' + '*.png')
 
-                        frame.append(face)
+                # get the strings for all of the nonwhite male emotional pictures in the picture directory
+                emonwmfilelist = glob.glob(self.picturedir + self.piclist[0] + 'M_' + 'NW_' + '*.png')
 
-                    elif (emoneu == 'neutral') & (gender == 'male'):
+                # get the strings for all of the nonwhite male neutral pictures in the picture directory
+                neutralnwmfilelist = glob.glob(self.picturedir + self.piclist[1] + 'M_' + 'NW_' + '*.png')
 
-                        face = maleneu.pop()
+                # get the strings for all of the nonwhite female emotional pictures in the picture directory
+                emonwffilelist = glob.glob(self.picturedir + self.piclist[0] + 'F_' + 'NW_' + '*.png')
 
-                        maleemo = [x for x in maleemo if face[0:3] != x[0:3]]
+                # get the strings for all of the nonwhite female neutral pictures in the picture directory
+                neutralnwffilelist = glob.glob(self.picturedir + self.piclist[1] + 'F_' + 'NW_' + '*.png')
 
-                        frame.append(face)
+                # repeat for each sex
+                for sex in picsex:
 
-                    elif (emoneu == 'emotional') & (gender == 'female'):
+                    # repeat for each race
+                    for race in picrace:
 
-                        face = femaleemo.pop()
+                        # get 3 frame pictures for each 1 center picture
+                        for pic in range(3):
 
-                        femaleneu = [x for x in femaleneu if face[0:3] != x[0:3]]
+                            # depending on what type of picture you want, pop it from the respective list, then remove
+                            # the same face from the other (neutral vs emotional) list so you don't get duplicated in
+                            # the same matrix, then append the picture to the list of pictures in the frame
+                            if (emoneu == 'emotional') & (sex == 'male') & (race == 'white'):
 
-                        frame.append(face)
+                                face = emowmfilelist.pop()
+
+                                neutralwmfilelist = [x for x in neutralwmfilelist if face[-6:] != x[-6:]]
+
+                                frame.append(face)
+
+                            elif (emoneu == 'neutral') & (sex == 'male') & (race == 'white'):
+
+                                face = neutralwmfilelist.pop()
+
+                                emowmfilelist = [x for x in emowmfilelist if face[-6:] != x[-6:]]
+
+                                frame.append(face)
+
+                            elif (emoneu == 'emotional') & (sex == 'female') & (race == 'white'):
+
+                                face = emowffilelist.pop()
+
+                                neutralwffilelist = [x for x in neutralwffilelist if face[-6:] != x[-6:]]
+
+                                frame.append(face)
+
+                            elif (emoneu == 'neutral') & (sex == 'female') & (race == 'white'):
+
+                                face = neutralwffilelist.pop()
+
+                                emowffilelist = [x for x in emowffilelist if face[-6:] != x[-6:]]
+
+                                frame.append(face)
+
+                            elif (emoneu == 'emotional') & (sex == 'male') & (race == 'nonwhite'):
+
+                                face = emonwmfilelist.pop()
+
+                                neutralnwmfilelist = [x for x in neutralnwmfilelist if face[-6:] != x[-6:]]
+
+                                frame.append(face)
+
+                            elif (emoneu == 'neutral') & (sex == 'male') & (race == 'nonwhite'):
+
+                                face = neutralnwmfilelist.pop()
+
+                                emonwmfilelist = [x for x in emonwmfilelist if face[-6:] != x[-6:]]
+
+                                frame.append(face)
+
+                            elif (emoneu == 'emotional') & (sex == 'female') & (race == 'nonwhite'):
+
+                                face = emonwffilelist.pop()
+
+                                neutralnwffilelist = [x for x in neutralnwffilelist if face[-6:] != x[-6:]]
+
+                                frame.append(face)
+
+                            else:
+
+                                face = neutralnwffilelist.pop()
+
+                                emonwffilelist = [x for x in emonwffilelist if face[-6:] != x[-6:]]
+
+                                frame.append(face)
+
+                        # do the same as the above but appending the pictures to the center as opposed to frame
+                        if (emoneu == 'emotional') & (sex == 'male') & (race == 'white'):
+
+                            face = emowmfilelist.pop()
+
+                            neutralwmfilelist = [x for x in neutralwmfilelist if face[-6:] != x[-6:]]
+
+                            center.append(face)
+
+                        elif (emoneu == 'neutral') & (sex == 'male') & (race == 'white'):
+
+                            face = neutralwmfilelist.pop()
+
+                            emowmfilelist = [x for x in emowmfilelist if face[-6:] != x[-6:]]
+
+                            center.append(face)
+
+                        elif (emoneu == 'emotional') & (sex == 'female') & (race == 'white'):
+
+                            face = emowffilelist.pop()
+
+                            neutralwffilelist = [x for x in neutralwffilelist if face[-6:] != x[-6:]]
+
+                            center.append(face)
+
+                        elif (emoneu == 'neutral') & (sex == 'female') & (race == 'white'):
+
+                            face = neutralwffilelist.pop()
+
+                            emowffilelist = [x for x in emowffilelist if face[-6:] != x[-6:]]
+
+                            center.append(face)
+
+                        elif (emoneu == 'emotional') & (sex == 'male') & (race == 'nonwhite'):
+
+                            face = emonwmfilelist.pop()
+
+                            neutralnwmfilelist = [x for x in neutralnwmfilelist if face[-6:] != x[-6:]]
+
+                            center.append(face)
+
+                        elif (emoneu == 'neutral') & (sex == 'male') & (race == 'nonwhite'):
+
+                            face = neutralnwmfilelist.pop()
+
+                            emonwmfilelist = [x for x in emonwmfilelist if face[-6:] != x[-6:]]
+
+                            center.append(face)
+
+                        elif (emoneu == 'emotional') & (sex == 'female') & (race == 'nonwhite'):
+
+                            face = emonwffilelist.pop()
+
+                            neutralnwffilelist = [x for x in neutralnwffilelist if face[-6:] != x[-6:]]
+
+                            center.append(face)
+
+                        else:
+
+                            face = neutralnwffilelist.pop()
+
+                            emonwffilelist = [x for x in emonwffilelist if face[-6:] != x[-6:]]
+
+                            center.append(face)
+
+            # just sex balancing
+            elif (self.sexbalancing == 'Yes') & (self.piclist[0] != 'NFNegative_'):
+
+                # get the strings for all of the emotional pictures in the picture directory
+                emomfilelist = glob.glob(self.picturedir + self.piclist[0] + 'M_' + '*.png')
+
+                # get the strings for all of the neutral pictures in the picture directory
+                emoffilelist = glob.glob(self.picturedir + self.piclist[0] + 'F_' + '*.png')
+
+                # get the strings for all of the emotional pictures in the picture directory
+                neutralmfilelist = glob.glob(self.picturedir + self.piclist[1] + 'M_' + '*.png')
+
+                # get the strings for all of the neutral pictures in the picture directory
+                neutralffilelist = glob.glob(self.picturedir + self.piclist[1] + 'F_' + '*.png')
+
+                # repeat this 2 times so that you get 4 x 4 pictures in the matrix
+                for halves in range(2):
+
+                    # repeat for each sex
+                    for sex in picsex:
+
+                        # get 3 frame pictures for each 1 center picture
+                        for pic in range(3):
+
+                            # depending on what type of picture you want, pop it from the respective list, then remove
+                            # the same face from the other (neutral vs emotional) list so you don't get duplicated in
+                            # the same matrix, then append the picture to the list of pictures in the frame
+                            if (emoneu == 'emotional') & (sex == 'male'):
+
+                                face = emomfilelist.pop()
+
+                                neutralmfilelist = [x for x in neutralmfilelist if face[-6:] != x[-6:]]
+
+                                frame.append(face)
+
+                            elif (emoneu == 'neutral') & (sex == 'male'):
+
+                                face = neutralmfilelist.pop()
+
+                                emomfilelist = [x for x in emomfilelist if face[-6:] != x[-6:]]
+
+                                frame.append(face)
+
+                            elif (emoneu == 'emotional') & (sex == 'female'):
+
+                                face = emoffilelist.pop()
+
+                                neutralffilelist = [x for x in neutralffilelist if face[-6:] != x[-6:]]
+
+                                frame.append(face)
+
+                            else:
+
+                                face = neutralffilelist.pop()
+
+                                emoffilelist = [x for x in emoffilelist if face[-6:] != x[-6:]]
+
+                                frame.append(face)
+
+                        # do the same as the above but appending the pictures to the center as opposed to frame
+                        if (emoneu == 'emotional') & (sex == 'male'):
+
+                            face = emomfilelist.pop()
+
+                            neutralmfilelist = [x for x in neutralmfilelist if face[-6:] != x[-6:]]
+
+                            center.append(face)
+
+                        elif (emoneu == 'neutral') & (sex == 'male'):
+
+                            face = neutralmfilelist.pop()
+
+                            emomfilelist = [x for x in emomfilelist if face[-6:] != x[-6:]]
+
+                            center.append(face)
+
+                        elif (emoneu == 'emotional') & (sex == 'female'):
+
+                            face = emoffilelist.pop()
+
+                            neutralffilelist = [x for x in neutralffilelist if face[-6:] != x[-6:]]
+
+                            center.append(face)
+
+                        else:
+
+                            face = neutralffilelist.pop()
+
+                            emoffilelist = [x for x in emoffilelist if face[-6:] != x[-6:]]
+
+                            center.append(face)
+
+            # just race balancing
+            elif (self.racebalancing == 'Yes') & (self.piclist[0] != 'NFNegative_'):
+
+                # get the strings for all of the emotional pictures in the picture directory
+                emowfilelist = glob.glob(self.picturedir + self.piclist[0] + '*_' + 'W_' + '*.png')
+
+                # get the strings for all of the neutral pictures in the picture directory
+                emonwfilelist = glob.glob(self.picturedir + self.piclist[0] + '*_' + 'NW_' + '*.png')
+
+                # get the strings for all of the emotional pictures in the picture directory
+                neutralwfilelist = glob.glob(self.picturedir + self.piclist[1] + '*_' + 'W_' + '*.png')
+
+                # get the strings for all of the neutral pictures in the picture directory
+                neutralnwfilelist = glob.glob(self.picturedir + self.piclist[1] + '*_' + 'NW_' + '*.png')
+
+                # repeat this 2 times so that you get 4 x 4 pictures in the matrix
+                for halves in range(2):
+
+                    # repeat for white and nonwhite
+                    for race in picrace:
+
+                        # get 3 frame pictures for each 1 center picture
+                        for pic in range(3):
+
+                            # depending on what type of picture you want, pop it from the respective list, then remove
+                            # the same face from the other (neutral vs emotional) list so you don't get duplicated in
+                            # the same matrix, then append the picture to the list of pictures in the frame
+                            if (emoneu == 'emotional') & (race == 'white'):
+
+                                face = emowfilelist.pop()
+
+                                neutralwfilelist = [x for x in neutralwfilelist if face[-6:] != x[-6:]]
+
+                                frame.append(face)
+
+                            elif (emoneu == 'neutral') & (race == 'white'):
+
+                                face = neutralwfilelist.pop()
+
+                                emowfilelist = [x for x in emowfilelist if face[-6:] != x[-6:]]
+
+                                frame.append(face)
+
+                            elif (emoneu == 'emotional') & (race == 'nonwhite'):
+
+                                face = emonwfilelist.pop()
+
+                                neutralnwfilelist = [x for x in neutralnwfilelist if face[-6:] != x[-6:]]
+
+                                frame.append(face)
+
+                            else:
+
+                                face = neutralnwfilelist.pop()
+
+                                emonwfilelist = [x for x in emonwfilelist if face[-6:] != x[-6:]]
+
+                                frame.append(face)
+
+                        # do the same as the above but appending the pictures to the center as opposed to frame
+                        if (emoneu == 'emotional') & (race == 'white'):
+
+                            face = emowfilelist.pop()
+
+                            neutralwfilelist = [x for x in neutralwfilelist if face[-6:] != x[-6:]]
+
+                            center.append(face)
+
+                        elif (emoneu == 'neutral') & (race == 'white'):
+
+                            face = neutralwfilelist.pop()
+
+                            emowfilelist = [x for x in emowfilelist if face[-6:] != x[-6:]]
+
+                            center.append(face)
+
+                        elif (emoneu == 'emotional') & (race == 'nonwhite'):
+
+                            face = emonwfilelist.pop()
+
+                            neutralnwfilelist = [x for x in neutralnwfilelist if face[-6:] != x[-6:]]
+
+                            center.append(face)
+
+                        else:
+
+                            face = neutralnwfilelist.pop()
+
+                            emonwfilelist = [x for x in emonwfilelist if face[-6:] != x[-6:]]
+
+                            center.append(face)
+
+            # no non-default balancing because non-face
+            else:
+
+                # get the strings for all of the emotional pictures in the picture directory
+                emofilelist = glob.glob(self.picturedir + self.piclist[0] + '*.png')
+
+                # get the strings for all of the neutral pictures in the picture directory
+                neutralfilelist = glob.glob(self.picturedir + self.piclist[1] + '*.png')
+
+                # repeat this 4 times so that you get 4 x 4 pictures in the matrix
+                for quarters in range(4):
+
+                    # repeat this 3 times so that you get 3 frame pics
+                    for pic in range(3):
+
+                        # depending on which picture you're currently selecting, pop an emotional or neutral picture
+                        if emoneu == 'emotional':
+
+                            picture = emofilelist.pop()
+
+                            frame.append(picture)
+
+                        else:
+
+                            picture = neutralfilelist.pop()
+
+                            frame.append(picture)
+
+                    # do the same as above but only once and for the center, not frame
+                    if emoneu == 'emotional':
+
+                        picture = emofilelist.pop()
+
+                        center.append(picture)
 
                     else:
 
-                        face = femaleneu.pop()
+                        picture = neutralfilelist.pop()
 
-                        femaleemo = [x for x in femaleemo if face[0:3] != x[0:3]]
+                        center.append(picture)
 
-                        frame.append(face)
-
-                if (emoneu == 'emotional') & (gender == 'male'):
-
-                    face = maleemo.pop()
-
-                    maleneu = [x for x in maleneu if face[0:3] != x[0:3]]
-
-                    center.append(face)
-
-                elif (emoneu == 'neutral') & (gender == 'male'):
-
-                    face = maleneu.pop()
-
-                    maleemo = [x for x in maleemo if face[0:3] != x[0:3]]
-
-                    center.append(face)
-
-                elif (emoneu == 'emotional') & (gender == 'female'):
-
-                    face = femaleemo.pop()
-
-                    femaleneu = [x for x in femaleneu if face[0:3] != x[0:3]]
-
-                    center.append(face)
-
-                else:
-
-                    face = femaleneu.pop()
-
-                    femaleemo = [x for x in femaleemo if face[0:3] != x[0:3]]
-
-                    center.append(face)
-
+        # shuffle the pictures in the center and frame lists for extra randomization
         random.shuffle(frame)
         random.shuffle(center)
 
+        # go through the following for loops to make the entire matrix
         for firstframecell in range(5):
             self.matrix.append(frame.pop())
 
@@ -310,4 +638,3 @@ class DwellParticipant(participant.Participant):
                 inst = 'Let the experimenter know when you are ready.'
 
         return inst
-
