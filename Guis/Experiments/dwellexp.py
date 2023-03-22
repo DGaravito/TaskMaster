@@ -8,7 +8,7 @@ from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 from Guis.Experiments import experiment
 
 
-class EGNGExp(experiment.Experiment):
+class DwellExp(experiment.Experiment):
     keyPressed = pyqtSignal(str)
 
     def __init__(self, person):
@@ -25,7 +25,7 @@ class EGNGExp(experiment.Experiment):
         middlelayout.addStretch(1)
 
         # Instructions
-        self.instructions.setText('Press ' + self.person.leftkey[0] + ' to respond to faces.')
+        self.instructions.setText('Press \"G\" to start the task.')
 
         # Put everything in vertical layout
         self.instquitlayout.addStretch(1)
@@ -42,21 +42,53 @@ class EGNGExp(experiment.Experiment):
         # stop the timer
         self.ititimer.stop()
 
-        # reset the border around the middle if there was something different
-        self.middle.setStyleSheet('border: 0px;')
-
         # if-then statement to determine whether the amount of trials completed is less than the number of trials the
         # user wants
         if self.trialsdone < self.person.get_trials():
 
-            # get a random number for one of the pictures
-            randopic = str(random.randint(1, 12))
-
             # Get the string that contains the name of the trial picture
-            self.picstring = self.person.get_trial_pic() + randopic + '.png'
+            self.picstringprefix = self.person.get_trial_pic()
+
+            # if the picture string starts with Happy, grab a random happy picture
+            if self.picstringprefix.startswith('Happy'):
+
+                # get a random number for one of the pictures
+                randopic = str(random.randrange(self.person.happylength))
+
+            elif self.picstringprefix.startswith('Sad'):
+
+                # get a random number for one of the pictures
+                randopic = str(random.randrange(self.person.sadlength))
+
+            elif self.picstringprefix.startswith('Angry'):
+
+                # get a random number for one of the pictures
+                randopic = str(random.randrange(self.person.angrylength))
+
+            elif self.picstringprefix.startswith('Fearful'):
+
+                # get a random number for one of the pictures
+                randopic = str(random.randrange(self.person.fearlength))
+
+            elif self.picstringprefix.startswith('Fearful'):
+
+                # get a random number for one of the pictures
+                randopic = str(random.randrange(self.person.fearlength))
+
+            elif self.picstringprefix.startswith('Fearful'):
+
+                # get a random number for one of the pictures
+                randopic = str(random.randrange(self.person.fearlength))
+
+            else:
+
+                # get a random number for one of the pictures
+                randopic = str(random.randrange(self.person.neulength))
+
+            self.picstring = self.picstringprefix + randopic + '.png'
 
             # add the path to the picture string
-            pathstring = 'Assets/' + self.picstring
+            pathstring = self.person.picturedir + self.picstring
 
             # Make a pixmap of the picture and then set the middle to that pixmap
             pixmap = QPixmap(pathstring)
@@ -68,9 +100,6 @@ class EGNGExp(experiment.Experiment):
             # Start the timers for until timeout and the time until the next trial begins
             self.timer.start(500)
             self.ititimer.start(1500)
-
-            # Set the variable that allows the user to respond
-            self.responseenabled = 1
 
         # if the trials requested have been completed...
         else:
@@ -98,6 +127,9 @@ class EGNGExp(experiment.Experiment):
             # If there are still some blocks to go...
             else:
 
+                # Instructions
+                self.instructions.setText('Press \"G\" to start the next round.')
+
                 # allow the user to start the next round
                 self.betweenrounds = 1
 
@@ -116,7 +148,7 @@ class EGNGExp(experiment.Experiment):
         self.trialsdone += 1
 
         # send the trial info to the participant class
-        self.person.updateoutput(self.trialsdone, self.picstring, self.starttime, 9999)
+        self.person.updateoutput(self.trialsdone, self.picstring, self.starttime)
 
         # set the screen to the iti window
         self.iti()
@@ -145,8 +177,8 @@ class EGNGExp(experiment.Experiment):
             # otherwise...
             else:
 
-                # reset the instructions to 1 in case they user wants to read instructions again next round
-                self.inst = 1
+                # Instructions
+                self.instructions.setText('')
 
                 # set the screen to the iti and then start the timer until the first trial starts
                 self.iti()
@@ -160,29 +192,6 @@ class EGNGExp(experiment.Experiment):
             if (self.trialsdone == 0) & (self.roundsdone == 0):
                 self.overallstart = time.time()
 
-        # if the participant presses the right or left key and is allowed to respond...
-        if (key in self.person.leftkey) & (self.responseenabled == 1):
-
-            # put a border around the middle to indicate a user input was received
-            self.middle.setStyleSheet('border: 3px solid blue;')
-
-            # no longer allow the participant to respond
-            self.responseenabled = 0
-
-            # stop the timers and indicate that the participant completed the trial
-            self.timer.stop()
-            self.trialsdone += 1
-
-            # use time.time and the start time variable to compute rt
-            endtime = time.time() - self.overallstart
-            rt = endtime - self.starttime
-
-            # send the trial info to the participant class so it can be added to the dataframe
-            self.person.updateoutput(self.trialsdone, self.picstring, self.starttime, rt, 1)
-
-            # set the window to the iti screen
-            self.iti()
-
         # if someone presses the i key and the participant is between rounds...
         if (key in ['i', 'I']) & (self.betweenrounds == 1):
 
@@ -193,7 +202,7 @@ class EGNGExp(experiment.Experiment):
             self.middle.setText(self.person.get_instructions(self.inst))
 
             # if the index reaches twelve...
-            if self.inst == 12:
+            if self.inst == 5:
 
                 # reset to zero to allow the user to start the instructions over
                 self.inst = 0

@@ -263,10 +263,7 @@ class SelectWindow(QWidget):
                 self.w = beadsset.BeadsSettings('Beads')
 
             case str('Dwell'):
-
-                # do nothing until implemented
-                # self.w = dwellset.DwellSettings('Dwell')
-                print('Not implemented yet')
+                self.w = dwellset.DwellSettings('Dwell')
 
             case str('Stroop'):
                 self.w = stroopset.StroopSettings('Stroop')

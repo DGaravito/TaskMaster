@@ -128,6 +128,9 @@ class Participant(object):
                 case 'Go/No-Go':
                     taskstr = 'GNG'
 
+                case 'Dwell':
+                    taskstr = 'Dwell'
+
                 case 'Pair Recall Memory':
                     taskstr = 'PR'
 

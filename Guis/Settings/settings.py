@@ -201,6 +201,11 @@ class MathErrorBox(QDialog):
                 followupstring = 'To easily balance the number of neutral vs. emotional faces, please make sure your' \
                                  ' number of trials is divisible by 4.'
 
+            case 9:
+
+                followupstring = 'For the dwell task, make sure you have at least 16 pictures for each type of matrix' \
+                                 ' you selected!'
+
             case _:
 
                 followupstring = 'I don\'t know what you put, but the math doesn\'t work out'
@@ -243,11 +248,14 @@ class Settings(QWidget):
         self.feedback = 'No'
         self.ftt = 'No'
         self.stt = 'No'
+        self.adopystate = 'No'
+
+        # defaults for EGNG and Dwell
         self.happy = 'No'
         self.fear = 'No'
         self.angry = 'No'
         self.sad = 'No'
-        self.adopystate = 'No'
+        self.neg = 'No'
 
         # Default directory
         self.wd = ''
@@ -345,7 +353,7 @@ class Settings(QWidget):
         self.quitbutton.clicked.connect(QApplication.instance().quit)
         self.quitbutton.resize(self.quitbutton.sizeHint())
 
-        # Checkboxes for Emo Go/No-Go TODO Figure out a way to put these just in the task
+        # Checkboxes for EGNG/Dwell
         # Happy checkbox
         self.happytoggle = QCheckBox('Happy?')
         self.happytoggle.stateChanged.connect(self.clickbox)
@@ -361,6 +369,10 @@ class Settings(QWidget):
         # Fear checkbox
         self.feartoggle = QCheckBox('Fearful?')
         self.feartoggle.stateChanged.connect(self.clickbox)
+
+        # Negative checkbox
+        self.negtoggle = QCheckBox('Negative (vs neutral) non-faces?')
+        self.negtoggle.stateChanged.connect(self.clickbox)
 
         # Show all elements
         self.show()
@@ -425,29 +437,35 @@ class Settings(QWidget):
         else:
             self.ftt = 'No'
 
-        # happy for emo go/no-go
+        # happy for EGNG/Dwell
         if self.happytoggle.isChecked():
             self.happy = 'Yes'
         else:
             self.happy = 'No'
 
-        # sad for emo go/no-go
+        # sad for EGNG/Dwell
         if self.sadtoggle.isChecked():
             self.sad = 'Yes'
         else:
             self.sad = 'No'
 
-        # angry for emo go/no-go
+        # angry for EGNG/Dwell
         if self.angertoggle.isChecked():
             self.angry = 'Yes'
         else:
             self.angry = 'No'
 
-        # fearful for emo go/no-go
+        # fearful for EGNG/Dwell
         if self.feartoggle.isChecked():
             self.fear = 'Yes'
         else:
             self.fear = 'No'
+
+        # fearful for EGNG/Dwell
+        if self.negtoggle.isChecked():
+            self.neg = 'Yes'
+        else:
+            self.neg = 'No'
 
     def checksettings(self):
         """

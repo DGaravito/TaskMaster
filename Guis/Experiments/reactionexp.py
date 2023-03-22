@@ -437,8 +437,8 @@ class EGNGExp(experiment.Experiment):
             # set the middle text to the appropriate text instruction, depending on the type of block and the index
             self.middle.setText(self.person.get_instructions(self.inst))
 
-            # if the index reaches twelve...
-            if self.inst == 12:
+            # if the index reaches seven...
+            if self.inst == 7:
 
                 # reset to zero to allow the user to start the instructions over
                 self.inst = 0
