@@ -103,7 +103,8 @@ class PBTExp(experiment.Experiment):
 
     def timeout(self):
         """
-        if the timer runs out and the participant doesn't respond, then the
+        if the timer runs out and the participant doesn't respond, then the timers stop, 9999 gets put in as the
+        reaction time, and the trial is "completed" with an incorrect response
         """
 
         # stop the timer

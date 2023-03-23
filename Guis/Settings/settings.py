@@ -64,8 +64,8 @@ class FormatErrorBox(QDialog):
         self.mainerror.setStyleSheet('padding :5px')
 
         text = 'First, make sure all pictures are in the PNG format.\nSecond, make sure all of the pictures have the' \
-               'proper naming structure.\nFor example, if I had 10 pictures of angry faces, they would be named' \
-               '\"Angry_1.png\", \"Angry_2.png\",...\"Angry_10.png\".'
+               'proper naming structure.\nFor example, if I had 10 pictures of angry faces made by white males, they ' \
+               'would be named \"Angry_M_W_1.png.png\", \"Angry_M_W_2.png\",...\"Angry_M_W_10.png\".'
 
         self.instruction = QLabel(text)
         self.instruction.setStyleSheet('padding :5px')

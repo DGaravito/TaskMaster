@@ -151,7 +151,7 @@ class DDiscountExp(experiment.Experiment):
     def timeout(self):
         """
         if the timer runs out and the participant doesn't respond, then the timers stop, 9999 gets put in as the
-        reaction time, and the trial is "completed" without a response
+        reaction time, and the trial is "completed" with an incorrect response
         """
 
         # stop the timer
@@ -446,7 +446,7 @@ class PDiscountExp(experiment.Experiment):
     def timeout(self):
         """
         if the timer runs out and the participant doesn't respond, then the timers stop, 9999 gets put in as the
-        reaction time, and the trial is "completed" without a response
+        reaction time, and the trial is "completed" without a  response
         """
 
         # stop the timer
@@ -770,7 +770,7 @@ class CEDiscountExp(experiment.Experiment):
     def timeout(self):
         """
         if the timer runs out and the participant doesn't respond, then the timers stop, 9999 gets put in as the
-        reaction time, and the trial is "completed" without a response
+        reaction time, and the trial is "completed" without a  response
         """
 
         # stop the timer

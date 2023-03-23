@@ -109,7 +109,8 @@ class SSExp(experiment.Experiment):
 
     def timeout(self):
         """
-        if the timer runs out and the participant doesn't respond, then the
+        if the timer runs out and the participant doesn't respond, then the timers stop, 9999 gets put in as the
+        reaction time, and the trial is completed
         """
 
         # stop the timers
@@ -348,7 +349,8 @@ class EGNGExp(experiment.Experiment):
 
     def timeout(self):
         """
-        if the timer runs out and the participant doesn't respond, then the
+        if the timer runs out and the participant doesn't respond, then the timers stop, 9999 gets put in as the
+        reaction time, and the trial is completed.
         """
 
         # stop the timers
@@ -535,7 +537,8 @@ class GNGExp(experiment.Experiment):
 
     def timeout(self):
         """
-        if the timer runs out and the participant doesn't respond, then the
+        if the timer runs out and the participant doesn't respond, then the timer stops, trial completes, and some
+        default info is submitted
         """
 
         # stop the timers

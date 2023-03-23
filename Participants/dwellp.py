@@ -141,6 +141,7 @@ class DwellParticipant(participant.Participant):
             if self.blocksdone == self.blocks:
 
                 prompt = 'Thank you! This task is complete.'
+                self.output()
 
             # if there are still more blocks to go...
             else:

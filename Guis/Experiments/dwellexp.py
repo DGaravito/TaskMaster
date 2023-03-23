@@ -1,8 +1,7 @@
-from PyQt6.QtWidgets import QHBoxLayout, QGridLayout
+from PyQt6.QtWidgets import QHBoxLayout, QGridLayout, QLabel
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt, pyqtSignal
 
-import random
 import time
 
 from Guis.Experiments import experiment
@@ -20,12 +19,16 @@ class DwellExp(experiment.Experiment):
         # Make middle layout for pictures and text
         middlelayout = QHBoxLayout()
 
+        # make the grid for the matrix
+        self.matrix = QGridLayout()
+
         middlelayout.addStretch(1)
+        middlelayout.addLayout(self.matrix)
         middlelayout.addWidget(self.middle)
         middlelayout.addStretch(1)
 
         # Instructions
-        self.instructions.setText('Press \"G\" to start the task.')
+        self.instructions.setText('Press \"G\" to start the task or \"I\" for instructions.')
 
         # Put everything in vertical layout
         self.instquitlayout.addStretch(1)
@@ -47,52 +50,17 @@ class DwellExp(experiment.Experiment):
         if self.trialsdone < self.person.get_trials():
 
             # Get the string that contains the name of the trial picture
-            self.picstringprefix = self.person.get_matrix()
+            self.matrixpics = self.person.get_matrix()
 
-            # if the picture string starts with Happy, grab a random happy picture
-            if self.picstringprefix.startswith('Happy'):
+            for row in range(4):
 
-                # get a random number for one of the pictures
-                randopic = str(random.randrange(self.person.happylength))
+                for column in range(4):
 
-            elif self.picstringprefix.startswith('Sad'):
+                    pixmap = QPixmap(self.matrixpics.pop())
+                    label = QLabel().setPixmap(pixmap.scaled(100, 100, Qt.AspectRatioMode.KeepAspectRatio))
 
-                # get a random number for one of the pictures
-                randopic = str(random.randrange(self.person.sadlength))
-
-            elif self.picstringprefix.startswith('Angry'):
-
-                # get a random number for one of the pictures
-                randopic = str(random.randrange(self.person.angrylength))
-
-            elif self.picstringprefix.startswith('Fearful'):
-
-                # get a random number for one of the pictures
-                randopic = str(random.randrange(self.person.fearlength))
-
-            elif self.picstringprefix.startswith('Fearful'):
-
-                # get a random number for one of the pictures
-                randopic = str(random.randrange(self.person.fearlength))
-
-            elif self.picstringprefix.startswith('Fearful'):
-
-                # get a random number for one of the pictures
-                randopic = str(random.randrange(self.person.fearlength))
-
-            else:
-
-                # get a random number for one of the pictures
-                randopic = str(random.randrange(self.person.neulength))
-
-            self.picstring = self.picstringprefix + randopic + '.png'
-
-            # add the path to the picture string
-            pathstring = self.person.picturedir + self.picstring
-
-            # Make a pixmap of the picture and then set the middle to that pixmap
-            pixmap = QPixmap(pathstring)
-            self.middle.setPixmap(pixmap.scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
+                    # add to the layout
+                    self.matrix.addWidget(label, row, column)
 
             # get the onset time for the trial, which will also be used to compute reaction time
             self.starttime = time.time() - self.overallstart
@@ -106,36 +74,21 @@ class DwellExp(experiment.Experiment):
 
             # indicate that another block (aka round) is complete and reset the number of trials done to 0 for the next
             # block
-            self.roundsdone += 1
             self.trialsdone = 0
 
             # set the text for the middle label to the appropriate text depending on how many blocks the user wanted
-            self.middle.setText(self.person.nextround(self.roundsdone))
+            self.instructions.setText(self.person.nextround())
 
-            prompt = self.person.nextround()
-
-            self.middle.setText(prompt[0])
-            self.start = prompt[1]
-
-            # if the number of rounds done is equal to the number the user requested...
-            if self.person.rounds == self.roundsdone:
-
-                # output the data to the user's directory and change the instructions to a thank you message
-                self.person.output()
-                self.instructions.setText('Thank you!')
-
-            # If there are still some blocks to go...
-            else:
-
-                # Instructions
-                self.instructions.setText('Press \"G\" to start the next round.')
+            # if the number of blocks done is not equal to the number the user requested and there are no more matrix
+            # types left in the block
+            if (self.person.blocksdone != self.person.blocks) & (len(self.person.blockorder) > 0):
 
                 # allow the user to start the next round
                 self.betweenrounds = 1
 
     def timeout(self):
         """
-        if the timer runs out and the participant doesn't respond, then the
+        when the timer runs out, submit the info for that trial
         """
 
         # stop the timers
@@ -148,7 +101,7 @@ class DwellExp(experiment.Experiment):
         self.trialsdone += 1
 
         # send the trial info to the participant class
-        self.person.updateoutput(self.trialsdone, self.picstring, self.starttime)
+        self.person.updateoutput(self.trialsdone, self.matrixpics, self.starttime)
 
         # set the screen to the iti window
         self.iti()
@@ -162,30 +115,15 @@ class DwellExp(experiment.Experiment):
         # if someone presses the g key and the participant is between rounds...
         if (key in ['g', 'G']) & (self.betweenrounds == 1):
 
-            # if the block info hasn't been displayed on screen yet...
-            if self.start == 0:
+            # Instructions
+            self.instructions.setText('')
 
-                # get the block info
-                text = self.person.nextround()
+            # set the screen to the iti and then start the timer until the first trial starts
+            self.iti()
+            self.ititimer.start(1000)
 
-                # display the info on screen
-                self.middle.setText(text[0])
-
-                # indicate that the block info has been shown
-                self.start += 1
-
-            # otherwise...
-            else:
-
-                # Instructions
-                self.instructions.setText('')
-
-                # set the screen to the iti and then start the timer until the first trial starts
-                self.iti()
-                self.ititimer.start(1000)
-
-                # indicate that the participant is no longer between rounds so g and i keys won't mess things up
-                self.betweenrounds = 0
+            # indicate that the participant is no longer between rounds so g and i keys won't mess things up
+            self.betweenrounds = 0
 
             # if this is the first trial of the first round, set the global start time to make the onset time make more
             # sense
