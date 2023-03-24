@@ -10,11 +10,14 @@ from Participants import participant
 class DdParticipant(participant.Participant):
 
     def __init__(self, expid, trials, session, outdir, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew,
-                 rounds, adopy, buttonbox, eyetracking, fmri):
+                 rounds, outcome, adopy, buttonbox, eyetracking, fmri):
         super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
 
         # make a variable for ADOPy status
         self.adopy = adopy
+
+        # make variable to store user input on whether they wanted an outcome chosen
+        self.outcomeopt = outcome
 
         # set how many blocks there are
         self.rounds = int(rounds)

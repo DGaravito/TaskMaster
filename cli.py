@@ -2,7 +2,7 @@ from Guis.main import main
 import logging
 
 # anything will get logged in a log.txt file in the application's directory
-logging.basicConfig(filename='TaskMaster.log', level=logging.INFO, filemode='w', format='%(asctime)s %(message)s')
+logging.basicConfig(filename='TaskMaster.log', level=logging.DEBUG, filemode='w', format='%(asctime)s %(message)s')
 logger = logging.getLogger(__name__)
 
 # main loop

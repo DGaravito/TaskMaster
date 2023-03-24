@@ -2,6 +2,9 @@
 /Assets/Faces/
 TaskMaster.log
 
+# PyCharm stuff
+.idea
+
 # Distribution / packaging
 .Python
 build/
