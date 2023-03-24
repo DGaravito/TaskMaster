@@ -4,6 +4,7 @@ from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 
 import random
 import time
+import glob
 
 from Guis.Experiments import experiment
 
@@ -276,36 +277,50 @@ class EGNGExp(experiment.Experiment):
 
             if self.picstringprefix.startswith('Happy'):
 
-                # get a random number for one of the pictures
-                randopic = str(random.randrange(self.person.happylength))
+                # get a list of all happy pictures
+                picturelist = glob.glob(self.person.picturedir + '/Happy_*.png')
+
+                # get a random pictures from the list
+                randopic = random.choice(picturelist)
 
             elif self.picstringprefix.startswith('Sad'):
 
-                # get a random number for one of the pictures
-                randopic = str(random.randrange(self.person.sadlength))
+                # get a list of all happy pictures
+                picturelist = glob.glob(self.person.picturedir + '/Sad_*.png')
+
+                # get a random pictures from the list
+                randopic = random.choice(picturelist)
 
             elif self.picstringprefix.startswith('Angry'):
 
-                # get a random number for one of the pictures
-                randopic = str(random.randrange(self.person.angrylength))
+                # get a list of all happy pictures
+                picturelist = glob.glob(self.person.picturedir + '/Angry_*.png')
+
+                # get a random pictures from the list
+                randopic = random.choice(picturelist)
 
             elif self.picstringprefix.startswith('Fearful'):
 
-                # get a random number for one of the pictures
-                randopic = str(random.randrange(self.person.fearlength))
+                # get a list of all happy pictures
+                picturelist = glob.glob(self.person.picturedir + '/Fearful_*.png')
+
+                # get a random pictures from the list
+                randopic = random.choice(picturelist)
 
             else:
 
-                # get a random number for one of the pictures
-                randopic = str(random.randrange(self.person.neulength))
+                # get a list of all happy pictures
+                picturelist = glob.glob(self.person.picturedir + '/Neutral_*.png')
 
-            self.picstring = self.picstringprefix + randopic + '.png'
+                # get a random pictures from the list
+                randopic = random.choice(picturelist)
 
-            # add the path to the picture string
-            pathstring = self.person.picturedir + self.picstring
+            # trim down the full string for the picture to just the picture name for when stuff is sent back to the
+            # participant class
+            self.picstring = randopic.replace(self.person.picturedir + '/', '')
 
             # Make a pixmap of the picture and then set the middle to that pixmap
-            pixmap = QPixmap(pathstring)
+            pixmap = QPixmap(randopic)
             self.middle.setPixmap(pixmap.scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
 
             # get the onset time for the trial, which will also be used to compute reaction time

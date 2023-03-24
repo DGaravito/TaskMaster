@@ -285,7 +285,7 @@ class EGNGParticipant(participant.Participant):
         self.neulength = neulen
 
         # make the picture directory a class variable
-        self.picturedir = picd
+        self.picturedir = picd + '/'
 
         # set how many blocks are needed and set the blocks done to 0
         self.blocks = int(blocks)
