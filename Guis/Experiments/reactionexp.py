@@ -328,7 +328,7 @@ class EGNGExp(experiment.Experiment):
 
             # Start the timers for until timeout and the time until the next trial begins
             self.timer.start(500)
-            self.ititimer.start(1500)
+            self.ititimer.start(random.randint(1500, 4000))
 
             # Set the variable that allows the user to respond
             self.responseenabled = 1
