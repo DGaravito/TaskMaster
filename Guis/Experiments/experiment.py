@@ -1,6 +1,6 @@
-from PyQt6.QtWidgets import *
-from PyQt6.QtCore import *
-from PyQt6.QtGui import *
+from PyQt6.QtWidgets import QWidget, QApplication, QVBoxLayout, QLabel, QPushButton
+from PyQt6.QtCore import QDir, Qt, QTimer
+from PyQt6.QtGui import QFont
 
 from pathlib import Path
 

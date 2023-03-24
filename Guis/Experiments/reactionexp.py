@@ -5,6 +5,7 @@ from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 import random
 import time
 import glob
+import os
 
 from Guis.Experiments import experiment
 
@@ -273,54 +274,54 @@ class EGNGExp(experiment.Experiment):
         if self.trialsdone < self.person.get_trials():
 
             # Get the string that contains the name of the trial picture
-            self.picstringprefix = self.person.get_trial_pic()
+            self.pictype = self.person.get_trial_pic()
 
-            if self.picstringprefix.startswith('Happy'):
+            match self.pictype:
 
-                # get a list of all happy pictures
-                picturelist = glob.glob(self.person.picturedir + '/Happy_*.png')
+                case 'Happy':
 
-                # get a random pictures from the list
-                randopic = random.choice(picturelist)
+                    # get a list of all happy pictures
+                    picturelist = glob.glob(self.person.picturedir + '/Happy_*.png')
 
-            elif self.picstringprefix.startswith('Sad'):
+                    # get a random pictures from the list
+                    self.picstring = os.path.normpath(random.choice(picturelist))
 
-                # get a list of all happy pictures
-                picturelist = glob.glob(self.person.picturedir + '/Sad_*.png')
+                case 'Sad':
 
-                # get a random pictures from the list
-                randopic = random.choice(picturelist)
+                    # get a list of all happy pictures
+                    picturelist = glob.glob(self.person.picturedir + '/Sad_*.png')
 
-            elif self.picstringprefix.startswith('Angry'):
+                    # get a random pictures from the list
+                    self.picstring = random.choice(picturelist)
 
-                # get a list of all happy pictures
-                picturelist = glob.glob(self.person.picturedir + '/Angry_*.png')
+                case 'Angry':
 
-                # get a random pictures from the list
-                randopic = random.choice(picturelist)
+                    # get a list of all happy pictures
+                    picturelist = glob.glob(self.person.picturedir + '/Angry_*.png')
 
-            elif self.picstringprefix.startswith('Fearful'):
+                    # get a random pictures from the list
+                    self.picstring = random.choice(picturelist)
 
-                # get a list of all happy pictures
-                picturelist = glob.glob(self.person.picturedir + '/Fearful_*.png')
+                case 'Fearful':
 
-                # get a random pictures from the list
-                randopic = random.choice(picturelist)
+                    # get a list of all happy pictures
+                    picturelist = glob.glob(self.person.picturedir + '/Fearful_*.png')
 
-            else:
+                    # get a random pictures from the list
+                    self.picstring = random.choice(picturelist)
 
-                # get a list of all happy pictures
-                picturelist = glob.glob(self.person.picturedir + '/Neutral_*.png')
+                case _:
 
-                # get a random pictures from the list
-                randopic = random.choice(picturelist)
+                    # get a list of all happy pictures
+                    picturelist = glob.glob(self.person.picturedir + '/Neutral_*.png')
 
-            # trim down the full string for the picture to just the picture name for when stuff is sent back to the
-            # participant class
-            self.picstring = randopic.replace(self.person.picturedir + '/', '')
+                    print(picturelist)
+
+                    # get a random pictures from the list
+                    self.picstring = os.path.normpath(random.choice(picturelist))
 
             # Make a pixmap of the picture and then set the middle to that pixmap
-            pixmap = QPixmap(randopic)
+            pixmap = QPixmap(self.picstring)
             self.middle.setPixmap(pixmap.scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
 
             # get the onset time for the trial, which will also be used to compute reaction time
@@ -328,7 +329,9 @@ class EGNGExp(experiment.Experiment):
 
             # Start the timers for until timeout and the time until the next trial begins
             self.timer.start(500)
-            self.ititimer.start(random.randint(1500, 4000))
+
+            randomiti = random.randint(1500, 4000)
+            self.ititimer.start(randomiti)
 
             # Set the variable that allows the user to respond
             self.responseenabled = 1

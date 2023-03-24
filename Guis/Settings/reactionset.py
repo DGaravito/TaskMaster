@@ -101,15 +101,12 @@ class EGNGSettings(settings.Settings):
                     # get the strings for all of the files in the picture directory
                     fullfilelist = glob.glob(picpathstring + '*.png')
 
-                    # for each of those file strings, trim the path off of the strings to make the trimmed list
-                    trimmedlist = [sub.replace(picpathstring, '') for sub in fullfilelist]
-
                     # Make lists of individual emotions for later
-                    happystr = [picstr for picstr in trimmedlist if picstr.startswith('Happy')]
-                    sadstr = [picstr for picstr in trimmedlist if picstr.startswith('Sad')]
-                    angrystr = [picstr for picstr in trimmedlist if picstr.startswith('Angry')]
-                    fearstr = [picstr for picstr in trimmedlist if picstr.startswith('Fearful')]
-                    neustr = [picstr for picstr in trimmedlist if picstr.startswith('Neutral')]
+                    happystr = [picstr for picstr in fullfilelist if 'Happy' in picstr]
+                    sadstr = [picstr for picstr in fullfilelist if 'Sad' in picstr]
+                    angrystr = [picstr for picstr in fullfilelist if 'Angry' in picstr]
+                    fearstr = [picstr for picstr in fullfilelist if 'Fearful' in picstr]
+                    neustr = [picstr for picstr in fullfilelist if 'Neutral' in picstr]
 
                     # check to make sure that if the user toggled on an emotion, there is at least one picture with
                     # that emotion and at least one neutral picture

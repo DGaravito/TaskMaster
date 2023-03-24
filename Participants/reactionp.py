@@ -285,7 +285,7 @@ class EGNGParticipant(participant.Participant):
         self.neulength = neulen
 
         # make the picture directory a class variable
-        self.picturedir = picd + '/'
+        self.picturedir = picd
 
         # set how many blocks are needed and set the blocks done to 0
         self.blocks = int(blocks)
@@ -293,6 +293,10 @@ class EGNGParticipant(participant.Participant):
 
         # make an empty list for the blocks
         self.structlist = []
+
+        # make empty lists for the total
+        self.piclist = []
+        self.picorder = []
 
         # each of the following if statements checks to see if the user checks any of these emotions. If so, it adds the
         # emotion and the reverse round to the block structure
@@ -340,7 +344,7 @@ class EGNGParticipant(participant.Participant):
         """
 
         # there will always be neutral pictures in the blocks
-        self.piclist = ['Neutral_']
+        self.piclist = ['Neutral']
 
         # find out which block is occuring...
         match block:
@@ -349,7 +353,7 @@ class EGNGParticipant(participant.Participant):
             case 'Happy':
 
                 # add those types of pictures to the list of pictures...
-                self.piclist.append('Happy_')
+                self.piclist.append('Happy')
 
                 # for emotion blocks, set the neutral number to a fourth of the trials; reverse, do the opposite
                 neutralnum = int(self.get_trials()/4)
@@ -359,37 +363,37 @@ class EGNGParticipant(participant.Participant):
                 emonum = self.get_trials()-neutralnum
 
             case 'HappyRev':
-                self.piclist.append('Happy_')
+                self.piclist.append('Happy')
                 emonum = int(self.get_trials()/4)
                 neutralnum = self.get_trials()-emonum
 
             case 'Sad':
-                self.piclist.append('Sad_')
+                self.piclist.append('Sad')
                 neutralnum = int(self.get_trials()/4)
                 emonum = self.get_trials()-neutralnum
 
             case 'SadRev':
-                self.piclist.append('Sad_')
+                self.piclist.append('Sad')
                 emonum = int(self.get_trials()/4)
                 neutralnum = self.get_trials()-emonum
 
             case 'Angry':
-                self.piclist.append('Angry_')
+                self.piclist.append('Angry')
                 neutralnum = int(self.get_trials()/4)
                 emonum = self.get_trials()-neutralnum
 
             case 'AngryRev':
-                self.piclist.append('Angry_')
+                self.piclist.append('Angry')
                 emonum = int(self.get_trials()/4)
                 neutralnum = self.get_trials()-emonum
 
             case 'Fearful':
-                self.piclist.append('Fearful_')
+                self.piclist.append('Fearful')
                 neutralnum = int(self.get_trials()/4)
                 emonum = self.get_trials()-neutralnum
 
             case _:
-                self.piclist.append('Fearful_')
+                self.piclist.append('Fearful')
                 emonum = int(self.get_trials()/4)
                 neutralnum = self.get_trials()-emonum
 
