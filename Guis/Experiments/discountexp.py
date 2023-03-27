@@ -82,7 +82,7 @@ class DDiscountExp(experiment.Experiment):
 
             # if fmri mode, then set the new trial timer now
             if self.person.fmri == 'Yes':
-                self.ititimer.start(5500)
+                self.ititimer.start(6000)
 
         # if the trials requested have been completed
         else:
@@ -372,7 +372,7 @@ class PDiscountExp(experiment.Experiment):
 
             # if fmri mode, then set the new trial timer now
             if self.person.fmri == 'Yes':
-                self.ititimer.start(5500)
+                self.ititimer.start(6000)
 
         # if the trials requested have been completed
         else:
@@ -669,7 +669,7 @@ class CEDiscountExp(experiment.Experiment):
 
             # if fmri mode, then set the new trial timer now
             if self.person.fmri == 'Yes':
-                self.ititimer.start(5500)
+                self.ititimer.start(6000)
 
         # if the trials requested have been completed
         else:
