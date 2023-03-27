@@ -475,6 +475,7 @@ class PdParticipant(participant.Participant):
 
         # only if the user wanted gains and losses
         if self.design == 'Gains and Losses':
+
             # divide the number of trials by 2 because there are 2 types of trials
             multnum = int(self.get_trials() / 2)
 

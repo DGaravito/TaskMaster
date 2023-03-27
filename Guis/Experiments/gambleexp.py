@@ -46,13 +46,11 @@ class ARTTExp(experiment.Experiment):
         # Put Left and Right options in horizontal layout
         explayout = QHBoxLayout()
 
-        explayout.addStretch(1)
         explayout.addWidget(self.left)
         explayout.addStretch(1)
         explayout.addWidget(self.middle)
         explayout.addStretch(1)
         explayout.addLayout(rightlayout)
-        explayout.addStretch(1)
 
         # Put everything in vertical layout
         self.instquitlayout.addStretch(1)
@@ -79,19 +77,19 @@ class ARTTExp(experiment.Experiment):
         if self.trialsdone < self.person.get_trials():
 
             # get trial text
-            info = self.person.get_design_text()
+            self.info = self.person.get_design_text()
 
             # set the left and right side using the trial text
-            self.left.setText(info[0])
-            pixmap = 'Assets/' + info[2]
-            self.rightpic.setPixmap(QPixmap(pixmap))
+            self.left.setText(self.info[0])
+            pixmap = 'Assets/' + self.info[2]
+            self.rightpic.setPixmap(QPixmap(pixmap).scaled(600, 600, Qt.AspectRatioMode.KeepAspectRatio))
 
-            if info[3] == 1:
-                self.righttoptext.setText(info[1])
+            if self.info[3] == 1:
+                self.righttoptext.setText(self.info[1])
                 self.rightbottomtext.setText('0')
 
             else:
-                self.rightbottomtext.setText(info[1])
+                self.rightbottomtext.setText(self.info[1])
                 self.righttoptext.setText('0')
 
             # set the middle to or
@@ -108,7 +106,7 @@ class ARTTExp(experiment.Experiment):
 
             # if fmri mode, then set the new trial timer now
             if self.person.fmri == 'Yes':
-                self.ititimer.start(5500)
+                self.ititimer.start(6000)
 
         # if the trials requested have been completed
         else:
@@ -134,7 +132,9 @@ class ARTTExp(experiment.Experiment):
 
                 # if the user wanted one of the participant's choices to get randomly chosen, then put that on screen
                 if self.person.outcomeopt == 'Yes':
+
                     outcome = random.choice(self.person.outcomelist)
+
                     self.middle.setText('Your outcome: ' + outcome)
 
             # if not, indicate that you are now between rounds
@@ -156,8 +156,7 @@ class ARTTExp(experiment.Experiment):
         self.righttoptext.setText('')
         self.rightbottomtext.setText('')
 
-        # if state is 1, that means the participant timed out and the experiment is in fmri mode, so change iti to the
-        # warning
+        # if the participant timed out in fMRI mode, then warn them here
         if state == 1:
 
             self.middle.setText('Please try to be quicker')
@@ -179,8 +178,8 @@ class ARTTExp(experiment.Experiment):
 
     def timeout(self):
         """
-        if the timer runs out and the participant doesn't respond, then the timers stop, 9999 gets put in as the
-        reaction time, and the trial is "completed" without a response
+        if the timer runs out and the participant doesn't respond, then the timers stop, and different thing happen
+        depending on if the user wanted the task in fMRI mode or not.
         """
 
         # stop the timer
@@ -192,20 +191,20 @@ class ARTTExp(experiment.Experiment):
         self.righttoptext.setText('')
         self.rightbottomtext.setText('')
 
-        # set the middle to a warning
-        self.middle.setText('Please try to be quicker')
-
-        # send the trial data to the participant class
-        self.person.updateoutput(self.trialsdone, self.starttime, 9999)
-
         # if you're not in fmri mode, then warn and start the reset timer
         if self.person.fmri == 'No':
 
+            # set the middle to a warning
             self.middle.setText('Please try to be quicker')
+
             self.trialresettimer.start(1000)
 
-        # if you are in fmri mode, then disable participant input, increment the trial counter, and go to the iti screen
+        # if you are in fmri mode, then disable participant input, increment the trial counter, submit info indicating
+        # the participant failed to respond, and go to the iti screen
         else:
+
+            # send the trial data to the participant class
+            self.person.updateoutput(self.trialsdone, self.starttime, 9999)
 
             self.trialsdone += 1
             self.responseenabled = 0
@@ -219,23 +218,20 @@ class ARTTExp(experiment.Experiment):
         # stop the reset timer
         self.trialresettimer.stop()
 
-        # get the trial text
-        info = self.person.get_design_text()
-
         # set the left using the trial text
-        self.left.setText(info[0])
+        self.left.setText(self.info[0])
 
         # get the picture for the right
-        pixmap = 'Assets/' + info[2]
-        self.rightpic.setPixmap(QPixmap(pixmap))
+        pixmap = 'Assets/' + self.info[2]
+        self.rightpic.setPixmap(QPixmap(pixmap).scaled(600, 600, Qt.AspectRatioMode.KeepAspectRatio))
 
         # set the right text depending on if the trial is a risk or an ambiguous one
-        if info[3] == 1:
-            self.righttoptext.setText(info[1])
+        if self.info[3] == 1:
+            self.righttoptext.setText(self.info[1])
             self.rightbottomtext.setText('0')
 
         else:
-            self.rightbottomtext.setText(info[1])
+            self.rightbottomtext.setText(self.info[1])
             self.righttoptext.setText('0')
 
         # set the middle text to or
@@ -313,13 +309,13 @@ class ARTTExp(experiment.Experiment):
             if self.inst == 5:
 
                 pixmap = QPixmap('Assets/ARTT_risk_25.png')
-                self.middle.setPixmap(pixmap.scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
+                self.middle.setPixmap(pixmap.scaled(600, 600, Qt.AspectRatioMode.KeepAspectRatio))
 
             # if the instruction index is eleven, then load the relevant picture
             elif self.inst == 11:
 
                 pixmap = QPixmap('Assets/ARTT_ambig_50.png')
-                self.middle.setPixmap(pixmap.scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
+                self.middle.setPixmap(pixmap.scaled(600, 600, Qt.AspectRatioMode.KeepAspectRatio))
 
             else:
                 # get the associated text
@@ -418,7 +414,7 @@ class RAExp(experiment.Experiment):
 
             # if fmri mode, then set the new trial timer now
             if self.person.fmri == 'Yes':
-                self.ititimer.start(5500)
+                self.ititimer.start(6000)
 
         # if the trials requested have been completed
         else:
@@ -705,7 +701,7 @@ class FrameExp(experiment.Experiment):
 
             # if fmri mode, then set the new trial timer now
             if self.person.fmri == 'Yes':
-                self.ititimer.start(5500)
+                self.ititimer.start(6000)
 
         # if the trials requested have been completed
         else:

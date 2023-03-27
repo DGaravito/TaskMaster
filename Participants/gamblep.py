@@ -168,7 +168,7 @@ class ARTTParticipant(participant.Participant):
                 r_var.append(random.uniform(rewmin + .5, rewmax))
 
         # the fixed reward will always be the minimum
-        r_fix = rewmin
+        r_fix = [rewmin]
 
         # make a list of lists of the rewards
         rewards = list([
@@ -410,9 +410,11 @@ class ARTTParticipant(participant.Participant):
 
                     # Then look at the state to see if it was a gain or loss
                     if self.state == "Gain":
+
                         self.outcomelist.append('$' + str('{:.2f}'.format(fAmount)))
 
                     else:
+
                         self.outcomelist.append('-$' + str('{:.2f}'.format(fAmount)))
 
             # if they chose the gamble...
@@ -426,46 +428,54 @@ class ARTTParticipant(participant.Participant):
 
                     # if they win, add the reward
                     if actualprob > pRisky:
+
                         self.outcomelist.append('$' + str('{:.2f}'.format(vAmount)))
 
                     # if not, add 0
                     else:
-                        self.outcomelist.append(self.outcomelist.append('$0.00'))
+
+                        self.outcomelist.append('$0.00')
 
                 # if they only have losses...
                 elif self.structure == 'Losses only':
 
                     # if they lose, add the loss
                     if actualprob < pRisky:
+
                         self.outcomelist.append('-$' + str('{:.2f}'.format(vAmount)))
 
                     # if not, add 0
                     else:
-                        self.outcomelist.append(self.outcomelist.append('$0.00'))
+
+                        self.outcomelist.append('$0.00')
 
                 # if they have gains and losses...
                 else:
 
                     # Then look at the state to see if it was a gain or loss
-                    if self.state[1] == "Gain":
+                    if self.state == 'Gain':
 
                         # if they win, add the reward
                         if actualprob > pRisky:
+
                             self.outcomelist.append('$' + str('{:.2f}'.format(vAmount)))
 
                         # if not, add 0
                         else:
-                            self.outcomelist.append(self.outcomelist.append('$0.00'))
+
+                            self.outcomelist.append('$0.00')
 
                     else:
 
                         # if they lose, add the loss
                         if actualprob < pRisky:
+
                             self.outcomelist.append('-$' + str('{:.2f}'.format(vAmount)))
 
                         # if not, add 0
                         else:
-                            self.outcomelist.append(self.outcomelist.append('$0.00'))
+
+                            self.outcomelist.append('$0.00')
 
     def get_instructions(self, instint):
         """
@@ -550,7 +560,7 @@ class RAParticipant(participant.Participant):
 
         # set variables from the user input
         self.rounds = int(rounds)
-        self.startmoney = money
+        self.startmoney = float(money)
         self.outcomeopt = outcome
 
         # make an empty list for the trial text
@@ -1143,7 +1153,7 @@ class FrameParticipant(participant.Participant):
 
                     # if not, add 0
                     else:
-                        self.outcomelist.append(self.outcomelist.append('$0.00'))
+                        self.outcomelist.append('$0.00')
 
                 # if they only have losses...
                 elif self.design == 'Losses only':
@@ -1154,7 +1164,7 @@ class FrameParticipant(participant.Participant):
 
                     # if not, add 0
                     else:
-                        self.outcomelist.append(self.outcomelist.append('$0.00'))
+                        self.outcomelist.append('$0.00')
 
                 # if they have gains and losses...
                 else:
@@ -1168,7 +1178,7 @@ class FrameParticipant(participant.Participant):
 
                         # if not, add 0
                         else:
-                            self.outcomelist.append(self.outcomelist.append('$0.00'))
+                            self.outcomelist.append('$0.00')
 
                     else:
 
@@ -1178,7 +1188,7 @@ class FrameParticipant(participant.Participant):
 
                         # if not, add 0
                         else:
-                            self.outcomelist.append(self.outcomelist.append('$0.00'))
+                            self.outcomelist.append('$0.00')
 
     def get_instructions(self, instint):
         """
