@@ -29,7 +29,7 @@ class DdParticipant(participant.Participant):
         self.rounds = int(rounds)
 
         # create the structure
-        self.create_structure()
+        self.create_design()
 
         # store the user input
         self.userinput = [float(ss_del), float(ll_shortdel), float(ll_longdel), float(ss_smallrew), float(ll_rew)]
@@ -71,6 +71,33 @@ class DdParticipant(participant.Participant):
 
         # attach the task-specific settings to the task general settings
         self.set_settings(dict_tasksettings)
+
+    def create_design(self):
+        """
+        If you want both gains and losses, then it creates a random order for gain and loss questions
+        :return: Does not return a value, instead creates the class dictionaries and then calls set design text to make
+        the first trial
+        """
+
+        # if you have gains and losts
+        if self.design == 'Gains and Losses':
+
+            # make a multiplier number from the total number of trials (trials per block times blocks) divided by two so
+            # that there will be an equal number of gains and losses
+            multnum = int((self.get_trials() / 2) * self.rounds)
+
+            # list composed of the multiplier number from above
+            multiplier = [multnum, multnum]
+
+            # list composed of the two strings: gain and loss
+            gainlosscond = ['Gain', 'Loss']
+
+            # the strings are multiplied so that you end up with a list of strings. The gain and loss both appear
+            # equally in the list
+            self.order = sum([[s] * n for s, n in zip(gainlosscond, multiplier)], [])
+
+            # shuffle the list so you have a random order
+            random.shuffle(self.order)
 
     # def create_dd_engine(self, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew):
     #     """
@@ -282,33 +309,6 @@ class DdParticipant(participant.Participant):
 
         # return the string
         return timestring
-
-    def create_structure(self):
-        """
-        If you want both gains and losses, then it creates a random order for gain and loss questions
-        :return: Does not return a value, instead creates the class dictionaries and then calls set design text to make
-        the first trial
-        """
-
-        # if you have gains and losts
-        if self.design == 'Gains and Losses':
-
-            # make a multiplier number from the total number of trials (trials per block times blocks) divided by two so
-            # that there will be an equal number of gains and losses
-            multnum = int((self.get_trials() / 2) * self.rounds)
-
-            # list composed of the multiplier number from above
-            multiplier = [multnum, multnum]
-
-            # list composed of the two strings: gain and loss
-            gainlosscond = ['Gain', 'Loss']
-
-            # the strings are multiplied so that you end up with a list of strings. The gain and loss both appear
-            # equally in the list
-            self.order = sum([[s] * n for s, n in zip(gainlosscond, multiplier)], [])
-
-            # shuffle the list so you have a random order
-            random.shuffle(self.order)
 
     def get_design_text(self):
         """
@@ -620,7 +620,7 @@ class PdParticipant(participant.Participant):
         if self.design == 'Gains and Losses':
 
             # divide the number of trials by 2 because there are 2 types of trials
-            multnum = int(self.get_trials() / 2)
+            multnum = int((self.get_trials() / 2) * self.rounds)
 
             # list composed of 2 integers which are one half of the total trials
             multiplier = [multnum, multnum]
