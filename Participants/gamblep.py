@@ -73,6 +73,7 @@ class ARTTParticipant(participant.Participant):
 
         # if you have gains and losts
         if self.structure == 'Gains and Losses':
+
             # make a multiplier number from the total number of trials (trials per block times blocks) divided by two so
             # that there will be an equal number of gains and losses
             multnum = int((self.get_trials() / 2) * self.rounds)
@@ -1096,7 +1097,7 @@ class FrameParticipant(participant.Participant):
         # make a dictionary of trial info
         df_trial = {
             'trial': [trial],
-            'cond': [str(self.state)],
+            'cond': [self.state],
             'SureAmount': [str('{:.2f}'.format(self.trialdesign[0]))],
             'RiskyAmount': [str('{:.2f}'.format(self.trialdesign[2]))],
             'RiskyProbability': [self.trialdesign[1]],
@@ -1110,7 +1111,7 @@ class FrameParticipant(participant.Participant):
         self.set_performance(df_trial)
 
         # only do the following if the user wanted a random reward/loss at the end
-        if (self.outcomeopt == 'Yes') & (response != 'None'):
+        if (self.outcomeopt == 'Yes') & (response != 3):
 
             # Add the potential outcome of this choice to the list for post-task rewards.
             # If they chose the sure thing...
@@ -1132,7 +1133,7 @@ class FrameParticipant(participant.Participant):
                 else:
 
                     # Then look at the state to see if it was a gain or loss
-                    if self.state[1] == "Gain":
+                    if 'Gain' in self.state:
                         self.outcomelist.append('$' + str('{:.2f}'.format(float(self.trialdesign[0]))))
 
                     else:
@@ -1170,7 +1171,7 @@ class FrameParticipant(participant.Participant):
                 else:
 
                     # Then look at the state to see if it was a gain or loss
-                    if self.state[1] == "Gain":
+                    if 'Gain' in self.state:
 
                         # if they win, add the reward
                         if actualprob > float(self.trialdesign[1]):

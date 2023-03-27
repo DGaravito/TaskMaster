@@ -178,8 +178,8 @@ class ARTTExp(experiment.Experiment):
 
     def timeout(self):
         """
-        if the timer runs out and the participant doesn't respond, then the timers stop, and different thing happen
-        depending on if the user wanted the task in fMRI mode or not.
+        if the timer runs out and the participant doesn't respond, then the timers stop, info is submitted, and
+        different things happen depending on if the user wanted the task in fMRI mode or not.
         """
 
         # stop the timer
@@ -191,6 +191,9 @@ class ARTTExp(experiment.Experiment):
         self.righttoptext.setText('')
         self.rightbottomtext.setText('')
 
+        # send the trial data to the participant class
+        self.person.updateoutput(self.trialsdone, self.starttime, 9999)
+
         # if you're not in fmri mode, then warn and start the reset timer
         if self.person.fmri == 'No':
 
@@ -199,12 +202,8 @@ class ARTTExp(experiment.Experiment):
 
             self.trialresettimer.start(1000)
 
-        # if you are in fmri mode, then disable participant input, increment the trial counter, submit info indicating
-        # the participant failed to respond, and go to the iti screen
+        # if you are in fmri mode, then disable participant input, increment the trial counter, and go to the iti screen
         else:
-
-            # send the trial data to the participant class
-            self.person.updateoutput(self.trialsdone, self.starttime, 9999)
 
             self.trialsdone += 1
             self.responseenabled = 0
@@ -236,6 +235,9 @@ class ARTTExp(experiment.Experiment):
 
         # set the middle text to or
         self.middle.setText('OR')
+
+        # log the trial onset time
+        self.starttime = time.time() - self.overallstart
 
         # start the timer again
         self.timer.start(5000)
@@ -537,6 +539,9 @@ class RAExp(experiment.Experiment):
         # set the middle text to or
         self.middle.setText('OR')
 
+        # log the trial onset time
+        self.starttime = time.time() - self.overallstart
+
         # start the timer again
         self.timer.start(5000)
 
@@ -816,6 +821,9 @@ class FrameExp(experiment.Experiment):
 
         # set the middle text
         self.middle.setText('OR')
+
+        # log the trial onset time
+        self.starttime = time.time() - self.overallstart
 
         # start the response timer
         self.timer.start(5000)

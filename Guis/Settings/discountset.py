@@ -38,6 +38,10 @@ class DdSettings(settings.Settings):
         self.lrewin.setRange(0, 100000000)
         self.lrewin.setValue(250)
 
+        # Dropdown box for gains, losses, or both
+        self.design = QComboBox()
+        self.design.addItems(['Gains only', 'Losses only', 'Gains and Losses'])
+
         # Make form layout for all the settingsguis
         self.layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
         self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
@@ -46,6 +50,7 @@ class DdSettings(settings.Settings):
         self.layout.addRow(QLabel('Longest delay in delayed option (weeks):'), self.ldin)
         self.layout.addRow(QLabel('Smallest reward in immediate option:'), self.srewin)
         self.layout.addRow(QLabel('Biggest reward in delayed option:'), self.lrewin)
+        self.layout.addRow(QLabel('What type of questions do you want?'), self.design)
         self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         # self.layout.addRow(QLabel('Do you want to use ADOPy?'), self.adopytoggle)
         self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
@@ -73,6 +78,7 @@ class DdSettings(settings.Settings):
                                          self.lrewin.text(),
                                          self.blocksin.text(),
                                          self.outcome,
+                                         self.design.currentText(),
                                          self.adopystate,
                                          self.buttonboxstate,
                                          self.eyetracking,

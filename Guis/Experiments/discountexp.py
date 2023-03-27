@@ -62,11 +62,11 @@ class DDiscountExp(experiment.Experiment):
         if self.trialsdone < self.person.get_trials():
 
             # get trial text
-            strings = self.person.get_design_text()
+            self.strings = self.person.get_design_text()
 
             # set the left and right side using the trial text
-            self.left.setText(strings[0])
-            self.right.setText(strings[1])
+            self.left.setText(self.strings[0])
+            self.right.setText(self.strings[1])
 
             # set the middle to or
             self.middle.setText('OR')
@@ -188,15 +188,15 @@ class DDiscountExp(experiment.Experiment):
         # stop the reset timer
         self.trialresettimer.stop()
 
-        # get the trial info
-        strings = self.person.get_design_text()
-
-        # set the left and right using that info
-        self.left.setText(strings[0])
-        self.right.setText(strings[1])
+        # set the left and right using trial info
+        self.left.setText(self.strings[0])
+        self.right.setText(self.strings[1])
 
         # set the middle text to or
         self.middle.setText('OR')
+
+        # log the trial onset time
+        self.starttime = time.time() - self.overallstart
 
         # start the timer again
         self.timer.start(5000)

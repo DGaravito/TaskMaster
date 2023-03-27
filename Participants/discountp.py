@@ -10,17 +10,26 @@ from Participants import participant
 class DdParticipant(participant.Participant):
 
     def __init__(self, expid, trials, session, outdir, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew,
-                 rounds, outcome, adopy, buttonbox, eyetracking, fmri):
+                 rounds, outcome, design, adopy, buttonbox, eyetracking, fmri):
         super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
 
         # make a variable for ADOPy status
         self.adopy = adopy
 
+        # make a variable for the structure
+        self.design = design
+
         # make variable to store user input on whether they wanted an outcome chosen
         self.outcomeopt = outcome
 
+        # make an empty list to collect the participant's choices if requested
+        self.outcomelist = []
+
         # set how many blocks there are
         self.rounds = int(rounds)
+
+        # create the structure
+        self.create_structure()
 
         # store the user input
         self.userinput = [float(ss_del), float(ll_shortdel), float(ll_longdel), float(ss_smallrew), float(ll_rew)]
@@ -55,6 +64,7 @@ class DdParticipant(participant.Participant):
                              'Smallest Smaller Sooner Reward': [ss_smallrew],
                              'Largest Smaller Sooner Reward': [(float(ll_rew) - float(ss_smallrew))],
                              'Larger Later Reward': [ll_rew],
+                             'Design': [design],
                              'Blocks': [rounds],
                              'ADOPy?': [adopy]
                              }
@@ -273,6 +283,33 @@ class DdParticipant(participant.Participant):
         # return the string
         return timestring
 
+    def create_structure(self):
+        """
+        If you want both gains and losses, then it creates a random order for gain and loss questions
+        :return: Does not return a value, instead creates the class dictionaries and then calls set design text to make
+        the first trial
+        """
+
+        # if you have gains and losts
+        if self.design == 'Gains and Losses':
+
+            # make a multiplier number from the total number of trials (trials per block times blocks) divided by two so
+            # that there will be an equal number of gains and losses
+            multnum = int((self.get_trials() / 2) * self.rounds)
+
+            # list composed of the multiplier number from above
+            multiplier = [multnum, multnum]
+
+            # list composed of the two strings: gain and loss
+            gainlosscond = ['Gain', 'Loss']
+
+            # the strings are multiplied so that you end up with a list of strings. The gain and loss both appear
+            # equally in the list
+            self.order = sum([[s] * n for s, n in zip(gainlosscond, multiplier)], [])
+
+            # shuffle the list so you have a random order
+            random.shuffle(self.order)
+
     def get_design_text(self):
         """
         takes the design from the ADOPy engine and turns it into strings for the left and right options
@@ -301,18 +338,70 @@ class DdParticipant(participant.Participant):
         self.trialinfo.append(self.taskstimuli[2])
         self.trialinfo.append(self.taskstimuli[3].pop())
 
-        # if the user wanted the immediate option to occur now, as opposed to also at a delay, use now  in the string
-        if int(self.trialinfo[0]) == 0:
-            shortstring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nnow'
+        # if you have gains and losts
+        if self.design == 'Gains and Losses':
 
-        # otherwise, use the get_timestring function to have a string
+            self.state = self.order.pop()
+
+            if self.state == 'Gain':
+
+                # if the user wanted the immediate option to occur now, as opposed to also at a delay, use now  in the string
+                if int(self.trialinfo[0]) == 0:
+                    shortstring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nnow'
+
+                # otherwise, use the get_timestring function to have a string
+                else:
+                    shortstring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nafter ' \
+                                  + self.get_timestring(self.trialinfo[1])
+
+                # for the delay string
+                delaystring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[2])) + '\nafter ' \
+                              + self.get_timestring(self.trialinfo[3])
+
+            else:
+
+                # if the user wanted the immediate option to occur now, as opposed to also at a delay, use now  in the string
+                if int(self.trialinfo[0]) == 0:
+                    shortstring = 'Losing $' + str('{:.2f}'.format(self.trialinfo[2])) + '\nnow'
+
+                # otherwise, use the get_timestring function to have a string
+                else:
+                    shortstring = 'Losing $' + str('{:.2f}'.format(self.trialinfo[2])) + '\nafter ' \
+                                  + self.get_timestring(self.trialinfo[1])
+
+                # for the delay string
+                delaystring = 'Losing $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nafter ' \
+                              + self.get_timestring(self.trialinfo[3])
+
+        elif self.design == 'Gains only':
+
+            # if the user wanted the immediate option to occur now, as opposed to also at a delay, use now  in the string
+            if int(self.trialinfo[0]) == 0:
+                shortstring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nnow'
+
+            # otherwise, use the get_timestring function to have a string
+            else:
+                shortstring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nafter ' \
+                              + self.get_timestring(self.trialinfo[1])
+
+            # for the delay string
+            delaystring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[2])) + '\nafter ' \
+                          + self.get_timestring(self.trialinfo[3])
+
         else:
-            shortstring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nafter ' \
-                          + self.get_timestring(self.trialinfo[1])
 
-        # for the right string
-        delaystring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[2])) + '\nafter ' \
-                      + self.get_timestring(self.trialinfo[3])
+            # if the user wanted the immediate option to occur now, as opposed to also at a delay, use now  in the string
+            if int(self.trialinfo[0]) == 0:
+                shortstring = 'Losing $' + str('{:.2f}'.format(self.trialinfo[2])) + '\nnow'
+
+            # otherwise, use the get_timestring function to have a string
+            else:
+                shortstring = 'Losing $' + str('{:.2f}'.format(self.trialinfo[2])) + '\nafter ' \
+                              + self.get_timestring(self.trialinfo[1])
+
+            # for the delay string
+            delaystring = 'Losing $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nafter ' \
+                          + self.get_timestring(self.trialinfo[3])
 
         # if the side integer is 1, then put the delay string on the right
         if side == 1:
@@ -372,7 +461,7 @@ class DdParticipant(participant.Participant):
         # return the prompt
         return prompt
 
-    def updateoutput(self, trial, onset, time, response):
+    def updateoutput(self, trial, onset, time, response=3):
         """
         records stats for the trial
         :param trial: the number of the trial that was just completed
@@ -384,13 +473,14 @@ class DdParticipant(participant.Participant):
 
         # make a dictionary of trial info
         df_trial = {
-            'trial': [trial],
-            'onset': [onset],
-            'SSAmount': [self.trialinfo[0]],
-            'LLAmount': [self.trialinfo[2]],
-            'LLDelay': [self.trialinfo[3]],
-            'response': [response],
-            'reaction time': [time]
+            'Trial': [trial],
+            'Pnset': [onset],
+            'SoonerAmount': [self.trialinfo[0]],
+            'SoonerDelay': [self.trialinfo[1]],
+            'LargerAmount': [self.trialinfo[2]],
+            'LargerDelay': [self.trialinfo[3]],
+            'Response': [response],
+            'Reaction Time': [time]
         }
 
         # if self.adopy == 'Yes':
@@ -402,6 +492,59 @@ class DdParticipant(participant.Participant):
         # turn that dictionary into a dataframe and use set_performance to add it to the overall dataframe
         df_trial = pd.DataFrame(data=df_trial)
         self.set_performance(df_trial)
+
+        # only do the following if the user wanted a random reward/loss at the end
+        if (self.outcomeopt == 'Yes') & (response != 3):
+
+            # Add the potential outcome of this choice to the list for post-task rewards.
+            # If they chose the sooner option...
+            if response == 0:
+
+                amountstring = '$' + str('{:.2f}'.format(self.trialinfo[0]))
+
+                # was the shorter delay 0? Then say now.
+                if int(self.trialinfo[1]) == 0:
+
+                    timestring = ' now'
+
+                # otherwise, use the get_timestring function to have a string
+                else:
+
+                    timestring = ' after ' + self.get_timestring(self.trialinfo[1])
+
+                # if they only have gains...then add a negative sign to amount
+                if self.design == 'Losses only':
+
+                    amountstring = '-' + amountstring
+
+                # if they have gains and losses...
+                else:
+
+                    # Then look at the state to see if it was a gain or loss before adding anything
+                    if self.state == 'Loss':
+
+                        amountstring = '-' + amountstring
+
+            # if they chose the later option...
+            else:
+
+                amountstring = '$' + str('{:.2f}'.format(self.trialinfo[2]))
+                timestring = ' after ' + self.get_timestring(self.trialinfo[3])
+
+                # if they only have losses...then add a negative sign
+                if self.design == 'Losses only':
+
+                    amountstring = '-' + amountstring
+
+                # if they have gains and losses...
+                else:
+
+                    # Then look at the state to see if it was a gain or loss. If loss, add a negative sign
+                    if self.state == "Loss":
+
+                        amountstring = '-' + amountstring
+
+            self.outcomelist.append(amountstring + timestring)
 
     def get_instructions(self, instint):
         """
@@ -596,7 +739,7 @@ class PdParticipant(participant.Participant):
         # return the prompt
         return prompt
 
-    def updateoutput(self, trial, onset, time, response):
+    def updateoutput(self, trial, onset, time, response=3):
         """
         records stats for the trial
         :param trial: the number of the trial that was just completed
@@ -623,7 +766,7 @@ class PdParticipant(participant.Participant):
         self.set_performance(df_trial)
 
         # only do the following if the user wanted a random reward/loss at the end
-        if (self.outcomeopt == 'Yes') & (response != 'None'):
+        if (self.outcomeopt == 'Yes') & (response != 3):
 
             # Add the potential outcome of this choice to the list for post-task rewards.
             # If they chose the sure thing...
@@ -645,7 +788,7 @@ class PdParticipant(participant.Participant):
                 else:
 
                     # Then look at the state to see if it was a gain or loss
-                    if self.state == "Gain":
+                    if self.state == 'Gain':
                         self.outcomelist.append('$' + str('{:.2f}'.format(float(self.trialdesign[0]))))
 
                     else:
@@ -683,7 +826,7 @@ class PdParticipant(participant.Participant):
                 else:
 
                     # Then look at the state to see if it was a gain or loss
-                    if self.state[1] == "Gain":
+                    if self.state == 'Gain':
 
                         # if they win, add the reward
                         if actualprob > float(self.trialdesign[1]):
@@ -714,10 +857,15 @@ class PdParticipant(participant.Participant):
 
             case 1:
 
-                inst = 'In this task, you will be making choices between\n guarantees of winning or losing some money' \
+                inst = 'In this task, you will be making choices between\nguarantees of winning or losing some money' \
                        ' or taking\ngambles to win more money or lose less money.'
 
             case 2:
+
+                inst = 'On each side of the screen, you will see an amount\nof money. You will also see your chances ' \
+                       'of getting\n that money, with a colored meter to represent that chance.'
+
+            case 3:
 
                 # if the user requested a random choice be output at the end, then tell the user how much starting money
                 # is there
