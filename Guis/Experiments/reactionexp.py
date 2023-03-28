@@ -354,8 +354,8 @@ class EGNGExp(experiment.Experiment):
             # telling the subject what the next face type is
             self.start = prompt[1]
 
-            # if the number of rounds done is equal to the number the user requested...
-            if self.person.rounds == self.roundsdone:
+            # if the task is fully completed
+            if prompt[1] == 3:
 
                 # output the data to the user's directory and change the instructions to a thank you message
                 self.person.output()
