@@ -343,11 +343,11 @@ class EGNGExp(experiment.Experiment):
             self.trialsdone = 0
 
             # set the text for the middle label to the appropriate text depending on how many blocks the user wanted
-            self.middle.setText(self.person.nextround(self.roundsdone))
-
             prompt = self.person.nextround()
-
             self.middle.setText(prompt[0])
+
+            # set start to the number from the nextround function, which will prevent the code from jumping without
+            # telling the subject what the next face type is
             self.start = prompt[1]
 
             # if the number of rounds done is equal to the number the user requested...
