@@ -158,8 +158,8 @@ class Participant(object):
             writer = pd.ExcelWriter(outputname, engine='xlsxwriter')
 
             # Write each dataframe to a different worksheet.
-            self.df_settings.to_excel(writer, sheet_name='Sheet1')
-            self.df_performance.to_excel(writer, sheet_name='Sheet2')
+            self.df_settings.to_excel(writer, sheet_name='Information')
+            self.df_performance.to_excel(writer, sheet_name='Performance')
 
             # Close the Pandas Excel writer and output the Excel file.
-            writer.save()
+            writer.close()
