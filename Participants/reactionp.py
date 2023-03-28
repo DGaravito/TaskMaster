@@ -475,7 +475,7 @@ class EGNGParticipant(participant.Participant):
                 random.shuffle(self.blocktypes)
 
                 # tell the participant that another block is starting
-                prompt = 'You will now repeat the task you just completed.\nPress \"G\".'
+                prompt = 'You will now repeat the task you have completed.\nPress \"G\".'
 
                 # set the binary value to 0 so the participant sees the instructions and has to press G once to move to
                 # the start screen and once to start the trial
