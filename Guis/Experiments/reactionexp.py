@@ -315,8 +315,6 @@ class EGNGExp(experiment.Experiment):
                     # get a list of all happy pictures
                     picturelist = glob.glob(self.person.picturedir + '/Neutral_*.png')
 
-                    print(picturelist)
-
                     # get a random pictures from the list
                     self.picstring = os.path.normpath(random.choice(picturelist))
 
