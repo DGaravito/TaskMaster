@@ -631,7 +631,7 @@ class EGNGParticipant(participant.Participant):
 
             case 3:
 
-                inst = '\"' + self.leftkey[0] + '\" when you see that\ntype of face.'
+                inst = 'Press \"' + self.leftkey[0] + '\" when you see that\ntype of face.'
 
             case 4:
 
