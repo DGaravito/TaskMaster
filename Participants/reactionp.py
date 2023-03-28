@@ -319,6 +319,9 @@ class EGNGParticipant(participant.Participant):
         # copy the original list to get an order for the task
         self.blocktypes = list(self.structlist)
 
+        print(self.blocktypes)
+        print(self.structlist)
+
         # shuffle the order
         random.shuffle(self.blocktypes)
 
@@ -425,11 +428,17 @@ class EGNGParticipant(participant.Participant):
         # if there are still rounds to go in this block...
         if len(self.blocktypes) > 0:
 
+            print('next round')
+
             # pop the next round
             self.blocktype = self.blocktypes.pop()
 
+            print(self.blocktype)
+
             # set the structure for that round
             self.set_structure(self.blocktype)
+
+            print(self.picorder)
 
             # if the round is a reverse round, then tell the participant to respond only to neutral faces
             if self.blocktype in ['HappyRev', 'SadRev', 'AngryRev', 'FearfulRev']:

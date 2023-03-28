@@ -273,6 +273,8 @@ class EGNGExp(experiment.Experiment):
         # user wants
         if self.trialsdone < self.person.get_trials():
 
+            print(self.trialsdone)
+
             # Get the string that contains the name of the trial picture
             self.pictype = self.person.get_trial_pic()
 
@@ -345,6 +347,8 @@ class EGNGExp(experiment.Experiment):
             # set the text for the middle label to the appropriate text depending on how many blocks the user wanted
             prompt = self.person.nextround()
             self.middle.setText(prompt[0])
+
+            print(prompt)
 
             # set start to the number from the nextround function, which will prevent the code from jumping without
             # telling the subject what the next face type is
