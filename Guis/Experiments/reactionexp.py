@@ -23,9 +23,22 @@ class SSExp(experiment.Experiment):
         middlelayout.addWidget(self.middle)
         middlelayout.addStretch(1)
 
-        # Instructions
-        self.instructions.setText('Press ' + self.person.leftkey[0] + ' for left arrows. Press ' +
-                                  self.person.rightkey[0] + ' for right arrows.')
+        # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
+        if self.person.controlscheme == 'Mouse':
+
+            # Attach middle QLabel to functions
+            # self.middle.mousePressEvent = self.clickedresponse
+            print('Not implemented yet. Contact the developer.')
+
+        # Instructions, depending on controls
+        if self.person.controlscheme != 'Mouse':
+            instructions = 'Press ' + self.person.leftkey[0] + ' for left arrows. Press ' + \
+                           self.person.rightkey[0] + ' for right arrows.'
+
+        else:
+            instructions = 'Click the mouse to respond to signals.'
+
+        self.instructions.setText(instructions)
 
         # Put everything in vertical layout
         self.instquitlayout.addStretch(1)
@@ -248,14 +261,30 @@ class EGNGExp(experiment.Experiment):
         middlelayout.addWidget(self.middle)
         middlelayout.addStretch(1)
 
-        # Instructions
-        self.instructions.setText('Press ' + self.person.leftkey[0] + ' to respond to faces.')
+        # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
+        if self.person.controlscheme == 'Mouse':
+
+            # Attach middle QLabel to functions
+            self.middle.mousePressEvent = self.clickedresponse
+
+        # Instructions, depending on controls
+        if self.person.controlscheme != 'Mouse':
+            instructions = 'Press ' + self.person.leftkey[0] + ' to respond to faces.'
+
+        else:
+            instructions = 'Click the mouse to respond to faces.'
+
+        self.instructions.setText(instructions)
 
         # Put everything in vertical layout
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(middlelayout)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitbutton)
+
+        # make a timer for blanking out the face
+        self.blanktimer = QTimer()
+        self.blanktimer.timeout.connect(self.iti)
 
     def generatenext(self):
         """
@@ -325,10 +354,12 @@ class EGNGExp(experiment.Experiment):
             # get the onset time for the trial, which will also be used to compute reaction time
             self.starttime = time.time() - self.overallstart
 
-            # Start the timers for until timeout and the time until the next trial begins
-            self.timer.start(500)
+            # Start the timers for until timeout, blanking screen, and the time until the next trial begins
+            self.timer.start(1500)
 
-            randomiti = random.randint(1500, 4000)
+            self.blanktimer.start(500)
+
+            randomiti = random.randint(1600, 4000)
             self.ititimer.start(randomiti)
 
             # Set the variable that allows the user to respond
@@ -381,8 +412,34 @@ class EGNGExp(experiment.Experiment):
         # send the trial info to the participant class
         self.person.updateoutput(self.trialsdone, self.picstring, self.starttime, 9999)
 
-        # set the screen to the iti window
-        self.iti()
+    def clickedresponse(self, event):
+        """
+        Function that records participant choice and sends info to the participant class
+        :param event: this is something for the clicking
+        """
+
+        # only allow the following if responses are enabled
+        if self.responseenabled == 1:
+
+            # put a border around the middle to indicate a user input was received
+            self.middle.setStyleSheet('border: 3px solid blue;')
+
+            # no longer allow the participant to respond
+            self.responseenabled = 0
+
+            # stop the timers and indicate that the participant completed the trial
+            self.timer.stop()
+            self.trialsdone += 1
+
+            # use time.time and the start time variable to compute rt
+            endtime = time.time() - self.overallstart
+            rt = endtime - self.starttime
+
+            # send the trial info to the participant class so it can be added to the dataframe
+            self.person.updateoutput(self.trialsdone, self.picstring, self.starttime, rt, 1)
+
+            # set the window to the iti screen
+            self.iti()
 
     def keyaction(self, key):
         """
@@ -481,8 +538,19 @@ class GNGExp(experiment.Experiment):
         middlelayout.addWidget(self.middle)
         middlelayout.addStretch(1)
 
-        # Instructions
-        self.instructions.setText('Press ' + self.person.leftkey[0] + ' to respond to signals.')
+        # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
+        if self.person.controlscheme == 'Mouse':
+            # Attach middle QLabel to functions
+            self.middle.mousePressEvent = self.clickedresponse
+
+        # Instructions, depending on controls
+        if self.person.controlscheme != 'Mouse':
+            instructions = 'Press ' + self.person.leftkey[0] + ' to respond to signals.'
+
+        else:
+            instructions = 'Click the mouse to respond to signals.'
+
+        self.instructions.setText(instructions)
 
         # Put everything in vertical layout
         self.instquitlayout.addStretch(1)
@@ -571,6 +639,35 @@ class GNGExp(experiment.Experiment):
 
         # set the screen to the iti window
         self.iti()
+
+    def clickedresponse(self, event):
+        """
+        Function that records participant choice and sends info to the participant class
+        :param event: this is something for the clicking
+        """
+
+        # only allow the following if responses are enabled
+        if self.responseenabled == 1:
+
+            # put a border around the middle to indicate a user input was received
+            self.middle.setStyleSheet('border: 3px solid blue;')
+
+            # no longer allow the participant to respond
+            self.responseenabled = 0
+
+            # stop the timers and indicate that the participant completed the trial
+            self.timer.stop()
+            self.trialsdone += 1
+
+            # use time.time and the start time variable to compute rt
+            endtime = time.time() - self.overallstart
+            rt = endtime - self.starttime
+
+            # send the trial info to the participant class so it can be added to the dataframe
+            self.person.updateoutput(self.trialsdone, self.signal, self.starttime, rt, 1)
+
+            # set the window to the iti screen
+            self.iti()
 
     def keyaction(self, key):
         """

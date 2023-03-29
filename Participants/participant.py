@@ -7,16 +7,23 @@ import xlsxwriter
 
 
 class Participant(object):
-    def __init__(self, expid, trials, session, outdir, task, buttonbox='No', eyetrack='No', fmri='No'):
+    def __init__(self, expid, trials, session, outdir, task, controls='Default', eyetrack='No', fmri='No'):
 
-        # set up keys depending on buttonbox option
-        if buttonbox == 'Yes':
+        # extract the control scheme
+        self.controlscheme = controls
+
+        # set up keys depending on controls option
+        if controls == 'Default (C & M)':
             self.leftkey = ['1']
             self.rightkey = ['2']
 
-        else:
+        elif controls == 'Buttonbox (1 & 2)':
             self.leftkey = ['C', 'c']
             self.rightkey = ['M', 'm']
+
+        else:
+            self.leftkey = ['']
+            self.rightkey = ['']
 
         # Set up class variables
         self.eyetracking = eyetrack

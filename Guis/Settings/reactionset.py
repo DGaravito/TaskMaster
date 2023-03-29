@@ -23,7 +23,6 @@ class SSSettings(settings.Settings):
         self.layout.addRow(QLabel('Number of trials:'), self.trialsin)
         self.layout.addRow(QLabel('Maximum delay for signal (in milliseconds; max is 2000):'), self.maxrtin)
         self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
-        self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
@@ -42,7 +41,7 @@ class SSSettings(settings.Settings):
                                          'Stop-Signal Task',
                                          self.maxrtin.text(),
                                          self.blocksin.text(),
-                                         self.buttonboxstate,
+                                         self.controls.currentText(),
                                          self.eyetracking)
 
         self.exp = reactionexp.SSExp(person)
@@ -64,7 +63,8 @@ class EGNGSettings(settings.Settings):
         facelayout.addWidget(self.feartoggle, 1, 1)
 
         # Make form layout for all the settings
-        self.layout.addRow(QLabel('Number of trials per block (must be divisible by 4):'), self.trialsin)
+        self.layout.addRow(QLabel('Number of trials per sub-block (must be divisible by 4):'), self.trialsin)
+        self.layout.addRow(QLabel('For above, put 48 to get 48 trials of Happy-Neutral, 48 of Neutral-Happy, etc.'))
         self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         self.layout.addRow(QLabel('Which faces would you like to include?'), facelayout)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
@@ -135,7 +135,7 @@ class EGNGSettings(settings.Settings):
                                                                len(fearstr),
                                                                len(neustr),
                                                                self.picd,
-                                                               self.buttonboxstate,
+                                                               self.controls.currentText(),
                                                                self.eyetracking)
 
                             self.exp = reactionexp.EGNGExp(person)
@@ -187,7 +187,7 @@ class GNGSettings(settings.Settings):
                                           self.wd,
                                           'Go/No-Go',
                                           self.blocksin.text(),
-                                          self.buttonboxstate,
+                                          self.controls.currentText(),
                                           self.eyetracking)
 
         self.exp = reactionexp.GNGExp(person)

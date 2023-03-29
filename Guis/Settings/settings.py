@@ -292,7 +292,7 @@ class Settings(QWidget):
         self.sessionin.setText('Pretest')
         self.layout.addRow(QLabel('Session name/number (enter \"Practice\" to not have output):'), self.sessionin)
 
-        # Dropdown box for gains, losses, or both
+        # Dropdown box for control options
         self.controls = QComboBox()
         self.controls.addItems(['Default (C & M)', 'Buttonbox (1 & 2)', 'Mouse'])
         self.layout.addRow(QLabel('What controls do you want to use?'), self.controls)

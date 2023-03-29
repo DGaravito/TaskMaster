@@ -13,9 +13,21 @@ class PBTExp(experiment.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
-        # Instructions
-        self.instructions.setText('Press ' + self.person.leftkey[0] + ' for crosses. Press ' +
-                                  self.person.rightkey[0] + ' for squares.')
+        # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
+        if self.person.controlscheme == 'Mouse':
+            # Attach middle QLabel to functions
+            # self.middle.mousePressEvent = self.clickedresponse
+            print('Not implemented yet. Contact the developer.')
+
+        # Instructions, depending on controls
+        if self.person.controlscheme != 'Mouse':
+            instructions = 'Press ' + self.person.leftkey[0] + ' for crosses. Press ' + self.person.rightkey[0] +\
+                           ' for squares.'
+
+        else:
+            instructions = 'Click the mouse to pick crosses or squares.'
+
+        self.instructions.setText(instructions)
 
         # Make middle for pictures and text
         middlelayout = QHBoxLayout()

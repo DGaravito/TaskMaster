@@ -6,8 +6,8 @@ from Participants import participant
 
 class SSParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, session, outdir, task, maxrt, blocks, buttonbox, eyetracking):
-        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking)
+    def __init__(self, expid, trials, session, outdir, task, maxrt, blocks, controls, eyetracking):
+        super().__init__(expid, trials, session, outdir, task, controls, eyetracking)
 
         # set the defaults based on user input
         self.blocks = int(blocks)
@@ -273,9 +273,8 @@ class SSParticipant(participant.Participant):
 class EGNGParticipant(participant.Participant):
 
     def __init__(self, expid, trials, session, outdir, task, blocks, happy, happylen, sad, sadlen, angry, angrylen,
-                 fear, fearlen, neulen, picd, buttonbox,
-                 eyetracking):
-        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking)
+                 fear, fearlen, neulen, picd, controls, eyetracking):
+        super().__init__(expid, trials, session, outdir, task, controls, eyetracking)
 
         # make length variables for the picture lists
         self.happylength = happylen
@@ -632,7 +631,13 @@ class EGNGParticipant(participant.Participant):
 
             case 3:
 
-                inst = 'Press \"' + self.leftkey[0] + '\" when you see that\ntype of face.'
+                if self.controlscheme != 'Mouse':
+
+                    inst = 'Press \"' + self.leftkey[0] + '\" when you see that\ntype of face.'
+
+                else:
+
+                    inst = 'Click the mouse when you see that type of face.'
 
             case 4:
 
@@ -651,8 +656,8 @@ class EGNGParticipant(participant.Participant):
 
 class GNGParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, session, outdir, task, blocks, buttonbox, eyetracking):
-        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking)
+    def __init__(self, expid, trials, session, outdir, task, blocks, controls, eyetracking):
+        super().__init__(expid, trials, session, outdir, task, controls, eyetracking)
 
         # set how many blocks are needed and set the blocks done to 0
         self.blocks = int(blocks)
@@ -869,7 +874,13 @@ class GNGParticipant(participant.Participant):
 
             case 3:
 
-                inst = '\"' + self.leftkey[0] + '\" when you see that\ntype of letter.'
+                if self.controlscheme != 'Mouse':
+
+                    inst = 'Press \"' + self.leftkey[0] + '\" when you see that\ntype of face.'
+
+                else:
+
+                    inst = 'Click the mouse when you see that type of face.'
 
             case 4:
 

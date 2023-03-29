@@ -14,7 +14,6 @@ class PBTSettings(settings.Settings):
         # Make form layout for all the settingsguis
         self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         self.layout.addRow(QLabel('Number of trials per block (make sure it\'s divisible by 4):'), self.trialsin)
-        self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
@@ -35,7 +34,7 @@ class PBTSettings(settings.Settings):
                                          self.wd,
                                          'Perceptual Bias Task',
                                          self.blocksin.text(),
-                                         self.buttonboxstate,
+                                         self.controls.currentText(),
                                          self.eyetracking)
 
             self.exp = pbtexp.PBTExp(person)
