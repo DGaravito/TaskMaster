@@ -74,7 +74,6 @@ class EGNGSettings(settings.Settings):
         self.layout.addRow(QLabel('Fearful_M_NW_12.png - This is a picture of a non-white male making a fearful face.'))
         self.layout.addRow(QLabel('Angry_F_W_21.png - This is a picture of a white female making an angry face.'))
         self.layout.addRow(QLabel('NFNeutral_7.png - This is a picture of a neutral non-face.'))
-        self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
         self.layout.addRow(self.quitbutton, self.submit)

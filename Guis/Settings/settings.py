@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QWidget, QApplication, QLabel, QPushButton, QSpinBox, QLineEdit, QVBoxLayout, QDialog, \
-    QCheckBox, QFormLayout, QFileDialog
+    QCheckBox, QFormLayout, QFileDialog, QComboBox
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 
@@ -267,11 +267,6 @@ class Settings(QWidget):
         # Default picture directory
         self.picd = ''
 
-        # picture directory input
-        self.picdset = QPushButton('Select Picture Directory')
-        self.picdset.clicked.connect(self.picdirselect)
-        self.picdlabel = QLabel(self.picd)
-
         # Make overarching layout
         self.over_layout = QVBoxLayout()
 
@@ -286,6 +281,7 @@ class Settings(QWidget):
         # Make form layout for all the settingsguis
         self.layout = QFormLayout()
 
+        # General settings
         # ID
         self.idform = QLineEdit()
         self.idform.setText('9999')
@@ -296,6 +292,11 @@ class Settings(QWidget):
         self.sessionin.setText('Pretest')
         self.layout.addRow(QLabel('Session name/number (enter \"Practice\" to not have output):'), self.sessionin)
 
+        # Dropdown box for gains, losses, or both
+        self.controls = QComboBox()
+        self.controls.addItems(['Default (C & M)', 'Buttonbox (1 & 2)', 'Mouse'])
+        self.layout.addRow(QLabel('What controls do you want to use?'), self.controls)
+
         # Trials input
         self.trialsin = QSpinBox()
         self.trialsin.setValue(5)
@@ -305,43 +306,6 @@ class Settings(QWidget):
         self.blocksin = QSpinBox()
         self.blocksin.setValue(1)
         self.blocksin.setMinimum(1)
-
-        # Starting money input
-        self.smoneyin = QSpinBox()
-        self.smoneyin.setValue(25)
-        self.smoneyin.setRange(0, 10000)
-
-        # ADOPy checkbox
-        # self.adopytoggle = QCheckBox()
-        # self.adopytoggle.stateChanged.connect(self.clickbox)
-
-        # Button checkbox
-        self.buttontoggle = QCheckBox()
-        self.buttontoggle.stateChanged.connect(self.clickbox)
-
-        # Eyetracking checkbox
-        # self.eyetrackingtoggle = QCheckBox()
-        # self.eyetrackingtoggle.stateChanged.connect(self.clickbox)
-
-        # fMRI checkbox
-        self.fmritoggle = QCheckBox()
-        self.fmritoggle.stateChanged.connect(self.clickbox)
-
-        # FTT checkbox for framing task
-        self.ftttoggle = QCheckBox()
-        self.ftttoggle.stateChanged.connect(self.clickbox)
-
-        # ST Trials checkbox for paired recall task
-        self.stttoggle = QCheckBox()
-        self.stttoggle.stateChanged.connect(self.clickbox)
-
-        # checkbox for getting a random outcome
-        self.outcometoggle = QCheckBox()
-        self.outcometoggle.stateChanged.connect(self.clickbox)
-
-        # checkbox for getting a random outcome
-        self.feedtoggle = QCheckBox()
-        self.feedtoggle.stateChanged.connect(self.clickbox)
 
         # WD input
         self.wdset = QPushButton('Select Directory')
@@ -357,7 +321,46 @@ class Settings(QWidget):
         self.quitbutton.clicked.connect(QApplication.instance().quit)
         self.quitbutton.resize(self.quitbutton.sizeHint())
 
-        # Checkboxes for EGNG/Dwell
+        # fMRI checkbox
+        self.fmritoggle = QCheckBox()
+        self.fmritoggle.stateChanged.connect(self.clickbox)
+
+        # Eyetracking checkbox
+        # self.eyetrackingtoggle = QCheckBox()
+        # self.eyetrackingtoggle.stateChanged.connect(self.clickbox)
+
+        # Task specific things
+        # Starting money input
+        self.smoneyin = QSpinBox()
+        self.smoneyin.setValue(25)
+        self.smoneyin.setRange(0, 10000)
+
+        # ADOPy checkbox
+        # self.adopytoggle = QCheckBox()
+        # self.adopytoggle.stateChanged.connect(self.clickbox)
+
+        # FTT checkbox for framing task
+        self.ftttoggle = QCheckBox()
+        self.ftttoggle.stateChanged.connect(self.clickbox)
+
+        # ST Trials checkbox for paired recall task
+        self.stttoggle = QCheckBox()
+        self.stttoggle.stateChanged.connect(self.clickbox)
+
+        # checkbox for getting a random outcome, specifically in decision tasks
+        self.outcometoggle = QCheckBox()
+        self.outcometoggle.stateChanged.connect(self.clickbox)
+
+        # checkbox for getting feedback, in things like nback tasks
+        self.feedtoggle = QCheckBox()
+        self.feedtoggle.stateChanged.connect(self.clickbox)
+
+        # things for EGNG/Dwell
+        # picture directory input
+        self.picdset = QPushButton('Select Picture Directory')
+        self.picdset.clicked.connect(self.picdirselect)
+        self.picdlabel = QLabel(self.picd)
+
         # Happy checkbox
         self.happytoggle = QCheckBox('Happy?')
         self.happytoggle.stateChanged.connect(self.clickbox)
@@ -406,12 +409,6 @@ class Settings(QWidget):
         function will check the status of every box and edit the respective class variable based on the state of the
         box.
         """
-
-        # button box
-        if self.buttontoggle.isChecked():
-            self.buttonboxstate = 'Yes'
-        else:
-            self.buttonboxstate = 'No'
 
         # outcome for decision tasks
         if self.outcometoggle.isChecked():
