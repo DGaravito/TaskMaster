@@ -6,8 +6,8 @@ from Participants import participant
 
 class PBTParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, session, outdir, task, rounds, controls, eyetracking):
-        super().__init__(expid, trials, session, outdir, task, controls, eyetracking)
+    def __init__(self, expid, trials, session, outdir, task, rounds, eyetracking, controls):
+        super().__init__(expid, trials, session, outdir, task, eyetracking, controls)
 
         # number of rounds equals what the user put in
         self.rounds = int(rounds)

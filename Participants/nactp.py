@@ -6,12 +6,12 @@ from Participants import participant
 
 class NACTParticipant(participant.Participant):
 
-    def __init__(self, expid, session, outdir, task, hightrials, lowtrials, money, buttonbox, eyetracking):
+    def __init__(self, expid, session, outdir, task, hightrials, lowtrials, money, eyetracking, controls):
 
         # the total number of trials is equal to the sum of the low and high trials
         trials = lowtrials + hightrials
 
-        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking)
+        super().__init__(expid, trials, session, outdir, task, eyetracking, controls)
 
         # either green or red is chosen as the high-value color
         self.highcolor = random.choice(['Green', 'Red'])

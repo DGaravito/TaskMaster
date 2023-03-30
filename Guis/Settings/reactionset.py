@@ -41,8 +41,8 @@ class SSSettings(settings.Settings):
                                          'Stop-Signal Task',
                                          self.maxrtin.text(),
                                          self.blocksin.text(),
-                                         self.controls.currentText(),
-                                         self.eyetracking)
+                                         self.eyetracking,
+                                         self.controls.currentText())
 
         self.exp = reactionexp.SSExp(person)
         self.exp.show()
@@ -135,8 +135,8 @@ class EGNGSettings(settings.Settings):
                                                                len(fearstr),
                                                                len(neustr),
                                                                self.picd,
-                                                               self.controls.currentText(),
-                                                               self.eyetracking)
+                                                               self.eyetracking,
+                                                               self.controls.currentText())
 
                             self.exp = reactionexp.EGNGExp(person)
                             self.exp.show()
@@ -187,8 +187,8 @@ class GNGSettings(settings.Settings):
                                           self.wd,
                                           'Go/No-Go',
                                           self.blocksin.text(),
-                                          self.controls.currentText(),
-                                          self.eyetracking)
+                                          self.eyetracking,
+                                          self.controls.currentText())
 
         self.exp = reactionexp.GNGExp(person)
         self.exp.show()

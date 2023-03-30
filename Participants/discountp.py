@@ -10,8 +10,8 @@ from Participants import participant
 class DdParticipant(participant.Participant):
 
     def __init__(self, expid, trials, session, outdir, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew,
-                 rounds, outcome, design, adopy, buttonbox, eyetracking, fmri):
-        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
+                 rounds, outcome, design, adopy, eyetracking, controls, fmri):
+        super().__init__(expid, trials, session, outdir, task, eyetracking, controls, fmri)
 
         # make a variable for ADOPy status
         self.adopy = adopy
@@ -580,8 +580,8 @@ class DdParticipant(participant.Participant):
 class PdParticipant(participant.Participant):
 
     def __init__(self, expid, trials, session, outdir, task, design, minimum, maximum, outcome, money, rounds,
-                 buttonbox, eyetracking, fmri):
-        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
+                 eyetracking, controls, fmri):
+        super().__init__(expid, trials, session, outdir, task, eyetracking, controls, fmri)
 
         # grab the information that the user entered on the settings page
         self.rounds = int(rounds)
@@ -890,9 +890,9 @@ class PdParticipant(participant.Participant):
 
 class CEDParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, session, outdir, task, maxrew, outcome, names, version, rounds, buttonbox,
-                 eyetracking, fmri):
-        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
+    def __init__(self, expid, trials, session, outdir, task, maxrew, outcome, names, version, rounds, eyetracking,
+                 controls, fmri):
+        super().__init__(expid, trials, session, outdir, task, eyetracking, controls, fmri)
 
         # grab information from what the user entered in the settings
         self.rounds = int(rounds)

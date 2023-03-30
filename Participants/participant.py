@@ -7,7 +7,7 @@ import xlsxwriter
 
 
 class Participant(object):
-    def __init__(self, expid, trials, session, outdir, task, controls='Default', eyetrack='No', fmri='No'):
+    def __init__(self, expid, trials, session, outdir, task, eyetrack='No', controls='Default', fmri='No'):
 
         # extract the control scheme
         self.controlscheme = controls
@@ -133,6 +133,9 @@ class Participant(object):
 
                 case 'Go/No-Go':
                     taskstr = 'GNG'
+
+                case 'Stroop':
+                    taskstr = 'Stroop'
 
                 case 'Dwell':
                     taskstr = 'Dwell'

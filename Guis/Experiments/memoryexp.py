@@ -154,9 +154,18 @@ class NbExp(experiment.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
+        # Instructions, depending on controls
+        if self.person.controlscheme != 'Mouse':
+            instructions = 'Press ' + self.person.leftkey[0] + ' if the letter is a false alarm. Press ' +\
+                           self.person.rightkey[0] + ' if the letter is a target'
+
+        else:
+            instructions = 'Click the left mouse button on the option you prefer.'
+
+        self.instructions.setText(instructions)
+
         # Instructions
-        self.instructions.setText('Press ' + self.person.leftkey[0] + ' if the letter is a false alarm. Press ' +
-                                  self.person.rightkey[0] + ' if the letter is a target')
+        self.instructions.setText()
 
         # center middle
         self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -166,6 +175,12 @@ class NbExp(experiment.Experiment):
         self.instquitlayout.addWidget(self.middle)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitbutton)
+
+        # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
+        if self.person.controlscheme == 'Mouse':
+
+            # Attach QLabels to functions
+            print('Not implemented yet. Contact the developer.')
 
     def generatenext(self):
         """
@@ -259,9 +274,15 @@ class NbExp(experiment.Experiment):
             # generate the next trial
             self.generatenext()
 
-            # set the instructions for the task
-            self.instructions.setText('Press ' + self.person.leftkey[0] + ' if the letter is a false alarm. Press ' +
-                                      self.person.rightkey[0] + ' if the letter is a target')
+            # Instructions, depending on controls
+            if self.person.controlscheme != 'Mouse':
+                instructions = 'Press ' + self.person.leftkey[0] + ' if the letter is a false alarm. Press ' +\
+                               self.person.rightkey[0] + ' if the letter is a target'
+
+            else:
+                instructions = 'Click the left mouse button on the option you prefer.'
+
+            self.instructions.setText(instructions)
 
             # if this is the first trial of the first round, set the global start time to make the onset time make more
             # sense

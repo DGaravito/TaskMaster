@@ -36,7 +36,7 @@ class SSExp(experiment.Experiment):
                            self.person.rightkey[0] + ' for right arrows.'
 
         else:
-            instructions = 'Click the mouse to respond to signals.'
+            instructions = 'Click the left mouse button for left arrows. Click the right mouse button for right arrows'
 
         self.instructions.setText(instructions)
 

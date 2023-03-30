@@ -25,7 +25,7 @@ class PBTExp(experiment.Experiment):
                            ' for squares.'
 
         else:
-            instructions = 'Click the mouse to pick crosses or squares.'
+            instructions = 'Click the left mouse button to pick crosses. Click the right mouse button for squares.'
 
         self.instructions.setText(instructions)
 

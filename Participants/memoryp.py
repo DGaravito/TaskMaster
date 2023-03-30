@@ -249,8 +249,8 @@ class PrParticipant(participant.Participant):
 
 class NbParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, session, outdir, task, feedback, rounds, buttonbox, eyetracking):
-        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking)
+    def __init__(self, expid, trials, session, outdir, task, feedback, rounds, eyetracking, controls):
+        super().__init__(expid, trials, session, outdir, task, eyetracking, controls)
 
         # set whether the user wants participant feedback
         self.feedback = feedback

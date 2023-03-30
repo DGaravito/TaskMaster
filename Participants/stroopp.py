@@ -6,8 +6,8 @@ from Participants import participant
 
 class StroopParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, session, outdir, blocks, eyetracking):
-        super().__init__(expid, trials, session, outdir, blocks, eyetracking)
+    def __init__(self, expid, trials, session, outdir, task, blocks, eyetracking):
+        super().__init__(expid, trials, session, outdir, task, eyetracking)
 
         self.blocklist = ['Consistent', 'Inconsistent']
 

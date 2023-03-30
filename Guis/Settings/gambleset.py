@@ -48,7 +48,6 @@ class ARTTSettings(settings.Settings):
         # self.layout.addRow(QLabel('Do you want to use ADOPy?'), self.adopytoggle)
         self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         self.layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
-        self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
         self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
@@ -97,7 +96,7 @@ class ARTTSettings(settings.Settings):
                                              self.smoneyin.text(),
                                              self.blocksin.text(),
                                              self.adopystate,
-                                             self.buttonboxstate,
+                                             self.controls,
                                              self.eyetracking,
                                              self.fmri)
 
@@ -131,7 +130,6 @@ class RASettings(settings.Settings):
         self.layout.addRow(QLabel('Largest possible gain:'), self.maxin)
         self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         self.layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
-        self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
         self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
@@ -155,7 +153,7 @@ class RASettings(settings.Settings):
                                        self.outcome,
                                        self.smoneyin.text(),
                                        self.blocksin.text(),
-                                       self.buttonboxstate,
+                                       self.controls,
                                        self.eyetracking,
                                        self.fmri)
 
@@ -192,7 +190,6 @@ class FrameSettings(settings.Settings):
         self.layout.addRow(QLabel('Do you want FTT truncations (i.e., Gist, Mixed, Verbatim)?'), self.ftttoggle)
         self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         self.layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
-        self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
         self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
@@ -236,7 +233,7 @@ class FrameSettings(settings.Settings):
                                               self.outcome,
                                               self.smoneyin.text(),
                                               self.blocksin.text(),
-                                              self.buttonboxstate,
+                                              self.controls,
                                               self.eyetracking,
                                               self.fmri)
 

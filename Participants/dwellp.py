@@ -8,8 +8,8 @@ from Participants import participant
 class DwellParticipant(participant.Participant):
 
     def __init__(self, expid, trials, session, outdir, task, blocks, happy, happylen, sad, sadlen, angry, angrylen,
-                 fear, fearlen, neulen, neg, neglen, neunflen, sex, race, picd, buttonbox, eyetracking):
-        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking)
+                 fear, fearlen, neulen, neg, neglen, neunflen, sex, race, picd, eyetracking):
+        super().__init__(expid, trials, session, outdir, task, eyetracking)
 
         # copy if sex/race balancing was requested
         self.sexbalancing = sex

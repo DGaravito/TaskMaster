@@ -61,7 +61,6 @@ class NBackSettings(settings.Settings):
         self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         self.layout.addRow(QLabel('Type of n-Back:'), self.design)
         self.layout.addRow(QLabel('Do you want feedback on participant performance?'), self.feedtoggle)
-        self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
@@ -85,8 +84,8 @@ class NBackSettings(settings.Settings):
                                        self.design.currentText(),
                                        self.feedback,
                                        self.blocksin.text(),
-                                       self.buttonboxstate,
-                                       self.eyetracking)
+                                       self.eyetracking,
+                                       self.controls)
 
         self.exp = memoryexp.NbExp(person)
         self.exp.show()

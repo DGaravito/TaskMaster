@@ -11,8 +11,8 @@ from Participants import participant
 class ARTTParticipant(participant.Participant):
 
     def __init__(self, expid, trials, session, outdir, task, risklist, amblist, rewmin, rewmax, structure, outcome,
-                 money, rounds, adopy, buttonbox, eyetracking, fmri):
-        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
+                 money, rounds, adopy, eyetracking, controls, fmri):
+        super().__init__(expid, trials, session, outdir, task, eyetracking, controls, fmri)
 
         # set variables from the user input
         self.rounds = int(rounds)
@@ -555,9 +555,9 @@ class ARTTParticipant(participant.Participant):
 
 class RAParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, session, outdir, task, minimum, maximum, outcome, money, rounds, buttonbox,
-                 eyetracking, fmri):
-        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
+    def __init__(self, expid, trials, session, outdir, task, minimum, maximum, outcome, money, rounds, eyetracking,
+                 controls, fmri):
+        super().__init__(expid, trials, session, outdir, task, eyetracking, controls, fmri)
 
         # set variables from the user input
         self.rounds = int(rounds)
@@ -741,8 +741,8 @@ class RAParticipant(participant.Participant):
 class FrameParticipant(participant.Participant):
 
     def __init__(self, expid, trials, session, outdir, task, minimum, maximum, design, ftt, outcome, money, rounds,
-                 buttonbox, eyetracking, fmri):
-        super().__init__(expid, trials, session, outdir, task, buttonbox, eyetracking, fmri)
+                 eyetracking, controls, fmri):
+        super().__init__(expid, trials, session, outdir, task, eyetracking, controls, fmri)
 
         # set variables from the user input
         self.rounds = int(rounds)

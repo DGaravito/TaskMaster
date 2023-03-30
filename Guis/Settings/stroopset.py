@@ -29,6 +29,7 @@ class StroopSettings(settings.Settings):
                                            self.trialsin.text(),
                                            self.sessionin.text(),
                                            self.wd,
+                                           'Stroop',
                                            self.blocksin.text(),
                                            self.eyetracking)
 

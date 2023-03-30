@@ -241,7 +241,6 @@ class Settings(QWidget):
 
         # Defaults for various tasks and options
         self.task = task
-        self.buttonboxstate = 'No'
         self.outcome = 'No'
         self.eyetracking = 'No'
         self.fmri = 'No'

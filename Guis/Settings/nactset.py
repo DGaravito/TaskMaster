@@ -31,7 +31,6 @@ class NACTSettings(settings.Settings):
         self.layout.addRow(QLabel('Number of low value ($0.03) trials:'), self.lowtrialsin)
         self.layout.addRow(QLabel('Participant starting money:'), self.smoneyin)
         self.layout.addRow(QLabel('Minimum money a participants could have at the end:'), self.minmoneyin)
-        self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
@@ -56,8 +55,8 @@ class NACTSettings(settings.Settings):
                                            hightrials,
                                            lowtrials,
                                            self.smoneyin.text(),
-                                           self.buttonboxstate,
-                                           self.eyetracking)
+                                           self.eyetracking,
+                                           self.controls)
 
             self.exp = nactexp.NACTExp(person)
             self.exp.show()

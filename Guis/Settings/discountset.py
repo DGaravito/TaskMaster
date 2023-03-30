@@ -53,7 +53,6 @@ class DdSettings(settings.Settings):
         self.layout.addRow(QLabel('What type of questions do you want?'), self.design)
         self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         # self.layout.addRow(QLabel('Do you want to use ADOPy?'), self.adopytoggle)
-        self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
         self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
@@ -80,8 +79,8 @@ class DdSettings(settings.Settings):
                                          self.outcome,
                                          self.design.currentText(),
                                          self.adopystate,
-                                         self.buttonboxstate,
                                          self.eyetracking,
+                                         self.controls,
                                          self.fmri)
 
         self.exp = discountexp.DDiscountExp(person)
@@ -119,7 +118,6 @@ class PdSettings(settings.Settings):
         self.layout.addRow(QLabel('What type of questions do you want?'), self.design)
         self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         self.layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
-        self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
         self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
@@ -153,8 +151,8 @@ class PdSettings(settings.Settings):
                                              self.outcome,
                                              self.smoneyin.text(),
                                              self.blocksin.text(),
-                                             self.buttonboxstate,
                                              self.eyetracking,
+                                             self.controls,
                                              self.fmri)
 
             self.exp = discountexp.PDiscountExp(person)
@@ -189,7 +187,6 @@ class CEDTSettings(settings.Settings):
         self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         self.layout.addRow(QLabel('What names would you like to use for the stimuli?'), self.names)
         self.layout.addRow(QLabel('Would you like the original or alternate version?'), self.version)
-        self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.buttontoggle)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
         self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
@@ -218,8 +215,8 @@ class CEDTSettings(settings.Settings):
                                               self.names.currentText(),
                                               self.version.currentText(),
                                               self.blocksin.text(),
-                                              self.buttonboxstate,
                                               self.eyetracking,
+                                              self.controls,
                                               self.fmri)
 
             self.exp = discountexp.CEDiscountExp(person)

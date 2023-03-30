@@ -14,9 +14,15 @@ class ARTTExp(experiment.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
-        # Instructions
-        self.instructions.setText('Press ' + self.person.leftkey[0] + ' for the left option and ' +
-                                  self.person.rightkey[0] + ' for the right option')
+        # Instructions, depending on controls
+        if self.person.controlscheme != 'Mouse':
+            instructions = 'Press ' + self.person.leftkey[0] + ' for the left option and ' + self.person.rightkey[0] \
+                           + ' for the right option'
+
+        else:
+            instructions = 'Click the mouse on the option you prefer.'
+
+        self.instructions.setText(instructions)
 
         # Set up Left option
         self.left = QLabel('')
@@ -29,7 +35,6 @@ class ARTTExp(experiment.Experiment):
         self.righttoptext.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.rightpic = QLabel()
-        self.rightpic.setPixmap(QPixmap())
         self.rightpic.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.rightbottomtext = QLabel('')
@@ -57,6 +62,16 @@ class ARTTExp(experiment.Experiment):
         self.instquitlayout.addLayout(explayout)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitbutton)
+
+        # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
+        if self.person.controlscheme == 'Mouse':
+
+            # Attach QLabels to functions
+            self.left.mousePressEvent = self.clickedleftresponse
+
+            self.righttoptext.mousePressEvent = self.clickedrightresponse
+            self.rightpic.mousePressEvent = self.clickedrightresponse
+            self.rightbottomtext.mousePressEvent = self.clickedrightresponse
 
     def generatenext(self):
         """
@@ -242,6 +257,63 @@ class ARTTExp(experiment.Experiment):
         # start the timer again
         self.timer.start(5000)
 
+    def clickedleftresponse(self, event):
+        """
+        Function that records participant click on left option and sends info to the participant class
+        :param event: this is something for the clicking
+        """
+
+        # only allow the following if responses are enabled
+        if self.responseenabled == 1:
+
+            # stop the timer and prevent users from sending more inputs
+            self.timer.stop()
+            self.responseenabled = 0
+
+            # increment the trial counter
+            self.trialsdone += 1
+
+            # use time.time and the start time variable to compute rt
+            endtime = time.time() - self.overallstart
+            rt = endtime - self.starttime
+
+            # put a border around the middle to indicate a user input was received
+            self.left.setStyleSheet('border: 3px solid blue;')
+
+            # send the trial data to the participant class
+            self.person.updateoutput(self.trialsdone, self.starttime, rt, 0)
+
+            self.iti()
+
+    def clickedrightresponse(self, event):
+        """
+        Function that records participant click on right option and sends info to the participant class
+        :param event: this is something for the clicking
+        """
+
+        # only allow the following if responses are enabled
+        if self.responseenabled == 1:
+
+            # stop the timer and prevent users from sending more inputs
+            self.timer.stop()
+            self.responseenabled = 0
+
+            # increment the trial counter
+            self.trialsdone += 1
+
+            # use time.time and the start time variable to compute rt
+            endtime = time.time() - self.overallstart
+            rt = endtime - self.starttime
+
+            # put a border around the middle to indicate a user input was received
+            self.righttoptext.setStyleSheet('border: 3px solid blue;')
+            self.rightbottomtext.setStyleSheet('border: 3px solid blue;')
+
+            # send the trial data to the participant class
+            self.person.updateoutput(self.trialsdone, self.starttime, rt, 1)
+
+            self.iti()
+
     def keyaction(self, key):
         """
         Reads the keys that are pressed and does the corresponding actions
@@ -336,9 +408,15 @@ class RAExp(experiment.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
-        # Instructions
-        self.instructions.setText('Press ' + self.person.leftkey[0] + ' for the left option and ' +
-                                  self.person.rightkey[0] + ' for the right option')
+        # Instructions, depending on controls
+        if self.person.controlscheme != 'Mouse':
+            instructions = 'Press ' + self.person.leftkey[0] + ' for the left option and ' + self.person.rightkey[0] \
+                           + ' for the right option'
+
+        else:
+            instructions = 'Click the mouse on the option you prefer.'
+
+        self.instructions.setText(instructions)
 
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
@@ -375,6 +453,15 @@ class RAExp(experiment.Experiment):
         self.instquitlayout.addLayout(mainhlayout)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitbutton)
+
+        # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
+        if self.person.controlscheme == 'Mouse':
+
+            # Attach QLabels to functions
+            self.left.mousePressEvent = self.clickedleftresponse
+
+            self.rightgain.mousePressEvent = self.clickedrightresponse
+            self.rightloss.mousePressEvent = self.clickedrightresponse
 
     def generatenext(self):
         """
@@ -545,6 +632,63 @@ class RAExp(experiment.Experiment):
         # start the timer again
         self.timer.start(5000)
 
+    def clickedleftresponse(self, event):
+        """
+        Function that records participant click on left option and sends info to the participant class
+        :param event: this is something for the clicking
+        """
+
+        # only allow the following if responses are enabled
+        if self.responseenabled == 1:
+
+            # stop the timer and prevent users from sending more inputs
+            self.timer.stop()
+            self.responseenabled = 0
+
+            # increment the trial counter
+            self.trialsdone += 1
+
+            # use time.time and the start time variable to compute rt
+            endtime = time.time() - self.overallstart
+            rt = endtime - self.starttime
+
+            # put a border around the middle to indicate a user input was received
+            self.left.setStyleSheet('border: 3px solid blue;')
+
+            # send the trial data to the participant class
+            self.person.updateoutput(self.trialsdone, self.starttime, rt, 0)
+
+            self.iti()
+
+    def clickedrightresponse(self, event):
+        """
+        Function that records participant click on right option and sends info to the participant class
+        :param event: this is something for the clicking
+        """
+
+        # only allow the following if responses are enabled
+        if self.responseenabled == 1:
+
+            # stop the timer and prevent users from sending more inputs
+            self.timer.stop()
+            self.responseenabled = 0
+
+            # increment the trial counter
+            self.trialsdone += 1
+
+            # use time.time and the start time variable to compute rt
+            endtime = time.time() - self.overallstart
+            rt = endtime - self.starttime
+
+            # put a border around the middle to indicate a user input was received
+            self.rightgain.setStyleSheet('border: 3px solid blue;')
+            self.rightloss.setStyleSheet('border: 3px solid blue;')
+
+            # send the trial data to the participant class
+            self.person.updateoutput(self.trialsdone, self.starttime, rt, 1)
+
+            self.iti()
+
     def keyaction(self, key):
         """
         Reads the keys that are pressed and does the corresponding actions
@@ -626,9 +770,15 @@ class FrameExp(experiment.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
-        # Instructions
-        self.instructions.setText('Press ' + self.person.leftkey[0] + ' for the left option and ' +
-                                  self.person.rightkey[0] + ' for the right option')
+        # Instructions, depending on controls
+        if self.person.controlscheme != 'Mouse':
+            instructions = 'Press ' + self.person.leftkey[0] + ' for the left option and ' + self.person.rightkey[0] \
+                           + ' for the right option'
+
+        else:
+            instructions = 'Click the mouse on the option you prefer.'
+
+        self.instructions.setText(instructions)
 
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
@@ -665,6 +815,15 @@ class FrameExp(experiment.Experiment):
         self.instquitlayout.addLayout(mainhlayout)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitbutton)
+
+        # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
+        if self.person.controlscheme == 'Mouse':
+
+            # Attach QLabels to functions
+            self.left.mousePressEvent = self.clickedleftresponse
+
+            self.righttop.mousePressEvent = self.clickedrightresponse
+            self.rightbottom.mousePressEvent = self.clickedrightresponse
 
     def generatenext(self):
         """
@@ -827,6 +986,62 @@ class FrameExp(experiment.Experiment):
 
         # start the response timer
         self.timer.start(5000)
+    def clickedleftresponse(self, event):
+        """
+        Function that records participant click on left option and sends info to the participant class
+        :param event: this is something for the clicking
+        """
+
+        # only allow the following if responses are enabled
+        if self.responseenabled == 1:
+
+            # stop the timer and prevent users from sending more inputs
+            self.timer.stop()
+            self.responseenabled = 0
+
+            # increment the trial counter
+            self.trialsdone += 1
+
+            # use time.time and the start time variable to compute rt
+            endtime = time.time() - self.overallstart
+            rt = endtime - self.starttime
+
+            # put a border around the middle to indicate a user input was received
+            self.left.setStyleSheet('border: 3px solid blue;')
+
+            # send the trial data to the participant class
+            self.person.updateoutput(self.trialsdone, self.starttime, rt, 0)
+
+            self.iti()
+
+    def clickedrightresponse(self, event):
+        """
+        Function that records participant click on right option and sends info to the participant class
+        :param event: this is something for the clicking
+        """
+
+        # only allow the following if responses are enabled
+        if self.responseenabled == 1:
+
+            # stop the timer and prevent users from sending more inputs
+            self.timer.stop()
+            self.responseenabled = 0
+
+            # increment the trial counter
+            self.trialsdone += 1
+
+            # use time.time and the start time variable to compute rt
+            endtime = time.time() - self.overallstart
+            rt = endtime - self.starttime
+
+            # put a border around the middle to indicate a user input was received
+            self.righttop.setStyleSheet('border: 3px solid blue;')
+            self.rightbottom.setStyleSheet('border: 3px solid blue;')
+
+            # send the trial data to the participant class
+            self.person.updateoutput(self.trialsdone, self.starttime, rt, 1)
+
+            self.iti()
 
     def keyaction(self, key):
         """

@@ -6,8 +6,8 @@ from Participants import participant
 
 class SSParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, session, outdir, task, maxrt, blocks, controls, eyetracking):
-        super().__init__(expid, trials, session, outdir, task, controls, eyetracking)
+    def __init__(self, expid, trials, session, outdir, task, maxrt, blocks, eyetracking, controls):
+        super().__init__(expid, trials, session, outdir, task, eyetracking, controls)
 
         # set the defaults based on user input
         self.blocks = int(blocks)
@@ -273,8 +273,8 @@ class SSParticipant(participant.Participant):
 class EGNGParticipant(participant.Participant):
 
     def __init__(self, expid, trials, session, outdir, task, blocks, happy, happylen, sad, sadlen, angry, angrylen,
-                 fear, fearlen, neulen, picd, controls, eyetracking):
-        super().__init__(expid, trials, session, outdir, task, controls, eyetracking)
+                 fear, fearlen, neulen, picd, eyetracking, controls):
+        super().__init__(expid, trials, session, outdir, task, eyetracking, controls)
 
         # make length variables for the picture lists
         self.happylength = happylen
@@ -656,8 +656,8 @@ class EGNGParticipant(participant.Participant):
 
 class GNGParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, session, outdir, task, blocks, controls, eyetracking):
-        super().__init__(expid, trials, session, outdir, task, controls, eyetracking)
+    def __init__(self, expid, trials, session, outdir, task, blocks, eyetracking, controls):
+        super().__init__(expid, trials, session, outdir, task, eyetracking, controls)
 
         # set how many blocks are needed and set the blocks done to 0
         self.blocks = int(blocks)

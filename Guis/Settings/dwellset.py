@@ -146,7 +146,6 @@ class DwellSettings(settings.Settings):
                                                              self.sexbalancing,
                                                              self.racebalancing,
                                                              self.picd,
-                                                             self.buttonboxstate,
                                                              self.eyetracking)
 
                             self.exp = dwellexp.DwellExp(person)

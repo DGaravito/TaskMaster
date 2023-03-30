@@ -34,8 +34,8 @@ class PBTSettings(settings.Settings):
                                          self.wd,
                                          'Perceptual Bias Task',
                                          self.blocksin.text(),
-                                         self.controls.currentText(),
-                                         self.eyetracking)
+                                         self.eyetracking,
+                                         self.controls.currentText())
 
             self.exp = pbtexp.PBTExp(person)
             self.exp.show()

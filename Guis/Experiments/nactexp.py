@@ -18,6 +18,22 @@ class NACTExp(experiment.Experiment):
         self.instructions.setText('Press ' + self.person.leftkey[0] + ' for |. Press ' + self.person.rightkey[0] +
                                   ' for -.')
 
+        # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
+        if self.person.controlscheme == 'Mouse':
+
+            # Attach middle QLabel to functions
+            # self.middle.mousePressEvent = self.clickedresponse
+            print('Not implemented yet. Contact the developer.')
+
+        # Instructions, depending on controls
+        if self.person.controlscheme != 'Mouse':
+            instructions = 'Press ' + self.person.leftkey[0] + ' for |. Press ' + self.person.rightkey[0] + ' for -.'
+
+        else:
+            instructions = 'Click the left mouse button for |. Click the right mouse button for -.'
+
+        self.instructions.setText(instructions)
+
         # Make middle layout for pictures and text
         middlelayout = QHBoxLayout()
 
