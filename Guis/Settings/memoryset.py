@@ -85,7 +85,7 @@ class NBackSettings(settings.Settings):
                                        self.feedback,
                                        self.blocksin.text(),
                                        self.eyetracking,
-                                       self.controls)
+                                       self.controls.currentText())
 
         self.exp = memoryexp.NbExp(person)
         self.exp.show()

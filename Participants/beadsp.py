@@ -6,8 +6,8 @@ from Participants import participant
 
 class BeadsParticipant(participant.Participant):
 
-    def __init__(self, expid, rounds, session, outdir, task, eyetracking):
-        super().__init__(expid, rounds, session, outdir, task, eyetracking)
+    def __init__(self, expid, rounds, session, outdir, task, eyetracking, controls):
+        super().__init__(expid, rounds, session, outdir, task, eyetracking, controls)
 
         # set up the jars as lists of beads, one with 80 red and one with 90 blue
         self.blue_jar = ['BeadsTask_BlueBead',

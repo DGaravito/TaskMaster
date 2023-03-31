@@ -142,8 +142,15 @@ class BeadsExp(experiment.Experiment):
         self.invbutton.setFixedHeight(40)
         self.invbutton.setFont(QFont('Helvetica', 25))
 
-        # Instructions
-        self.instructions.setText('Press \"M\" to draw a bead and \"C\" to choose a jar')
+        # Instructions, depending on controls
+        if self.person.controlscheme != 'Mouse':
+            instructions = 'Press ' + self.person.leftkey[0] + ' to draw a bead and ' + self.person.rightkey[0] \
+                           + ' to choose a jar'
+
+        else:
+            instructions = 'Click the mouse to draw a bead or choose a jar.'
+
+        self.instructions.setText(instructions)
 
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
@@ -280,8 +287,8 @@ class BeadsExp(experiment.Experiment):
         self.middle.setText('')
 
         # put the jars into pixmaps
-        leftpixmap = QPixmap('../../Assets/BeadsTask_RedJar.png')
-        rightpixmap = QPixmap('../../Assets/BeadsTask_BlueJar.png')
+        leftpixmap = QPixmap('Assets/BeadsTask_RedJar.png')
+        rightpixmap = QPixmap('Assets/BeadsTask_BlueJar.png')
 
         # set the left and right to the pixmaps
         self.left.setPixmap(leftpixmap.scaledToWidth(300, Qt.TransformationMode.SmoothTransformation))

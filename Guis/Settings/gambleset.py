@@ -96,7 +96,7 @@ class ARTTSettings(settings.Settings):
                                              self.smoneyin.text(),
                                              self.blocksin.text(),
                                              self.adopystate,
-                                             self.controls,
+                                             self.controls.currentText(),
                                              self.eyetracking,
                                              self.fmri)
 
@@ -153,7 +153,7 @@ class RASettings(settings.Settings):
                                        self.outcome,
                                        self.smoneyin.text(),
                                        self.blocksin.text(),
-                                       self.controls,
+                                       self.controls.currentText(),
                                        self.eyetracking,
                                        self.fmri)
 
@@ -233,7 +233,7 @@ class FrameSettings(settings.Settings):
                                               self.outcome,
                                               self.smoneyin.text(),
                                               self.blocksin.text(),
-                                              self.controls,
+                                              self.controls.currentText(),
                                               self.eyetracking,
                                               self.fmri)
 

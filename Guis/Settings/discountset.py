@@ -80,7 +80,7 @@ class DdSettings(settings.Settings):
                                          self.design.currentText(),
                                          self.adopystate,
                                          self.eyetracking,
-                                         self.controls,
+                                         self.controls.currentText(),
                                          self.fmri)
 
         self.exp = discountexp.DDiscountExp(person)
@@ -152,7 +152,7 @@ class PdSettings(settings.Settings):
                                              self.smoneyin.text(),
                                              self.blocksin.text(),
                                              self.eyetracking,
-                                             self.controls,
+                                             self.controls.currentText(),
                                              self.fmri)
 
             self.exp = discountexp.PDiscountExp(person)
@@ -216,7 +216,7 @@ class CEDTSettings(settings.Settings):
                                               self.version.currentText(),
                                               self.blocksin.text(),
                                               self.eyetracking,
-                                              self.controls,
+                                              self.controls.currentText(),
                                               self.fmri)
 
             self.exp = discountexp.CEDiscountExp(person)

@@ -29,7 +29,8 @@ class BeadsSettings(settings.Settings):
                                          self.sessionin.text(),
                                          self.wd,
                                          'Beads Task',
-                                         self.eyetracking)
+                                         self.eyetracking,
+                                         self.controls)
 
         self.exp = beadsexp.BeadsExp(person)
         self.exp.show()

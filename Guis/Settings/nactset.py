@@ -56,7 +56,7 @@ class NACTSettings(settings.Settings):
                                            lowtrials,
                                            self.smoneyin.text(),
                                            self.eyetracking,
-                                           self.controls)
+                                           self.controls.currentText())
 
             self.exp = nactexp.NACTExp(person)
             self.exp.show()
