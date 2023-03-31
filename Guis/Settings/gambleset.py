@@ -96,8 +96,8 @@ class ARTTSettings(settings.Settings):
                                              self.smoneyin.text(),
                                              self.blocksin.text(),
                                              self.adopystate,
-                                             self.controls.currentText(),
                                              self.eyetracking,
+                                             self.controls.currentText(),
                                              self.fmri)
 
             self.exp = gambleexp.ARTTExp(person)
@@ -153,8 +153,8 @@ class RASettings(settings.Settings):
                                        self.outcome,
                                        self.smoneyin.text(),
                                        self.blocksin.text(),
-                                       self.controls.currentText(),
                                        self.eyetracking,
+                                       self.controls.currentText(),
                                        self.fmri)
 
         self.exp = gambleexp.RAExp(person)
@@ -233,8 +233,8 @@ class FrameSettings(settings.Settings):
                                               self.outcome,
                                               self.smoneyin.text(),
                                               self.blocksin.text(),
-                                              self.controls.currentText(),
                                               self.eyetracking,
+                                              self.controls.currentText(),
                                               self.fmri)
 
             self.exp = gambleexp.FrameExp(person)
