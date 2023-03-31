@@ -51,11 +51,13 @@ class ARTTExp(experiment.Experiment):
         # Put Left and Right options in horizontal layout
         explayout = QHBoxLayout()
 
+        explayout.addStretch(1)
         explayout.addWidget(self.left)
         explayout.addStretch(1)
         explayout.addWidget(self.middle)
         explayout.addStretch(1)
         explayout.addLayout(rightlayout)
+        explayout.addStretch(1)
 
         # Put everything in vertical layout
         self.instquitlayout.addStretch(1)
