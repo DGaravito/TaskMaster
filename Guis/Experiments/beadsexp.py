@@ -144,8 +144,8 @@ class BeadsExp(experiment.Experiment):
 
         # Instructions, depending on controls
         if self.person.controlscheme != 'Mouse':
-            instructions = 'Press ' + self.person.leftkey[0] + ' to draw a bead and ' + self.person.rightkey[0] \
-                           + ' to choose a jar'
+            instructions = 'Press ' + self.person.leftkey[0] + ' to choose a jar and ' + self.person.rightkey[0] \
+                           + ' to draw a bead'
 
         else:
             instructions = 'Click the mouse to draw a bead or choose a jar.'
