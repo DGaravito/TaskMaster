@@ -398,13 +398,13 @@ class ARTTParticipant(participant.Participant):
                 if self.structure == 'Gains only':
 
                     # then add the fixed gain to the list
-                    self.outcomelist.append('$' + str('{:.2f}'.format(fAmount)))
+                    outcomestring = '(Sure Thing) $' + str('{:.2f}'.format(fAmount))
 
                 # if they only have losses...
                 elif self.structure == 'Losses only':
 
                     # then add the fixed loss to the list
-                    self.outcomelist.append('-$' + str('{:.2f}'.format(fAmount)))
+                    outcomestring = '(Sure Thing) -$' + str('{:.2f}'.format(fAmount))
 
                 # if they have gains and losses...
                 else:
@@ -412,11 +412,11 @@ class ARTTParticipant(participant.Participant):
                     # Then look at the state to see if it was a gain or loss
                     if self.state == "Gain":
 
-                        self.outcomelist.append('$' + str('{:.2f}'.format(fAmount)))
+                        outcomestring = '(Sure Thing) $' + str('{:.2f}'.format(fAmount))
 
                     else:
 
-                        self.outcomelist.append('-$' + str('{:.2f}'.format(fAmount)))
+                        outcomestring = '(Sure Thing) -$' + str('{:.2f}'.format(fAmount))
 
             # if they chose the gamble...
             else:
@@ -428,14 +428,16 @@ class ARTTParticipant(participant.Participant):
                 if self.structure == 'Gains only':
 
                     # if they win, add the reward
-                    if actualprob > pRisky:
+                    if actualprob >= pRisky:
 
-                        self.outcomelist.append('$' + str('{:.2f}'.format(vAmount)))
+                        outcomestring = '(Gain Gamble Won, ' + str(round(100 * actualprob)) + ' vs your ' + \
+                                            str(round(100 * pRisky)) + ') $' + str('{:.2f}'.format(vAmount))
 
                     # if not, add 0
                     else:
 
-                        self.outcomelist.append('$0.00')
+                        outcomestring = '(Gain Gamble Lost, ' + str(round(100 * actualprob)) + ' vs your ' + \
+                                        str(round(100 * pRisky)) + ') $0.00'
 
                 # if they only have losses...
                 elif self.structure == 'Losses only':
@@ -443,12 +445,14 @@ class ARTTParticipant(participant.Participant):
                     # if they lose, add the loss
                     if actualprob < pRisky:
 
-                        self.outcomelist.append('-$' + str('{:.2f}'.format(vAmount)))
+                        outcomestring = '(Loss Gamble Lost, ' + str(round(100 * actualprob)) + ' vs your ' + \
+                                        str(round(100 * pRisky)) + ') -$' + str('{:.2f}'.format(vAmount))
 
                     # if not, add 0
                     else:
 
-                        self.outcomelist.append('$0.00')
+                        outcomestring = '(Loss Gamble Won, ' + str(round(100 * actualprob)) + ' vs your ' + \
+                                            str(round(100 * pRisky)) + ') $0.00'
 
                 # if they have gains and losses...
                 else:
@@ -457,26 +461,37 @@ class ARTTParticipant(participant.Participant):
                     if self.state == 'Gain':
 
                         # if they win, add the reward
-                        if actualprob > pRisky:
+                        if actualprob >= pRisky:
 
-                            self.outcomelist.append('$' + str('{:.2f}'.format(vAmount)))
+                            outcomestring = '(Gain Gamble Won, ' + str(round(100 * actualprob)) + ' vs your ' + \
+                                            str(round(100 * pRisky)) + ') $' + str('{:.2f}'.format(vAmount))
 
                         # if not, add 0
                         else:
 
-                            self.outcomelist.append('$0.00')
+                            outcomestring = '(Gain Gamble Lost, ' + str(round(100 * actualprob)) + ' vs your ' + \
+                                            str(round(100 * pRisky)) + ') $0.00'
 
                     else:
 
                         # if they lose, add the loss
                         if actualprob < pRisky:
 
-                            self.outcomelist.append('-$' + str('{:.2f}'.format(vAmount)))
+                            outcomestring = '(Loss Gamble Lost, ' + str(round(100 * actualprob)) + ' vs your ' + \
+                                            str(round(100 * pRisky)) + ') -$' + str('{:.2f}'.format(vAmount))
 
                         # if not, add 0
                         else:
 
-                            self.outcomelist.append('$0.00')
+                            outcomestring = '(Loss Gamble Won, ' + str(round(100 * actualprob)) + ' vs your ' + \
+                                            str(round(100 * pRisky)) + ') $0.00'
+
+            if (pAmbiguous > 0) & (response == 1):
+
+                bagstring = 'Ambiguous bag -> 50/50 bag: '
+                outcomestring = bagstring + outcomestring
+
+            self.outcomelist.append(outcomestring)
 
     def get_instructions(self, instint):
         """
@@ -690,11 +705,11 @@ class RAParticipant(participant.Participant):
 
                 # if they win, add the reward
                 if coin == 1:
-                    self.outcomelist.append('$' + str('{:.2f}'.format(float(self.gainint))))
+                    self.outcomelist.append('(Win Coin Flip) $' + str('{:.2f}'.format(float(self.gainint))))
 
                 # if they don't, add the loss
                 else:
-                    self.outcomelist.append('-$' + str('{:.2f}'.format(self.lossfloat)))
+                    self.outcomelist.append('(Lost Coin Flip) -$' + str('{:.2f}'.format(self.lossfloat)))
 
     def get_instructions(self, instint):
         """
@@ -1121,23 +1136,23 @@ class FrameParticipant(participant.Participant):
                 if self.design == 'Gains only':
 
                     # then add the fixed gain to the list
-                    self.outcomelist.append('$' + str('{:.2f}'.format(float(self.trialdesign[0]))))
+                    outcomestring = '(Sure Thing) $' + str('{:.2f}'.format(float(self.trialdesign[0])))
 
                 # if they only have losses...
                 elif self.design == 'Losses only':
 
                     # then add the fixed loss to the list
-                    self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.trialdesign[0]))))
+                    outcomestring = '(Sure Thing) -$' + str('{:.2f}'.format(float(self.trialdesign[0])))
 
                 # if they have gains and losses...
                 else:
 
                     # Then look at the state to see if it was a gain or loss
                     if 'Gain' in self.state:
-                        self.outcomelist.append('$' + str('{:.2f}'.format(float(self.trialdesign[0]))))
+                        outcomestring = '(Sure Thing) $' + str('{:.2f}'.format(float(self.trialdesign[0])))
 
                     else:
-                        self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.trialdesign[0]))))
+                        outcomestring = '(Sure Thing) -$' + str('{:.2f}'.format(float(self.trialdesign[0])))
 
             # if they chose the gamble...
             else:
@@ -1149,23 +1164,29 @@ class FrameParticipant(participant.Participant):
                 if self.design == 'Gains only':
 
                     # if they win, add the reward
-                    if actualprob > float(self.trialdesign[1]):
-                        self.outcomelist.append('$' + str('{:.2f}'.format(float(self.trialdesign[2]))))
+                    if actualprob >= self.trialdesign[1]:
+                        outcomestring = '(Gain Gamble Won, ' + str(round(100 * actualprob)) + ' vs your ' +\
+                                        str(round(100 * self.trialdesign[1])) + ') $' +\
+                                        str('{:.2f}'.format(float(self.trialdesign[2])))
 
                     # if not, add 0
                     else:
-                        self.outcomelist.append('$0.00')
+                        outcomestring = '(Gain Gamble Lost, ' + str(round(100 * actualprob)) + ' vs your ' +\
+                                        str(round(100 * self.trialdesign[1])) + ') $0.00'
 
                 # if they only have losses...
                 elif self.design == 'Losses only':
 
                     # if they lose, add the loss
-                    if actualprob < float(self.trialdesign[1]):
-                        self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.trialdesign[2]))))
+                    if actualprob < self.trialdesign[1]:
+                        outcomestring = '(Loss Gamble Lost, ' + str(round(100 * actualprob)) + ' vs your ' +\
+                                        str(round(100 * self.trialdesign[1])) + ') -$' +\
+                                        str('{:.2f}'.format(float(self.trialdesign[2])))
 
                     # if not, add 0
                     else:
-                        self.outcomelist.append('$0.00')
+                        outcomestring = '(Loss Gamble Won, ' + str(round(100 * actualprob)) + ' vs your ' +\
+                                        str(round(100 * self.trialdesign[1])) + ') $0.00'
 
                 # if they have gains and losses...
                 else:
@@ -1174,22 +1195,30 @@ class FrameParticipant(participant.Participant):
                     if 'Gain' in self.state:
 
                         # if they win, add the reward
-                        if actualprob > float(self.trialdesign[1]):
-                            self.outcomelist.append('$' + str('{:.2f}'.format(float(self.trialdesign[2]))))
+                        if actualprob >= self.trialdesign[1]:
+                            outcomestring = '(Gain Gamble Won, ' + str(round(100 * actualprob)) + ' vs your ' +\
+                                            str(round(100 * self.trialdesign[1])) + ') $' +\
+                                            str('{:.2f}'.format(float(self.trialdesign[2])))
 
                         # if not, add 0
                         else:
-                            self.outcomelist.append('$0.00')
+                            outcomestring = '(Gain Gamble Lost, ' + str(round(100 * actualprob)) + ' vs your ' +\
+                                        str(round(100 * self.trialdesign[1])) + ') $0.00'
 
                     else:
 
                         # if they lose, add the loss
-                        if actualprob < float(self.trialdesign[1]):
-                            self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.trialdesign[2]))))
+                        if actualprob < self.trialdesign[1]:
+                            outcomestring = '(Loss Gamble Lost, ' + str(round(100 * actualprob)) + ' vs your ' +\
+                                        str(round(100 * self.trialdesign[1])) + ') -$' +\
+                                            str('{:.2f}'.format(float(self.trialdesign[2])))
 
                         # if not, add 0
                         else:
-                            self.outcomelist.append('$0.00')
+                            outcomestring = '(Loss Gamble Won, ' + str(round(100 * actualprob)) + ' vs your ' +\
+                                        str(round(100 * self.trialdesign[1])) + ') $0.00'
+
+            self.outcomelist.append(outcomestring)
 
     def get_instructions(self, instint):
         """
