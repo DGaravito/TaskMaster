@@ -63,7 +63,7 @@ class ARTTExp(experiment.Experiment):
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(explayout)
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addLayout(self.quitmenulayout)
 
         # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
         if self.person.controlscheme == 'Mouse':
@@ -145,6 +145,7 @@ class ARTTExp(experiment.Experiment):
 
                 # output the trial data and thank the participant
                 self.person.output()
+                self.menubutton.show()
                 self.instructions.setText('Thank you!')
 
                 # if the user wanted one of the participant's choices to get randomly chosen, then put that on screen
@@ -454,7 +455,7 @@ class RAExp(experiment.Experiment):
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(mainhlayout)
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addLayout(self.quitmenulayout)
 
         # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
         if self.person.controlscheme == 'Mouse':
@@ -527,6 +528,7 @@ class RAExp(experiment.Experiment):
 
                 # output the trial data and thank the participant
                 self.person.output()
+                self.menubutton.show()
                 self.instructions.setText('Thank you!')
 
                 # if the user wanted one of the participant's choices to get randomly chosen, then put that on screen
@@ -816,7 +818,7 @@ class FrameExp(experiment.Experiment):
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(mainhlayout)
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addLayout(self.quitmenulayout)
 
         # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
         if self.person.controlscheme == 'Mouse':
@@ -889,6 +891,7 @@ class FrameExp(experiment.Experiment):
 
                 # output the trial data and thank the participant
                 self.person.output()
+                self.menubutton.show()
                 self.instructions.setText('Thank you!')
 
                 # if the user wanted one of the participant's choices to get randomly chosen, then put that on screen

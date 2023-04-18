@@ -52,7 +52,7 @@ class DDiscountExp(experiment.Experiment):
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(explayout)
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addLayout(self.quitmenulayout)
 
         # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
         if self.person.controlscheme == 'Mouse':
@@ -122,6 +122,7 @@ class DDiscountExp(experiment.Experiment):
                 # output the trial data and thank the participant
                 self.person.output()
                 self.instructions.setText('Thank you!')
+                self.menubutton.show()
 
                 # if the user wanted one of the participant's choices to get randomly chosen, then put that on screen
                 if self.person.outcomeopt == 'Yes':
@@ -409,7 +410,7 @@ class PDiscountExp(experiment.Experiment):
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(expvislayout)
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addLayout(self.quitmenulayout)
 
         # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
         if self.person.controlscheme == 'Mouse':
@@ -482,6 +483,7 @@ class PDiscountExp(experiment.Experiment):
                 # output the trial data and thank the participant
                 self.person.output()
                 self.instructions.setText('Thank you!')
+                self.menubutton.show()
 
                 # if the user wanted one of the participant's choices to get randomly chosen, then put that on screen
                 if self.person.outcomeopt == 'Yes':
@@ -759,7 +761,7 @@ class CEDiscountExp(experiment.Experiment):
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(explayout)
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addLayout(self.quitmenulayout)
 
         if self.person.fmri == 'Yes':
             self.extradelay = [0]
@@ -842,6 +844,7 @@ class CEDiscountExp(experiment.Experiment):
                 # output the trial data and thank the participant
                 self.person.output()
                 self.instructions.setText('Thank you!')
+                self.menubutton.show()
 
                 # if the user wanted one of the participant's choices to get randomly chosen, then put that on screen
                 if self.person.outcomeopt == 'Yes':

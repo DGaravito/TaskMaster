@@ -1,8 +1,10 @@
-from PyQt6.QtWidgets import QWidget, QApplication, QVBoxLayout, QLabel, QPushButton
+from PyQt6.QtWidgets import QWidget, QApplication, QVBoxLayout, QLabel, QPushButton, QHBoxLayout
 from PyQt6.QtCore import QDir, Qt, QTimer
 from PyQt6.QtGui import QFont
 
 from pathlib import Path
+
+from Guis import main
 
 
 class Experiment(QWidget):
@@ -87,6 +89,18 @@ class Experiment(QWidget):
         self.quitbutton.setFixedHeight(40)
         self.quitbutton.setFont(QFont('Helvetica', 25))
 
+        # Main menu button
+        self.menubutton = QPushButton('Return to Main Menu')
+        self.menubutton.clicked.connect(self.mainmenu)
+        self.menubutton.hide()
+
+        # Put inventory and quit button in horizontal layout
+        self.quitmenulayout = QHBoxLayout()
+
+        self.quitmenulayout.addWidget(self.quitbutton)
+        self.quitmenulayout.addStretch(1)
+        self.quitmenulayout.addWidget(self.menubutton)
+
         # Instructions - default is blank, of course
         self.instructions = QLabel('')
 
@@ -106,6 +120,16 @@ class Experiment(QWidget):
 
         # Set up layout
         self.setLayout(self.instquitlayout)
+
+    def mainmenu(self):
+        """
+        sends the user back to the main menu
+        :return:
+        """
+
+        self.w = main.SelectWindow()
+        self.w.show()
+        self.hide()
 
     def iti(self):
         """

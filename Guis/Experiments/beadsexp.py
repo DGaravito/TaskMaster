@@ -170,18 +170,15 @@ class BeadsExp(experiment.Experiment):
         mainhlayout.addWidget(self.right)
         mainhlayout.addStretch(1)
 
-        # Put inventory and quit button in horizontal layout
-        quitinvlayout = QHBoxLayout()
-
-        quitinvlayout.addWidget(self.quitbutton)
-        quitinvlayout.addStretch(1)
-        quitinvlayout.addWidget(self.invbutton)
+        # add the inventory button to the bottom level
+        self.quitmenulayout.addStretch(1)
+        self.quitmenulayout.addWidget(self.invbutton)
 
         # Put everything in vertical layout
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(mainhlayout)
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addLayout(quitinvlayout)
+        self.instquitlayout.addLayout(self.quitmenulayout)
 
         # Make timer for jitter screen
         self.jittertimer = QTimer()
@@ -275,6 +272,7 @@ class BeadsExp(experiment.Experiment):
         # otherwise, output to the user's directory
         else:
             self.person.output()
+            self.menubutton.show()
 
     def startround(self):
         """

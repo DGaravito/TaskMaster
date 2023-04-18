@@ -40,7 +40,7 @@ class PBTExp(experiment.Experiment):
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(middlelayout)
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addWidget(self.quitmenulayout)
 
         # Make a timer that controls how long an image is left on the screen
         self.blankouttimer = QTimer()
@@ -98,6 +98,8 @@ class PBTExp(experiment.Experiment):
                 # output the data to the user's directory and change the instructions to a thank you message
                 self.person.output()
                 self.instructions.setText('Thank you!')
+
+                self.menubutton.show()
 
             # If there are still some blocks to go...
             else:

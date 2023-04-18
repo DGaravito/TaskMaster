@@ -44,7 +44,7 @@ class SSExp(experiment.Experiment):
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(middlelayout)
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addLayout(self.quitmenulayout)
 
         # Make timer to indicate when a signal should be sent (in signal trials)
         self.signaltimer = QTimer()
@@ -114,6 +114,7 @@ class SSExp(experiment.Experiment):
 
                 # output the data to the user's directory and change the instructions to a thank you message
                 self.person.output()
+                self.menubutton.show()
                 self.instructions.setText('Thank you!')
 
             # If there are still some blocks to go...
@@ -280,7 +281,7 @@ class EGNGExp(experiment.Experiment):
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(middlelayout)
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addLayout(self.quitmenulayout)
 
         # make a timer for blanking out the face
         self.blanktimer = QTimer()
@@ -386,6 +387,7 @@ class EGNGExp(experiment.Experiment):
 
                 # output the data to the user's directory and change the instructions to a thank you message
                 self.person.output()
+                self.menubutton.show()
                 self.instructions.setText('Thank you!')
 
             # If there are still some blocks to go...
@@ -556,7 +558,7 @@ class GNGExp(experiment.Experiment):
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(middlelayout)
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addLayout(self.quitmenulayout)
 
     def generatenext(self):
         """
@@ -611,6 +613,7 @@ class GNGExp(experiment.Experiment):
 
                 # output the data to the user's directory and change the instructions to a thank you message
                 self.person.output()
+                self.menubutton.show()
                 self.instructions.setText('Thank you!')
 
             # If there are still some blocks to go...

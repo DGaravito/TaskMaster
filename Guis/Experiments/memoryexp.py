@@ -37,7 +37,7 @@ class PrExp(experiment.Experiment):
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(explayout)
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addLayout(self.quitmenulayout)
 
         # Make timer for new trial screen
         self.newtrialtimer = QTimer()
@@ -82,6 +82,7 @@ class PrExp(experiment.Experiment):
 
                 # output info
                 self.person.output()
+                self.menubutton.show()
 
                 self.left.setText('')
                 self.right.setText('')
@@ -174,7 +175,7 @@ class NbExp(experiment.Experiment):
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.middle)
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addLayout(self.quitmenulayout)
 
         # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
         if self.person.controlscheme == 'Mouse':
@@ -232,6 +233,7 @@ class NbExp(experiment.Experiment):
             if self.person.rounds == self.roundsdone:
 
                 self.person.output()
+                self.menubutton.show()
 
             # if more rounds need to be done, then indicate that it is between rounds
             else:
@@ -415,7 +417,7 @@ class DsExp(experiment.Experiment):
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.middle)
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addLayout(self.quitmenulayout)
 
     def generatenext(self):
         """
@@ -619,6 +621,7 @@ class DsExp(experiment.Experiment):
 
                 # Output data
                 self.person.output()
+                self.menubutton.show()
 
             # if more rounds need to be done, then indicate that it is between rounds
             else:

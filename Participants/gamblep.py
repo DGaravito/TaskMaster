@@ -430,14 +430,14 @@ class ARTTParticipant(participant.Participant):
                     # if they win, add the reward
                     if actualprob >= pRisky:
 
-                        outcomestring = '(Gain Gamble Won, ' + str(round(100 * actualprob)) + ' vs your ' + \
-                                            str(round(100 * pRisky)) + ') $' + str('{:.2f}'.format(vAmount))
+                        outcomestring = '(Gain ' + str(round(100 * pRisky)) + ' Gamble Won (' +\
+                                            str(round(100 * actualprob)) + '): $' + str('{:.2f}'.format(vAmount))
 
                     # if not, add 0
                     else:
 
-                        outcomestring = '(Gain Gamble Lost, ' + str(round(100 * actualprob)) + ' vs your ' + \
-                                        str(round(100 * pRisky)) + ') $0.00'
+                        outcomestring = 'Gain ' + str(round(100 * pRisky)) + ' Gamble Lost (' +\
+                                        str(round(100 * actualprob)) + '): $0.00'
 
                 # if they only have losses...
                 elif self.structure == 'Losses only':
@@ -445,14 +445,14 @@ class ARTTParticipant(participant.Participant):
                     # if they lose, add the loss
                     if actualprob < pRisky:
 
-                        outcomestring = '(Loss Gamble Lost, ' + str(round(100 * actualprob)) + ' vs your ' + \
-                                        str(round(100 * pRisky)) + ') -$' + str('{:.2f}'.format(vAmount))
+                        outcomestring = '(Loss ' + str(round(100 * pRisky)) + ' Gamble Lost (' +\
+                                        str(round(100 * actualprob)) + '): -$' + str('{:.2f}'.format(vAmount))
 
                     # if not, add 0
                     else:
 
-                        outcomestring = '(Loss Gamble Won, ' + str(round(100 * actualprob)) + ' vs your ' + \
-                                            str(round(100 * pRisky)) + ') $0.00'
+                        outcomestring = '(Loss ' + str(round(100 * pRisky)) + ' Gamble Lost (' +\
+                                        str(round(100 * actualprob)) + '): $0.00'
 
                 # if they have gains and losses...
                 else:
@@ -463,32 +463,32 @@ class ARTTParticipant(participant.Participant):
                         # if they win, add the reward
                         if actualprob >= pRisky:
 
-                            outcomestring = '(Gain Gamble Won, ' + str(round(100 * actualprob)) + ' vs your ' + \
-                                            str(round(100 * pRisky)) + ') $' + str('{:.2f}'.format(vAmount))
+                            outcomestring = '(Gain ' + str(round(100 * pRisky)) + ' Gamble Won (' +\
+                                            str(round(100 * actualprob)) + '): $' + str('{:.2f}'.format(vAmount))
 
                         # if not, add 0
                         else:
 
-                            outcomestring = '(Gain Gamble Lost, ' + str(round(100 * actualprob)) + ' vs your ' + \
-                                            str(round(100 * pRisky)) + ') $0.00'
+                            outcomestring = 'Gain ' + str(round(100 * pRisky)) + ' Gamble Lost (' +\
+                                            str(round(100 * actualprob)) + '): $0.00'
 
                     else:
 
                         # if they lose, add the loss
                         if actualprob < pRisky:
 
-                            outcomestring = '(Loss Gamble Lost, ' + str(round(100 * actualprob)) + ' vs your ' + \
-                                            str(round(100 * pRisky)) + ') -$' + str('{:.2f}'.format(vAmount))
+                            outcomestring = '(Loss ' + str(round(100 * pRisky)) + ' Gamble Lost (' +\
+                                            str(round(100 * actualprob)) + '): -$' + str('{:.2f}'.format(vAmount))
 
                         # if not, add 0
                         else:
 
-                            outcomestring = '(Loss Gamble Won, ' + str(round(100 * actualprob)) + ' vs your ' + \
-                                            str(round(100 * pRisky)) + ') $0.00'
+                            outcomestring = '(Loss ' + str(round(100 * pRisky)) + ' Gamble Lost (' +\
+                                            str(round(100 * actualprob)) + '): $0.00'
 
             if (pAmbiguous > 0) & (response == 1):
 
-                bagstring = 'Ambiguous bag -> 50/50 bag: '
+                bagstring = 'Ambiguous (' + str(round(100 * pAmbiguous)) + '%) bag -> 50/50 bag:\n'
                 outcomestring = bagstring + outcomestring
 
             self.outcomelist.append(outcomestring)

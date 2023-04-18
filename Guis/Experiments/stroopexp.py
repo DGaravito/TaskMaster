@@ -27,7 +27,7 @@ class StroopExp(experiment.Experiment):
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(explayout)
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addLayout(self.quitmenulayout)
 
         # Make timer for new trial screen
         self.newblocktimer = QTimer()
@@ -139,6 +139,8 @@ class StroopExp(experiment.Experiment):
 
                 self.instructions.setText('Thank you!')
                 self.middle.setText('You have finished this part of the study.')
+
+                self.menubutton.show()
 
             # if there are still blocks to do, then clear the text and start the trial to start the next round
             else:

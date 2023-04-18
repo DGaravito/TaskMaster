@@ -34,7 +34,7 @@ class DwellExp(experiment.Experiment):
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(middlelayout)
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addLayout(self.quitmenulayout)
 
     def generatenext(self):
         """
@@ -79,9 +79,15 @@ class DwellExp(experiment.Experiment):
             # set the text for the middle label to the appropriate text depending on how many blocks the user wanted
             self.instructions.setText(self.person.nextround())
 
-            # if the number of blocks done is not equal to the number the user requested and there are no more matrix
+            # if the number of blocks done is equal to the number the user requested and there are no more matrix
             # types left in the block
-            if (self.person.blocksdone != self.person.blocks) & (len(self.person.blockorder) > 0):
+            if (self.person.blocksdone == self.person.blocks) & (len(self.person.blockorder) <= 0):
+
+                # output and show menu button
+                self.person.output()
+                self.menubutton.show()
+
+            else:
 
                 # allow the user to start the next round
                 self.betweenrounds = 1

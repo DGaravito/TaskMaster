@@ -95,7 +95,7 @@ class NACTExp(experiment.Experiment):
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(middlebottomlayout)
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addWidget(self.quitbutton)
+        self.instquitlayout.addLayout(self.quitmenulayout)
 
     def generatenext(self):
         """
@@ -163,6 +163,7 @@ class NACTExp(experiment.Experiment):
 
                 self.person.output()
                 self.instructions.setText('Thank you!')
+                self.menubutton.show()
 
             # otherwise, allow the user to start the next round
             else:

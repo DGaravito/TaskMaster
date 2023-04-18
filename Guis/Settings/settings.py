@@ -5,6 +5,8 @@ from PyQt6.QtGui import QFont
 
 from os import path
 
+from Guis import main
+
 
 class DirErrorBox(QDialog):
     """
@@ -277,24 +279,18 @@ class Settings(QWidget):
         # Add header to overarching layout
         self.over_layout.addWidget(self.header)
 
-        # Make form layout for all the settingsguis
-        self.layout = QFormLayout()
-
         # General settings
         # ID
         self.idform = QLineEdit()
         self.idform.setText('9999')
-        self.layout.addRow(QLabel('Subject ID:'), self.idform)
 
         # Session form
         self.sessionin = QLineEdit()
         self.sessionin.setText('Pretest')
-        self.layout.addRow(QLabel('Session name/number (enter \"Practice\" to not have output):'), self.sessionin)
 
         # Dropdown box for control options
         self.controls = QComboBox()
         self.controls.addItems(['Default (C & M)', 'Buttonbox (1 & 2)', 'Mouse'])
-        self.layout.addRow(QLabel('What controls do you want to use?'), self.controls)
 
         # Trials input
         self.trialsin = QSpinBox()
@@ -314,6 +310,10 @@ class Settings(QWidget):
         # Submit button
         self.submit = QPushButton('Submit')
         self.submit.clicked.connect(self.checksettings)
+
+        # Main menu button
+        self.menubutton = QPushButton('Return to Main Menu')
+        self.menubutton.clicked.connect(self.mainmenu)
 
         # Quit button
         self.quitbutton = QPushButton('Quit')
@@ -387,6 +387,13 @@ class Settings(QWidget):
         # race balancing checkbox
         self.racebalancetoggle = QCheckBox('')
         self.racebalancetoggle.stateChanged.connect(self.clickbox)
+
+        # Make form layout for all the settingsguis
+        self.layout = QFormLayout()
+        self.layout.addRow(self.menubutton)
+        self.layout.addRow(QLabel('Subject ID:'), self.idform)
+        self.layout.addRow(QLabel('Session name/number (enter \"Practice\" to not have output):'), self.sessionin)
+        self.layout.addRow(QLabel('What controls do you want to use?'), self.controls)
 
         # Show all elements
         self.show()
@@ -506,6 +513,16 @@ class Settings(QWidget):
 
         else:
             self.wderrordialog()
+
+    def mainmenu(self):
+        """
+        sends the user back to the main menu
+        :return:
+        """
+
+        self.w = main.SelectWindow()
+        self.w.show()
+        self.hide()
 
     def fileselect(self):
         """
