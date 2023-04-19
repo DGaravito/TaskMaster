@@ -431,6 +431,7 @@ class EGNGExp(experiment.Experiment):
 
             # stop the timers and indicate that the participant completed the trial
             self.timer.stop()
+            self.blanktimer.stop()
             self.trialsdone += 1
 
             # use time.time and the start time variable to compute rt
