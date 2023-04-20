@@ -31,7 +31,7 @@ class ARTTSettings(settings.Settings):
         # Largest reward input
         self.lrewin = QSpinBox()
         self.lrewin.setRange(0, 1000000)
-        self.lrewin.setValue(50)
+        self.lrewin.setValue(60)
 
         # Dropdown box for gains, losses, or both
         self.design = QComboBox()
