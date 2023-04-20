@@ -332,12 +332,13 @@ class ARTTParticipant(participant.Participant):
     #         # Generate new optimal design based on previous design and response
     #         self.design = self.engine.get_design('optimal')
 
-    def updateoutput(self, trial, onset, time, response=3):
+    def updateoutput(self, trial, onset, time, bluered, response=3):
         """
         Records the stats
         :param trial: the number of the trial that was just completed
         :param onset: onset time for the trial
         :param time: participants's reaction time
+        :param bluered: binary; 1 means that red is the reward; 0, blue
         :param response: integer with either 0 or 1 depending on if the person chose left or right. Default is 3 in case
         the participants doesn't answer in time.
         :return: updates the performance dataframe in the superclass
@@ -365,6 +366,7 @@ class ARTTParticipant(participant.Participant):
             'Proportion Risky': [pRisky],
             'Fixed Amount': [fAmount],
             'Variable Amount': [vAmount],
+            'Color of Variable Amount': [bluered],
             'onset': [onset],
             'response': [response],
             'reaction time': [time]
@@ -427,32 +429,84 @@ class ARTTParticipant(participant.Participant):
                 # if they only have gains...
                 if self.structure == 'Gains only':
 
-                    # if they win, add the reward
-                    if actualprob >= pRisky:
+                    # if blue is the reward color, then they win only if they have less than or equal to the prob
+                    if bluered == 0:
 
-                        outcomestring = '(Gain ' + str(round(100 * pRisky)) + ' Gamble Won (' +\
-                                            str(round(100 * actualprob)) + '): $' + str('{:.2f}'.format(vAmount))
+                        outcomestring = 'Gain Gamble: ' + str(round(100 * pRisky)) + ' to win ' + \
+                                        str('{:.2f}'.format(vAmount)) + ' with a blue chip\n'
 
-                    # if not, add 0
+                        # if they win, add the reward
+                        if actualprob <= pRisky:
+
+                            outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' + \
+                                            str('{:.2f}'.format(vAmount)) + str('{:.2f}'.format(self.startmoney)) \
+                                            + ' = ' + str('{:.2f}'.format(self.startmoney + vAmount)) + '.'
+
+                        # if not, add 0
+                        else:
+
+                            outcomestring += 'Gamble Lost (' + str(round(100 * actualprob)) + '): $0.00 + $' +\
+                            str('{:.2f}'.format(self.startmoney)) + ' = ' + str('{:.2f}'.format(self.startmoney)) + '.'
+
+                    # if red is the reward color, then they win only if they have less than or equal to 1 minus the prob
                     else:
 
-                        outcomestring = 'Gain ' + str(round(100 * pRisky)) + ' Gamble Lost (' +\
-                                        str(round(100 * actualprob)) + '): $0.00'
+                        outcomestring = 'Gain Gamble: ' + str(round(100 * (1-pRisky))) + ' to win ' + \
+                                        str('{:.2f}'.format(vAmount)) + ' with a red chip\n'
+
+                        # if they win, add the reward
+                        if actualprob <= (1-pRisky):
+
+                            outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' + \
+                                            str('{:.2f}'.format(vAmount)) + str('{:.2f}'.format(self.startmoney)) \
+                                            + ' = ' + str('{:.2f}'.format(self.startmoney + vAmount)) + '.'
+
+                        # if not, add 0
+                        else:
+
+                            outcomestring += 'Gamble Lost (' + str(round(100 * actualprob)) + '): $0.00 + $' +\
+                            str('{:.2f}'.format(self.startmoney)) + ' = ' + str('{:.2f}'.format(self.startmoney)) + '.'
 
                 # if they only have losses...
                 elif self.structure == 'Losses only':
 
-                    # if they lose, add the loss
-                    if actualprob < pRisky:
+                    # if blue is the reward color, then they win only if they have less than or equal to the prob
+                    if bluered == 0:
 
-                        outcomestring = '(Loss ' + str(round(100 * pRisky)) + ' Gamble Lost (' +\
-                                        str(round(100 * actualprob)) + '): -$' + str('{:.2f}'.format(vAmount))
+                        outcomestring = 'Loss Gamble: ' + str(round(100 * pRisky)) + ' to lose ' + \
+                                        str('{:.2f}'.format(vAmount)) + ' with a blue chip\n'
 
-                    # if not, add 0
+                        # if they lose, add the loss
+                        if actualprob <= pRisky:
+
+                            outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $' + \
+                                            str('{:.2f}'.format(vAmount)) + str('{:.2f}'.format(self.startmoney)) \
+                                            + ' = ' + str('{:.2f}'.format(self.startmoney - vAmount)) + '.'
+
+                        # if not, add 0
+                        else:
+
+                            outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): -$0.00 + $' +\
+                            str('{:.2f}'.format(self.startmoney)) + ' = ' + str('{:.2f}'.format(self.startmoney)) + '.'
+
+                    # if red is the reward color, then they win only if they have less than or equal to 1 minus the prob
                     else:
 
-                        outcomestring = '(Loss ' + str(round(100 * pRisky)) + ' Gamble Lost (' +\
-                                        str(round(100 * actualprob)) + '): $0.00'
+                        outcomestring = 'Loss Gamble: ' + str(round(100 * (1-pRisky))) + ' to lose ' + \
+                                        str('{:.2f}'.format(vAmount)) + ' with a red chip\n'
+
+                        # if they lose, add the loss
+                        if actualprob <= (1-pRisky):
+
+                            outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $' + \
+                                            str('{:.2f}'.format(vAmount)) + str('{:.2f}'.format(self.startmoney)) \
+                                            + ' = ' + str('{:.2f}'.format(self.startmoney + vAmount)) + '.'
+
+                        # if not, add 0
+                        else:
+
+                            outcomestring += 'Won (' + str(round(100 * actualprob)) + '): -$0.00 + $' +\
+                            str('{:.2f}'.format(self.startmoney)) + ' = ' + str('{:.2f}'.format(self.startmoney)) + '.'
 
                 # if they have gains and losses...
                 else:
@@ -460,31 +514,88 @@ class ARTTParticipant(participant.Participant):
                     # Then look at the state to see if it was a gain or loss
                     if self.state == 'Gain':
 
-                        # if they win, add the reward
-                        if actualprob >= pRisky:
+                        # if blue is the reward color, then they win only if they have less than or equal to the prob
+                        if bluered == 0:
 
-                            outcomestring = '(Gain ' + str(round(100 * pRisky)) + ' Gamble Won (' +\
-                                            str(round(100 * actualprob)) + '): $' + str('{:.2f}'.format(vAmount))
+                            outcomestring = 'Gain Gamble: ' + str(round(100 * pRisky)) + ' to win ' + \
+                                            str('{:.2f}'.format(vAmount)) + ' with a blue chip\n'
 
-                        # if not, add 0
+                            # if they win, add the reward
+                            if actualprob <= pRisky:
+
+                                outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' + \
+                                                str('{:.2f}'.format(vAmount)) + str('{:.2f}'.format(self.startmoney)) \
+                                                + ' = ' + str('{:.2f}'.format(self.startmoney + vAmount)) + '.'
+
+                            # if not, add 0
+                            else:
+
+                                outcomestring += 'Gamble Lost (' + str(round(100 * actualprob)) + '): $0.00 + $' +\
+                                                 str('{:.2f}'.format(self.startmoney)) + ' = ' + \
+                                                 str('{:.2f}'.format(self.startmoney)) + '.'
+
+                        # if red is the reward color, then they win only if they have less than or equal to 1 minus the prob
                         else:
 
-                            outcomestring = 'Gain ' + str(round(100 * pRisky)) + ' Gamble Lost (' +\
-                                            str(round(100 * actualprob)) + '): $0.00'
+                            outcomestring = 'Gain Gamble: ' + str(round(100 * (1-pRisky))) + ' to win ' + \
+                                            str('{:.2f}'.format(vAmount)) + ' with a red chip\n'
 
+                            # if they win, add the reward
+                            if actualprob <= (1-pRisky):
+
+                                outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' + \
+                                                str('{:.2f}'.format(vAmount)) + str('{:.2f}'.format(self.startmoney)) \
+                                                + ' = ' + str('{:.2f}'.format(self.startmoney + vAmount)) + '.'
+
+                            # if not, add 0
+                            else:
+
+                                outcomestring += 'Gamble Lost (' + str(round(100 * actualprob)) + '): $0.00 + $' +\
+                                                 str('{:.2f}'.format(self.startmoney)) + ' = ' +\
+                                                 str('{:.2f}'.format(self.startmoney)) + '.'
+
+                    # if it is a loss state
                     else:
 
-                        # if they lose, add the loss
-                        if actualprob < pRisky:
+                        # if blue is the reward color, then they win only if they have less than or equal to the prob
+                        if bluered == 0:
 
-                            outcomestring = '(Loss ' + str(round(100 * pRisky)) + ' Gamble Lost (' +\
-                                            str(round(100 * actualprob)) + '): -$' + str('{:.2f}'.format(vAmount))
+                            outcomestring = 'Loss Gamble: ' + str(round(100 * pRisky)) + ' to lose ' + \
+                                            str('{:.2f}'.format(vAmount)) + ' with a blue chip\n'
 
-                        # if not, add 0
+                            # if they lose, add the loss
+                            if actualprob <= pRisky:
+
+                                outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $' + \
+                                                str('{:.2f}'.format(vAmount)) + str('{:.2f}'.format(self.startmoney)) \
+                                                + ' = ' + str('{:.2f}'.format(self.startmoney - vAmount)) + '.'
+
+                            # if not, add 0
+                            else:
+
+                                outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): -$0.00 + $' +\
+                                                 str('{:.2f}'.format(self.startmoney)) + ' = ' +\
+                                                 str('{:.2f}'.format(self.startmoney)) + '.'
+
+                        # if red is the reward color, then they win only if they have less than or equal to 1 minus the prob
                         else:
 
-                            outcomestring = '(Loss ' + str(round(100 * pRisky)) + ' Gamble Lost (' +\
-                                            str(round(100 * actualprob)) + '): $0.00'
+                            outcomestring = 'Loss Gamble: ' + str(round(100 * (1-pRisky))) + ' to lose ' + \
+                                            str('{:.2f}'.format(vAmount)) + ' with a red chip\n'
+
+                            # if they lose, add the loss
+                            if actualprob <= (1-pRisky):
+
+                                outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $' + \
+                                                str('{:.2f}'.format(vAmount)) + str('{:.2f}'.format(self.startmoney)) \
+                                                + ' = ' + str('{:.2f}'.format(self.startmoney + vAmount)) + '.'
+
+                            # if not, add 0
+                            else:
+
+                                outcomestring += 'Won (' + str(round(100 * actualprob)) + '): -$0.00 + $' +\
+                                                 str('{:.2f}'.format(self.startmoney)) + ' = ' +\
+                                                 str('{:.2f}'.format(self.startmoney)) + '.'
 
             if (pAmbiguous > 0) & (response == 1):
 
