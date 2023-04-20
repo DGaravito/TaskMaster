@@ -399,26 +399,33 @@ class ARTTParticipant(participant.Participant):
                 # if they only have gains...
                 if self.structure == 'Gains only':
 
-                    # then add the fixed gain to the list
-                    outcomestring = '(Sure Thing) $' + str('{:.2f}'.format(fAmount))
+                    outcomestring = '(Sure Gain): $' + str('{:.2f}'.format(fAmount)) + ' + $' +\
+                                    str('{:.2f}'.format(self.startmoney)) + ' = $' +\
+                                    str('{:.2f}'.format(self.startmoney + fAmount)) + '.'
 
                 # if they only have losses...
                 elif self.structure == 'Losses only':
 
                     # then add the fixed loss to the list
-                    outcomestring = '(Sure Thing) -$' + str('{:.2f}'.format(fAmount))
+                    outcomestring = '(Sure Loss): $' + str('{:.2f}'.format(self.startmoney)) + ' - $' +\
+                                    str('{:.2f}'.format(fAmount)) + ' = $' +\
+                                    str('{:.2f}'.format(self.startmoney - fAmount)) + '.'
 
                 # if they have gains and losses...
                 else:
 
                     # Then look at the state to see if it was a gain or loss
-                    if self.state == "Gain":
+                    if self.state == 'Gain':
 
-                        outcomestring = '(Sure Thing) $' + str('{:.2f}'.format(fAmount))
+                        outcomestring = '(Sure Gain): $' + str('{:.2f}'.format(fAmount)) + ' + $' +\
+                                        str('{:.2f}'.format(self.startmoney)) + ' = $' +\
+                                        str('{:.2f}'.format(self.startmoney + fAmount)) + '.'
 
                     else:
 
-                        outcomestring = '(Sure Thing) -$' + str('{:.2f}'.format(fAmount))
+                        outcomestring = '(Sure Loss): $' + str('{:.2f}'.format(self.startmoney)) + ' - $' +\
+                                        str('{:.2f}'.format(fAmount)) + ' = $' +\
+                                        str('{:.2f}'.format(self.startmoney - fAmount)) + '.'
 
             # if they chose the gamble...
             else:
