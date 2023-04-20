@@ -210,7 +210,7 @@ class ARTTExp(experiment.Experiment):
         self.rightbottomtext.setText('')
 
         # send the trial data to the participant class
-        self.person.updateoutput(self.trialsdone, self.starttime, 9999)
+        self.person.updateoutput(self.trialsdone, self.starttime, 9999, self.info[3] == 1)
 
         # if you're not in fmri mode, then warn and start the reset timer
         if self.person.fmri == 'No':
