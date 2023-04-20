@@ -390,7 +390,7 @@ class ARTTParticipant(participant.Participant):
         self.set_performance(df_trial)
 
         # only do the following if the user wanted a random reward/loss at the end
-        if (self.outcomeopt != 'None') & (response != 3):
+        if (self.outcomeopt != 'No') & (response != 3):
 
             # Add the potential outcome of this choice to the list for post-task rewards.
             # If they chose the sure thing...
@@ -439,11 +439,11 @@ class ARTTParticipant(participant.Participant):
                     # if blue is the reward color, then they win only if they have less than or equal to the prob
                     if bluered == 0:
 
-                        outcomestring = 'Gain Gamble: ' + str(round(100 * pRisky)) + ' to win ' +\
+                        outcomestring = 'Gain Gamble: ' + str(round(100 * pRisky)) + '% to win ' +\
                                         str('{:.2f}'.format(vAmount)) + ' with a blue chip\n'
 
                         # if the user wanted the full outcome and not just a bag to pick from
-                        if self.outcomeopt == 'Full Outcome':
+                        if self.outcomeopt == 'Yes, Full Outcome':
 
                             # if they win, add the reward
                             if actualprob <= pRisky:
@@ -463,11 +463,11 @@ class ARTTParticipant(participant.Participant):
                     # if red is the reward color, then they win only if they have less than or equal to 1 minus the prob
                     else:
 
-                        outcomestring = 'Gain Gamble: ' + str(round(100 * (1-pRisky))) + ' to win ' +\
+                        outcomestring = 'Gain Gamble: ' + str(round(100 * (1-pRisky))) + '% to win ' +\
                                         str('{:.2f}'.format(vAmount)) + ' with a red chip\n'
 
                         # if the user wanted the full outcome and not just a bag to pick from
-                        if self.outcomeopt == 'Full Outcome':
+                        if self.outcomeopt == 'Yes, Full Outcome':
 
                             # if they win, add the reward
                             if actualprob <= (1-pRisky):
@@ -490,11 +490,11 @@ class ARTTParticipant(participant.Participant):
                     # if blue is the reward color, then they win only if they have less than or equal to the prob
                     if bluered == 0:
 
-                        outcomestring = 'Loss Gamble: ' + str(round(100 * pRisky)) + ' to lose ' +\
+                        outcomestring = 'Loss Gamble: ' + str(round(100 * pRisky)) + '% to lose ' +\
                                         str('{:.2f}'.format(vAmount)) + ' with a blue chip\n'
 
                         # if the user wanted the full outcome and not just a bag to pick from
-                        if self.outcomeopt == 'Full Outcome':
+                        if self.outcomeopt == 'Yes, Full Outcome':
 
                             # if they lose, add the loss
                             if actualprob <= pRisky:
@@ -514,11 +514,11 @@ class ARTTParticipant(participant.Participant):
                     # if red is the reward color, then they win only if they have less than or equal to 1 minus the prob
                     else:
 
-                        outcomestring = 'Loss Gamble: ' + str(round(100 * (1-pRisky))) + ' to lose ' +\
+                        outcomestring = 'Loss Gamble: ' + str(round(100 * (1-pRisky))) + '% to lose ' +\
                                         str('{:.2f}'.format(vAmount)) + ' with a red chip\n'
 
                         # if the user wanted the full outcome and not just a bag to pick from
-                        if self.outcomeopt == 'Full Outcome':
+                        if self.outcomeopt == 'Yes, Full Outcome':
 
                             # if they lose, add the loss
                             if actualprob <= (1-pRisky):
@@ -544,11 +544,11 @@ class ARTTParticipant(participant.Participant):
                         # if blue is the reward color, then they win only if they have less than or equal to the prob
                         if bluered == 0:
 
-                            outcomestring = 'Gain Gamble: ' + str(round(100 * pRisky)) + ' to win ' + \
+                            outcomestring = 'Gain Gamble: ' + str(round(100 * pRisky)) + '% to win ' + \
                                             str('{:.2f}'.format(vAmount)) + ' with a blue chip\n'
 
                             # if the user wanted the full outcome and not just a bag to pick from
-                            if self.outcomeopt == 'Full Outcome':
+                            if self.outcomeopt == 'Yes, Full Outcome':
 
                                 # if they win, add the reward
                                 if actualprob <= pRisky:
@@ -569,11 +569,11 @@ class ARTTParticipant(participant.Participant):
                         # prob
                         else:
 
-                            outcomestring = 'Gain Gamble: ' + str(round(100 * (1-pRisky))) + ' to win ' + \
+                            outcomestring = 'Gain Gamble: ' + str(round(100 * (1-pRisky))) + '% to win ' + \
                                             str('{:.2f}'.format(vAmount)) + ' with a red chip\n'
 
                             # if the user wanted the full outcome and not just a bag to pick from
-                            if self.outcomeopt == 'Full Outcome':
+                            if self.outcomeopt == 'Yes, Full Outcome':
 
                                 # if they win, add the reward
                                 if actualprob <= (1-pRisky):
@@ -596,11 +596,11 @@ class ARTTParticipant(participant.Participant):
                         # if blue is the reward color, then they win only if they have less than or equal to the prob
                         if bluered == 0:
 
-                            outcomestring = 'Loss Gamble: ' + str(round(100 * pRisky)) + ' to lose ' + \
+                            outcomestring = 'Loss Gamble: ' + str(round(100 * pRisky)) + '% to lose ' + \
                                             str('{:.2f}'.format(vAmount)) + ' with a blue chip\n'
 
                             # if the user wanted the full outcome and not just a bag to pick from
-                            if self.outcomeopt == 'Full Outcome':
+                            if self.outcomeopt == 'Yes, Full Outcome':
 
                                 # if they lose, add the loss
                                 if actualprob <= pRisky:
@@ -620,11 +620,11 @@ class ARTTParticipant(participant.Participant):
                         # if red is the reward color, then they win only if they have less than or equal to 1 minus the prob
                         else:
 
-                            outcomestring = 'Loss Gamble: ' + str(round(100 * (1-pRisky))) + ' to lose ' +\
+                            outcomestring = 'Loss Gamble: ' + str(round(100 * (1-pRisky))) + '% to lose ' +\
                                             str('{:.2f}'.format(vAmount)) + ' with a red chip\n'
 
                             # if the user wanted the full outcome and not just a bag to pick from
-                            if self.outcomeopt == 'Full Outcome':
+                            if self.outcomeopt == 'Yes, Full Outcome':
 
                                 # if they lose, add the loss
                                 if actualprob <= (1-pRisky):

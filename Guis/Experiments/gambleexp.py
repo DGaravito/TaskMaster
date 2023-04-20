@@ -149,7 +149,7 @@ class ARTTExp(experiment.Experiment):
                 self.instructions.setText('Thank you!')
 
                 # if the user wanted one of the participant's choices to get randomly chosen, then put that on screen
-                if self.person.outcomeopt != 'None':
+                if self.person.outcomeopt != 'No':
 
                     outcome = random.choice(self.person.outcomelist)
 

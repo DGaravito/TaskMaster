@@ -39,7 +39,7 @@ class ARTTSettings(settings.Settings):
 
         # Unique dropdown box for outcome options
         self.outcomeopts = QComboBox()
-        self.outcomeopts.addItems(['None', 'Bag Only', 'Full Outcome'])
+        self.outcomeopts.addItems(['No', 'Yes, Bag Only', 'Yes, Full Outcome'])
 
         # Make form layout for all the settingsguis
         self.layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
