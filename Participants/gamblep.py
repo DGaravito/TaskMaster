@@ -390,7 +390,7 @@ class ARTTParticipant(participant.Participant):
         self.set_performance(df_trial)
 
         # only do the following if the user wanted a random reward/loss at the end
-        if (self.outcomeopt == 'Yes') & (response != 3):
+        if (self.outcomeopt != 'None') & (response != 3):
 
             # Add the potential outcome of this choice to the list for post-task rewards.
             # If they chose the sure thing...
@@ -435,20 +435,23 @@ class ARTTParticipant(participant.Participant):
                         outcomestring = 'Gain Gamble: ' + str(round(100 * pRisky)) + ' to win ' +\
                                         str('{:.2f}'.format(vAmount)) + ' with a blue chip\n'
 
-                        # if they win, add the reward
-                        if actualprob <= pRisky:
+                        # if the user wanted the full outcome and not just a bag to pick from
+                        if self.outcomeopt == 'Full Outcome':
 
-                            outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
-                                             str('{:.2f}'.format(vAmount)) + ' + $' +\
-                                             str('{:.2f}'.format(self.startmoney)) +\
-                                             ' = $' + str('{:.2f}'.format(self.startmoney + vAmount)) + '.'
+                            # if they win, add the reward
+                            if actualprob <= pRisky:
 
-                        # if not, add 0
-                        else:
+                                outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
+                                                 str('{:.2f}'.format(vAmount)) + ' + $' +\
+                                                 str('{:.2f}'.format(self.startmoney)) +\
+                                                 ' = $' + str('{:.2f}'.format(self.startmoney + vAmount)) + '.'
 
-                            outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $0.00 + $' +\
-                                             str('{:.2f}'.format(self.startmoney)) + ' = $' +\
-                                             str('{:.2f}'.format(self.startmoney)) + '.'
+                            # if not, add 0
+                            else:
+
+                                outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $0.00 + $' +\
+                                                 str('{:.2f}'.format(self.startmoney)) + ' = $' +\
+                                                 str('{:.2f}'.format(self.startmoney)) + '.'
 
                     # if red is the reward color, then they win only if they have less than or equal to 1 minus the prob
                     else:
@@ -456,20 +459,23 @@ class ARTTParticipant(participant.Participant):
                         outcomestring = 'Gain Gamble: ' + str(round(100 * (1-pRisky))) + ' to win ' +\
                                         str('{:.2f}'.format(vAmount)) + ' with a red chip\n'
 
-                        # if they win, add the reward
-                        if actualprob <= (1-pRisky):
+                        # if the user wanted the full outcome and not just a bag to pick from
+                        if self.outcomeopt == 'Full Outcome':
 
-                            outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
-                                             str('{:.2f}'.format(vAmount)) + ' + $' +\
-                                             str('{:.2f}'.format(self.startmoney)) +\
-                                             ' = $' + str('{:.2f}'.format(self.startmoney + vAmount)) + '.'
+                            # if they win, add the reward
+                            if actualprob <= (1-pRisky):
 
-                        # if not, add 0
-                        else:
+                                outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
+                                                 str('{:.2f}'.format(vAmount)) + ' + $' +\
+                                                 str('{:.2f}'.format(self.startmoney)) +\
+                                                 ' = $' + str('{:.2f}'.format(self.startmoney + vAmount)) + '.'
 
-                            outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $0.00 + $' +\
-                                             str('{:.2f}'.format(self.startmoney)) + ' = $' +\
-                                             str('{:.2f}'.format(self.startmoney)) + '.'
+                            # if not, add 0
+                            else:
+
+                                outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $0.00 + $' +\
+                                                 str('{:.2f}'.format(self.startmoney)) + ' = $' +\
+                                                 str('{:.2f}'.format(self.startmoney)) + '.'
 
                 # if they only have losses...
                 elif self.structure == 'Losses only':
@@ -480,20 +486,23 @@ class ARTTParticipant(participant.Participant):
                         outcomestring = 'Loss Gamble: ' + str(round(100 * pRisky)) + ' to lose ' +\
                                         str('{:.2f}'.format(vAmount)) + ' with a blue chip\n'
 
-                        # if they lose, add the loss
-                        if actualprob <= pRisky:
+                        # if the user wanted the full outcome and not just a bag to pick from
+                        if self.outcomeopt == 'Full Outcome':
 
-                            outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $' +\
-                                             str('{:.2f}'.format(self.startmoney)) + ' -  $' +\
-                                             str('{:.2f}'.format(vAmount)) + ' = $' +\
-                                             str('{:.2f}'.format(self.startmoney - vAmount)) + '.'
+                            # if they lose, add the loss
+                            if actualprob <= pRisky:
 
-                        # if not, add 0
-                        else:
+                                outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $' +\
+                                                 str('{:.2f}'.format(self.startmoney)) + ' -  $' +\
+                                                 str('{:.2f}'.format(vAmount)) + ' = $' +\
+                                                 str('{:.2f}'.format(self.startmoney - vAmount)) + '.'
 
-                            outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
-                                             str('{:.2f}'.format(self.startmoney)) + ' - $0.00' + ' = $' +\
-                                             str('{:.2f}'.format(self.startmoney)) + '.'
+                            # if not, add 0
+                            else:
+
+                                outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
+                                                 str('{:.2f}'.format(self.startmoney)) + ' - $0.00' + ' = $' +\
+                                                 str('{:.2f}'.format(self.startmoney)) + '.'
 
                     # if red is the reward color, then they win only if they have less than or equal to 1 minus the prob
                     else:
@@ -501,20 +510,23 @@ class ARTTParticipant(participant.Participant):
                         outcomestring = 'Loss Gamble: ' + str(round(100 * (1-pRisky))) + ' to lose ' +\
                                         str('{:.2f}'.format(vAmount)) + ' with a red chip\n'
 
-                        # if they lose, add the loss
-                        if actualprob <= (1-pRisky):
+                        # if the user wanted the full outcome and not just a bag to pick from
+                        if self.outcomeopt == 'Full Outcome':
 
-                            outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $' +\
-                                             str('{:.2f}'.format(self.startmoney)) + ' -  $' +\
-                                             str('{:.2f}'.format(vAmount)) + ' = $' +\
-                                             str('{:.2f}'.format(self.startmoney - vAmount)) + '.'
+                            # if they lose, add the loss
+                            if actualprob <= (1-pRisky):
 
-                        # if not, add 0
-                        else:
+                                outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $' +\
+                                                 str('{:.2f}'.format(self.startmoney)) + ' -  $' +\
+                                                 str('{:.2f}'.format(vAmount)) + ' = $' +\
+                                                 str('{:.2f}'.format(self.startmoney - vAmount)) + '.'
 
-                            outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
-                                             str('{:.2f}'.format(self.startmoney)) + ' - $0.00' + ' = $' +\
-                                             str('{:.2f}'.format(self.startmoney)) + '.'
+                            # if not, add 0
+                            else:
+
+                                outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
+                                                 str('{:.2f}'.format(self.startmoney)) + ' - $0.00' + ' = $' +\
+                                                 str('{:.2f}'.format(self.startmoney)) + '.'
 
                 # if they have gains and losses...
                 else:
@@ -528,41 +540,48 @@ class ARTTParticipant(participant.Participant):
                             outcomestring = 'Gain Gamble: ' + str(round(100 * pRisky)) + ' to win ' + \
                                             str('{:.2f}'.format(vAmount)) + ' with a blue chip\n'
 
-                            # if they win, add the reward
-                            if actualprob <= pRisky:
+                            # if the user wanted the full outcome and not just a bag to pick from
+                            if self.outcomeopt == 'Full Outcome':
 
-                                outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
-                                                 str('{:.2f}'.format(vAmount)) + ' + $' +\
-                                                 str('{:.2f}'.format(self.startmoney)) +\
-                                                 ' = $' + str('{:.2f}'.format(self.startmoney + vAmount)) + '.'
+                                # if they win, add the reward
+                                if actualprob <= pRisky:
 
-                            # if not, add 0
-                            else:
+                                    outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
+                                                     str('{:.2f}'.format(vAmount)) + ' + $' +\
+                                                     str('{:.2f}'.format(self.startmoney)) +\
+                                                     ' = $' + str('{:.2f}'.format(self.startmoney + vAmount)) + '.'
 
-                                outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $0.00 + $' +\
-                                                 str('{:.2f}'.format(self.startmoney)) + ' = $' +\
-                                                 str('{:.2f}'.format(self.startmoney)) + '.'
+                                # if not, add 0
+                                else:
 
-                        # if red is the reward color, then they win only if they have less than or equal to 1 minus the prob
+                                    outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $0.00 + $' +\
+                                                     str('{:.2f}'.format(self.startmoney)) + ' = $' +\
+                                                     str('{:.2f}'.format(self.startmoney)) + '.'
+
+                        # if red is the reward color, then they win only if they have less than or equal to 1 minus the
+                        # prob
                         else:
 
                             outcomestring = 'Gain Gamble: ' + str(round(100 * (1-pRisky))) + ' to win ' + \
                                             str('{:.2f}'.format(vAmount)) + ' with a red chip\n'
 
-                            # if they win, add the reward
-                            if actualprob <= (1-pRisky):
+                            # if the user wanted the full outcome and not just a bag to pick from
+                            if self.outcomeopt == 'Full Outcome':
 
-                                outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
-                                                 str('{:.2f}'.format(vAmount)) + ' + $' +\
-                                                 str('{:.2f}'.format(self.startmoney)) +\
-                                                 ' = $' + str('{:.2f}'.format(self.startmoney + vAmount)) + '.'
+                                # if they win, add the reward
+                                if actualprob <= (1-pRisky):
 
-                            # if not, add 0
-                            else:
+                                    outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
+                                                     str('{:.2f}'.format(vAmount)) + ' + $' +\
+                                                     str('{:.2f}'.format(self.startmoney)) +\
+                                                     ' = $' + str('{:.2f}'.format(self.startmoney + vAmount)) + '.'
 
-                                outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $0.00 + $' +\
-                                                 str('{:.2f}'.format(self.startmoney)) + ' = $' +\
-                                                 str('{:.2f}'.format(self.startmoney)) + '.'
+                                # if not, add 0
+                                else:
+
+                                    outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $0.00 + $' +\
+                                                     str('{:.2f}'.format(self.startmoney)) + ' = $' +\
+                                                     str('{:.2f}'.format(self.startmoney)) + '.'
 
                     # if it is a loss state
                     else:
@@ -573,20 +592,23 @@ class ARTTParticipant(participant.Participant):
                             outcomestring = 'Loss Gamble: ' + str(round(100 * pRisky)) + ' to lose ' + \
                                             str('{:.2f}'.format(vAmount)) + ' with a blue chip\n'
 
-                            # if they lose, add the loss
-                            if actualprob <= pRisky:
+                            # if the user wanted the full outcome and not just a bag to pick from
+                            if self.outcomeopt == 'Full Outcome':
 
-                                outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $' +\
-                                                 str('{:.2f}'.format(self.startmoney)) + ' -  $' +\
-                                                 str('{:.2f}'.format(vAmount)) + ' = $' +\
-                                                 str('{:.2f}'.format(self.startmoney - vAmount)) + '.'
+                                # if they lose, add the loss
+                                if actualprob <= pRisky:
 
-                            # if not, add 0
-                            else:
+                                    outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $' +\
+                                                     str('{:.2f}'.format(self.startmoney)) + ' -  $' +\
+                                                     str('{:.2f}'.format(vAmount)) + ' = $' +\
+                                                     str('{:.2f}'.format(self.startmoney - vAmount)) + '.'
 
-                                outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
-                                                 str('{:.2f}'.format(self.startmoney)) + ' - $0.00' + ' = $' +\
-                                                 str('{:.2f}'.format(self.startmoney)) + '.'
+                                # if not, add 0
+                                else:
+
+                                    outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
+                                                     str('{:.2f}'.format(self.startmoney)) + ' - $0.00' + ' = $' +\
+                                                     str('{:.2f}'.format(self.startmoney)) + '.'
 
                         # if red is the reward color, then they win only if they have less than or equal to 1 minus the prob
                         else:
@@ -594,20 +616,23 @@ class ARTTParticipant(participant.Participant):
                             outcomestring = 'Loss Gamble: ' + str(round(100 * (1-pRisky))) + ' to lose ' +\
                                             str('{:.2f}'.format(vAmount)) + ' with a red chip\n'
 
-                            # if they lose, add the loss
-                            if actualprob <= (1-pRisky):
+                            # if the user wanted the full outcome and not just a bag to pick from
+                            if self.outcomeopt == 'Full Outcome':
 
-                                outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $' +\
-                                                 str('{:.2f}'.format(self.startmoney)) + ' -  $' +\
-                                                 str('{:.2f}'.format(vAmount)) + ' = $' +\
-                                                 str('{:.2f}'.format(self.startmoney - vAmount)) + '.'
+                                # if they lose, add the loss
+                                if actualprob <= (1-pRisky):
 
-                            # if not, add 0
-                            else:
+                                    outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $' +\
+                                                     str('{:.2f}'.format(self.startmoney)) + ' -  $' +\
+                                                     str('{:.2f}'.format(vAmount)) + ' = $' +\
+                                                     str('{:.2f}'.format(self.startmoney - vAmount)) + '.'
 
-                                outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
-                                                 str('{:.2f}'.format(self.startmoney)) + ' - $0.00' + ' = $' +\
-                                                 str('{:.2f}'.format(self.startmoney)) + '.'
+                                # if not, add 0
+                                else:
+
+                                    outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
+                                                     str('{:.2f}'.format(self.startmoney)) + ' - $0.00' + ' = $' +\
+                                                     str('{:.2f}'.format(self.startmoney)) + '.'
 
             if (pAmbiguous > 0) & (response == 1):
 

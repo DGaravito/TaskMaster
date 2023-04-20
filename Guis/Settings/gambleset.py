@@ -37,6 +37,10 @@ class ARTTSettings(settings.Settings):
         self.design = QComboBox()
         self.design.addItems(['Gains only', 'Losses only', 'Gains and Losses'])
 
+        # Unique dropdown box for outcome options
+        self.outcomeopts = QComboBox()
+        self.outcomeopts.addItems(['None', 'Bag Only', 'Full Outcome'])
+
         # Make form layout for all the settingsguis
         self.layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
         self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
@@ -46,7 +50,7 @@ class ARTTSettings(settings.Settings):
         self.layout.addRow(QLabel('Largest reward/loss possible:'), self.lrewin)
         self.layout.addRow(QLabel('What type of questions do you want?'), self.design)
         # self.layout.addRow(QLabel('Do you want to use ADOPy?'), self.adopytoggle)
-        self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
+        self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcomeopts)
         self.layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
@@ -92,7 +96,7 @@ class ARTTSettings(settings.Settings):
                                              self.srewin.text(),
                                              self.lrewin.text(),
                                              self.design.currentText(),
-                                             self.outcome,
+                                             self.outcomeopts.currentText(),
                                              self.smoneyin.text(),
                                              self.blocksin.text(),
                                              self.adopystate,
