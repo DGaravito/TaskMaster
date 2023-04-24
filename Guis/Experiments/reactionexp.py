@@ -543,6 +543,7 @@ class GNGExp(experiment.Experiment):
 
         # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
         if self.person.controlscheme == 'Mouse':
+
             # Attach middle QLabel to functions
             self.middle.mousePressEvent = self.clickedresponse
 

@@ -222,6 +222,125 @@ class MathErrorBox(QDialog):
         self.setLayout(dialayout)
 
 
+class CitationWindow(QDialog):
+    """
+    This is a popup window that will give the APA citation for the task that the user selected
+    """
+
+    def __init__(self, task):
+        super().__init__()
+
+        self.setWindowTitle('APA Citation')
+
+        # Make  layout
+        dialayout = QVBoxLayout()
+
+        # Make labels for text
+
+        self.description = QLabel('The following is the APA citation for the task:')
+        self.description.setStyleSheet('padding :5px')
+
+        match task:
+
+            case str('DD'):
+
+                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
+                                 'divisible by 4.'
+
+            case str('PD'):
+
+                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
+                                 'divisible by 4.'
+
+            case str('CEDT'):
+
+                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
+                                 'divisible by 4.'
+
+            case str('ARTT'):
+
+                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
+                                 'divisible by 4.'
+
+            case str('RA'):
+
+                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
+                                 'divisible by 4.'
+
+            case str('Framing'):
+
+                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
+                                 'divisible by 4.'
+
+            case str('Beads'):
+
+                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
+                                 'divisible by 4.'
+
+            case str('Dwell'):
+
+                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
+                                 'divisible by 4.'
+
+            case str('Stroop'):
+
+                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
+                                 'divisible by 4.'
+
+            case str('PBT'):
+
+                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
+                                 'divisible by 4.'
+
+            case str('NACT'):
+
+                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
+                                 'divisible by 4.'
+
+            case str('SS'):
+
+                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
+                                 'divisible by 4.'
+
+            case str('PR'):
+
+                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
+                                 'divisible by 4.'
+
+            case str('DS'):
+
+                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
+                                 'divisible by 4.'
+
+            case str('NB'):
+
+                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
+                                 'divisible by 4.'
+
+            case str('EGNG'):
+
+                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
+                                 'divisible by 4.'
+
+            case str('GNG'):
+
+                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
+                                 'divisible by 4.'
+
+            case _:
+
+                followupstring = 'I have no idea what you chose or how to cite it...'
+
+        self.followup = QLabel(followupstring)
+        self.followup.setStyleSheet('padding :5px')
+
+        # Add stuff to overarching layout
+        dialayout.addWidget(self.description),
+        dialayout.addWidget(self.followup)
+
+        self.setLayout(dialayout)
+
+
 class Settings(QWidget):
     """
     Main class for the settingsguis window. This guy has all of the characteristics and things that every settingsguis
@@ -315,6 +434,10 @@ class Settings(QWidget):
         self.menubutton = QPushButton('Return to Main Menu')
         self.menubutton.clicked.connect(self.mainmenu)
 
+        # Main menu button
+        self.citationbutton = QPushButton('Get Citation')
+        self.citationbutton.clicked.connect(self.citation)
+
         # Quit button
         self.quitbutton = QPushButton('Quit')
         self.quitbutton.clicked.connect(QApplication.instance().quit)
@@ -390,7 +513,7 @@ class Settings(QWidget):
 
         # Make form layout for all the settingsguis
         self.layout = QFormLayout()
-        self.layout.addRow(self.menubutton)
+        self.layout.addRow(self.menubutton, self.citationbutton)
         self.layout.addRow(QLabel('Subject ID:'), self.idform)
         self.layout.addRow(QLabel('Session name/number (enter \"Practice\" to not have output):'), self.sessionin)
         self.layout.addRow(QLabel('What controls do you want to use?'), self.controls)
@@ -523,6 +646,15 @@ class Settings(QWidget):
         self.w = main.SelectWindow()
         self.w.show()
         self.hide()
+
+    def citation(self):
+        """
+        This function opens a text dialog that gives the citation for the task
+        """
+
+        cite = CitationWindow(self.task)
+
+        cite.exec()
 
     def fileselect(self):
         """
