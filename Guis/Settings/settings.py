@@ -244,88 +244,110 @@ class CitationWindow(QDialog):
 
             case str('DD'):
 
-                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
-                                 'divisible by 4.'
+                followupstring = 'Du, W., Green, L., & Myerson, J. (2002). Cross-cultural comparisons of ' \
+                                 'discounting delayed and probabilistic rewards. The Psychological Record, 52(4), ' \
+                                 '479-492.'
 
             case str('PD'):
 
-                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
-                                 'divisible by 4.'
+                followupstring = 'Madden, G.J., Petry, N.M., & Johnson, P.S. (2009). Pathological gamblers discount ' \
+                                 'probabilistic rewards less steeply than matched controls. Experimental and ' \
+                                 'Clinical Psychopharmacology, 17(5), 283–290. https://doi.org/10.1037/a0016806.'
 
             case str('CEDT'):
 
-                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
-                                 'divisible by 4.'
+                followupstring = 'Westbrook, A., Kester, D., & Braver T.S. (2013). What is the subjective cost of ' \
+                                 'cognitive effort? Load, trait, and aging effects revealed by economic preference.' \
+                                 ' PLOS ONE, 8(7), e68210. https://doi.org/10.1371/journal.pone.0068210.'
 
             case str('ARTT'):
 
-                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
-                                 'divisible by 4.'
+                followupstring = 'Agnieszka, T., Belmaker, L.A.R., Roy, A.K., Ruderman, L., Manson, K., Glimcher, ' \
+                                 'P.W., & Levy, I. (2012). Adolescents’risk-taking behavior is driven by tolerance to' \
+                                 ' ambiguity. Proceedings of the National Academy of Sciences, 109(42), 17135–17140. ' \
+                                 'https://doi.org/10.1073/pnas.1207144109.'
 
             case str('RA'):
 
-                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
-                                 'divisible by 4.'
+                followupstring = 'Kahneman, D. & Tversky, A. (1979). Prospect theory: An analysis of decision under ' \
+                                 'risk. Econometrica, 47(2), 263-292.'
 
             case str('Framing'):
 
-                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
-                                 'divisible by 4.'
+                followupstring = 'Broniatowski, D.A. & Reyna, V.F. (2018). A formal model of fuzzy-trace theory: ' \
+                                 'Variations on framing effects and the Allais paradox. Decision (Washington, D.C.), ' \
+                                 '5(4), 205–252. https://doi.org/10.1037/dec0000083.'
 
             case str('Beads'):
 
-                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
-                                 'divisible by 4.'
+                followupstring = 'Moutoussis, M., Bentall, R.P., El-Deredy, W., & Dayan, P. (2011). Bayesian ' \
+                                 'modelling of Jumping-to-Conclusions bias in delusional patients. Cognitive ' \
+                                 'Neuropsychiatry, 16(5), 422-447. https://doi.org/10.1080/13546805.2010.548678.'
 
             case str('Dwell'):
 
-                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
-                                 'divisible by 4.'
+                followupstring = 'Lazarov, A., Abend, R., & Bar-Haim, Y. (2016). Social anxiety is related to increased' \
+                                 ' dwell time on socially threatening faces. Journal of Affective Disorders, 193, ' \
+                                 '282-288. https://doi.org/10.1016/j.jad.2016.01.007.'
 
             case str('Stroop'):
 
-                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
-                                 'divisible by 4.'
+                followupstring = 'MacLeod, C.M. (1991). Half a century of research on the Stroop effect: An ' \
+                                 'integrative review. Psychological Bulletin, 109(2), 163–203. ' \
+                                 'https://doi.org/10.1037/0033-2909.109.2.163.'
 
             case str('PBT'):
 
-                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
-                                 'divisible by 4.'
+                followupstring = 'de Fockert, J.W. & Cooper, A. (2014). Higher levels of depression are associated ' \
+                                 'with reduced global bias in visual processing. Cognition and Emotion, 28(3), ' \
+                                 '541–549. https://doi.org/10.1080/02699931.2013.839939.'
 
             case str('NACT'):
 
-                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
-                                 'divisible by 4.'
+                followupstring = 'Anderson, B.A., Faulkner, M.L., Rilee, J.J., Yantis, S., & Marvel, C.L. (2013). ' \
+                                 'Attentional bias for nondrug reward is magnified in addiction. Experimental and ' \
+                                 'Clinical Psychopharmacology, 21(6), 499–506. ' \
+                                 'https://doi.org/10.1037/a0034575.'
 
             case str('SS'):
 
-                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
-                                 'divisible by 4.'
+                followupstring = 'Logan, G.D. (1994). On the ability to inhibit thought and action: A user’s guide to' \
+                                 ' the stop signal paradigm. In D. Dagenbach & T.H. Carr (Eds.), Inhibitory ' \
+                                 'processes in attention, memory and language. Academic Press.'
 
             case str('PR'):
 
-                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
-                                 'divisible by 4.'
+                followupstring = 'Brainerd, C.J., & Reyna, V.F. (2010). Recollective and Nonrecollective Recall. ' \
+                                 'Journal of Memory and Language, 63(3), 425–445. ' \
+                                 'https://doi.org/10.1016/j.jml.2010.05.002.'
 
             case str('DS'):
 
-                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
-                                 'divisible by 4.'
+                followupstring = 'Ramsay, M.C., & Reynolds, C.R. (1995). Separate digits tests: A brief history, a' \
+                                 ' literature review, and a reexamination of the factor structure of the Test of ' \
+                                 'Memory and Learning (TOMAL). Neuropsychology Review, 5(3), 151–171. ' \
+                                 'https://doi.org/10.1007/BF02214760.'
 
             case str('NB'):
 
-                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
-                                 'divisible by 4.'
+                followupstring = 'Owen, A.M., McMillan, K.M., Laird, A.R., & Bullmore, E. (2005). N‐back working' \
+                                 ' memory paradigm: A meta‐analysis of normative functional neuroimaging studies. ' \
+                                 'Human brain mapping, 25(1), 46-59. https://doi.org/10.1002/hbm.20131.'
 
             case str('EGNG'):
 
-                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
-                                 'divisible by 4.'
+                followupstring = 'Tottenham, N., Hare, T.A., & Casey, B.J. (2011). Behavioral assessment of ' \
+                                 'emotion discrimination, emotion regulation, and cognitive control in childhood, ' \
+                                 'adolescence, and adulthood. Frontiers in Psychology, 2, 1-9. ' \
+                                 'https://doi.org/10.3389/fpsyg.2011.00039.'
 
             case str('GNG'):
 
-                followupstring = 'There are 4 pictures for stimuli, so the total number of trials must be ' \
-                                 'divisible by 4.'
+                followupstring = 'Casey, B.J., Trainor, R.J., Orendi, J.L., Schubert, A.B., Nystrom, L.E., ' \
+                                 'Giedd, J.N., Castellanos, F.X., Haxby, J.V., Noll, D.C., Cohen, J.D., Forman, ' \
+                                 'S.D., Dahl, R.E., and Rapoport, J.L. (1997). A Developmental functional MRI ' \
+                                 'study of prefrontal activation during performance of a go–no-go task. Journal of ' \
+                                 'Cognitive Neuroscience, 9(6), 835–847. https://doi.org/10.1162/jocn.1997.9.6.835.'
 
             case _:
 
@@ -333,6 +355,10 @@ class CitationWindow(QDialog):
 
         self.followup = QLabel(followupstring)
         self.followup.setStyleSheet('padding :5px')
+
+        # make sure the text wraps so the dialog isn't weird-looking
+        self.followup.setWordWrap(True)
+        self.followup.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
 
         # Add stuff to overarching layout
         dialayout.addWidget(self.description),
@@ -431,11 +457,11 @@ class Settings(QWidget):
         self.submit.clicked.connect(self.checksettings)
 
         # Main menu button
-        self.menubutton = QPushButton('Return to Main Menu')
+        self.menubutton = QPushButton('Main Menu')
         self.menubutton.clicked.connect(self.mainmenu)
 
         # Main menu button
-        self.citationbutton = QPushButton('Get Citation')
+        self.citationbutton = QPushButton('Get Task Citation')
         self.citationbutton.clicked.connect(self.citation)
 
         # Quit button
