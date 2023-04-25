@@ -199,15 +199,22 @@ class BeadsExp(experiment.Experiment):
         :param event: this is something for the clicking
         """
 
-        # launch the confidence window
-        window = BeadsConfidence()
-        window.exec()
+        if self.person.confidence == 'Yes':
 
-        # take the output from the confidence window
-        conf = window.output
+            # launch the confidence window
+            window = BeadsConfidence()
+            window.exec()
 
-        # send all the trial info to the participant class
-        self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Red', conf)
+            # take the output from the confidence window
+            conf = window.output
+
+            # send all the trial info to the participant class
+            self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Red', conf)
+
+        else:
+
+            # send all the trial info to the participant class
+            self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Red', 9999)
 
         # set the window to the iti screen
         self.iti()
@@ -219,15 +226,22 @@ class BeadsExp(experiment.Experiment):
         :param event: this is something for the clicking
         """
 
-        # launch the confidence window
-        window = BeadsConfidence()
-        window.exec()
+        if self.person.confidence == 'Yes':
 
-        # take the output from the confidence window
-        conf = window.output
+            # launch the confidence window
+            window = BeadsConfidence()
+            window.exec()
 
-        # send all the trial info to the participant class
-        self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Blue', conf)
+            # take the output from the confidence window
+            conf = window.output
+
+            # send all the trial info to the participant class
+            self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Blue', conf)
+
+        else:
+
+            # send all the trial info to the participant class
+            self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Red', 9999)
 
         # set the window to the iti screen
         self.iti()

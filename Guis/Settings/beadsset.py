@@ -12,6 +12,7 @@ class BeadsSettings(settings.Settings):
         super().__init__(task)
 
         self.layout.addRow(QLabel('Number of trials:'), self.trialsin)
+        self.layout.addRow(QLabel('Do you want to get participant confidence?'), self.confidencetoggle)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
@@ -27,6 +28,7 @@ class BeadsSettings(settings.Settings):
         person = beadsp.BeadsParticipant(self.idform.text(),
                                          self.trialsin.text(),
                                          self.sessionin.text(),
+                                         self.confidence,
                                          self.wd,
                                          'Beads Task',
                                          self.eyetracking,

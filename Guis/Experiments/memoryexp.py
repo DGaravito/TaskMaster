@@ -161,7 +161,8 @@ class NbExp(experiment.Experiment):
                            self.person.rightkey[0] + ' if the letter is a target'
 
         else:
-            instructions = 'Click the left mouse button on the option you prefer.'
+            instructions = 'Click the left button if the letter is a false alarm and the right button if the letter ' \
+                           'is a target.'
 
         self.instructions.setText(instructions)
 
@@ -174,6 +175,25 @@ class NbExp(experiment.Experiment):
         # Put everything in vertical layout
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.middle)
+
+        # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
+        if self.person.controlscheme == 'Mouse':
+
+            self.fabutton = QPushButton('False Alarm')
+            self.targetbutton = QPushButton('Target')
+
+            self.fabutton.clicked.connect(self.clicked_fabutton)
+            self.targetbutton.clicked.connect(self.clicked_targetbutton)
+
+            # Make middle layout for pictures and text
+            buttonlayout = QHBoxLayout()
+
+            buttonlayout.addStretch(1)
+            buttonlayout.addWidget(self.fabutton)
+            buttonlayout.addWidget(self.targetbutton)
+            buttonlayout.addStretch(1)
+            self.instquitlayout.addLayout(buttonlayout)
+
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(self.quitmenulayout)
 
@@ -260,6 +280,56 @@ class NbExp(experiment.Experiment):
 
         # set the screen to the iti window
         self.iti()
+
+    def clicked_fabutton(self):
+
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
+
+            # put a border around the middle to indicate a user input was received
+            self.middle.setStyleSheet('border: 3px solid blue;')
+
+            # no longer allow the participant to respond
+            self.responseenabled = 0
+
+            # stop the timer and increment the number of trials done
+            self.timer.stop()
+            self.trialsdone += 1
+
+            # use time.time and the start time variable to compute rt
+            endtime = time.time() - self.overallstart
+            rt = endtime - self.starttime
+
+            # send the trial info to the participant class so it can be added to the dataframe
+            self.person.updateoutput(self.trialsdone, self.starttime, rt, 0)
+
+            # set the window to the iti screen
+            self.iti()
+
+    def clicked_targetbutton(self):
+
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
+
+            # put a border around the middle to indicate a user input was received
+            self.middle.setStyleSheet('border: 3px solid blue;')
+
+            # no longer allow the participant to respond
+            self.responseenabled = 0
+
+            # stop the timer and increment the number of trials done
+            self.timer.stop()
+            self.trialsdone += 1
+
+            # use time.time and the start time variable to compute rt
+            endtime = time.time() - self.overallstart
+            rt = endtime - self.starttime
+
+            # send the trial info to the participant class so it can be added to the dataframe
+            self.person.updateoutput(self.trialsdone, self.starttime, rt, 1)
+
+            # set the window to the iti screen
+            self.iti()
 
     def keyaction(self, key):
         """
@@ -369,18 +439,18 @@ class DsExp(experiment.Experiment):
         self.middle.addWidget(self.display)
 
         # make the buttons for the keypad
-        self.button1 = QPushButton()
-        self.button2 = QPushButton()
-        self.button3 = QPushButton()
-        self.button4 = QPushButton()
-        self.button5 = QPushButton()
-        self.button6 = QPushButton()
-        self.button7 = QPushButton()
-        self.button8 = QPushButton()
-        self.button9 = QPushButton()
-        self.buttondel = QPushButton()
-        self.button0 = QPushButton()
-        self.buttonsub = QPushButton()
+        self.button1 = QPushButton('1')
+        self.button2 = QPushButton('2')
+        self.button3 = QPushButton('3')
+        self.button4 = QPushButton('4')
+        self.button5 = QPushButton('5')
+        self.button6 = QPushButton('6')
+        self.button7 = QPushButton('7')
+        self.button8 = QPushButton('8')
+        self.button9 = QPushButton('9')
+        self.buttondel = QPushButton('Delete')
+        self.button0 = QPushButton('0')
+        self.buttonsub = QPushButton('Enter')
 
         # connect the buttons
         self.button1.clicked.connect(self.clicked_button1)

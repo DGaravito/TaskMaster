@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QHBoxLayout
+from PyQt6.QtWidgets import QHBoxLayout, QPushButton
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 
@@ -23,26 +23,38 @@ class SSExp(experiment.Experiment):
         middlelayout.addWidget(self.middle)
         middlelayout.addStretch(1)
 
-        # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
-        if self.person.controlscheme == 'Mouse':
-
-            # Attach middle QLabel to functions
-            # self.middle.mousePressEvent = self.clickedresponse
-            print('Not implemented yet. Contact the developer.')
-
         # Instructions, depending on controls
         if self.person.controlscheme != 'Mouse':
             instructions = 'Press ' + self.person.leftkey[0] + ' for left arrows. Press ' + \
                            self.person.rightkey[0] + ' for right arrows.'
 
         else:
-            instructions = 'Click the left mouse button for left arrows. Click the right mouse button for right arrows'
+            instructions = 'Click the left arrow button for left arrows. Click the right arrow button for right arrows'
 
         self.instructions.setText(instructions)
 
         # Put everything in vertical layout
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(middlelayout)
+
+        # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
+        if self.person.controlscheme == 'Mouse':
+
+            self.leftarrowbutton = QPushButton('Left Arrow')
+            self.rightarrowbutton = QPushButton('Right Arrow')
+
+            self.leftarrowbutton.clicked.connect(self.clicked_leftbutton)
+            self.rightarrowbutton.clicked.connect(self.clicked_rightbutton)
+
+            # Make middle layout for pictures and text
+            buttonlayout = QHBoxLayout()
+
+            buttonlayout.addStretch(1)
+            buttonlayout.addWidget(self.leftarrowbutton)
+            buttonlayout.addWidget(self.rightarrowbutton)
+            buttonlayout.addStretch(1)
+            self.instquitlayout.addLayout(buttonlayout)
+
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(self.quitmenulayout)
 
@@ -167,6 +179,58 @@ class SSExp(experiment.Experiment):
         # load the pixmap
         self.middle.setPixmap(pixmap.scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
 
+    def clicked_leftbutton(self):
+
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
+
+            # put a border around the middle to indicate a user input was received
+            self.middle.setStyleSheet('border: 3px solid blue;')
+
+            # no longer allow the participant to respond
+            self.responseenabled = 0
+
+            # stop the timers and indicate that the participant completed the trial
+            self.timer.stop()
+            self.signaltimer.stop()
+            self.trialsdone += 1
+
+            # use time.time and the start time variable to compute rt
+            endtime = time.time() - self.overallstart
+            rt = endtime - self.starttime
+
+            # send the trial info to the participant class so it can be added to the dataframe
+            self.person.updateoutput(self.trialsdone, self.picstring, self.starttime, rt, self.signal, 0)
+
+            # set the window to the iti screen
+            self.iti()
+
+    def clicked_rightbutton(self):
+
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
+
+            # put a border around the middle to indicate a user input was received
+            self.middle.setStyleSheet('border: 3px solid blue;')
+
+            # no longer allow the participant to respond
+            self.responseenabled = 0
+
+            # stop the timers and indicate that the participant completed the trial
+            self.timer.stop()
+            self.signaltimer.stop()
+            self.trialsdone += 1
+
+            # use time.time and the start time variable to compute rt
+            endtime = time.time() - self.overallstart
+            rt = endtime - self.starttime
+
+            # send the trial info to the participant class so it can be added to the dataframe
+            self.person.updateoutput(self.trialsdone, self.picstring, self.starttime, rt, self.signal, 1)
+
+            # set the window to the iti screen
+            self.iti()
+
     def keyaction(self, key):
         """
         Reads the keys that are pressed and does the corresponding actions
@@ -267,13 +331,11 @@ class EGNGExp(experiment.Experiment):
 
             # Attach middle QLabel to functions
             self.middle.mousePressEvent = self.clickedresponse
+            instructions = 'Click the mouse to respond to faces.'
 
         # Instructions, depending on controls
-        if self.person.controlscheme != 'Mouse':
-            instructions = 'Press ' + self.person.leftkey[0] + ' to respond to faces.'
-
         else:
-            instructions = 'Click the mouse to respond to faces.'
+            instructions = 'Press ' + self.person.leftkey[0] + ' to respond to faces.'
 
         self.instructions.setText(instructions)
 
@@ -546,13 +608,10 @@ class GNGExp(experiment.Experiment):
 
             # Attach middle QLabel to functions
             self.middle.mousePressEvent = self.clickedresponse
-
-        # Instructions, depending on controls
-        if self.person.controlscheme != 'Mouse':
-            instructions = 'Press ' + self.person.leftkey[0] + ' to respond to signals.'
+            instructions = 'Click the mouse to respond to signals.'
 
         else:
-            instructions = 'Click the mouse to respond to signals.'
+            instructions = 'Press ' + self.person.leftkey[0] + ' to respond to signals.'
 
         self.instructions.setText(instructions)
 

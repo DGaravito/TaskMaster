@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QHBoxLayout
+from PyQt6.QtWidgets import QHBoxLayout, QPushButton
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 
@@ -15,17 +15,12 @@ class PBTExp(experiment.Experiment):
 
         # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
         if self.person.controlscheme == 'Mouse':
-            # Attach middle QLabel to functions
-            # self.middle.mousePressEvent = self.clickedresponse
-            print('Not implemented yet. Contact the developer.')
+            instructions = 'Click the left button for crosses and right button for squares.'
 
         # Instructions, depending on controls
-        if self.person.controlscheme != 'Mouse':
+        else:
             instructions = 'Press ' + self.person.leftkey[0] + ' for crosses. Press ' + self.person.rightkey[0] +\
                            ' for squares.'
-
-        else:
-            instructions = 'Click the left mouse button to pick crosses. Click the right mouse button for squares.'
 
         self.instructions.setText(instructions)
 
@@ -39,6 +34,25 @@ class PBTExp(experiment.Experiment):
         # Put everything in vertical layout
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(middlelayout)
+
+        # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
+        if self.person.controlscheme == 'Mouse':
+
+            self.crossbutton = QPushButton('Crosses')
+            self.squarebutton = QPushButton('Squares')
+
+            self.crossbutton.clicked.connect(self.clicked_crossbutton)
+            self.squarebutton.clicked.connect(self.clicked_squarebutton)
+
+            # Make middle layout for pictures and text
+            buttonlayout = QHBoxLayout()
+
+            buttonlayout.addStretch(1)
+            buttonlayout.addWidget(self.crossbutton)
+            buttonlayout.addWidget(self.squarebutton)
+            buttonlayout.addStretch(1)
+            self.instquitlayout.addLayout(buttonlayout)
+
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addWidget(self.quitmenulayout)
 
@@ -135,6 +149,56 @@ class PBTExp(experiment.Experiment):
 
         # set the screen to the iti window
         self.iti()
+
+    def clicked_crossbutton(self):
+
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
+
+            # put a border around the middle to indicate a user input was received
+            self.middle.setStyleSheet('border: 3px solid blue;')
+
+            # no longer allow the participant to respond
+            self.responseenabled = 0
+
+            # stop the timeout timer and indicate that the participant completed the trial
+            self.timer.stop()
+            self.trialsdone += 1
+
+            # use time.time and the start time variable to compute rt
+            endtime = time.time() - self.overallstart
+            rt = endtime - self.starttime
+
+            # send the trial info to the participant class so it can be added to the dataframe
+            self.person.updateoutput(self.trialsdone, self.picstring, self.starttime, rt, 'Cross')
+
+            # set the window to the iti screen
+            self.iti()
+
+    def clicked_squarebutton(self):
+
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
+
+            # put a border around the middle to indicate a user input was received
+            self.middle.setStyleSheet('border: 3px solid blue;')
+
+            # no longer allow the participant to respond
+            self.responseenabled = 0
+
+            # stop the timeout timer and indicate that the participant completed the trial
+            self.timer.stop()
+            self.trialsdone += 1
+
+            # use time.time and the start time variable to compute rt
+            endtime = time.time() - self.overallstart
+            rt = endtime - self.starttime
+
+            # send the trial info to the participant class so it can be added to the dataframe
+            self.person.updateoutput(self.trialsdone, self.picstring, self.starttime, rt, 'Square')
+
+            # set the window to the iti screen
+            self.iti()
 
     def keyaction(self, key):
         """

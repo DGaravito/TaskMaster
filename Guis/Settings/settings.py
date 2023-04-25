@@ -394,6 +394,7 @@ class Settings(QWidget):
         self.feedback = 'No'
         self.ftt = 'No'
         self.stt = 'No'
+        self.confidence = 'No'
         self.adopystate = 'No'
 
         # defaults for EGNG and Dwell
@@ -494,6 +495,10 @@ class Settings(QWidget):
         # ST Trials checkbox for paired recall task
         self.stttoggle = QCheckBox()
         self.stttoggle.stateChanged.connect(self.clickbox)
+
+        # ST Trials checkbox for paired recall task
+        self.confidencetoggle = QCheckBox()
+        self.confidencetoggle.stateChanged.connect(self.clickbox)
 
         # checkbox for getting a random outcome, specifically in decision tasks
         self.outcometoggle = QCheckBox()
@@ -600,6 +605,12 @@ class Settings(QWidget):
             self.ftt = 'Yes'
         else:
             self.ftt = 'No'
+
+        # FTT for framing
+        if self.confidencetoggle.isChecked():
+            self.confidence = 'Yes'
+        else:
+            self.confidence = 'No'
 
         # happy for EGNG/Dwell
         if self.happytoggle.isChecked():
