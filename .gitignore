@@ -4,6 +4,7 @@ TaskMaster.log
 
 # PyCharm stuff
 .idea
+.iml
 
 # Distribution / packaging
 .Python
