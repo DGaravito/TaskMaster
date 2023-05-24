@@ -52,7 +52,7 @@ class SSSettings(settings.Settings):
             self.hide()
 
         else:
-            self.matherrordialog(2)
+            self.matherrordialog(10)
 
 
 class EGNGSettings(settings.Settings):
