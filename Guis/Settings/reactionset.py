@@ -34,19 +34,25 @@ class SSSettings(settings.Settings):
         self.setLayout(self.over_layout)
 
     def submitsettings(self):
-        person = reactionp.SSParticipant(self.idform.text(),
-                                         self.trialsin.text(),
-                                         self.sessionin.text(),
-                                         self.wd,
-                                         'Stop-Signal Task',
-                                         self.maxrtin.text(),
-                                         self.blocksin.text(),
-                                         self.eyetracking,
-                                         self.controls.currentText())
 
-        self.exp = reactionexp.SSExp(person)
-        self.exp.show()
-        self.hide()
+        if ((int(self.trialsin.text()) % 2) == 0):
+
+            person = reactionp.SSParticipant(self.idform.text(),
+                                             self.trialsin.text(),
+                                             self.sessionin.text(),
+                                             self.wd,
+                                             'Stop-Signal Task',
+                                             self.maxrtin.text(),
+                                             self.blocksin.text(),
+                                             self.eyetracking,
+                                             self.controls.currentText())
+
+            self.exp = reactionexp.SSExp(person)
+            self.exp.show()
+            self.hide()
+
+        else:
+            self.matherrordialog(2)
 
 
 class EGNGSettings(settings.Settings):

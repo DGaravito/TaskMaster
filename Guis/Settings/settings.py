@@ -208,6 +208,11 @@ class MathErrorBox(QDialog):
                 followupstring = 'For the dwell task, make sure you have at least 16 pictures for each type of matrix' \
                                  ' you selected!'
 
+            case 10:
+
+                followupstring = 'For the stop signal task, we balance tasks for left and right arrows, so make sure ' \
+                                 'your number of trial is divisible by 2.'
+
             case _:
 
                 followupstring = 'I don\'t know what you put, but the math doesn\'t work out'
