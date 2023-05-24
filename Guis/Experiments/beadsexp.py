@@ -199,7 +199,7 @@ class BeadsExp(experiment.Experiment):
         :param event: this is something for the clicking
         """
 
-        if self.person.confidence == 'Yes':
+        if self.person.confidenceoption == 'Yes':
 
             # launch the confidence window
             window = BeadsConfidence()
@@ -226,7 +226,7 @@ class BeadsExp(experiment.Experiment):
         :param event: this is something for the clicking
         """
 
-        if self.person.confidence == 'Yes':
+        if self.person.confidenceoption == 'Yes':
 
             # launch the confidence window
             window = BeadsConfidence()
