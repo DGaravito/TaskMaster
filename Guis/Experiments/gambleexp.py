@@ -284,7 +284,7 @@ class ARTTExp(experiment.Experiment):
             self.left.setStyleSheet('border: 3px solid blue;')
 
             # send the trial data to the participant class
-            self.person.updateoutput(self.trialsdone, self.starttime, rt, self.info[3] == 1, 0)
+            self.person.updateoutput(self.trialsdone, self.starttime, rt, self.info[3], 0)
 
             self.iti()
 
@@ -313,7 +313,7 @@ class ARTTExp(experiment.Experiment):
             self.rightbottomtext.setStyleSheet('border: 3px solid blue;')
 
             # send the trial data to the participant class
-            self.person.updateoutput(self.trialsdone, self.starttime, rt, self.info[3] == 1, 1)
+            self.person.updateoutput(self.trialsdone, self.starttime, rt, self.info[3], 1)
 
             self.iti()
 
@@ -372,7 +372,7 @@ class ARTTExp(experiment.Experiment):
                 response = 0
 
             # send the trial data to the participant class
-            self.person.updateoutput(self.trialsdone, self.starttime, rt, self.info[3] == 1, response)
+            self.person.updateoutput(self.trialsdone, self.starttime, rt, self.info[3], response)
 
             self.iti()
 
@@ -896,6 +896,7 @@ class FrameExp(experiment.Experiment):
 
                 # if the user wanted one of the participant's choices to get randomly chosen, then put that on screen
                 if self.person.outcomeopt == 'Yes':
+
                     outcome = random.choice(self.person.outcomelist)
                     self.middle.setText('Your outcome: ' + outcome)
 
