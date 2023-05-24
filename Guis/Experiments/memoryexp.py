@@ -166,9 +166,6 @@ class NbExp(experiment.Experiment):
 
         self.instructions.setText(instructions)
 
-        # Instructions
-        self.instructions.setText()
-
         # center middle
         self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
