@@ -24,10 +24,6 @@ class DDiscountExp(experiment.Experiment):
 
         self.instructions.setText(instructions)
 
-        # Instructions
-        self.instructions.setText('Press ' + self.person.leftkey[0] + ' for the left option and ' +
-                                  self.person.rightkey[0] + ' for the right option')
-
         # Left and right options (and middle stuff) with font settingsguis
         self.left = QLabel('')
         self.left.setFont(QFont('Helvetica', 40))

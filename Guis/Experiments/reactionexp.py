@@ -83,8 +83,7 @@ class SSExp(experiment.Experiment):
             pathstring = 'Assets/' + self.picstring
 
             # Make a pixmap of the picture and then set the middle to that pixmap
-            pixmap = QPixmap(pathstring)
-            self.middle.setPixmap(pixmap.scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
+            self.middle.setPixmap(QPixmap(pathstring).scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
 
             # randomly select zero or one to determine whether the trial will be a signal or non-signal one
             signalrand = random.randint(0, 1)
@@ -173,11 +172,8 @@ class SSExp(experiment.Experiment):
         else:
             pathstring = 'Assets/SS_RightSignal.png'
 
-        # set the picture to the pixmap
-        pixmap = QPixmap(pathstring)
-
-        # load the pixmap
-        self.middle.setPixmap(pixmap.scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
+        # set the picture to the pixmap and load the pixmap
+        self.middle.setPixmap(QPixmap(pathstring).scaled(250, 250, Qt.AspectRatioMode.KeepAspectRatio))
 
     def clicked_leftbutton(self):
 
