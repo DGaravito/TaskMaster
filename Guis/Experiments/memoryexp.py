@@ -242,7 +242,7 @@ class NbExp(experiment.Experiment):
             self.middle.setText(text[1])
 
             # if the person did badly that round, make them do an additional
-            if self.person.roundperformance < 70:
+            if self.person.roundperformance < .70:
 
                 self.roundsdone -= 1
 
@@ -340,9 +340,6 @@ class NbExp(experiment.Experiment):
             # indicate that the participant is no longer between rounds so g and i keys won't mess things up
             self.betweenrounds = 0
 
-            # generate the next trial
-            self.generatenext()
-
             # Instructions, depending on controls
             if self.person.controlscheme != 'Mouse':
                 instructions = 'Press ' + self.person.leftkey[0] + ' if the letter is a false alarm. Press ' +\
@@ -357,6 +354,10 @@ class NbExp(experiment.Experiment):
             # sense
             if (self.trialsdone == 0) & (self.roundsdone == 0):
                 self.overallstart = time.time()
+
+            # set the screen to the iti and then start the timer until the first trial starts
+            self.iti()
+            self.ititimer.start(1000)
 
         # if the participant presses the left or right keys and is allowed to respond
         if ((key in self.person.rightkey) | (key in self.person.leftkey)) & (self.responseenabled == 1):

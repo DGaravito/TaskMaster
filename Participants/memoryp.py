@@ -288,7 +288,7 @@ class NbParticipant(participant.Participant):
 
             if self.feedback == 'Yes':
 
-                prompt1 = 'You got ' + str('{:.1f}'.format(self.roundperformance)) + '% correct.'
+                prompt1 = 'You got ' + str('{:.1f}'.format(self.roundperformance*100)) + '% correct.'
 
             else:
 
