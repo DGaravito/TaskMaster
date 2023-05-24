@@ -54,7 +54,7 @@ class PBTExp(experiment.Experiment):
             self.instquitlayout.addLayout(buttonlayout)
 
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addWidget(self.quitmenulayout)
+        self.instquitlayout.addLayout(self.quitmenulayout)
 
         # Make a timer that controls how long an image is left on the screen
         self.blankouttimer = QTimer()
