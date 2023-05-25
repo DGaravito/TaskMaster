@@ -652,9 +652,7 @@ class GNGExp(experiment.Experiment):
         # if the trials requested have been completed...
         else:
 
-            # indicate that another block (aka round) is complete and reset the number of trials done to 0 for the next
-            # block
-            self.roundsdone += 1
+            # reset the number of trials done to 0 for the next block
             self.trialsdone = 0
 
             # set the text for the middle label to the appropriate text depending on how many blocks the user wanted
@@ -666,7 +664,7 @@ class GNGExp(experiment.Experiment):
             self.start = prompt[1]
 
             # if the number of rounds done is equal to the number the user requested...
-            if self.person.blocks == self.roundsdone:
+            if self.person.blocksdone == self.person.blocks:
 
                 # output the data to the user's directory and change the instructions to a thank you message
                 self.person.output()

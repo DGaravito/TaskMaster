@@ -659,7 +659,7 @@ class GNGParticipant(participant.Participant):
         super().__init__(expid, trials, session, outdir, task, eyetracking, controls)
 
         # set how many blocks are needed and set the blocks done to 0
-        self.blocks = int(blocks)*2
+        self.blocks = int(blocks)
         self.blocksdone = 0
 
         # make an empty list for the blocks
@@ -727,7 +727,7 @@ class GNGParticipant(participant.Participant):
         :return: list: string for participant instruction; integer to tell the gui whether there are still trials to do
         """
 
-        # default is there are still trials to go
+        # default is there are still rounds and/or blocks to go
         num = 1
 
         # if there are still rounds to go in this block...
