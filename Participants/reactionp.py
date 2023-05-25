@@ -660,7 +660,7 @@ class GNGParticipant(participant.Participant):
         super().__init__(expid, trials, session, outdir, task, eyetracking, controls)
 
         # set how many blocks are needed and set the blocks done to 0
-        self.blocks = int(blocks)
+        self.blocks = int(blocks)*2
         self.blocksdone = 0
 
         # make an empty list for the blocks

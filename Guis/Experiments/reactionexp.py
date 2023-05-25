@@ -634,7 +634,7 @@ class GNGExp(experiment.Experiment):
         if self.trialsdone < self.person.get_trials():
 
             # Get the string of the signal
-            self.signal = self.person.get_trial_string()
+            self.signal = self.person.get_trial_pic()
 
             # Set the middle to that signal
             self.middle.setText(self.signal)
@@ -666,7 +666,7 @@ class GNGExp(experiment.Experiment):
             self.start = prompt[1]
 
             # if the number of rounds done is equal to the number the user requested...
-            if self.person.rounds == self.roundsdone:
+            if self.person.blocks == self.roundsdone:
 
                 # output the data to the user's directory and change the instructions to a thank you message
                 self.person.output()
