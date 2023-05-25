@@ -121,7 +121,7 @@ class SSExp(experiment.Experiment):
             self.middle.setText(self.person.nextround(self.roundsdone))
 
             # if the number of rounds done is equal to the number the user requested...
-            if self.person.rounds == self.roundsdone:
+            if self.person.blocks == self.roundsdone:
 
                 # output the data to the user's directory and change the instructions to a thank you message
                 self.person.output()

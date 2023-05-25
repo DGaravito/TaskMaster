@@ -11,7 +11,6 @@ class SSParticipant(participant.Participant):
 
         # set the defaults based on user input
         self.blocks = int(blocks)
-        self.globallocal = random.choice(['Global', 'Local'])
         self.maxrt = int(maxrt)
 
         # make the starting timer 250 milliseconds
