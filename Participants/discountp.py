@@ -776,23 +776,23 @@ class PdParticipant(participant.Participant):
                 if self.design == 'Gains only':
 
                     # then add the fixed gain to the list
-                    self.outcomelist.append('$' + str('{:.2f}'.format(float(self.trialdesign[0]))))
+                    outcomestring = '$' + str('{:.2f}'.format(float(self.trialdesign[0])))
 
                 # if they only have losses...
                 elif self.design == 'Losses only':
 
                     # then add the fixed loss to the list
-                    self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.trialdesign[0]))))
+                    outcomestring = '-$' + str('{:.2f}'.format(float(self.trialdesign[0])))
 
                 # if they have gains and losses...
                 else:
 
                     # Then look at the state to see if it was a gain or loss
                     if self.state == 'Gain':
-                        self.outcomelist.append('$' + str('{:.2f}'.format(float(self.trialdesign[0]))))
+                        outcomestring = '$' + str('{:.2f}'.format(float(self.trialdesign[0])))
 
                     else:
-                        self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.trialdesign[0]))))
+                        outcomestring = '-$' + str('{:.2f}'.format(float(self.trialdesign[0])))
 
             # if they chose the gamble...
             else:
@@ -805,22 +805,22 @@ class PdParticipant(participant.Participant):
 
                     # if they win, add the reward
                     if actualprob > float(self.trialdesign[1]):
-                        self.outcomelist.append('$' + str('{:.2f}'.format(float(self.maximum))))
+                        outcomestring = '$' + str('{:.2f}'.format(float(self.maximum)))
 
                     # if not, add 0
                     else:
-                        self.outcomelist.append(self.outcomelist.append('$0.00'))
+                        outcomestring = '$0.00'
 
                 # if they only have losses...
                 elif self.design == 'Losses only':
 
                     # if they lose, add the loss
                     if actualprob < float(self.trialdesign[1]):
-                        self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.maximum))))
+                        outcomestring = '-$' + str('{:.2f}'.format(float(self.maximum)))
 
                     # if not, add 0
                     else:
-                        self.outcomelist.append(self.outcomelist.append('$0.00'))
+                        outcomestring = '$0.00'
 
                 # if they have gains and losses...
                 else:
@@ -830,21 +830,23 @@ class PdParticipant(participant.Participant):
 
                         # if they win, add the reward
                         if actualprob > float(self.trialdesign[1]):
-                            self.outcomelist.append('$' + str('{:.2f}'.format(float(self.maximum))))
+                            outcomestring = '$' + str('{:.2f}'.format(float(self.maximum)))
 
                         # if not, add 0
                         else:
-                            self.outcomelist.append(self.outcomelist.append('$0.00'))
+                            outcomestring = '$0.00'
 
                     else:
 
                         # if they lose, add the loss
                         if actualprob < float(self.trialdesign[1]):
-                            self.outcomelist.append('-$' + str('{:.2f}'.format(float(self.maximum))))
+                            outcomestring = '-$' + str('{:.2f}'.format(float(self.maximum)))
 
                         # if not, add 0
                         else:
-                            self.outcomelist.append(self.outcomelist.append('$0.00'))
+                            outcomestring = '$0.00'
+
+            self.outcomelist.append(outcomestring)
 
     def get_instructions(self, instint):
         """
