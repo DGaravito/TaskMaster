@@ -946,6 +946,7 @@ class CEDParticipant(participant.Participant):
         # Experiment settingsguis output dataframe
         dict_tasksettings = {
             'Maximum Reward': [maxrew],
+            'Stimuli Names': [names],
             'Version': [version]
         }
 
@@ -974,7 +975,7 @@ class CEDParticipant(participant.Participant):
 
             # the strings are multiplied so that you end up with a list of strings. Each string appears one sixth of the
             # time
-            self.order = sum([[s] * n for s, n in zip(gainlosscond, multiplier)], [])
+            self.mainorder = sum([[s] * n for s, n in zip(gainlosscond, multiplier)], [])
 
         # if the user wanted the standard CogED
         else:
@@ -990,9 +991,10 @@ class CEDParticipant(participant.Participant):
 
             # the strings are multiplied so that you end up with a list of strings. Each string appears one third of the
             # time
-            self.order = sum([[s] * n for s, n in zip(gainlosscond, multiplier)], [])
+            self.mainorder = sum([[s] * n for s, n in zip(gainlosscond, multiplier)], [])
 
         # shuffle the order
+        self.order = list(self.mainorder)
         random.shuffle(self.order)
 
     def set_design_text(self):
@@ -1238,14 +1240,6 @@ class CEDParticipant(participant.Participant):
         :return: string to prompt the participant at the round's completion
         """
 
-        # reset trial counts for modifiers
-        self.onetwotrials = 0
-        self.onethreetrials = 0
-        self.onefourtrials = 0
-        self.twothreetrials = 0
-        self.twofourtrials = 0
-        self.threefourtrials = 0
-
         # if all the blocks have been completed
         if self.rounds == roundsdone:
 
@@ -1261,6 +1255,18 @@ class CEDParticipant(participant.Participant):
 
         # if there are still more blocks to go, tell the participant so
         else:
+
+            # reset trial counts for modifiers
+            self.onetwotrials = 0
+            self.onethreetrials = 0
+            self.onefourtrials = 0
+            self.twothreetrials = 0
+            self.twofourtrials = 0
+            self.threefourtrials = 0
+
+            # generate a new order
+            self.order = list(self.mainorder)
+            random.shuffle(self.order)
 
             prompt = 'Please wait for the next round.'
 

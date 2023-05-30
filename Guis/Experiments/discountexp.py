@@ -794,21 +794,24 @@ class CEDiscountExp(experiment.Experiment):
         # user wants
         if self.trialsdone < self.person.get_trials():
 
+            # set design text
+            self.person.set_design_text()
+
             # get trial text
-            strings = self.person.get_design_text()
+            self.strings = self.person.get_design_text()
 
             # pick a random either 1 or 2 to see which side appears first
             self.sideint = random.randint(1, 2)
 
             # if it's a one, left appears first
             if self.sideint == 1:
-                self.left.setText(strings[0])
+                self.left.setText(self.strings[0])
                 self.right.setText('')
 
             # if it's a two, right appears first
             else:
-                self.right.setText(strings[1])
-                self.right.setText('')
+                self.right.setText(self.strings[1])
+                self.left.setText('')
 
             # set the middle to blank
             self.middle.setText('')
@@ -893,16 +896,13 @@ class CEDiscountExp(experiment.Experiment):
         # stop the timer
         self.secondhalftimer.stop()
 
-        # get the design text
-        strings = self.person.get_design_text()
-
         # if left appeared first, display right
         if self.sideint == 1:
-            self.right.setText(strings[1])
+            self.right.setText(self.strings[1])
 
         # if right appeared first, display left
         else:
-            self.left.setText(strings[0])
+            self.left.setText(self.strings[0])
 
         # set the middle to or
         self.middle.setText('OR')
@@ -937,7 +937,7 @@ class CEDiscountExp(experiment.Experiment):
         self.middle.setText('Please try to be quicker')
 
         # send the trial data to the participant class
-        self.person.updateoutput(self.trialsdone, self.starttime, 9999)
+        self.person.updateoutput(self.trialsdone, self.starttime, self.full, 9999)
 
         # if you're not in fmri mode, then warn and start the reset timer
         if self.person.fmri == 'No':
@@ -960,12 +960,9 @@ class CEDiscountExp(experiment.Experiment):
         # stop the reset timer
         self.trialresettimer.stop()
 
-        # get the trial text
-        strings = self.person.get_design_text()
-
         # set the left and right using that text
-        self.left.setText(strings[0])
-        self.right.setText(strings[1])
+        self.left.setText(self.strings[0])
+        self.right.setText(self.strings[1])
 
         # set the middle text to or
         self.middle.setText('OR')
