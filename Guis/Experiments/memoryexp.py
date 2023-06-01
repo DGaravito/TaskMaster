@@ -466,7 +466,6 @@ class DsExp(experiment.Experiment):
 
         # arrange the buttons
         keypad = QGridLayout()
-        self.middle.addWidget(keypad)
 
         keypad.addWidget(self.button1, 0, 0, 1, 1)
         keypad.addWidget(self.button2, 0, 1, 1, 1)
@@ -480,6 +479,8 @@ class DsExp(experiment.Experiment):
         keypad.addWidget(self.buttondel, 3, 0, 1, 1)
         keypad.addWidget(self.button0, 3, 1, 1, 1)
         keypad.addWidget(self.buttonsub, 3, 2, 1, 1)
+
+        self.middle.addWidget(keypad)
 
         # Put everything in vertical layout
         self.instquitlayout.addStretch(1)

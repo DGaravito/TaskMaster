@@ -115,7 +115,7 @@ class DSSettings(settings.Settings):
         self.layout.addRow(QLabel('Should difficulty increase (by one) with each test or stay static?'), self.testdiff)
         self.layout.addRow(QLabel('Should participants enter numbers forwards or backwards?'), self.testorder)
         self.layout.addRow(QLabel('Do you want feedback on participant performance?'), self.feedtoggle)
-        self.layout.addRow(QLabel('Are you using a button-box instead of the keyboard?'), self.timelimit)
+        self.layout.addRow(QLabel('How long, in ms, do you want to give the participant to respond?'), self.timelimit)
         self.layout.addRow(QLabel('Number of tests:'), self.blocksin)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
         self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
@@ -141,6 +141,6 @@ class DSSettings(settings.Settings):
                                        self.blocksin.text(),
                                        self.eyetracking)
 
-        self.exp = memoryexp.NbExp(person)
+        self.exp = memoryexp.DsExp(person)
         self.exp.show()
         self.hide()
