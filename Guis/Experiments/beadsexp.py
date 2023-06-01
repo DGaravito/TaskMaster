@@ -112,6 +112,9 @@ class BeadsExp(experiment.Experiment):
     def __init__(self, person):
         super().__init__(person)
 
+        # create a variable that will be toggled to indicate whether the participant is choosing a jar or not
+        self.choosing = 0
+
         # create variables to represent the number of beads drawn and the (currently empty) list of beads drawn
         self.beadsdrawn = 0
         self.beadlist = ['',
@@ -142,13 +145,29 @@ class BeadsExp(experiment.Experiment):
         self.invbutton.setFixedHeight(40)
         self.invbutton.setFont(QFont('Helvetica', 25))
 
+        # Draw bead button
+        self.drawbutton = QPushButton('Draw a bead')
+        self.drawbutton.clicked.connect(self.drawbead)
+        self.drawbutton.setFixedWidth(310)
+        self.drawbutton.setFixedHeight(40)
+        self.drawbutton.setFont(QFont('Helvetica', 25))
+        self.drawbutton.hide()
+
+        # Choose jar button
+        self.choosebutton = QPushButton('Choose a jar')
+        self.choosebutton.clicked.connect(self.start_choosing)
+        self.choosebutton.setFixedWidth(310)
+        self.choosebutton.setFixedHeight(40)
+        self.choosebutton.setFont(QFont('Helvetica', 25))
+        self.choosebutton.hide()
+
         # Instructions, depending on controls
         if self.person.controlscheme != 'Mouse':
             instructions = 'Press ' + self.person.leftkey[0] + ' to choose a jar and ' + self.person.rightkey[0] \
                            + ' to draw a bead'
 
         else:
-            instructions = 'Click the mouse to draw a bead or choose a jar.'
+            instructions = 'Click the button to draw a bead or choose a jar.'
 
         self.instructions.setText(instructions)
 
@@ -165,14 +184,31 @@ class BeadsExp(experiment.Experiment):
         mainhlayout.addStretch(1)
         mainhlayout.addWidget(self.left)
         mainhlayout.addStretch(1)
-        mainhlayout.addWidget(self.middle)
+
+        # If using mouse controls, then add buttons to a specific layout in the middle; otherwise, just put middle in
+        # regular layout
+        if self.person.controlscheme == 'Mouse':
+
+            self.mousemiddle = QVBoxLayout()
+
+            self.mousemiddle.addWidget(self.middle)
+            self.mousemiddle.addWidget(self.drawbutton)
+            self.mousemiddle.addWidget(self.choosebutton)
+
+            mainhlayout.addLayout(self.mousemiddle)
+
+        else:
+            mainhlayout.addWidget(self.middle)
+
         mainhlayout.addStretch(1)
         mainhlayout.addWidget(self.right)
         mainhlayout.addStretch(1)
 
-        # add the inventory button to the bottom level
-        self.quitmenulayout.addStretch(1)
-        self.quitmenulayout.addWidget(self.invbutton)
+        # Only add the inventory button if using mouse controls
+        if self.person.controlscheme == 'Mouse':
+
+            self.quitmenulayout.addStretch(1)
+            self.quitmenulayout.addWidget(self.invbutton)
 
         # Put everything in vertical layout
         self.instquitlayout.addStretch(1)
@@ -194,57 +230,61 @@ class BeadsExp(experiment.Experiment):
 
     def choseleftjar(self, event):
         """
-        Function that launches the confidence window, takes the output of that, and then sends it to the participant
-        class
+        Function that launches the confidence window (if requested), takes the output of that, and then sends all info
+        to the participant class
         :param event: this is something for the clicking
         """
 
-        if self.person.confidenceoption == 'Yes':
+        if self.choosing == 1:
 
-            # launch the confidence window
-            window = BeadsConfidence()
-            window.exec()
+            if self.person.confidenceoption == 'Yes':
 
-            # take the output from the confidence window
-            conf = window.output
+                # launch the confidence window
+                window = BeadsConfidence()
+                window.exec()
 
-            # send all the trial info to the participant class
-            self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Red', conf)
+                # take the output from the confidence window
+                conf = window.output
 
-        else:
+                # send all the trial info to the participant class
+                self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Red', conf)
 
-            # send all the trial info to the participant class
-            self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Red', 9999)
+            else:
 
-        # set the window to the iti screen
-        self.iti()
+                # send all the trial info to the participant class
+                self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Red', 9999)
+
+            # set the window to the iti screen
+            self.iti()
 
     def choserightjar(self, event):
         """
-        Function that launches the confidence window, takes the output of that, and then sends it to the participant
-        class
+        Function that launches the confidence window (if requested), takes the output of that, and then sends all info
+        to the participant class
         :param event: this is something for the clicking
         """
 
-        if self.person.confidenceoption == 'Yes':
+        if self.choosing == 1:
 
-            # launch the confidence window
-            window = BeadsConfidence()
-            window.exec()
+            if self.person.confidenceoption == 'Yes':
 
-            # take the output from the confidence window
-            conf = window.output
+                # launch the confidence window
+                window = BeadsConfidence()
+                window.exec()
 
-            # send all the trial info to the participant class
-            self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Blue', conf)
+                # take the output from the confidence window
+                conf = window.output
 
-        else:
+                # send all the trial info to the participant class
+                self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Blue', conf)
 
-            # send all the trial info to the participant class
-            self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Red', 9999)
+            else:
 
-        # set the window to the iti screen
-        self.iti()
+                # send all the trial info to the participant class
+                self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Blue', 9999)
+
+            # set the window to the iti screen
+            self.iti()
 
     def openinventory(self):
         """
@@ -262,6 +302,11 @@ class BeadsExp(experiment.Experiment):
         self.left.setPixmap(QPixmap())
         self.right.setPixmap(QPixmap())
         self.middle.setText('+')
+
+        # hide the buttons if using mouse controls
+        if self.person.controlscheme == 'Mouse':
+            self.choosebutton.hide()
+            self.drawbutton.hide()
 
         self.jittertimer.start(1000)
 
@@ -297,6 +342,11 @@ class BeadsExp(experiment.Experiment):
         # stop the timer and clear the middle
         self.starttimer.stop()
         self.middle.setText('')
+
+        # show the buttons if using mouse controls
+        if self.person.controlscheme == 'Mouse':
+            self.choosebutton.show()
+            self.drawbutton.show()
 
         # put the jars into pixmaps
         leftpixmap = QPixmap('Assets/BeadsTask_RedJar.png')
@@ -352,6 +402,22 @@ class BeadsExp(experiment.Experiment):
         # send that info to the participant class
         self.person.updateoutput(self.roundsdone, self.beadsdrawn)
 
+    def start_choosing(self):
+        """
+        puts the instructions for choosing a jar on screen and then changes the class variable to indicate that the
+        participant is choosing a jar
+        """
+
+        if self.person.controlscheme != 'Mouse':
+            chooseprompt = 'Press ' + self.person.leftkey[0] + ' to choose the left jar\nPress ' + \
+                           self.person.rightkey[0] + ' to choose the right jar'
+
+        else:
+            chooseprompt = 'Click on the jar\nyou want to choose'
+
+        self.middle.setText(chooseprompt)
+        self.choosing = 1
+
     def keyaction(self, key):
         """
         Reads the keys that are pressed and does the corresponding actions
@@ -359,36 +425,91 @@ class BeadsExp(experiment.Experiment):
         """
 
         # If the user presses the left key, the center text tells the user to click on the jar the choose
-        if key in self.person.leftkey:
-            self.middle.setText('Click on the jar\nyou want to choose')
+        if (key in self.person.leftkey) & (self.betweenrounds == 0):
+
+            if self.choosing == 0:
+
+                self.start_choosing()
+
+            else:
+
+                if self.person.confidenceoption == 'Yes':
+
+                    # launch the confidence window
+                    window = BeadsConfidence()
+                    window.exec()
+
+                    # take the output from the confidence window
+                    conf = window.output
+
+                    # send all the trial info to the participant class
+                    self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Red', conf)
+
+                else:
+
+                    # send all the trial info to the participant class
+                    self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Red', 9999)
+
+                # set the window to the iti screen
+                self.iti()
 
         # if the user preses the right key...
-        if key in self.person.rightkey:
+        if (key in self.person.rightkey) & (self.betweenrounds == 0):
 
-            # clear the middle label
-            self.middle.setText('')
+            if self.choosing == 0:
 
-            # if there have been fewer than 20 beads drawn, draw a bead
-            if self.beadsdrawn < 20:
-                self.drawbead()
+                # clear the middle label
+                self.middle.setText('')
 
-            # if 20 or more have been drawn, tell the user that no more can be drawn
+                # if there have been fewer than 20 beads drawn, draw a bead
+                if self.beadsdrawn < 20:
+                    self.drawbead()
+
+                # if 20 or more have been drawn, tell the user that no more can be drawn
+                else:
+                    self.middle.setText('Max number of\nbeads drawn')
+
             else:
-                self.middle.setText('Max number of\nbeads drawn')
+
+                if self.person.confidenceoption == 'Yes':
+
+                    # launch the confidence window
+                    window = BeadsConfidence()
+                    window.exec()
+
+                    # take the output from the confidence window
+                    conf = window.output
+
+                    # send all the trial info to the participant class
+                    self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Blue', conf)
+
+                else:
+
+                    # send all the trial info to the participant class
+                    self.person.updateoutput(self.roundsdone, self.beadsdrawn, 1, 'Blue', 9999)
+
+                # set the window to the iti screen
+                self.iti()
 
         # if the user presses the g key, then set the window to the iti screen
-        if key in ['g', 'G']:
+        if (key in ['g', 'G']) & (self.betweenrounds == 1):
             self.iti()
 
         # if the user presses the i key, then...
         if key in ['i', 'I']:
 
-            # increase the instruction index
-            self.inst += 1
+            if self.betweenrounds == 1:
 
-            # set the middle text to the corresponding instruction
-            self.middle.setText(self.person.get_instructions(self.inst))
+                # increase the instruction index
+                self.inst += 1
 
-            # if the index reaches 20, reset to 0 so the instructions can be read again if desired
-            if self.inst == 20:
-                self.inst = 0
+                # set the middle text to the corresponding instruction
+                self.middle.setText(self.person.get_instructions(self.inst))
+
+                # if the index reaches 20, reset to 0 so the instructions can be read again if desired
+                if self.inst == 20:
+                    self.inst = 0
+
+            else:
+
+                self.openinventory()

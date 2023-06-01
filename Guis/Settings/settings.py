@@ -552,7 +552,10 @@ class Settings(QWidget):
         self.layout.addRow(self.menubutton, self.citationbutton)
         self.layout.addRow(QLabel('Subject ID:'), self.idform)
         self.layout.addRow(QLabel('Session name/number (enter \"Practice\" to not have output):'), self.sessionin)
-        self.layout.addRow(QLabel('What controls do you want to use?'), self.controls)
+
+        # only allow for controls selection for tasks other than the digit span
+        if task != 'DS':
+            self.layout.addRow(QLabel('What controls do you want to use?'), self.controls)
 
         # Show all elements
         self.show()

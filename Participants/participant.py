@@ -157,6 +157,9 @@ class Participant(object):
                 case '4-back':
                     taskstr = self.task
 
+                case 'Digit Span':
+                    taskstr = self.task
+
                 case _:
                     taskstr = ''
 
