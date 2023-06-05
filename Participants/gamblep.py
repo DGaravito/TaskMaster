@@ -698,8 +698,8 @@ class ARTTParticipant(participant.Participant):
 
             case 8:
 
-                inst = 'In around half of the trials, the red color will be associated\nwith zero; in the other half,' \
-                       ' the blue color will\nbe.'
+                inst = 'In around half of the trials, the red chips will be mean\n winning or losing $0; in the ' \
+                       'other half, the blue chips will\n mean winning or losing $0.'
 
             case 9:
 

@@ -418,12 +418,12 @@ class DsExp(experiment.Experiment):
 
         # Instructions, depending on the user settings
         if self.person.order == 'Forwards':
-            instruction = 'Wait for ' + self.person.get_trials() + ' numbers to be displayed. Then enter them in the' \
-                                                                   ' REVERSE order.'
+            instruction = 'Wait for ' + str(self.person.get_trials()) + ' numbers to be displayed. Then enter them ' \
+                                                                        'in the SAME order.'
 
         else:
-            instruction = 'Wait for ' + self.person.get_trials() + ' numbers to be displayed. Then enter them in the' \
-                                                                   ' REVERSE order.'
+            instruction = 'Wait for ' + str(self.person.get_trials()) + ' numbers to be displayed. Then enter them ' \
+                                                                        'in the REVERSE order.'
 
         self.instructions.setText(instruction)
 
@@ -480,11 +480,11 @@ class DsExp(experiment.Experiment):
         keypad.addWidget(self.button0, 3, 1, 1, 1)
         keypad.addWidget(self.buttonsub, 3, 2, 1, 1)
 
-        self.middle.addWidget(keypad)
+        self.middle.addLayout(keypad)
 
         # Put everything in vertical layout
         self.instquitlayout.addStretch(1)
-        self.instquitlayout.addWidget(self.middle)
+        self.instquitlayout.addLayout(self.middle)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(self.quitmenulayout)
 

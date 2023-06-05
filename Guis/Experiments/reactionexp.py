@@ -68,8 +68,10 @@ class SSExp(experiment.Experiment):
         round is started or the completion text is put on screen
         """
 
-        # stop the timer
+        # stop any/all timers (may be redundant, but whatever)
         self.ititimer.stop()
+        self.timer.stop()
+        self.signaltimer.stop()
 
         # reset the border around the middle if there was something different
         self.middle.setStyleSheet('border: 0px;')
@@ -351,8 +353,10 @@ class EGNGExp(experiment.Experiment):
         round is started or the completion text is put on screen
         """
 
-        # stop the timer
+        # stop any and all timers (may be redundant, but whatever)
         self.ititimer.stop()
+        self.timer.stop()
+        self.blanktimer.stop()
 
         # reset the border around the middle if there was something different
         self.middle.setStyleSheet('border: 0px;')
@@ -623,8 +627,9 @@ class GNGExp(experiment.Experiment):
         round is started or the completion text is put on screen
         """
 
-        # stop the timer
+        # stop any/all timers (may be redundant, but whatever)
         self.ititimer.stop()
+        self.timer.stop()
 
         # reset the border around the middle if there was something different
         self.middle.setStyleSheet('border: 0px;')

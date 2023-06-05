@@ -102,12 +102,23 @@ class ARTTExp(experiment.Experiment):
             self.rightpic.setPixmap(QPixmap(pixmap).scaled(600, 600, Qt.AspectRatioMode.KeepAspectRatio))
 
             if self.info[3] == 1:
+
                 self.righttoptext.setText(self.info[1])
-                self.rightbottomtext.setText('0')
+
+                if self.person.state == 'Gain':
+                    self.rightbottomtext.setText('WIN $0')
+
+                else:
+                    self.rightbottomtext.setText('LOSE $0')
 
             else:
                 self.rightbottomtext.setText(self.info[1])
-                self.righttoptext.setText('0')
+
+                if self.person.state == 'Gain':
+                    self.righttoptext.setText('WIN $0')
+
+                else:
+                    self.righttoptext.setText('LOSE $0')
 
             # set the middle to or
             self.middle.setText('OR')
@@ -386,15 +397,43 @@ class ARTTExp(experiment.Experiment):
             if self.inst == 5:
 
                 pixmap = QPixmap('Assets/ARTT_risk_25.png')
-                self.middle.setPixmap(pixmap.scaled(600, 600, Qt.AspectRatioMode.KeepAspectRatio))
+                self.rightpic.setPixmap(pixmap.scaled(600, 600, Qt.AspectRatioMode.KeepAspectRatio))
+                self.middle.setText('OR')
+
+                if self.person.structure != 'Losses only':
+
+                    self.righttoptext.setText('WIN $10')
+                    self.rightbottomtext.setText('WIN $0')
+                    self.left.setText('WIN $5 for sure')
+
+                else:
+
+                    self.righttoptext.setText('LOSE $10')
+                    self.rightbottomtext.setText('LOSE $0')
+                    self.left.setText('LOSE $5 for sure')
 
             # if the instruction index is eleven, then load the relevant picture
             elif self.inst == 11:
 
                 pixmap = QPixmap('Assets/ARTT_ambig_50.png')
-                self.middle.setPixmap(pixmap.scaled(600, 600, Qt.AspectRatioMode.KeepAspectRatio))
+                self.rightpic.setPixmap(pixmap.scaled(600, 600, Qt.AspectRatioMode.KeepAspectRatio))
+                self.middle.setText('OR')
+
+                if self.person.structure != 'Gains only':
+                    self.rightbottomtext.setText('LOSE $10')
+                    self.righttoptext.setText('LOSE $0')
+                    self.left.setText('LOSE $5 for sure')
+
+                else:
+                    self.rightbottomtext.setText('WIN $10')
+                    self.righttoptext.setText('WIN $0')
+                    self.left.setText('WIN $5 for sure')
 
             else:
+                self.rightbottomtext.setText('')
+                self.rightpic.setPixmap(QPixmap())
+                self.righttoptext.setText('')
+                self.left.setText('')
                 # get the associated text
                 self.middle.setText(self.person.get_instructions(self.inst))
 

@@ -562,6 +562,7 @@ class DsParticipant(participant.Participant):
 
         # make a starting list
         self.set_list()
+        print(self.numberlist)
 
         # set the number of correct and percent correct to 0 at the start
         self.roundperformance = 0.0
@@ -625,14 +626,14 @@ class DsParticipant(participant.Participant):
         """
         Picks the appropriate number from the number list and returns it
         :param trial: last trial that was completed
-        :return: an int from the number list
+        :return: a string converted from an integer from the number list
         """
 
         # pick the number that corresponds to the correct trial
         displaynumber = self.numberlist[trial]
 
         # return the new letter
-        return displaynumber
+        return str(displaynumber)
 
     def set_list(self):
         """
