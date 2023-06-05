@@ -662,10 +662,10 @@ class PdParticipant(participant.Participant):
             if self.state == 'Gain':
 
                 # Set up the left string for sure value
-                leftstring = 'Win $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                 # Set up the right string for risky gamble
-                rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to win $' + \
+                rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to WIN $' + \
                               str('{:.2f}'.format(self.maximum))
 
                 # Set the probability bar for the risky gamble
@@ -675,10 +675,10 @@ class PdParticipant(participant.Participant):
             else:
 
                 # Set up the left string for sure value
-                leftstring = 'Lose $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                 # Set up the right string for risky gamble
-                rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to lose $' + \
+                rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to LOSE $' + \
                               str('{:.2f}'.format(self.maximum))
 
                 # Set the probability bar for the risky gamble
@@ -691,10 +691,10 @@ class PdParticipant(participant.Participant):
             self.state = 'Gain'
 
             # Set up the left string for sure value
-            leftstring = 'Win $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+            leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
             # Set up the right string for risky gamble
-            rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to win $' + \
+            rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to WIN $' + \
                           str('{:.2f}'.format(self.maximum))
 
             # Set the probability bar for the risky gamble
@@ -707,10 +707,10 @@ class PdParticipant(participant.Participant):
             self.state = 'Loss'
 
             # Set up the left string for sure value
-            leftstring = 'Lose $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+            leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
             # Set up the right string for risky gamble
-            rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to lose $' + \
+            rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to LOSE $' + \
                           str('{:.2f}'.format(self.maximum))
 
             # Set the probability bar for the risky gamble

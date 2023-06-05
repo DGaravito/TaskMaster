@@ -788,10 +788,10 @@ class RAParticipant(participant.Participant):
         """
 
         # Set up the left string for sure value
-        gainstring = '50% chance to win $' + str('{:.2f}'.format(self.gainint))
+        gainstring = '50% chance to WIN $' + str('{:.2f}'.format(self.gainint))
 
         # Set up the right string for risky gamble
-        lossstring = '50% chance to lose $' + str('{:.2f}'.format(self.lossfloat))
+        lossstring = '50% chance to LOSE $' + str('{:.2f}'.format(self.lossfloat))
 
         # Return the values to the expguis
         return [gainstring, lossstring]
@@ -1057,65 +1057,65 @@ class FrameParticipant(participant.Participant):
                 # if it's a gist and loss trial
                 case ['Gist', 'Loss']:
                     # Set up the left string for sure value
-                    leftstring = 'Lose $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                    leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                     # Set up the right string for positive gamble outcome
-                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to lose nothing'
+                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to LOSE nothing'
 
                     rightbottomstring = ''
 
                 # if it's a gist and gain trial
                 case ['Gist', 'Gain']:
                     # Set up the left string for sure value
-                    leftstring = 'Win $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                    leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                     righttopstring = ''
 
                     # Set up the right string for negative gamble outcome
-                    rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to win nothing'
+                    rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to WIN nothing'
 
                 # if it's a mixed and loss trial
                 case ['Mixed', 'Loss']:
                     # Set up the left string for sure value
-                    leftstring = 'Lose $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                    leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                     # Set up the right string for positive gamble outcome
-                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to lose nothing'
+                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to LOSE nothing'
 
                     # Set up the right string for negative gamble outcome
-                    rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to lose $' + \
+                    rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to LOSE $' + \
                                         str('{:.2f}'.format(self.trialdesign[2]))
 
                 # if it's a mixed and gain trial
                 case ['Mixed', 'Gain']:
                     # Set up the left string for sure value
-                    leftstring = 'Win $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                    leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                     # Set up the right string for positive gamble outcome
-                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to win $' + \
+                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
                                      str('{:.2f}'.format(self.trialdesign[2]))
 
                     # Set up the right string for negative gamble outcome
-                    rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to win nothing'
+                    rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to WIN nothing'
 
                 # if it's a verbatim and loss trial
                 case ['Verbatim', 'Loss']:
                     # Set up the left string for sure value
-                    leftstring = 'Lose $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                    leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                     righttopstring = ''
 
                     # Set up the right string for negative gamble outcome
-                    rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to lose $' + \
+                    rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to LOSE $' + \
                                         str('{:.2f}'.format(self.trialdesign[2]))
 
                 # if it's a verbatim and gain trial
                 case ['Verbatim', 'Gain']:
                     # Set up the left string for sure value
-                    leftstring = 'Win $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                    leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                     # Set up the right string for positive gamble outcome
-                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to win $' + \
+                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
                                      str('{:.2f}'.format(self.trialdesign[2]))
 
                     rightbottomstring = ''
@@ -1134,10 +1134,10 @@ class FrameParticipant(participant.Participant):
             if self.state == 'Gist':
 
                 # Set up the left string for sure value
-                leftstring = 'Lose $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                 # Set up the right string for positive gamble outcome
-                righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to lose nothing'
+                righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to LOSE nothing'
 
                 rightbottomstring = ''
 
@@ -1145,24 +1145,24 @@ class FrameParticipant(participant.Participant):
             elif self.state == 'Mixed':
 
                 # Set up the left string for sure value
-                leftstring = 'Lose $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                 # Set up the right string for positive gamble outcome
-                righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to lose nothing'
+                righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to LOSE nothing'
 
                 # Set up the right string for negative gamble outcome
-                rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to lose $' + \
+                rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to LOSE $' + \
                                     str('{:.2f}'.format(self.trialdesign[2]))
 
             # if it's a verbatim trial
             else:
                 # Set up the left string for sure value
-                leftstring = 'Lose $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                 righttopstring = ''
 
                 # Set up the right string for negative gamble outcome
-                rightbottomstring = 'A ' + str(100 * (1 - self.trialdesign[1])) + '% chance to lose ' + \
+                rightbottomstring = 'A ' + str(100 * (1 - self.trialdesign[1])) + '% chance to LOSE ' + \
                                     str('{:.2f}'.format(self.trialdesign[2]))
 
         # if you use ftt truncations but only gains
@@ -1172,33 +1172,33 @@ class FrameParticipant(participant.Participant):
             if self.state == 'Gist':
 
                 # Set up the left string for sure value
-                leftstring = 'Win $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                 righttopstring = ''
 
                 # Set up the right string for negative gamble outcome
-                rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to win nothing'
+                rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to WIN nothing'
 
             # if it's a mixed trial
             elif self.state == 'Mixed':
 
                 # Set up the left string for sure value
-                leftstring = 'Win $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                 # Set up the right string for positive gamble outcome
-                righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to win $' + \
+                righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
                                  str('{:.2f}'.format(self.trialdesign[2]))
 
                 # Set up the right string for negative gamble outcome
-                rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to win nothing'
+                rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to WIN nothing'
 
             # if it's a verbatim trial
             else:
                 # Set up the left string for sure value
-                leftstring = 'Win $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                 # Set up the right string for positive gamble outcome
-                righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to win $' + \
+                righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
                                  str('{:.2f}'.format(self.trialdesign[2]))
 
                 rightbottomstring = ''
@@ -1209,25 +1209,25 @@ class FrameParticipant(participant.Participant):
             # if it's a gain trial
             if self.state == 'Gain':
                 # Set up the left string for sure value
-                leftstring = 'Win $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                 # Set up the right string for positive gamble outcome
-                righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to win $' + \
+                righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
                                  str('{:.2f}'.format(self.trialdesign[2]))
 
                 # Set up the right string for negative gamble outcome
-                rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to win nothing'
+                rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to WIN nothing'
 
             # if it's a loss trial
             else:
                 # Set up the left string for sure value
-                leftstring = 'Lose $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
 
                 # Set up the right string for positive gamble outcome
-                righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to lose nothing'
+                righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to LOSE nothing'
 
                 # Set up the right string for negative gamble outcome
-                rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to lose $' + \
+                rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to LOSE $' + \
                                     str('{:.2f}'.format(self.trialdesign[2]))
 
         # Return the values to the expguis
