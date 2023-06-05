@@ -644,6 +644,7 @@ class DsParticipant(participant.Participant):
 
         # for the number of numbers requested, add a random one to the list
         for number in range(self.get_trials()):
+
             # randomly pick a letter
             newnumber = random.randint(0, 9)
 

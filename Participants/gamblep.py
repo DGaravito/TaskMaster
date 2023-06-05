@@ -238,14 +238,14 @@ class ARTTParticipant(participant.Participant):
             # if the next trial type is gain, then set the strings in a gain frame
             if self.state == 'Gain':
 
-                fixedstring = 'Win $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
-                otherstring = 'Win $' + str('{:.2f}'.format(self.trialinfo[1]))
+                fixedstring = 'WIN $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
+                otherstring = 'WIN $' + str('{:.2f}'.format(self.trialinfo[1]))
 
             # if the next trial type is loss, then set the strings in a loss frame
             else:
 
-                fixedstring = 'Lose $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
-                otherstring = 'Lose $' + str('{:.2f}'.format(self.trialinfo[1]))
+                fixedstring = 'LOSE $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
+                otherstring = 'LOSE $' + str('{:.2f}'.format(self.trialinfo[1]))
 
         # if the user wanted gains only...
         elif self.structure == 'Gains only':
@@ -254,8 +254,8 @@ class ARTTParticipant(participant.Participant):
             self.state = 'Gain'
 
             # set the strings in a gain frame
-            fixedstring = 'Win $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
-            otherstring = 'Win $' + str('{:.2f}'.format(self.trialinfo[1]))
+            fixedstring = 'WIN $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
+            otherstring = 'WIN $' + str('{:.2f}'.format(self.trialinfo[1]))
 
         # if the user wanted losses only...
         else:
@@ -264,8 +264,8 @@ class ARTTParticipant(participant.Participant):
             self.state = 'Loss'
 
             # set the strings in a loss frame
-            fixedstring = 'Lose $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
-            otherstring = 'Lose $' + str('{:.2f}'.format(self.trialinfo[1]))
+            fixedstring = 'LOSE $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
+            otherstring = 'LOSE $' + str('{:.2f}'.format(self.trialinfo[1]))
 
         # if there is no ambiguity (i.e., it's a risk trial)
         if self.trialinfo[3] == 0:
