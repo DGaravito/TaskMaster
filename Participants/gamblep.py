@@ -665,7 +665,7 @@ class ARTTParticipant(participant.Participant):
             case 2:
 
                 # if the user requested that one of the participant's choices is output
-                if self.outcomeopt == 'Yes':
+                if self.outcomeopt != 'No':
 
                     # then tell the participant how much starting money is there
                     inst = 'You have $' + str('{:.2f}'.format(self.startmoney)) + ' in starting money. Your final ' \
@@ -698,8 +698,8 @@ class ARTTParticipant(participant.Participant):
 
             case 8:
 
-                inst = 'In around half of the trials, the red chips will be mean\n winning or losing $0; in the ' \
-                       'other half, the blue chips will\n mean winning or losing $0.'
+                inst = 'In around half of the trials, the color red will represent\n winning or losing $0. In the ' \
+                       'other half, the color blue will\n represent winning or losing $0.'
 
             case 9:
 

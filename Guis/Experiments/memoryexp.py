@@ -194,12 +194,6 @@ class NbExp(experiment.Experiment):
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(self.quitmenulayout)
 
-        # if you're using the mouse for controls, then make sure the middle QLabel is connected to a mouse press event
-        if self.person.controlscheme == 'Mouse':
-
-            # Attach QLabels to functions
-            print('Not implemented yet. Contact the developer.')
-
     def generatenext(self):
         """
         Generate the info for the next trial and put it on screen. if the final trial was just completed, then the next
@@ -432,23 +426,42 @@ class DsExp(experiment.Experiment):
 
         # make the keypad with display
         self.middle = QVBoxLayout()
+        self.middledisplay = QHBoxLayout()
 
-        self.display = QLineEdit()
-        self.middle.addWidget(self.display)
+        self.display = QLineEdit('Press \"G\" to start')
+        self.display.setFont(QFont('Helvetica', 20))
+        self.display.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.display.resize(self.display.sizeHint())
+
+        self.middledisplay.addWidget(self.display)
+
+        self.middle.addLayout(self.middledisplay)
 
         # make the buttons for the keypad
         self.button1 = QPushButton('1')
+        self.button1.setFont(QFont('Helvetica', 20))
         self.button2 = QPushButton('2')
+        self.button2.setFont(QFont('Helvetica', 20))
         self.button3 = QPushButton('3')
+        self.button3.setFont(QFont('Helvetica', 20))
         self.button4 = QPushButton('4')
+        self.button4.setFont(QFont('Helvetica', 20))
         self.button5 = QPushButton('5')
+        self.button5.setFont(QFont('Helvetica', 20))
         self.button6 = QPushButton('6')
+        self.button6.setFont(QFont('Helvetica', 20))
         self.button7 = QPushButton('7')
+        self.button7.setFont(QFont('Helvetica', 20))
         self.button8 = QPushButton('8')
+        self.button8.setFont(QFont('Helvetica', 20))
         self.button9 = QPushButton('9')
+        self.button9.setFont(QFont('Helvetica', 20))
         self.buttondel = QPushButton('Delete')
+        self.buttondel.setFont(QFont('Helvetica', 20))
         self.button0 = QPushButton('0')
+        self.button0.setFont(QFont('Helvetica', 20))
         self.buttonsub = QPushButton('Enter')
+        self.buttonsub.setFont(QFont('Helvetica', 20))
 
         # connect the buttons
         self.button1.clicked.connect(self.clicked_button1)
@@ -480,13 +493,23 @@ class DsExp(experiment.Experiment):
         keypad.addWidget(self.button0, 3, 1, 1, 1)
         keypad.addWidget(self.buttonsub, 3, 2, 1, 1)
 
-        self.middle.addLayout(keypad)
+        self.middlekeypad = QHBoxLayout()
+
+        self.middlekeypad.addStretch(1)
+        self.middlekeypad.addLayout(keypad)
+        self.middlekeypad.addStretch(1)
+
+        self.middle.addLayout(self.middlekeypad)
 
         # Put everything in vertical layout
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(self.middle)
         self.instquitlayout.addStretch(1)
         self.instquitlayout.addLayout(self.quitmenulayout)
+
+        # make timer for blanking out display
+        self.blanktimer = QTimer()
+        self.blanktimer.timeout.connect(self.blankout)
 
     def generatenext(self):
         """
@@ -497,16 +520,18 @@ class DsExp(experiment.Experiment):
         # stop the timer
         self.ititimer.stop()
 
-        # clear the display screen
-        self.display.setText('')
-
         # if-then statement to determine whether the amount of trials completed is less than the number of trials the
         # user wants
         if self.trialsdone < self.person.get_trials():
 
             # get the next letter
             self.display.setText(self.person.get_trial_text(self.trialsdone))
-            self.ititimer.start(2000)
+
+            # indicate an additional letter has been sent out
+            self.trialsdone += 1
+
+            # start timer
+            self.blanktimer.start(1500)
 
         # if the trials requested have been completed
         else:
@@ -517,6 +542,20 @@ class DsExp(experiment.Experiment):
             # start test timer and allow the user to respond
             self.timer.start(self.person.timelimit)
             self.responseenabled = 1
+
+    def blankout(self):
+        """
+        blanks out the display for a second to space out the display of numbers
+        """
+
+        # stop the blank timer
+        self.blanktimer.stop()
+
+        # clear the display screen
+        self.display.setText('')
+
+        # start timer
+        self.ititimer.start(500)
 
     def timeout(self):
         """
@@ -530,11 +569,36 @@ class DsExp(experiment.Experiment):
         # turn off the ability for the participant to respond
         self.responseenabled = 0
 
+        # indicate that this round is done and reset trials to 0
+        self.roundsdone += 1
+        self.trialsdone = 0
+
+        self.person.nextround(self.roundsdone)
+
         # send the trial info to the participant class
         self.person.updateoutput(self.starttime, 9999, '')
 
         # clear the display screen with a warning
-        self.display.setText('Too slow!')
+        warning = 'Time\'s up!'
+
+        # if there are still rounds to go, then allow the participant to start the next test
+        if self.person.rounds != self.roundsdone:
+
+            warning = warning + ' Press \"G\" for the next test.'
+            self.betweenrounds = 1
+
+        else:
+
+            warning = warning + ' This task is complete.'
+
+            # reset the border around the display if there was something different
+            self.display.setStyleSheet('border: 0px;')
+
+            # Output data
+            self.person.output()
+            self.menubutton.show()
+
+        self.display.setText(warning)
 
     def keyaction(self, key):
         """
@@ -561,6 +625,21 @@ class DsExp(experiment.Experiment):
             # sense
             if (self.trialsdone == 0) & (self.roundsdone == 0):
                 self.overallstart = time.time()
+
+        # if someone presses the i key and the participant is between rounds...
+        if (key in ['i', 'I']) & (self.betweenrounds == 1):
+
+            # increase the index for the instructions
+            self.inst += 1
+
+            # get the associated instruction text
+            self.display.setText(self.person.get_instructions(self.inst))
+
+            # if the index reaches twelve...
+            if self.inst == 11:
+
+                # reset to zero so the instructions can be viewed again
+                self.inst = 0
 
     def clicked_button1(self):
 
@@ -660,11 +739,11 @@ class DsExp(experiment.Experiment):
             # get the start time
             self.endtime = time.time() - self.overallstart
 
+            # stop the response timer
+            self.timer.stop()
+
             # put a border around the display to indicate a user input was received
             self.display.setStyleSheet('border: 3px solid blue;')
-
-            # clear the display screen
-            self.display.setText('')
 
             # indicate that the participant is no longer between rounds so g and i keys won't mess things up
             self.betweenrounds = 0
@@ -674,6 +753,9 @@ class DsExp(experiment.Experiment):
 
             # send the trial info to the participant class
             self.person.updateoutput(self.starttime, self.endtime, self.display.text())
+
+            # clear the display screen
+            self.display.setText('')
 
             # increase the number of rounds done and reset the number of trials done to 0
             self.roundsdone += 1

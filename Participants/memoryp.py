@@ -562,7 +562,6 @@ class DsParticipant(participant.Participant):
 
         # make a starting list
         self.set_list()
-        print(self.numberlist)
 
         # set the number of correct and percent correct to 0 at the start
         self.roundperformance = 0.0
@@ -588,7 +587,8 @@ class DsParticipant(participant.Participant):
 
             if self.feedback == 'Yes':
 
-                prompt = 'You got ' + str('{:.1f}'.format(self.roundperformance)) + '% correct.\nThis task is complete.'
+                prompt = 'You got ' + str('{:.1f}'.format((self.roundperformance * 100))) + '% correct.\nThis task ' \
+                                                                                            'is complete.'
 
             else:
 
@@ -600,7 +600,7 @@ class DsParticipant(participant.Participant):
             # if the user wanted increasing difficulty, add 1 to the number of numbers for the next test
             if self.diff == 'Increasing':
 
-                self.trials += 1
+                self.trials = str(self.get_trials() + 1)
 
             # if requested, return participant stats
             if self.feedback == 'Yes':
@@ -700,6 +700,7 @@ class DsParticipant(participant.Participant):
         df_trial = {
             'difficulty': [self.get_trials()],
             'list': [self.numberlist],
+            'onset': [onset],
             'response': [response],
             'reaction time': [time],
             'correct_raw': [self.roundsumcorrect],

@@ -108,7 +108,7 @@ class DSSettings(settings.Settings):
         # Number entry for time limit to enter numbers
         self.timelimit = QSpinBox()
         self.timelimit.setRange(1000, 100000)
-        self.timelimit.setValue(5000)
+        self.timelimit.setValue(10000)
 
         # Make form layout for all the settingsguis
         self.layout.addRow(QLabel('Number of numbers per test:'), self.trialsin)
