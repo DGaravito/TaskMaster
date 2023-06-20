@@ -412,12 +412,11 @@ class DsExp(experiment.Experiment):
 
         # Instructions, depending on the user settings
         if self.person.order == 'Forwards':
-            instruction = 'Wait for ' + str(self.person.get_trials()) + ' numbers to be displayed. Then enter them ' \
+            instruction = 'Wait for all the numbers to appear. Then enter them ' \
                                                                         'in the SAME order.'
 
         else:
-            instruction = 'Wait for ' + str(self.person.get_trials()) + ' numbers to be displayed. Then enter them ' \
-                                                                        'in the REVERSE order.'
+            instruction = 'Wait for all the numbers to appear. Then enter them in the REVERSE order.'
 
         self.instructions.setText(instruction)
 
