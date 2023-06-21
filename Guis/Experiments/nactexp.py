@@ -40,9 +40,11 @@ class NACTExp(experiment.Experiment):
 
         self.leftbutton = QPushButton(' - ')
         self.leftbutton.clicked.connect(self.clicked_leftbutton)
+        self.leftbutton.hide()
 
         self.rightbutton = QPushButton(' | ')
         self.rightbutton.clicked.connect(self.clicked_rightbutton)
+        self.rightbutton.hide()
 
         middlelayout.addStretch(1)
         middlelayout.addWidget(self.left)
@@ -114,6 +116,11 @@ class NACTExp(experiment.Experiment):
         if self.trialsdone != 0:
             self.ititimer.stop()
 
+        # if this IS the first trial, then show the mouse buttons if using those controls
+        if (self.person.controlscheme == 'Mouse') & (self.trialsdone == 0):
+            self.leftbutton.show()
+            self.rightbutton.show()
+
         # reset the border around the middle if there was something different
         self.middle.setStyleSheet('border: 0px;')
 
@@ -134,12 +141,12 @@ class NACTExp(experiment.Experiment):
                 self.pixmaps.append(QPixmap(pathstring))
 
             # arrange the pixmaps around the screen
-            self.topleft.setPixmap(self.pixmaps[0].scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
-            self.left.setPixmap(self.pixmaps[1].scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
-            self.bottomleft.setPixmap(self.pixmaps[2].scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
-            self.bottomright.setPixmap(self.pixmaps[3].scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
-            self.right.setPixmap(self.pixmaps[4].scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
-            self.topright.setPixmap(self.pixmaps[5].scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
+            self.topleft.setPixmap(self.pixmaps[0].scaled(300, 300, Qt.AspectRatioMode.KeepAspectRatio))
+            self.left.setPixmap(self.pixmaps[1].scaled(300, 300, Qt.AspectRatioMode.KeepAspectRatio))
+            self.bottomleft.setPixmap(self.pixmaps[2].scaled(300, 300, Qt.AspectRatioMode.KeepAspectRatio))
+            self.bottomright.setPixmap(self.pixmaps[3].scaled(300, 300, Qt.AspectRatioMode.KeepAspectRatio))
+            self.right.setPixmap(self.pixmaps[4].scaled(300, 300, Qt.AspectRatioMode.KeepAspectRatio))
+            self.topright.setPixmap(self.pixmaps[5].scaled(300, 300, Qt.AspectRatioMode.KeepAspectRatio))
 
             # set the fixation cross
             self.middle.setText('+')
@@ -174,6 +181,12 @@ class NACTExp(experiment.Experiment):
 
             # otherwise, allow the user to start the next round
             else:
+
+                # hide buttons if using mouse controls
+                if self.person.controlscheme == 'Mouse':
+                    self.leftbutton.hide()
+                    self.rightbutton.hide()
+
                 self.betweenrounds = 1
 
     def iti(self):
