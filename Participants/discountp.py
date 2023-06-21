@@ -10,8 +10,11 @@ from Participants import participant
 class DdParticipant(participant.Participant):
 
     def __init__(self, expid, trials, session, outdir, task, ss_del, ll_shortdel, ll_longdel, ss_smallrew, ll_rew,
-                 rounds, outcome, design, adopy, eyetracking, controls, fmri):
+                 rounds, wholenumbers, outcome, design, adopy, eyetracking, controls, fmri):
         super().__init__(expid, trials, session, outdir, task, eyetracking, controls, fmri)
+
+        # make binary variable for whether you want whole numbers
+        self.wholenumberopt = wholenumbers
 
         # make a variable for ADOPy status
         self.adopy = adopy
@@ -66,7 +69,8 @@ class DdParticipant(participant.Participant):
                              'Larger Later Reward': [ll_rew],
                              'Design': [design],
                              'Blocks': [rounds],
-                             'ADOPy?': [adopy]
+                             'ADOPy?': [adopy],
+                             'Whole numbers only?': [wholenumbers]
                              }
 
         # attach the task-specific settings to the task general settings
@@ -184,13 +188,26 @@ class DdParticipant(participant.Participant):
             for trial in range(self.get_trials()):
 
                 # add a random float between the smallest and largest amount for the sooner option to the amount list
-                amountrange.append(random.uniform(ss_smallrew, ll_rew - .5))
+                if self.wholenumberopt == 'No':
+                    amountrange.append(random.uniform(ss_smallrew, ll_rew - .5))
+
+                else:
+                    amountrange.append(random.randint(ss_smallrew, ll_rew - 1))
 
         # otherwise, just put the min and max (minus $.5) in the list
         else:
 
-            amountrange.append(ss_smallrew)
-            amountrange.append(ll_rew - .5)
+            if self.wholenumberopt == 'No':
+                amountrange.append(ss_smallrew)
+
+            else:
+                amountrange.append(int(ss_smallrew))
+
+            if self.wholenumberopt == 'No':
+                amountrange.append(ll_rew - .5)
+
+            else:
+                amountrange.append(int(ll_rew - 1))
 
         # randomize the list items
         random.shuffle(amountrange)
@@ -202,7 +219,11 @@ class DdParticipant(participant.Participant):
         self.taskstimuli.append(ss_del)
 
         # add the amount for later rewards to the stimuli list
-        self.taskstimuli.append(ll_rew)
+        if self.wholenumberopt == 'No':
+            self.taskstimuli.append(ll_rew)
+
+        else:
+            self.taskstimuli.append(int(ll_rew))
 
         # make a list to have the different delays for the delayed option
         timerange = [ll_shortdel]
@@ -212,6 +233,7 @@ class DdParticipant(participant.Participant):
 
             # then for however many additional trials per block there are...
             for trial in range(self.get_trials() - 2):
+
                 # add a random float between the shortest and longest delay for the delayed option to the list of delays
                 timerange.append(random.uniform(ll_shortdel, ll_longdel))
 
@@ -305,7 +327,7 @@ class DdParticipant(participant.Participant):
 
         # if there are any more full days left, then add them to the string
         if int(days) > 0:
-            timestring = timestring + str(int(days)) + ' days.'
+            timestring = timestring + str(int(days)) + ' days'
 
         # return the string
         return timestring
@@ -345,63 +367,127 @@ class DdParticipant(participant.Participant):
 
             if self.state == 'Gain':
 
-                # if the user wanted the immediate option to occur now, as opposed to also at a delay, use now  in the string
-                if int(self.trialinfo[0]) == 0:
-                    shortstring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nnow'
+                # if the user wanted the immediate option to occur now, not at a delay, use now in the string
+                if int(self.trialinfo[1]) == 0:
+
+                    if self.wholenumberopt == 'No':
+                        shortstring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nnow'
+
+                    else:
+                        shortstring = 'Getting $' + str(self.trialinfo[0]) + '\nnow'
 
                 # otherwise, use the get_timestring function to have a string
                 else:
-                    shortstring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nafter ' \
+
+                    if self.wholenumberopt == 'No':
+                        shortstring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nafter ' \
+                                  + self.get_timestring(self.trialinfo[1])
+
+                    else:
+                        shortstring = 'Getting $' + str(self.trialinfo[0]) + '\nafter ' \
                                   + self.get_timestring(self.trialinfo[1])
 
                 # for the delay string
+                if self.wholenumberopt == 'No':
+                    delaystring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[2])) + '\nafter ' \
+                              + self.get_timestring(self.trialinfo[3])
+
+                else:
+                    delaystring = 'Getting $' + str(self.trialinfo[2]) + '\nafter ' \
+                                  + self.get_timestring(self.trialinfo[3])
+
+            else:
+
+                # if the user wanted the immediate option to occur now, use now in the string
+                if int(self.trialinfo[1]) == 0:
+
+                    if self.wholenumberopt == 'No':
+                        shortstring = 'Losing $' + str('{:.2f}'.format(self.trialinfo[2])) + '\nnow'
+
+                    else:
+                        shortstring = 'Losing $' + str(self.trialinfo[2]) + '\nnow'
+
+                # otherwise, use the get_timestring function to have a string
+                else:
+
+                    if self.wholenumberopt == 'No':
+                        shortstring = 'Losing $' + str('{:.2f}'.format(self.trialinfo[2])) + '\nafter ' \
+                                      + self.get_timestring(self.trialinfo[1])
+
+                    else:
+                        shortstring = 'Losing $' + str(self.trialinfo[2]) + '\nafter ' \
+                                      + self.get_timestring(self.trialinfo[1])
+
+                # for the delay string
+                if self.wholenumberopt == 'No':
+                    delaystring = 'Losing $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nafter ' \
+                                  + self.get_timestring(self.trialinfo[3])
+
+                else:
+                    delaystring = 'Losing $' + str(self.trialinfo[0]) + '\nafter ' \
+                                  + self.get_timestring(self.trialinfo[3])
+
+        elif self.design == 'Gains only':
+
+            # if the user wanted the immediate option to occur now, not at a delay, use now  in the string
+            if int(self.trialinfo[1]) == 0:
+
+                if self.wholenumberopt == 'No':
+                    shortstring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nnow'
+
+                else:
+                    shortstring = 'Getting $' + str(self.trialinfo[0]) + '\nnow'
+
+            # otherwise, use the get_timestring function to have a string
+            else:
+
+                if self.wholenumberopt == 'No':
+                    shortstring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nafter ' \
+                                  + self.get_timestring(self.trialinfo[1])
+
+                else:
+                    shortstring = 'Getting $' + str(self.trialinfo[0]) + '\nafter ' \
+                                  + self.get_timestring(self.trialinfo[1])
+
+            # for the delay string
+            if self.wholenumberopt == 'No':
                 delaystring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[2])) + '\nafter ' \
                               + self.get_timestring(self.trialinfo[3])
 
             else:
-
-                # if the user wanted the immediate option to occur now, as opposed to also at a delay, use now  in the string
-                if int(self.trialinfo[0]) == 0:
-                    shortstring = 'Losing $' + str('{:.2f}'.format(self.trialinfo[2])) + '\nnow'
-
-                # otherwise, use the get_timestring function to have a string
-                else:
-                    shortstring = 'Losing $' + str('{:.2f}'.format(self.trialinfo[2])) + '\nafter ' \
-                                  + self.get_timestring(self.trialinfo[1])
-
-                # for the delay string
-                delaystring = 'Losing $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nafter ' \
+                delaystring = 'Getting $' + str(self.trialinfo[2]) + '\nafter ' \
                               + self.get_timestring(self.trialinfo[3])
-
-        elif self.design == 'Gains only':
-
-            # if the user wanted the immediate option to occur now, as opposed to also at a delay, use now  in the string
-            if int(self.trialinfo[0]) == 0:
-                shortstring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nnow'
-
-            # otherwise, use the get_timestring function to have a string
-            else:
-                shortstring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nafter ' \
-                              + self.get_timestring(self.trialinfo[1])
-
-            # for the delay string
-            delaystring = 'Getting $' + str('{:.2f}'.format(self.trialinfo[2])) + '\nafter ' \
-                          + self.get_timestring(self.trialinfo[3])
 
         else:
 
-            # if the user wanted the immediate option to occur now, as opposed to also at a delay, use now  in the string
-            if int(self.trialinfo[0]) == 0:
-                shortstring = 'Losing $' + str('{:.2f}'.format(self.trialinfo[2])) + '\nnow'
+            # if the user wanted the immediate option to occur now, not at a delay, use now  in the string
+            if int(self.trialinfo[1]) == 0:
+
+                if self.wholenumberopt == 'No':
+                    shortstring = 'Losing $' + str('{:.2f}'.format(self.trialinfo[2])) + '\nnow'
+
+                else:
+                    shortstring = 'Losing $' + str(self.trialinfo[2]) + '\nnow'
 
             # otherwise, use the get_timestring function to have a string
             else:
-                shortstring = 'Losing $' + str('{:.2f}'.format(self.trialinfo[2])) + '\nafter ' \
-                              + self.get_timestring(self.trialinfo[1])
+
+                if self.wholenumberopt == 'No':
+                    shortstring = 'Losing $' + str('{:.2f}'.format(self.trialinfo[2])) + '\nafter ' \
+                                  + self.get_timestring(self.trialinfo[1])
+
+                else:
+                    shortstring = 'Losing $' + str(self.trialinfo[2]) + '\nafter ' \
+                                  + self.get_timestring(self.trialinfo[1])
 
             # for the delay string
-            delaystring = 'Losing $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nafter ' \
-                          + self.get_timestring(self.trialinfo[3])
+            if self.wholenumberopt == 'No':
+                delaystring = 'Losing $' + str('{:.2f}'.format(self.trialinfo[0])) + '\nafter ' \
+                              + self.get_timestring(self.trialinfo[3])
+
+            else:
+                delaystring = 'Losing $' + str(self.trialinfo[0]) + '\nafter ' \
+                              + self.get_timestring(self.trialinfo[3])
 
         # if the side integer is 1, then put the delay string on the right
         if side == 1:
@@ -579,9 +665,12 @@ class DdParticipant(participant.Participant):
 
 class PdParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, session, outdir, task, design, minimum, maximum, outcome, money, rounds,
-                 eyetracking, controls, fmri):
+    def __init__(self, expid, trials, session, outdir, task, design, minimum, maximum, wholenumbers, outcome, money,
+                 rounds, eyetracking, controls, fmri):
         super().__init__(expid, trials, session, outdir, task, eyetracking, controls, fmri)
+
+        # make binary variable for whether you want whole numbers
+        self.wholenumberopt = wholenumbers
 
         # grab the information that the user entered on the settings page
         self.rounds = int(rounds)
@@ -603,7 +692,8 @@ class PdParticipant(participant.Participant):
         dict_tasksettings = {'Design': [design],
                              'Minimum Reward': [minimum],
                              'Maximum Reward': [maximum],
-                             'Blocks': [rounds]
+                             'Blocks': [rounds],
+                             'Whole numbers only?': [wholenumbers]
                              }
 
         # attach the task-specific settings to the task general settings
@@ -641,10 +731,17 @@ class PdParticipant(participant.Participant):
         """
 
         # generate random floats between the ranges for rewards and probabilities
-        self.trialdesign = [
-            random.uniform(self.minimum, self.maximum - .5),
-            random.uniform(.01, .99)
-        ]
+        if self.wholenumberopt == 'No':
+            self.trialdesign = [
+                random.uniform(self.minimum, self.maximum - .5),
+                random.uniform(.01, .99)
+            ]
+
+        else:
+            self.trialdesign = [
+                round(random.uniform(self.minimum, self.maximum - 1)),
+                random.uniform(.01, .99)
+            ]
 
     def get_design_text(self):
         """
@@ -662,11 +759,20 @@ class PdParticipant(participant.Participant):
             if self.state == 'Gain':
 
                 # Set up the left string for sure value
-                leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                if self.wholenumberopt == 'No':
+                    leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+                else:
+                    leftstring = 'WIN $' + str(self.trialdesign[0]) + ' for sure'
 
                 # Set up the right string for risky gamble
-                rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to WIN $' + \
-                              str('{:.2f}'.format(self.maximum))
+                if self.wholenumberopt == 'No':
+                    rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to WIN $' + \
+                                  str('{:.2f}'.format(self.maximum))
+
+                else:
+                    rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to WIN $' + \
+                                  str(int(self.maximum))
 
                 # Set the probability bar for the risky gamble
                 barvalue = round(self.trialdesign[1] * 100)
@@ -675,11 +781,20 @@ class PdParticipant(participant.Participant):
             else:
 
                 # Set up the left string for sure value
-                leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                if self.wholenumberopt == 'No':
+                    leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+                else:
+                    leftstring = 'LOSE $' + str(self.trialdesign[0]) + ' for sure'
 
                 # Set up the right string for risky gamble
-                rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to LOSE $' + \
-                              str('{:.2f}'.format(self.maximum))
+                if self.wholenumberopt == 'No':
+                    rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to LOSE $' + \
+                                  str('{:.2f}'.format(self.maximum))
+
+                else:
+                    rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to LOSE $' + \
+                                  str(int(self.maximum))
 
                 # Set the probability bar for the risky gamble
                 barvalue = round((1 - self.trialdesign[1]) * 100)
@@ -691,11 +806,20 @@ class PdParticipant(participant.Participant):
             self.state = 'Gain'
 
             # Set up the left string for sure value
-            leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+            if self.wholenumberopt == 'No':
+                leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+            else:
+                leftstring = 'WIN $' + str(self.trialdesign[0]) + ' for sure'
 
             # Set up the right string for risky gamble
-            rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to WIN $' + \
-                          str('{:.2f}'.format(self.maximum))
+            if self.wholenumberopt == 'No':
+                rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to WIN $' + \
+                              str('{:.2f}'.format(self.maximum))
+
+            else:
+                rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to WIN $' + \
+                              str(int(self.maximum))
 
             # Set the probability bar for the risky gamble
             barvalue = round(self.trialdesign[1] * 100)
@@ -707,11 +831,20 @@ class PdParticipant(participant.Participant):
             self.state = 'Loss'
 
             # Set up the left string for sure value
-            leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+            if self.wholenumberopt == 'No':
+                leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+            else:
+                leftstring = 'LOSE $' + str(self.trialdesign[0]) + ' for sure'
 
             # Set up the right string for risky gamble
-            rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to LOSE $' + \
-                          str('{:.2f}'.format(self.maximum))
+            if self.wholenumberopt == 'No':
+                rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to LOSE $' + \
+                              str('{:.2f}'.format(self.maximum))
+
+            else:
+                rightstring = 'A ' + str(round(self.trialdesign[1] * 100)) + '% chance to LOSE $' + \
+                              str(int(self.maximum))
 
             # Set the probability bar for the risky gamble
             barvalue = round((1 - self.trialdesign[1]) * 100)
@@ -892,8 +1025,8 @@ class PdParticipant(participant.Participant):
 
 class CEDParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, session, outdir, task, maxrew, outcome, names, version, rounds, eyetracking,
-                 controls, fmri):
+    def __init__(self, expid, trials, session, outdir, task, maxrew, outcome, names, version, rounds,
+                 eyetracking, controls, fmri):
         super().__init__(expid, trials, session, outdir, task, eyetracking, controls, fmri)
 
         # grab information from what the user entered in the settings

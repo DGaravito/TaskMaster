@@ -213,21 +213,21 @@ class NACTParticipant(participant.Participant):
         correct = 0
 
         # find out whether the participants was correct
-        # if the stimulus included a vertical line...
+        # if the stimulus included a horizontal line...
         if self.signalnumber == 1:
 
-            # make the stimulus string 'Vertical'
-            stimstring = 'Vertical'
+            # make the stimulus string 'Horizontal'
+            stimstring = 'Horizontal'
 
             # the participant was correct if they hit the left key
             if response == 0:
                 correct = 1
 
-        # if the stimulus included a horizontal line...
+        # if the stimulus included a vertical line...
         else:
 
-            # make the stimulus string 'Horizontal'
-            stimstring = 'Horizontal'
+            # make the stimulus string 'Vertical'
+            stimstring = 'Vertical'
 
             # the participant was correct if they hit the right key
             if response == 1:

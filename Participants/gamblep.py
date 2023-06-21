@@ -10,9 +10,12 @@ from Participants import participant
 
 class ARTTParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, session, outdir, task, risklist, amblist, rewmin, rewmax, structure, outcome,
-                 money, rounds, adopy, eyetracking, controls, fmri):
+    def __init__(self, expid, trials, session, outdir, task, risklist, amblist, rewmin, rewmax, structure,
+                 wholenumbers, timelimit, outcome, money, rounds, adopy, eyetracking, controls, fmri):
         super().__init__(expid, trials, session, outdir, task, eyetracking, controls, fmri)
+
+        # make binary variable for whether you want whole numbers
+        self.wholenumberopt = wholenumbers
 
         # set variables from the user input
         self.rounds = int(rounds)
@@ -20,6 +23,7 @@ class ARTTParticipant(participant.Participant):
         self.outcomeopt = outcome
         self.structure = structure
         self.adopy = adopy
+        self.timelimit = int(timelimit)
 
         # make an empty list to collect the participant's choices if requested
         self.outcomelist = []
@@ -58,7 +62,9 @@ class ARTTParticipant(participant.Participant):
                              'Largest Reward': [rewmax],
                              'ADOPy?': [adopy],
                              'Design': [structure],
-                             'Blocks': [rounds]
+                             'Blocks': [rounds],
+                             'Whole numbers only?': [wholenumbers],
+                             'Time limit': [timelimit]
                              }
 
         # attach the task-specific settings to the generic settings
@@ -165,11 +171,18 @@ class ARTTParticipant(participant.Participant):
             # then for however many additional trials per block there are...
             for trial in range(self.get_trials()):
 
-                # add a random float between the smallest and largest amount for the sooner option to the amount list
-                r_var.append(random.uniform(rewmin + .5, rewmax))
+                if self.wholenumberopt == 'No':
+
+                    # add a random float between the smallest and largest amount for the sooner option to the list
+                    r_var.append(random.uniform(rewmin + .5, rewmax))
+
+                else:
+
+                    # add a random float between the smallest and largest amount for the sooner option to the list
+                    r_var.append(random.randint(int(rewmin) + 1, int(rewmax)))
 
         # the fixed reward will always be the minimum
-        r_fix = [rewmin]
+        r_fix = [int(rewmin)]
 
         # make a list of lists of the rewards
         rewards = list([
@@ -238,14 +251,34 @@ class ARTTParticipant(participant.Participant):
             # if the next trial type is gain, then set the strings in a gain frame
             if self.state == 'Gain':
 
-                fixedstring = 'WIN $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
-                otherstring = 'WIN $' + str('{:.2f}'.format(self.trialinfo[1]))
+                if self.wholenumberopt == 'No':
+                    fixedstring = 'WIN $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
+
+                else:
+                    fixedstring = 'WIN $' + str(self.trialinfo[0]) + ' for sure'
+
+                # for the reward string, if user just wanted whole numbers, then don't add the decimal stuff
+                if self.wholenumberopt == 'No':
+                    otherstring = 'WIN $' + str('{:.2f}'.format(self.trialinfo[1]))
+
+                else:
+                    otherstring = 'WIN $' + str(self.trialinfo[1])
 
             # if the next trial type is loss, then set the strings in a loss frame
             else:
 
-                fixedstring = 'LOSE $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
-                otherstring = 'LOSE $' + str('{:.2f}'.format(self.trialinfo[1]))
+                if self.wholenumberopt == 'No':
+                    fixedstring = 'LOSE $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
+
+                else:
+                    fixedstring = 'LOSE $' + str(self.trialinfo[0]) + ' for sure'
+
+                # for the reward string, if user just wanted whole numbers, then don't add the decimal stuff
+                if self.wholenumberopt == 'No':
+                    otherstring = 'LOSE $' + str('{:.2f}'.format(self.trialinfo[1]))
+
+                else:
+                    otherstring = 'LOSE $' + str(self.trialinfo[1])
 
         # if the user wanted gains only...
         elif self.structure == 'Gains only':
@@ -254,8 +287,18 @@ class ARTTParticipant(participant.Participant):
             self.state = 'Gain'
 
             # set the strings in a gain frame
-            fixedstring = 'WIN $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
-            otherstring = 'WIN $' + str('{:.2f}'.format(self.trialinfo[1]))
+            if self.wholenumberopt == 'No':
+                fixedstring = 'WIN $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
+
+            else:
+                fixedstring = 'WIN $' + str(self.trialinfo[0]) + ' for sure'
+
+            # for the reward string, if user just wanted whole numbers, then don't add the decimal stuff
+            if self.wholenumberopt == 'No':
+                otherstring = 'WIN $' + str('{:.2f}'.format(self.trialinfo[1]))
+
+            else:
+                otherstring = 'WIN $' + str(self.trialinfo[1])
 
         # if the user wanted losses only...
         else:
@@ -264,8 +307,18 @@ class ARTTParticipant(participant.Participant):
             self.state = 'Loss'
 
             # set the strings in a loss frame
-            fixedstring = 'LOSE $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
-            otherstring = 'LOSE $' + str('{:.2f}'.format(self.trialinfo[1]))
+            if self.wholenumberopt == 'No':
+                fixedstring = 'LOSE $' + str(self.trialinfo[0]) + ' for sure'
+
+            else:
+                fixedstring = 'LOSE $' + str('{:.2f}'.format(self.trialinfo[0])) + ' for sure'
+
+            # for the reward string, if user just wanted whole numbers, then don't add the decimal stuff
+            if self.wholenumberopt == 'No':
+                otherstring = 'LOSE $' + str('{:.2f}'.format(self.trialinfo[1]))
+
+            else:
+                otherstring = 'LOSE $' + str(self.trialinfo[1])
 
         # if there is no ambiguity (i.e., it's a risk trial)
         if self.trialinfo[3] == 0:
@@ -353,19 +406,19 @@ class ARTTParticipant(participant.Participant):
         #
         # else:
 
-        pAmbiguous = self.trialinfo[3]
-        pRisky = self.trialinfo[2]
-        fAmount = self.trialinfo[0]
-        vAmount = self.trialinfo[1]
+        p_ambiguous = self.trialinfo[3]
+        p_risky = self.trialinfo[2]
+        f_amount = self.trialinfo[0]
+        v_amount = self.trialinfo[1]
 
         # make dictionary of trial data
         df_trial = {
             'trial': [trial],
             'cond': [self.state],
-            'Proportion Ambiguous': [pAmbiguous],
-            'Proportion Risky': [pRisky],
-            'Fixed Amount': [fAmount],
-            'Variable Amount': [vAmount],
+            'Proportion Ambiguous': [p_ambiguous],
+            'Proportion Risky': [p_risky],
+            'Fixed Amount': [f_amount],
+            'Variable Amount': [v_amount],
             'Color of Variable Amount': [bluered],
             'onset': [onset],
             'response': [response],
@@ -399,17 +452,17 @@ class ARTTParticipant(participant.Participant):
                 # if they only have gains...
                 if self.structure == 'Gains only':
 
-                    outcomestring = '(Sure Gain): $' + str('{:.2f}'.format(fAmount)) + ' + $' +\
+                    outcomestring = '(Sure Gain): $' + str('{:.2f}'.format(f_amount)) + ' + $' +\
                                     str('{:.2f}'.format(self.startmoney)) + ' = $' +\
-                                    str('{:.2f}'.format(self.startmoney + fAmount)) + '.'
+                                    str('{:.2f}'.format(self.startmoney + f_amount)) + '.'
 
                 # if they only have losses...
                 elif self.structure == 'Losses only':
 
                     # then add the fixed loss to the list
                     outcomestring = '(Sure Loss): $' + str('{:.2f}'.format(self.startmoney)) + ' - $' +\
-                                    str('{:.2f}'.format(fAmount)) + ' = $' +\
-                                    str('{:.2f}'.format(self.startmoney - fAmount)) + '.'
+                                    str('{:.2f}'.format(f_amount)) + ' = $' +\
+                                    str('{:.2f}'.format(self.startmoney - f_amount)) + '.'
 
                 # if they have gains and losses...
                 else:
@@ -417,15 +470,15 @@ class ARTTParticipant(participant.Participant):
                     # Then look at the state to see if it was a gain or loss
                     if self.state == 'Gain':
 
-                        outcomestring = '(Sure Gain): $' + str('{:.2f}'.format(fAmount)) + ' + $' +\
+                        outcomestring = '(Sure Gain): $' + str('{:.2f}'.format(f_amount)) + ' + $' +\
                                         str('{:.2f}'.format(self.startmoney)) + ' = $' +\
-                                        str('{:.2f}'.format(self.startmoney + fAmount)) + '.'
+                                        str('{:.2f}'.format(self.startmoney + f_amount)) + '.'
 
                     else:
 
                         outcomestring = '(Sure Loss): $' + str('{:.2f}'.format(self.startmoney)) + ' - $' +\
-                                        str('{:.2f}'.format(fAmount)) + ' = $' +\
-                                        str('{:.2f}'.format(self.startmoney - fAmount)) + '.'
+                                        str('{:.2f}'.format(f_amount)) + ' = $' +\
+                                        str('{:.2f}'.format(self.startmoney - f_amount)) + '.'
 
             # if they chose the gamble...
             else:
@@ -439,19 +492,19 @@ class ARTTParticipant(participant.Participant):
                     # if blue is the reward color, then they win only if they have less than or equal to the prob
                     if bluered == 0:
 
-                        outcomestring = 'Gain Gamble: ' + str(round(100 * pRisky)) + '% to win ' +\
-                                        str('{:.2f}'.format(vAmount)) + ' with a blue chip\n'
+                        outcomestring = 'Gain Gamble: ' + str(round(100 * p_risky)) + '% to win ' +\
+                                        str('{:.2f}'.format(v_amount)) + ' with a blue chip\n'
 
                         # if the user wanted the full outcome and not just a bag to pick from
                         if self.outcomeopt == 'Yes, Full Outcome':
 
                             # if they win, add the reward
-                            if actualprob <= pRisky:
+                            if actualprob <= p_risky:
 
                                 outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
-                                                 str('{:.2f}'.format(vAmount)) + ' + $' +\
+                                                 str('{:.2f}'.format(v_amount)) + ' + $' +\
                                                  str('{:.2f}'.format(self.startmoney)) +\
-                                                 ' = $' + str('{:.2f}'.format(self.startmoney + vAmount)) + '.'
+                                                 ' = $' + str('{:.2f}'.format(self.startmoney + v_amount)) + '.'
 
                             # if not, add 0
                             else:
@@ -463,19 +516,19 @@ class ARTTParticipant(participant.Participant):
                     # if red is the reward color, then they win only if they have less than or equal to 1 minus the prob
                     else:
 
-                        outcomestring = 'Gain Gamble: ' + str(round(100 * (1-pRisky))) + '% to win ' +\
-                                        str('{:.2f}'.format(vAmount)) + ' with a red chip\n'
+                        outcomestring = 'Gain Gamble: ' + str(round(100 * (1-p_risky))) + '% to win ' +\
+                                        str('{:.2f}'.format(v_amount)) + ' with a red chip\n'
 
                         # if the user wanted the full outcome and not just a bag to pick from
                         if self.outcomeopt == 'Yes, Full Outcome':
 
                             # if they win, add the reward
-                            if actualprob <= (1-pRisky):
+                            if actualprob <= (1-p_risky):
 
                                 outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
-                                                 str('{:.2f}'.format(vAmount)) + ' + $' +\
+                                                 str('{:.2f}'.format(v_amount)) + ' + $' +\
                                                  str('{:.2f}'.format(self.startmoney)) +\
-                                                 ' = $' + str('{:.2f}'.format(self.startmoney + vAmount)) + '.'
+                                                 ' = $' + str('{:.2f}'.format(self.startmoney + v_amount)) + '.'
 
                             # if not, add 0
                             else:
@@ -490,19 +543,19 @@ class ARTTParticipant(participant.Participant):
                     # if blue is the reward color, then they win only if they have less than or equal to the prob
                     if bluered == 0:
 
-                        outcomestring = 'Loss Gamble: ' + str(round(100 * pRisky)) + '% to lose ' +\
-                                        str('{:.2f}'.format(vAmount)) + ' with a blue chip\n'
+                        outcomestring = 'Loss Gamble: ' + str(round(100 * p_risky)) + '% to lose ' +\
+                                        str('{:.2f}'.format(v_amount)) + ' with a blue chip\n'
 
                         # if the user wanted the full outcome and not just a bag to pick from
                         if self.outcomeopt == 'Yes, Full Outcome':
 
                             # if they lose, add the loss
-                            if actualprob <= pRisky:
+                            if actualprob <= p_risky:
 
                                 outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $' +\
                                                  str('{:.2f}'.format(self.startmoney)) + ' -  $' +\
-                                                 str('{:.2f}'.format(vAmount)) + ' = $' +\
-                                                 str('{:.2f}'.format(self.startmoney - vAmount)) + '.'
+                                                 str('{:.2f}'.format(v_amount)) + ' = $' +\
+                                                 str('{:.2f}'.format(self.startmoney - v_amount)) + '.'
 
                             # if not, add 0
                             else:
@@ -514,19 +567,19 @@ class ARTTParticipant(participant.Participant):
                     # if red is the reward color, then they win only if they have less than or equal to 1 minus the prob
                     else:
 
-                        outcomestring = 'Loss Gamble: ' + str(round(100 * (1-pRisky))) + '% to lose ' +\
-                                        str('{:.2f}'.format(vAmount)) + ' with a red chip\n'
+                        outcomestring = 'Loss Gamble: ' + str(round(100 * (1-p_risky))) + '% to lose ' +\
+                                        str('{:.2f}'.format(v_amount)) + ' with a red chip\n'
 
                         # if the user wanted the full outcome and not just a bag to pick from
                         if self.outcomeopt == 'Yes, Full Outcome':
 
                             # if they lose, add the loss
-                            if actualprob <= (1-pRisky):
+                            if actualprob <= (1-p_risky):
 
                                 outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $' +\
                                                  str('{:.2f}'.format(self.startmoney)) + ' -  $' +\
-                                                 str('{:.2f}'.format(vAmount)) + ' = $' +\
-                                                 str('{:.2f}'.format(self.startmoney - vAmount)) + '.'
+                                                 str('{:.2f}'.format(v_amount)) + ' = $' +\
+                                                 str('{:.2f}'.format(self.startmoney - v_amount)) + '.'
 
                             # if not, add 0
                             else:
@@ -544,19 +597,19 @@ class ARTTParticipant(participant.Participant):
                         # if blue is the reward color, then they win only if they have less than or equal to the prob
                         if bluered == 0:
 
-                            outcomestring = 'Gain Gamble: ' + str(round(100 * pRisky)) + '% to win ' + \
-                                            str('{:.2f}'.format(vAmount)) + ' with a blue chip\n'
+                            outcomestring = 'Gain Gamble: ' + str(round(100 * p_risky)) + '% to win ' + \
+                                            str('{:.2f}'.format(v_amount)) + ' with a blue chip\n'
 
                             # if the user wanted the full outcome and not just a bag to pick from
                             if self.outcomeopt == 'Yes, Full Outcome':
 
                                 # if they win, add the reward
-                                if actualprob <= pRisky:
+                                if actualprob <= p_risky:
 
                                     outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
-                                                     str('{:.2f}'.format(vAmount)) + ' + $' +\
+                                                     str('{:.2f}'.format(v_amount)) + ' + $' +\
                                                      str('{:.2f}'.format(self.startmoney)) +\
-                                                     ' = $' + str('{:.2f}'.format(self.startmoney + vAmount)) + '.'
+                                                     ' = $' + str('{:.2f}'.format(self.startmoney + v_amount)) + '.'
 
                                 # if not, add 0
                                 else:
@@ -569,19 +622,19 @@ class ARTTParticipant(participant.Participant):
                         # prob
                         else:
 
-                            outcomestring = 'Gain Gamble: ' + str(round(100 * (1-pRisky))) + '% to win ' + \
-                                            str('{:.2f}'.format(vAmount)) + ' with a red chip\n'
+                            outcomestring = 'Gain Gamble: ' + str(round(100 * (1-p_risky))) + '% to win ' + \
+                                            str('{:.2f}'.format(v_amount)) + ' with a red chip\n'
 
                             # if the user wanted the full outcome and not just a bag to pick from
                             if self.outcomeopt == 'Yes, Full Outcome':
 
                                 # if they win, add the reward
-                                if actualprob <= (1-pRisky):
+                                if actualprob <= (1-p_risky):
 
                                     outcomestring += 'Won (' + str(round(100 * actualprob)) + '): $' +\
-                                                     str('{:.2f}'.format(vAmount)) + ' + $' +\
+                                                     str('{:.2f}'.format(v_amount)) + ' + $' +\
                                                      str('{:.2f}'.format(self.startmoney)) +\
-                                                     ' = $' + str('{:.2f}'.format(self.startmoney + vAmount)) + '.'
+                                                     ' = $' + str('{:.2f}'.format(self.startmoney + v_amount)) + '.'
 
                                 # if not, add 0
                                 else:
@@ -596,19 +649,19 @@ class ARTTParticipant(participant.Participant):
                         # if blue is the reward color, then they win only if they have less than or equal to the prob
                         if bluered == 0:
 
-                            outcomestring = 'Loss Gamble: ' + str(round(100 * pRisky)) + '% to lose ' + \
-                                            str('{:.2f}'.format(vAmount)) + ' with a blue chip\n'
+                            outcomestring = 'Loss Gamble: ' + str(round(100 * p_risky)) + '% to lose ' + \
+                                            str('{:.2f}'.format(v_amount)) + ' with a blue chip\n'
 
                             # if the user wanted the full outcome and not just a bag to pick from
                             if self.outcomeopt == 'Yes, Full Outcome':
 
                                 # if they lose, add the loss
-                                if actualprob <= pRisky:
+                                if actualprob <= p_risky:
 
                                     outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $' +\
                                                      str('{:.2f}'.format(self.startmoney)) + ' -  $' +\
-                                                     str('{:.2f}'.format(vAmount)) + ' = $' +\
-                                                     str('{:.2f}'.format(self.startmoney - vAmount)) + '.'
+                                                     str('{:.2f}'.format(v_amount)) + ' = $' +\
+                                                     str('{:.2f}'.format(self.startmoney - v_amount)) + '.'
 
                                 # if not, add 0
                                 else:
@@ -617,22 +670,22 @@ class ARTTParticipant(participant.Participant):
                                                      str('{:.2f}'.format(self.startmoney)) + ' - $0.00' + ' = $' +\
                                                      str('{:.2f}'.format(self.startmoney)) + '.'
 
-                        # if red is the reward color, then they win only if they have less than or equal to 1 minus the prob
+                        # if red is the reward color, then they win only if less than or equal to 1 minus the prob
                         else:
 
-                            outcomestring = 'Loss Gamble: ' + str(round(100 * (1-pRisky))) + '% to lose ' +\
-                                            str('{:.2f}'.format(vAmount)) + ' with a red chip\n'
+                            outcomestring = 'Loss Gamble: ' + str(round(100 * (1-p_risky))) + '% to lose ' +\
+                                            str('{:.2f}'.format(v_amount)) + ' with a red chip\n'
 
                             # if the user wanted the full outcome and not just a bag to pick from
                             if self.outcomeopt == 'Yes, Full Outcome':
 
                                 # if they lose, add the loss
-                                if actualprob <= (1-pRisky):
+                                if actualprob <= (1-p_risky):
 
                                     outcomestring += 'Lost (' + str(round(100 * actualprob)) + '): $' +\
                                                      str('{:.2f}'.format(self.startmoney)) + ' -  $' +\
-                                                     str('{:.2f}'.format(vAmount)) + ' = $' +\
-                                                     str('{:.2f}'.format(self.startmoney - vAmount)) + '.'
+                                                     str('{:.2f}'.format(v_amount)) + ' = $' +\
+                                                     str('{:.2f}'.format(self.startmoney - v_amount)) + '.'
 
                                 # if not, add 0
                                 else:
@@ -641,9 +694,9 @@ class ARTTParticipant(participant.Participant):
                                                      str('{:.2f}'.format(self.startmoney)) + ' - $0.00' + ' = $' +\
                                                      str('{:.2f}'.format(self.startmoney)) + '.'
 
-            if (pAmbiguous > 0) & (response == 1):
+            if (p_ambiguous > 0) & (response == 1):
 
-                bagstring = 'Ambiguous (' + str(round(100 * pAmbiguous)) + '%) bag -> 50/50 bag:\n'
+                bagstring = 'Ambiguous (' + str(round(100 * p_ambiguous)) + '%) bag -> 50/50 bag:\n'
                 outcomestring = bagstring + outcomestring
 
             self.outcomelist.append(outcomestring)
@@ -725,9 +778,12 @@ class ARTTParticipant(participant.Participant):
 
 class RAParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, session, outdir, task, minimum, maximum, outcome, money, rounds, eyetracking,
-                 controls, fmri):
+    def __init__(self, expid, trials, session, outdir, task, minimum, maximum, wholenumbers, outcome, money, rounds,
+                 eyetracking, controls, fmri):
         super().__init__(expid, trials, session, outdir, task, eyetracking, controls, fmri)
+
+        # make binary variable for whether you want whole numbers
+        self.wholenumberopt = wholenumbers
 
         # set variables from the user input
         self.rounds = int(rounds)
@@ -746,7 +802,8 @@ class RAParticipant(participant.Participant):
         # Experiment settingsguis output dataframe
         dict_tasksettings = {'Minimum Reward': [minimum],
                              'Maximum Reward': [maximum],
-                             'Blocks': [rounds]
+                             'Blocks': [rounds],
+                             'Whole numbers only?': [wholenumbers]
                              }
 
         # attach the task-specific settings to the task general settings
@@ -779,7 +836,12 @@ class RAParticipant(participant.Participant):
         """
 
         self.gainint = random.choice(self.gainamounts)
-        self.lossfloat = self.gainint * random.choice(self.multiplieramounts)
+
+        if self.wholenumberopt == 'No':
+            self.lossfloat = self.gainint * random.choice(self.multiplieramounts)
+
+        else:
+            self.lossfloat = round(self.gainint * random.choice(self.multiplieramounts))
 
     def get_design_text(self):
         """
@@ -788,10 +850,18 @@ class RAParticipant(participant.Participant):
         """
 
         # Set up the left string for sure value
-        gainstring = '50% chance to WIN $' + str('{:.2f}'.format(self.gainint))
+        if self.wholenumberopt == 'No':
+            gainstring = '50% chance to WIN $' + str('{:.2f}'.format(self.gainint))
+
+        else:
+            gainstring = '50% chance to WIN $' + str(self.gainint)
 
         # Set up the right string for risky gamble
-        lossstring = '50% chance to LOSE $' + str('{:.2f}'.format(self.lossfloat))
+        if self.wholenumberopt == 'No':
+            lossstring = '50% chance to LOSE $' + str('{:.2f}'.format(self.lossfloat))
+
+        else:
+            lossstring = '50% chance to LOSE $' + str(self.lossfloat)
 
         # Return the values to the expguis
         return [gainstring, lossstring]
@@ -910,9 +980,12 @@ class RAParticipant(participant.Participant):
 
 class FrameParticipant(participant.Participant):
 
-    def __init__(self, expid, trials, session, outdir, task, minimum, maximum, design, ftt, outcome, money, rounds,
-                 eyetracking, controls, fmri):
+    def __init__(self, expid, trials, session, outdir, task, minimum, maximum, design, ftt, wholenumbers, outcome,
+                 money, rounds, eyetracking, controls, fmri):
         super().__init__(expid, trials, session, outdir, task, eyetracking, controls, fmri)
+
+        # make binary variable for whether you want whole numbers
+        self.wholenumberopt = wholenumbers
 
         # set variables from the user input
         self.rounds = int(rounds)
@@ -939,7 +1012,8 @@ class FrameParticipant(participant.Participant):
         dict_tasksettings = {'Design': [design],
                              'FTT': [ftt],
                              'Minimum Reward': [minimum],
-                             'Maximum Reward': [maximum]
+                             'Maximum Reward': [maximum],
+                             'Whole numbers only?': [wholenumbers]
                              }
 
         # attach the task-specific settings to the task general settings
@@ -1037,7 +1111,11 @@ class FrameParticipant(participant.Participant):
         sureamount = gambleamount * gambleprob
 
         # set the trials design as a list
-        self.trialdesign = [sureamount, gambleprob, gambleamount]
+        if self.wholenumberopt == 'No':
+            self.trialdesign = [sureamount, gambleprob, gambleamount]
+
+        else:
+            self.trialdesign = [round(sureamount), gambleprob, round(gambleamount)]
 
     def get_design_text(self):
         """
@@ -1056,8 +1134,13 @@ class FrameParticipant(participant.Participant):
 
                 # if it's a gist and loss trial
                 case ['Gist', 'Loss']:
+
                     # Set up the left string for sure value
-                    leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                    if self.wholenumberopt == 'No':
+                        leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+                    else:
+                        leftstring = 'LOSE $' + str(self.trialdesign[0]) + ' for sure'
 
                     # Set up the right string for positive gamble outcome
                     righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to LOSE nothing'
@@ -1066,8 +1149,13 @@ class FrameParticipant(participant.Participant):
 
                 # if it's a gist and gain trial
                 case ['Gist', 'Gain']:
+
                     # Set up the left string for sure value
-                    leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                    if self.wholenumberopt == 'No':
+                        leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+                    else:
+                        leftstring = 'WIN $' + str(self.trialdesign[0]) + ' for sure'
 
                     righttopstring = ''
 
@@ -1076,47 +1164,87 @@ class FrameParticipant(participant.Participant):
 
                 # if it's a mixed and loss trial
                 case ['Mixed', 'Loss']:
+
                     # Set up the left string for sure value
-                    leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                    if self.wholenumberopt == 'No':
+                        leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+                    else:
+                        leftstring = 'LOSE $' + str(self.trialdesign[0]) + ' for sure'
 
                     # Set up the right string for positive gamble outcome
                     righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to LOSE nothing'
 
                     # Set up the right string for negative gamble outcome
-                    rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to LOSE $' + \
-                                        str('{:.2f}'.format(self.trialdesign[2]))
+                    if self.wholenumberopt == 'No':
+                        rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to LOSE $' +\
+                                            str('{:.2f}'.format(self.trialdesign[2]))
+
+                    else:
+                        rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to LOSE $' +\
+                                            str(self.trialdesign[2])
 
                 # if it's a mixed and gain trial
                 case ['Mixed', 'Gain']:
+
                     # Set up the left string for sure value
-                    leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                    if self.wholenumberopt == 'No':
+                        leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+                    else:
+                        leftstring = 'WIN $' + str(self.trialdesign[0]) + ' for sure'
 
                     # Set up the right string for positive gamble outcome
-                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
-                                     str('{:.2f}'.format(self.trialdesign[2]))
+                    if self.wholenumberopt == 'No':
+                        righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
+                                         str('{:.2f}'.format(self.trialdesign[2]))
+
+                    else:
+                        righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
+                                         str(self.trialdesign[2])
 
                     # Set up the right string for negative gamble outcome
                     rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to WIN nothing'
 
                 # if it's a verbatim and loss trial
                 case ['Verbatim', 'Loss']:
+
                     # Set up the left string for sure value
-                    leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                    if self.wholenumberopt == 'No':
+                        leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+                    else:
+                        leftstring = 'LOSE $' + str(self.trialdesign[0]) + ' for sure'
 
                     righttopstring = ''
 
                     # Set up the right string for negative gamble outcome
-                    rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to LOSE $' + \
-                                        str('{:.2f}'.format(self.trialdesign[2]))
+                    if self.wholenumberopt == 'No':
+                        rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to LOSE $' +\
+                                            str('{:.2f}'.format(self.trialdesign[2]))
+
+                    else:
+                        rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to LOSE $' +\
+                                            str(self.trialdesign[2])
 
                 # if it's a verbatim and gain trial
                 case ['Verbatim', 'Gain']:
+
                     # Set up the left string for sure value
-                    leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                    if self.wholenumberopt == 'No':
+                        leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+                    else:
+                        leftstring = 'WIN $' + str(self.trialdesign[0]) + ' for sure'
 
                     # Set up the right string for positive gamble outcome
-                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
-                                     str('{:.2f}'.format(self.trialdesign[2]))
+                    if self.wholenumberopt == 'No':
+                        righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
+                                         str('{:.2f}'.format(self.trialdesign[2]))
+
+                    else:
+                        righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
+                                         str(self.trialdesign[2])
 
                     rightbottomstring = ''
 
@@ -1134,7 +1262,11 @@ class FrameParticipant(participant.Participant):
             if self.state == 'Gist':
 
                 # Set up the left string for sure value
-                leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                if self.wholenumberopt == 'No':
+                    leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+                else:
+                    leftstring = 'LOSE $' + str(self.trialdesign[0]) + ' for sure'
 
                 # Set up the right string for positive gamble outcome
                 righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to LOSE nothing'
@@ -1145,25 +1277,43 @@ class FrameParticipant(participant.Participant):
             elif self.state == 'Mixed':
 
                 # Set up the left string for sure value
-                leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                if self.wholenumberopt == 'No':
+                    leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+                else:
+                    leftstring = 'LOSE $' + str(self.trialdesign[0]) + ' for sure'
 
                 # Set up the right string for positive gamble outcome
                 righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to LOSE nothing'
 
                 # Set up the right string for negative gamble outcome
-                rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to LOSE $' + \
-                                    str('{:.2f}'.format(self.trialdesign[2]))
+                if self.wholenumberopt == 'No':
+                    rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to LOSE $' + \
+                                        str('{:.2f}'.format(self.trialdesign[2]))
+
+                else:
+                    rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to LOSE $' + \
+                                        str(self.trialdesign[2])
 
             # if it's a verbatim trial
             else:
                 # Set up the left string for sure value
-                leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                if self.wholenumberopt == 'No':
+                    leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+                else:
+                    leftstring = 'LOSE $' + str(self.trialdesign[0]) + ' for sure'
 
                 righttopstring = ''
 
                 # Set up the right string for negative gamble outcome
-                rightbottomstring = 'A ' + str(100 * (1 - self.trialdesign[1])) + '% chance to LOSE ' + \
-                                    str('{:.2f}'.format(self.trialdesign[2]))
+                if self.wholenumberopt == 'No':
+                    rightbottomstring = 'A ' + str(100 * (1 - self.trialdesign[1])) + '% chance to LOSE ' + \
+                                        str('{:.2f}'.format(self.trialdesign[2]))
+
+                else:
+                    rightbottomstring = 'A ' + str(100 * (1 - self.trialdesign[1])) + '% chance to LOSE ' + \
+                                        str(self.trialdesign[2])
 
         # if you use ftt truncations but only gains
         elif (self.ftt == 'Yes') & (self.design == 'Gains only'):
@@ -1172,7 +1322,11 @@ class FrameParticipant(participant.Participant):
             if self.state == 'Gist':
 
                 # Set up the left string for sure value
-                leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                if self.wholenumberopt == 'No':
+                    leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+                else:
+                    leftstring = 'WIN $' + str(self.trialdesign[0]) + ' for sure'
 
                 righttopstring = ''
 
@@ -1183,23 +1337,42 @@ class FrameParticipant(participant.Participant):
             elif self.state == 'Mixed':
 
                 # Set up the left string for sure value
-                leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                if self.wholenumberopt == 'No':
+                    leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+                else:
+                    leftstring = 'WIN $' + str(self.trialdesign[0]) + ' for sure'
 
                 # Set up the right string for positive gamble outcome
-                righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
-                                 str('{:.2f}'.format(self.trialdesign[2]))
+                if self.wholenumberopt == 'No':
+                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
+                                     str('{:.2f}'.format(self.trialdesign[2]))
+
+                else:
+                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
+                                     str(self.trialdesign[2])
 
                 # Set up the right string for negative gamble outcome
                 rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to WIN nothing'
 
             # if it's a verbatim trial
             else:
+
                 # Set up the left string for sure value
-                leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                if self.wholenumberopt == 'No':
+                    leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+                else:
+                    leftstring = 'WIN $' + str(self.trialdesign[0]) + ' for sure'
 
                 # Set up the right string for positive gamble outcome
-                righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
-                                 str('{:.2f}'.format(self.trialdesign[2]))
+                if self.wholenumberopt == 'No':
+                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
+                                     str('{:.2f}'.format(self.trialdesign[2]))
+
+                else:
+                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
+                                     str(self.trialdesign[2])
 
                 rightbottomstring = ''
 
@@ -1208,27 +1381,47 @@ class FrameParticipant(participant.Participant):
 
             # if it's a gain trial
             if self.state == 'Gain':
+
                 # Set up the left string for sure value
-                leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                if self.wholenumberopt == 'No':
+                    leftstring = 'WIN $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+                else:
+                    leftstring = 'WIN $' + str(self.trialdesign[0]) + ' for sure'
 
                 # Set up the right string for positive gamble outcome
-                righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
-                                 str('{:.2f}'.format(self.trialdesign[2]))
+                if self.wholenumberopt == 'No':
+                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
+                                     str('{:.2f}'.format(self.trialdesign[2]))
+
+                else:
+                    righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to WIN $' + \
+                                     str(self.trialdesign[2])
 
                 # Set up the right string for negative gamble outcome
                 rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to WIN nothing'
 
             # if it's a loss trial
             else:
+
                 # Set up the left string for sure value
-                leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+                if self.wholenumberopt == 'No':
+                    leftstring = 'LOSE $' + str('{:.2f}'.format(self.trialdesign[0])) + ' for sure'
+
+                else:
+                    leftstring = 'LOSE $' + str(self.trialdesign[0]) + ' for sure'
 
                 # Set up the right string for positive gamble outcome
                 righttopstring = 'A ' + str(round(100 * self.trialdesign[1])) + '% chance to LOSE nothing'
 
                 # Set up the right string for negative gamble outcome
-                rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to LOSE $' + \
-                                    str('{:.2f}'.format(self.trialdesign[2]))
+                if self.wholenumberopt == 'No':
+                    rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to LOSE $' + \
+                                        str('{:.2f}'.format(self.trialdesign[2]))
+
+                else:
+                    rightbottomstring = 'A ' + str(round(100 * (1 - self.trialdesign[1]))) + '% chance to LOSE $' + \
+                                        str(self.trialdesign[2])
 
         # Return the values to the expguis
         return [leftstring, righttopstring, rightbottomstring]
@@ -1365,7 +1558,7 @@ class FrameParticipant(participant.Participant):
                         # if they lose, add the loss
                         if actualprob < self.trialdesign[1]:
                             outcomestring = '(Loss Gamble Lost, ' + str(round(100 * actualprob)) + ' vs your ' +\
-                                        str(round(100 * self.trialdesign[1])) + ') -$' +\
+                                            str(round(100 * self.trialdesign[1])) + ') -$' +\
                                             str('{:.2f}'.format(float(self.trialdesign[2])))
 
                         # if not, add 0

@@ -33,6 +33,11 @@ class ARTTSettings(settings.Settings):
         self.lrewin.setRange(0, 1000000)
         self.lrewin.setValue(60)
 
+        # Time limit input
+        self.timelimit = QSpinBox()
+        self.timelimit.setRange(1000, 1000000)
+        self.timelimit.setValue(10000)
+
         # Dropdown box for gains, losses, or both
         self.design = QComboBox()
         self.design.addItems(['Gains only', 'Losses only', 'Gains and Losses'])
@@ -48,11 +53,13 @@ class ARTTSettings(settings.Settings):
         # layout.addRow(QLabel('Enter the proportions covered for ambiguous trials:'), self.probambin)
         self.layout.addRow(QLabel('Fixed reward/loss magnitude:'), self.srewin)
         self.layout.addRow(QLabel('Largest reward/loss possible:'), self.lrewin)
+        self.layout.addRow(QLabel('Do you want to only use whole numbers (e.g., $1 but not $1.15)?'), self.wholetoggle)
         self.layout.addRow(QLabel('What type of questions do you want?'), self.design)
         # self.layout.addRow(QLabel('Do you want to use ADOPy?'), self.adopytoggle)
         self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcomeopts)
         self.layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
+        self.layout.addRow(QLabel('How long should the time limit be (in ms)?'), self.timelimit)
         self.layout.addRow(QLabel('Run in fMRI mode?'), self.fmritoggle)
         self.layout.addRow(QLabel('Current output directory:'), self.wdlabel)
         self.layout.addRow(QLabel('Click to choose where to save your output:'), self.wdset)
@@ -96,6 +103,8 @@ class ARTTSettings(settings.Settings):
                                              self.srewin.text(),
                                              self.lrewin.text(),
                                              self.design.currentText(),
+                                             self.wholenumbers,
+                                             self.timelimit.text(),
                                              self.outcomeopts.currentText(),
                                              self.smoneyin.text(),
                                              self.blocksin.text(),
@@ -132,6 +141,7 @@ class RASettings(settings.Settings):
         self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         self.layout.addRow(QLabel('Smallest possible gain:'), self.minin)
         self.layout.addRow(QLabel('Largest possible gain:'), self.maxin)
+        self.layout.addRow(QLabel('Do you want to only use whole numbers (e.g., $1 but not $1.15)?'), self.wholetoggle)
         self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         self.layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
         # self.layout.addRow(QLabel('Are you using an eyetracker?'), self.eyetrackingtoggle)
@@ -154,6 +164,7 @@ class RASettings(settings.Settings):
                                        'Risk Aversion',
                                        self.minin.text(),
                                        self.maxin.text(),
+                                       self.wholenumbers,
                                        self.outcome,
                                        self.smoneyin.text(),
                                        self.blocksin.text(),
@@ -190,6 +201,7 @@ class FrameSettings(settings.Settings):
         self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         self.layout.addRow(QLabel('Minimum expected value:'), self.minin)
         self.layout.addRow(QLabel('Maximum expected value:'), self.maxin)
+        self.layout.addRow(QLabel('Do you want to only use whole numbers (e.g., $1 but not $1.15)?'), self.wholetoggle)
         self.layout.addRow(QLabel('What type of questions do you want?'), self.design)
         self.layout.addRow(QLabel('Do you want FTT truncations (i.e., Gist, Mixed, Verbatim)?'), self.ftttoggle)
         self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
@@ -234,6 +246,7 @@ class FrameSettings(settings.Settings):
                                               self.maxin.text(),
                                               self.design.currentText(),
                                               self.ftt,
+                                              self.wholenumbers,
                                               self.outcome,
                                               self.smoneyin.text(),
                                               self.blocksin.text(),

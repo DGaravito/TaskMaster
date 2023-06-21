@@ -127,14 +127,14 @@ class ARTTExp(experiment.Experiment):
             self.starttime = time.time() - self.overallstart
 
             # start the trial timer
-            self.timer.start(5000)
+            self.timer.start(self.person.timelimit)
 
             # enable participant responses
             self.responseenabled = 1
 
             # if fmri mode, then set the new trial timer now
             if self.person.fmri == 'Yes':
-                self.ititimer.start(6000)
+                self.ititimer.start(self.person.timelimit + 1000)
 
         # if the trials requested have been completed
         else:

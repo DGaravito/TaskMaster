@@ -401,6 +401,7 @@ class Settings(QWidget):
         self.stt = 'No'
         self.confidence = 'No'
         self.adopystate = 'No'
+        self.wholenumbers = 'No'
 
         # defaults for EGNG and Dwell
         self.happy = 'No'
@@ -492,6 +493,10 @@ class Settings(QWidget):
         # ADOPy checkbox
         # self.adopytoggle = QCheckBox()
         # self.adopytoggle.stateChanged.connect(self.clickbox)
+
+        # Whole numbers only checkbox
+        self.wholetoggle = QCheckBox()
+        self.wholetoggle.stateChanged.connect(self.clickbox)
 
         # FTT checkbox for framing task
         self.ftttoggle = QCheckBox()
@@ -607,6 +612,12 @@ class Settings(QWidget):
         #     self.adopystate = 'Yes'
         # else:
         #     self.adopystate = 'No'
+
+        # Whole numbers only
+        if self.wholetoggle.isChecked():
+            self.wholenumbers = 'Yes'
+        else:
+            self.wholenumbers = 'No'
 
         # FTT for framing
         if self.ftttoggle.isChecked():

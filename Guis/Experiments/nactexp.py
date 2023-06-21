@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QLabel, QHBoxLayout
+from PyQt6.QtWidgets import QLabel, QHBoxLayout, QPushButton
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt, pyqtSignal
 
@@ -19,12 +19,11 @@ class NACTExp(experiment.Experiment):
 
             # Attach middle QLabel to functions
             # self.middle.mousePressEvent = self.clickedresponse
-            print('Not implemented yet. Contact the developer.')
-            instructions = 'Click the left mouse button for |. Click the right mouse button for -.'
+            instructions = 'Click the left button for |. Click the right button for -.'
 
         # Instructions, depending on controls
         else:
-            instructions = 'Press ' + self.person.leftkey[0] + ' for |. Press ' + self.person.rightkey[0] + ' for -.'
+            instructions = 'Press ' + self.person.leftkey[0] + ' for -. Press ' + self.person.rightkey[0] + ' for |.'
 
         self.instructions.setText(instructions)
 
@@ -39,10 +38,24 @@ class NACTExp(experiment.Experiment):
         self.right.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.right.setScaledContents(True)
 
+        self.leftbutton = QPushButton(' - ')
+        self.leftbutton.clicked.connect(self.clicked_leftbutton)
+
+        self.rightbutton = QPushButton(' | ')
+        self.rightbutton.clicked.connect(self.clicked_rightbutton)
+
         middlelayout.addStretch(1)
         middlelayout.addWidget(self.left)
         middlelayout.addStretch(1)
+
+        if self.person.controlscheme == 'Mouse':
+            middlelayout.addWidget(self.leftbutton)
+
         middlelayout.addWidget(self.middle)
+
+        if self.person.controlscheme == 'Mouse':
+            middlelayout.addWidget(self.rightbutton)
+
         middlelayout.addStretch(1)
         middlelayout.addWidget(self.right)
         middlelayout.addStretch(1)
@@ -121,12 +134,12 @@ class NACTExp(experiment.Experiment):
                 self.pixmaps.append(QPixmap(pathstring))
 
             # arrange the pixmaps around the screen
-            self.topleft.setPixmap(self.pixmaps[0].scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio))
-            self.left.setPixmap(self.pixmaps[1].scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio))
-            self.bottomleft.setPixmap(self.pixmaps[2].scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio))
-            self.bottomright.setPixmap(self.pixmaps[3].scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio))
-            self.right.setPixmap(self.pixmaps[4].scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio))
-            self.topright.setPixmap(self.pixmaps[5].scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio))
+            self.topleft.setPixmap(self.pixmaps[0].scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
+            self.left.setPixmap(self.pixmaps[1].scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
+            self.bottomleft.setPixmap(self.pixmaps[2].scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
+            self.bottomright.setPixmap(self.pixmaps[3].scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
+            self.right.setPixmap(self.pixmaps[4].scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
+            self.topright.setPixmap(self.pixmaps[5].scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio))
 
             # set the fixation cross
             self.middle.setText('+')
@@ -135,10 +148,10 @@ class NACTExp(experiment.Experiment):
             self.starttime = time.time() - self.overallstart
 
             # set the timers, with the trial lasting between 1.2 and 1.5 seconds
-            randomtimer = random.randint(1200, 1500)
+            randomtimer = random.randint(2000, 2500)
 
             self.timer.start(randomtimer)
-            self.ititimer.start(randomtimer+1000)
+            self.ititimer.start(randomtimer+500)
 
             # Set the variable that allows the user to respond
             self.responseenabled = 1
@@ -197,6 +210,56 @@ class NACTExp(experiment.Experiment):
         # set the screen to the iti window
         self.iti()
 
+    def clicked_leftbutton(self):
+
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
+
+            # put a border around the middle to indicate a user input was received
+            self.middle.setStyleSheet('border: 3px solid blue;')
+
+            # no longer allow the participant to respond
+            self.responseenabled = 0
+
+            # stop the timer and increment the number of trials done
+            self.timer.stop()
+            self.trialsdone += 1
+
+            # use time.time and the start time variable to compute rt
+            endtime = time.time() - self.overallstart
+            rt = endtime - self.starttime
+
+            # send the trial info to the participant class so it can be added to the dataframe
+            self.middle.setText(self.person.updateoutput(self.trialsdone, self.starttime, rt, 0))
+
+            # set the window to the iti screen
+            self.iti()
+
+    def clicked_rightbutton(self):
+
+        # only allow the button press if response is enabled
+        if self.responseenabled == 1:
+
+            # put a border around the middle to indicate a user input was received
+            self.middle.setStyleSheet('border: 3px solid blue;')
+
+            # no longer allow the participant to respond
+            self.responseenabled = 0
+
+            # stop the timer and increment the number of trials done
+            self.timer.stop()
+            self.trialsdone += 1
+
+            # use time.time and the start time variable to compute rt
+            endtime = time.time() - self.overallstart
+            rt = endtime - self.starttime
+
+            # send the trial info to the participant class so it can be added to the dataframe
+            self.middle.setText(self.person.updateoutput(self.trialsdone, self.starttime, rt, 1))
+
+            # set the window to the iti screen
+            self.iti()
+
     def keyaction(self, key):
         """
         Reads the keys that are pressed and does the corresponding actions
@@ -206,22 +269,22 @@ class NACTExp(experiment.Experiment):
         # if someone presses the g key and the participant is between rounds...
         if (key in ['g', 'G']) & (self.betweenrounds == 1):
 
+            # indicate that the participant is no longer between rounds so g and i keys won't mess things up
+            self.betweenrounds = 0
+
             # remove all text from the middle label
             self.middle.setText('')
 
             # reset the instructions to 0 in case they user wants to read instructions again next round
             self.inst = 0
 
-            # generate the next trial
-            self.generatenext()
-
-            # indicate that the participant is no longer between rounds so g and i keys won't mess things up
-            self.betweenrounds = 0
-
             # if this is the first trial of the first round, set the global start time to make the onset time make more
             # sense
             if (self.trialsdone == 0) & (self.roundsdone == 0):
                 self.overallstart = time.time()
+
+            # generate the next trial
+            self.generatenext()
 
         # if the participant presses the left or right keys and is allowed to respond
         if ((key in self.person.rightkey) | (key in self.person.leftkey)) & (self.responseenabled == 1):

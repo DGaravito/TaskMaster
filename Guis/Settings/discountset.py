@@ -45,11 +45,12 @@ class DdSettings(settings.Settings):
         # Make form layout for all the settingsguis
         self.layout.addRow(QLabel('Number of trials per block:'), self.trialsin)
         self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
-        self.layout.addRow(QLabel('Shortest delay in immediate option (weeks):'), self.imdin)
+        self.layout.addRow(QLabel('Delay in immediate option (weeks):'), self.imdin)
         self.layout.addRow(QLabel('Shortest delay in delayed option (weeks):'), self.sdin)
         self.layout.addRow(QLabel('Longest delay in delayed option (weeks):'), self.ldin)
-        self.layout.addRow(QLabel('Smallest reward in immediate option:'), self.srewin)
-        self.layout.addRow(QLabel('Biggest reward in delayed option:'), self.lrewin)
+        self.layout.addRow(QLabel('Smallest reward for immediate option:'), self.srewin)
+        self.layout.addRow(QLabel('Reward in delayed option:'), self.lrewin)
+        self.layout.addRow(QLabel('Do you want to only use whole numbers (e.g., $1 but not $1.15)?'), self.wholetoggle)
         self.layout.addRow(QLabel('What type of questions do you want?'), self.design)
         self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         # self.layout.addRow(QLabel('Do you want to use ADOPy?'), self.adopytoggle)
@@ -76,6 +77,7 @@ class DdSettings(settings.Settings):
                                          self.srewin.text(),
                                          self.lrewin.text(),
                                          self.blocksin.text(),
+                                         self.wholenumbers,
                                          self.outcome,
                                          self.design.currentText(),
                                          self.adopystate,
@@ -115,6 +117,7 @@ class PdSettings(settings.Settings):
         self.layout.addRow(QLabel('Number of blocks:'), self.blocksin)
         self.layout.addRow(QLabel('Smallest amount of money:'), self.rewmin)
         self.layout.addRow(QLabel('Biggest amount of money:'), self.rewmax)
+        self.layout.addRow(QLabel('Do you want to only use whole numbers (e.g., $1 but not $1.15)?'), self.wholetoggle)
         self.layout.addRow(QLabel('What type of questions do you want?'), self.design)
         self.layout.addRow(QLabel('Do you want to have an outcome randomly chosen?'), self.outcometoggle)
         self.layout.addRow(QLabel('Participant starting money (only used if above is checked):'), self.smoneyin)
@@ -148,6 +151,7 @@ class PdSettings(settings.Settings):
                                              self.design.currentText(),
                                              self.rewmin.text(),
                                              self.rewmax.text(),
+                                             self.wholenumbers,
                                              self.outcome,
                                              self.smoneyin.text(),
                                              self.blocksin.text(),
