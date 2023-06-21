@@ -141,12 +141,12 @@ class NACTExp(experiment.Experiment):
                 self.pixmaps.append(QPixmap(pathstring))
 
             # arrange the pixmaps around the screen
-            self.topleft.setPixmap(self.pixmaps[0].scaled(300, 300, Qt.AspectRatioMode.KeepAspectRatio))
-            self.left.setPixmap(self.pixmaps[1].scaled(300, 300, Qt.AspectRatioMode.KeepAspectRatio))
-            self.bottomleft.setPixmap(self.pixmaps[2].scaled(300, 300, Qt.AspectRatioMode.KeepAspectRatio))
-            self.bottomright.setPixmap(self.pixmaps[3].scaled(300, 300, Qt.AspectRatioMode.KeepAspectRatio))
-            self.right.setPixmap(self.pixmaps[4].scaled(300, 300, Qt.AspectRatioMode.KeepAspectRatio))
-            self.topright.setPixmap(self.pixmaps[5].scaled(300, 300, Qt.AspectRatioMode.KeepAspectRatio))
+            self.topleft.setPixmap(self.pixmaps[0].scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
+            self.left.setPixmap(self.pixmaps[1].scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
+            self.bottomleft.setPixmap(self.pixmaps[2].scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
+            self.bottomright.setPixmap(self.pixmaps[3].scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
+            self.right.setPixmap(self.pixmaps[4].scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
+            self.topright.setPixmap(self.pixmaps[5].scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio))
 
             # set the fixation cross
             self.middle.setText('+')
