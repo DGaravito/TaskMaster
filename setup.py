@@ -13,30 +13,48 @@ if sys.platform == 'darwin':
     OPTIONS = {
         'argv_emulation': True,
         'site_packages': True,
-        'iconfile': 'TM.icns',
-        'packages': []
+        'iconfile': 'TM.icns'
     }
 
-    setup(
-        name='TaskMaster',
-        version='1.0.0',
-        description='A python-based program that will run common behavioral research tasks on any system using PyQt.',
-        author='David Michael Nolta Garavito',
-        author_email='d.garavito2@gmail.com',
-        setup_requires=['py2app', 'PyQt6', 'numpy', 'scipy', 'pandas', 'xlsxwriter'],
+    extra_options = dict(
+        setup_requires=['py2app'],
         app=[mainscript],
         data_files=data,
-        options={'py2app': OPTIONS}
+        options=dict(py2app=OPTIONS)
     )
 
-if sys.platform == 'win32':
+elif sys.platform == 'win32':
 
-    setup(
-        name='TaskMaster',
-        version='1.0.0',
-        description='A python-based application that can run common psych research tasks on any system using PyQt.',
-        author='David Michael Nolta Garavito',
-        author_email='d.garavito2@gmail.com',
-        setup_requires=['PyQt6', 'numpy', 'scipy', 'pandas', 'xlsxwriter'],
-        app=[mainscript]
+    OPTIONS = {
+        'iconfile': 'TM.ico'
+    }
+
+    extra_options = dict(
+         setup_requires=['py2exe'],
+         app=[mainscript],
+         data_files=data,
+         options=dict(py2exe=OPTIONS)
     )
+
+else:
+     extra_options = dict(
+         scripts=[mainscript],
+         data_files=data
+     )
+
+setup(
+    name='TaskMaster',
+    version='1.0.0',
+    url='https://github.com/DGaravito/TaskMaster',
+    description='A python-based application that can run common psych research tasks on any system using PyQt.',
+    author='David Michael Nolta Garavito',
+    author_email='d.garavito2@gmail.com',
+    install_requires=[
+                         'PyQt6',
+                         'numpy',
+                         'scipy',
+                         'pandas',
+                         'xlsxwriter'
+                     ],
+    **extra_options
+)
