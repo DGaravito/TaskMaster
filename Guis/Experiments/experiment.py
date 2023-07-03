@@ -4,8 +4,6 @@ from PyQt6.QtGui import QFont
 
 from pathlib import Path
 
-from Guis import main
-
 
 class Experiment(QWidget):
     def __init__(self, person):
@@ -126,6 +124,8 @@ class Experiment(QWidget):
         sends the user back to the main menu
         :return:
         """
+
+        from Guis import main
 
         self.w = main.SelectWindow()
         self.w.show()

@@ -5,8 +5,6 @@ from PyQt6.QtGui import QFont
 
 from os import path
 
-from Guis import main
-
 
 class DirErrorBox(QDialog):
     """
@@ -291,9 +289,9 @@ class CitationWindow(QDialog):
 
             case str('Dwell'):
 
-                followupstring = 'Lazarov, A., Abend, R., & Bar-Haim, Y. (2016). Social anxiety is related to increased' \
-                                 ' dwell time on socially threatening faces. Journal of Affective Disorders, 193, ' \
-                                 '282-288. https://doi.org/10.1016/j.jad.2016.01.007.'
+                followupstring = 'Lazarov, A., Abend, R., & Bar-Haim, Y. (2016). Social anxiety is related to ' \
+                                 'increased dwell time on socially threatening faces. Journal of Affective Disorders,' \
+                                 ' 193, 282-288. https://doi.org/10.1016/j.jad.2016.01.007.'
 
             case str('Stroop'):
 
@@ -698,6 +696,8 @@ class Settings(QWidget):
         sends the user back to the main menu
         :return:
         """
+
+        from Guis import main
 
         self.w = main.SelectWindow()
         self.w.show()
