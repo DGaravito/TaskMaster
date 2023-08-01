@@ -492,7 +492,7 @@ class ARTTParticipant(participant.Participant):
                     # if blue is the reward color, then they win only if they have less than or equal to the prob
                     if bluered == 0:
 
-                        outcomestring = 'Gain Gamble: ' + str(round(100 * p_risky)) + '% to win ' +\
+                        outcomestring = 'Gain Gamble: ' + str(round(100 * p_risky)) + '% to win $' +\
                                         str('{:.2f}'.format(v_amount)) + ' with a blue chip\n'
 
                         # if the user wanted the full outcome and not just a bag to pick from
@@ -516,7 +516,7 @@ class ARTTParticipant(participant.Participant):
                     # if red is the reward color, then they win only if they have less than or equal to 1 minus the prob
                     else:
 
-                        outcomestring = 'Gain Gamble: ' + str(round(100 * (1-p_risky))) + '% to win ' +\
+                        outcomestring = 'Gain Gamble: ' + str(round(100 * (1-p_risky))) + '% to win $' +\
                                         str('{:.2f}'.format(v_amount)) + ' with a red chip\n'
 
                         # if the user wanted the full outcome and not just a bag to pick from
@@ -543,7 +543,7 @@ class ARTTParticipant(participant.Participant):
                     # if blue is the reward color, then they win only if they have less than or equal to the prob
                     if bluered == 0:
 
-                        outcomestring = 'Loss Gamble: ' + str(round(100 * p_risky)) + '% to lose ' +\
+                        outcomestring = 'Loss Gamble: ' + str(round(100 * p_risky)) + '% to lose $' +\
                                         str('{:.2f}'.format(v_amount)) + ' with a blue chip\n'
 
                         # if the user wanted the full outcome and not just a bag to pick from
@@ -567,7 +567,7 @@ class ARTTParticipant(participant.Participant):
                     # if red is the reward color, then they win only if they have less than or equal to 1 minus the prob
                     else:
 
-                        outcomestring = 'Loss Gamble: ' + str(round(100 * (1-p_risky))) + '% to lose ' +\
+                        outcomestring = 'Loss Gamble: ' + str(round(100 * (1-p_risky))) + '% to lose $' +\
                                         str('{:.2f}'.format(v_amount)) + ' with a red chip\n'
 
                         # if the user wanted the full outcome and not just a bag to pick from
@@ -597,7 +597,7 @@ class ARTTParticipant(participant.Participant):
                         # if blue is the reward color, then they win only if they have less than or equal to the prob
                         if bluered == 0:
 
-                            outcomestring = 'Gain Gamble: ' + str(round(100 * p_risky)) + '% to win ' + \
+                            outcomestring = 'Gain Gamble: ' + str(round(100 * p_risky)) + '% to win $' + \
                                             str('{:.2f}'.format(v_amount)) + ' with a blue chip\n'
 
                             # if the user wanted the full outcome and not just a bag to pick from
@@ -622,7 +622,7 @@ class ARTTParticipant(participant.Participant):
                         # prob
                         else:
 
-                            outcomestring = 'Gain Gamble: ' + str(round(100 * (1-p_risky))) + '% to win ' + \
+                            outcomestring = 'Gain Gamble: ' + str(round(100 * (1-p_risky))) + '% to win $' + \
                                             str('{:.2f}'.format(v_amount)) + ' with a red chip\n'
 
                             # if the user wanted the full outcome and not just a bag to pick from
@@ -649,7 +649,7 @@ class ARTTParticipant(participant.Participant):
                         # if blue is the reward color, then they win only if they have less than or equal to the prob
                         if bluered == 0:
 
-                            outcomestring = 'Loss Gamble: ' + str(round(100 * p_risky)) + '% to lose ' + \
+                            outcomestring = 'Loss Gamble: ' + str(round(100 * p_risky)) + '% to lose $' + \
                                             str('{:.2f}'.format(v_amount)) + ' with a blue chip\n'
 
                             # if the user wanted the full outcome and not just a bag to pick from
@@ -673,7 +673,7 @@ class ARTTParticipant(participant.Participant):
                         # if red is the reward color, then they win only if less than or equal to 1 minus the prob
                         else:
 
-                            outcomestring = 'Loss Gamble: ' + str(round(100 * (1-p_risky))) + '% to lose ' +\
+                            outcomestring = 'Loss Gamble: ' + str(round(100 * (1-p_risky))) + '% to lose $' +\
                                             str('{:.2f}'.format(v_amount)) + ' with a red chip\n'
 
                             # if the user wanted the full outcome and not just a bag to pick from
