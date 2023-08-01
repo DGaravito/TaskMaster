@@ -111,7 +111,7 @@ class Experiment(QWidget):
 
         # add the middle, which will always have the same starting text
         self.middle = QLabel('Press \"G\" to start, \"I\" for instructions')
-        self.middle.setFont(QFont('Helvetica', 45))
+        self.middle.setFont(QFont('Helvetica', 30))
 
         # center middle
         self.middle.setAlignment(Qt.AlignmentFlag.AlignCenter)
